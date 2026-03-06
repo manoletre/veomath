@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import { NextRequest, NextResponse } from 'next/server';
 
 const SYSTEM_PROMPT = `You are a mathematics visualization assistant that creates beautiful animations using manim-web, a browser-based animation library inspired by 3Blue1Brown's Manim.
@@ -303,7 +304,7 @@ export async function POST(request: NextRequest) {
 
     const response = await openai.chat.completions.create({
       model: 'gpt-5.4',
-      messages: apiMessages,
+      messages: apiMessages as ChatCompletionMessageParam[],
       response_format: {
         type: 'json_schema',
         json_schema: {
