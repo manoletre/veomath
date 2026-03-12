@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 declare global {
@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-export default function SandboxPage() {
+function SandboxContent() {
   const searchParams = useSearchParams();
   const containerRef = useRef<HTMLDivElement>(null);
   const [status, setStatus] = useState<'loading' | 'running' | 'done' | 'error'>('loading');
@@ -103,5 +103,19 @@ export default function SandboxPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function SandboxPage() {
+  return (
+    <Suspense
+      fallback={
+        <div style={{ width: '100vw', height: '100vh', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555' }}>
+          Loading...
+        </div>
+      }
+    >
+      <SandboxContent />
+    </Suspense>
   );
 }
