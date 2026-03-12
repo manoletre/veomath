@@ -12,6 +12,7 @@
     "manim-web": "^0.3.9",
     "next": "16.1.6",
     "openai": "^6.26.0",
+    "playwright": "^1.58.2",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },

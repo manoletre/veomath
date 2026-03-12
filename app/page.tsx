@@ -352,7 +352,7 @@ export default function Home() {
         style={{
           width: sidebarOpen ? '220px' : '48px',
           minWidth: sidebarOpen ? '220px' : '48px',
-          borderRight: '1px solid #1a1a1a',
+          borderRight: '1px solid #252525',
           background: '#0d0d0d',
           display: 'flex',
           flexDirection: 'column',
@@ -368,7 +368,7 @@ export default function Home() {
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            borderBottom: '1px solid #1a1a1a',
+            borderBottom: '1px solid #252525',
             flexShrink: 0,
           }}
         >
@@ -378,7 +378,7 @@ export default function Home() {
             style={{
               background: 'none',
               border: 'none',
-              color: '#525252',
+              color: '#6b6b6b',
               cursor: 'pointer',
               padding: '4px',
               borderRadius: '6px',
@@ -391,8 +391,8 @@ export default function Home() {
               width: '28px',
               height: '28px',
             }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#a3a3a3')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#525252')}
+            onMouseEnter={e => (e.currentTarget.style.color = '#c0c0c0')}
+            onMouseLeave={e => (e.currentTarget.style.color = '#6b6b6b')}
           >
             {sidebarOpen ? '⟨' : '⟩'}
           </button>
@@ -403,18 +403,18 @@ export default function Home() {
               title="New chat"
               style={{
                 background: 'none',
-                border: '1px solid #2a2a2a',
-                borderRadius: '6px',
-                color: '#a3a3a3',
-                fontSize: '11px',
-                cursor: 'pointer',
-                padding: '4px 10px',
-                marginLeft: 'auto',
-                whiteSpace: 'nowrap',
-                flexShrink: 0,
-              }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = '#404040')}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = '#2a2a2a')}
+              border: '1px solid #383838',
+              borderRadius: '6px',
+              color: '#b4b4b4',
+              fontSize: '11px',
+              cursor: 'pointer',
+              padding: '4px 10px',
+              marginLeft: 'auto',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
+            onMouseEnter={e => (e.currentTarget.style.borderColor = '#555')}
+            onMouseLeave={e => (e.currentTarget.style.borderColor = '#383838')}
             >
               + New
             </button>
@@ -430,7 +430,7 @@ export default function Home() {
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#525252',
+                color: '#6b6b6b',
                 cursor: 'pointer',
                 padding: '4px',
                 fontSize: '16px',
@@ -441,8 +441,8 @@ export default function Home() {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#a3a3a3')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#525252')}
+              onMouseEnter={e => (e.currentTarget.style.color = '#c0c0c0')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#6b6b6b')}
             >
               +
             </button>
@@ -462,7 +462,7 @@ export default function Home() {
                   border: 'none',
                   borderRadius: '6px',
                   padding: '7px 8px',
-                  color: chat.id === activeChatId ? '#e5e5e5' : '#737373',
+                  color: chat.id === activeChatId ? '#e5e5e5' : '#909090',
                   fontSize: '12px',
                   cursor: 'pointer',
                   textAlign: 'left',
@@ -488,7 +488,7 @@ export default function Home() {
                   <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {chat.title}
                   </div>
-                  <div style={{ fontSize: '10px', color: '#404040', marginTop: '2px' }}>
+                  <div style={{ fontSize: '10px', color: '#575757', marginTop: '2px' }}>
                     {formatDate(chat.createdAt)}
                   </div>
                 </div>
@@ -497,17 +497,17 @@ export default function Home() {
                   onClick={e => { e.stopPropagation(); deleteChat(chat.id); }}
                   title="Delete chat"
                   style={{
-                    opacity: 0,
-                    color: '#525252',
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    padding: '0 2px',
-                    lineHeight: 1,
-                    flexShrink: 0,
-                    transition: 'opacity 0.1s',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#525252')}
+                  opacity: 0,
+                  color: '#6b6b6b',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  padding: '0 2px',
+                  lineHeight: 1,
+                  flexShrink: 0,
+                  transition: 'opacity 0.1s',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
+                onMouseLeave={e => (e.currentTarget.style.color = '#6b6b6b')}
                 >
                   ×
                 </span>
@@ -523,7 +523,7 @@ export default function Home() {
         style={{
           width: '380px',
           minWidth: '320px',
-          borderRight: '1px solid #262626',
+          borderRight: '1px solid #333',
           background: '#111111',
           flexShrink: 0,
         }}
@@ -532,7 +532,7 @@ export default function Home() {
         <div
           style={{
             padding: '16px 20px',
-            borderBottom: '1px solid #262626',
+            borderBottom: '1px solid #333',
             fontSize: '15px',
             fontWeight: 600,
             letterSpacing: '-0.01em',
@@ -547,9 +547,9 @@ export default function Home() {
           {(!activeChat || activeChat.messages.length === 0) && !loading && (
             <div
               style={{
-                color: '#525252',
-                fontSize: '13px',
-                textAlign: 'center',
+              color: '#6b6b6b',
+              fontSize: '13px',
+              textAlign: 'center',
                 marginTop: '40px',
                 lineHeight: 1.6,
               }}
@@ -577,8 +577,8 @@ export default function Home() {
                     maxWidth: '88%',
                     padding: '8px 12px',
                     borderRadius: m.role === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
-                    background: m.role === 'user' ? '#2563eb' : '#1e1e1e',
-                    color: m.role === 'user' ? '#fff' : '#d4d4d4',
+                    background: m.role === 'user' ? '#2563eb' : '#232323',
+                    color: m.role === 'user' ? '#fff' : '#e0e0e0',
                     fontSize: '13px',
                     lineHeight: 1.55,
                   }}
@@ -592,13 +592,13 @@ export default function Home() {
                       marginTop: '4px',
                       background: 'none',
                       border: 'none',
-                      color: '#525252',
+                      color: '#6b6b6b',
                       fontSize: '11px',
                       cursor: 'pointer',
                       padding: '2px 4px',
                     }}
-                    onMouseEnter={e => (e.currentTarget.style.color = '#a3a3a3')}
-                    onMouseLeave={e => (e.currentTarget.style.color = '#525252')}
+                    onMouseEnter={e => (e.currentTarget.style.color = '#c0c0c0')}
+                    onMouseLeave={e => (e.currentTarget.style.color = '#6b6b6b')}
                   >
                     replay animation
                   </button>
@@ -612,9 +612,9 @@ export default function Home() {
                   style={{
                     padding: '8px 12px',
                     borderRadius: '14px 14px 14px 4px',
-                    background: '#1e1e1e',
+                    background: '#232323',
                     fontSize: '13px',
-                    color: '#525252',
+                    color: '#6b6b6b',
                   }}
                 >
                   <span className="thinking-dots">
@@ -629,22 +629,22 @@ export default function Home() {
         </div>
 
         {/* Input */}
-        <div style={{ padding: '12px 16px', borderTop: '1px solid #262626' }}>
+          <div style={{ padding: '12px 16px', borderTop: '1px solid #333' }}>
           {hasLastAssistant && !loading && (
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '6px' }}>
               <button
                 onClick={retryLastMessage}
                 style={{
                   background: 'none',
-                  border: '1px solid #2a2a2a',
-                  borderRadius: '8px',
-                  padding: '3px 10px',
-                  color: '#525252',
-                  fontSize: '11px',
-                  cursor: 'pointer',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#a3a3a3')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#525252')}
+                border: '1px solid #383838',
+                borderRadius: '8px',
+                padding: '3px 10px',
+                color: '#6b6b6b',
+                fontSize: '11px',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#c0c0c0')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#6b6b6b')}
               >
                 regenerate
               </button>
@@ -658,7 +658,7 @@ export default function Home() {
               background: '#1a1a1a',
               borderRadius: '12px',
               padding: '8px 12px',
-              border: '1px solid #2a2a2a',
+              border: '1px solid #383838',
             }}
           >
             <textarea
@@ -685,8 +685,8 @@ export default function Home() {
               onClick={sendMessage}
               disabled={loading || !input.trim()}
               style={{
-                background: input.trim() && !loading ? '#2563eb' : '#262626',
-                color: input.trim() && !loading ? '#fff' : '#525252',
+                background: input.trim() && !loading ? '#2563eb' : '#2e2e2e',
+                color: input.trim() && !loading ? '#fff' : '#6b6b6b',
                 border: 'none',
                 borderRadius: '8px',
                 padding: '5px 12px',
@@ -699,7 +699,7 @@ export default function Home() {
               Send
             </button>
           </div>
-          <div style={{ fontSize: '10px', color: '#404040', marginTop: '6px', textAlign: 'center' }}>
+          <div style={{ fontSize: '10px', color: '#575757', marginTop: '6px', textAlign: 'center' }}>
             Enter to send &middot; Shift+Enter for newline
           </div>
         </div>
@@ -724,7 +724,7 @@ export default function Home() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#262626',
+              color: '#404040',
               fontSize: '13px',
             }}
           >
@@ -759,17 +759,17 @@ export default function Home() {
               onClick={() => setShowCodePanel(o => !o)}
               title={showCodePanel ? 'Hide code' : 'View generated code'}
               style={{
-                background: showCodePanel ? '#1e3a5f' : '#111',
-                border: `1px solid ${showCodePanel ? '#2563eb' : '#2a2a2a'}`,
-                borderRadius: '8px',
-                padding: '3px 10px',
-                color: showCodePanel ? '#93c5fd' : '#525252',
-                fontSize: '11px',
-                cursor: 'pointer',
-                fontFamily: 'monospace',
-              }}
-              onMouseEnter={e => { if (!showCodePanel) e.currentTarget.style.borderColor = '#404040'; }}
-              onMouseLeave={e => { if (!showCodePanel) e.currentTarget.style.borderColor = '#2a2a2a'; }}
+              background: showCodePanel ? '#1e3a5f' : '#111',
+              border: `1px solid ${showCodePanel ? '#2563eb' : '#383838'}`,
+              borderRadius: '8px',
+              padding: '3px 10px',
+              color: showCodePanel ? '#93c5fd' : '#6b6b6b',
+              fontSize: '11px',
+              cursor: 'pointer',
+              fontFamily: 'monospace',
+            }}
+            onMouseEnter={e => { if (!showCodePanel) e.currentTarget.style.borderColor = '#555'; }}
+            onMouseLeave={e => { if (!showCodePanel) e.currentTarget.style.borderColor = '#383838'; }}
             >
               {'{ }'}
             </button>
@@ -786,7 +786,7 @@ export default function Home() {
               bottom: debugInfo ? debugPanelHeight : 0,
               width: '420px',
               background: '#0a0a0a',
-              borderLeft: '1px solid #1f1f1f',
+              borderLeft: '1px solid #2d2d2d',
               display: 'flex',
               flexDirection: 'column',
               zIndex: 25,
@@ -798,11 +798,11 @@ export default function Home() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                borderBottom: '1px solid #1f1f1f',
-                flexShrink: 0,
-              }}
-            >
-              <span style={{ fontSize: '11px', color: '#525252', fontFamily: 'monospace' }}>
+              borderBottom: '1px solid #2d2d2d',
+              flexShrink: 0,
+            }}
+          >
+              <span style={{ fontSize: '11px', color: '#6b6b6b', fontFamily: 'monospace' }}>
                 generated code
                 {manimExports.length > 0 && (
                   <span style={{ marginLeft: '8px', color: manimExports.includes('makeDraggable') ? '#4ade80' : '#f87171' }}>
@@ -815,21 +815,21 @@ export default function Home() {
                   onClick={() => navigator.clipboard.writeText(activeChat.currentCode!)}
                   style={{
                     background: 'none',
-                    border: '1px solid #2a2a2a',
+                    border: '1px solid #383838',
                     borderRadius: '6px',
                     padding: '2px 8px',
-                    color: '#525252',
+                    color: '#6b6b6b',
                     fontSize: '10px',
                     cursor: 'pointer',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#a3a3a3')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#525252')}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#c0c0c0')}
+                  onMouseLeave={e => (e.currentTarget.style.color = '#6b6b6b')}
                 >
                   copy
                 </button>
                 <button
                   onClick={() => setShowCodePanel(false)}
-                  style={{ background: 'none', border: 'none', color: '#525252', fontSize: '14px', cursor: 'pointer', lineHeight: 1, padding: '0 2px' }}
+                  style={{ background: 'none', border: 'none', color: '#6b6b6b', fontSize: '14px', cursor: 'pointer', lineHeight: 1, padding: '0 2px' }}
                 >
                   ×
                 </button>
@@ -843,7 +843,7 @@ export default function Home() {
               </div>
             )}
             <div style={{ flex: 1, overflowY: 'auto', padding: '12px' }}>
-              <pre style={{ color: '#a3a3a3', fontSize: '11px', margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'monospace', lineHeight: 1.6 }}>
+              <pre style={{ color: '#b8b8b8', fontSize: '11px', margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'monospace', lineHeight: 1.6 }}>
                 {activeChat.currentCode}
               </pre>
             </div>
@@ -865,7 +865,7 @@ export default function Home() {
               transition: 'bottom 0.2s',
             }}
           >
-            <div style={{ fontSize: '10px', color: '#404040', marginBottom: '2px' }}>history</div>
+            <div style={{ fontSize: '10px', color: '#575757', marginBottom: '2px' }}>history</div>
             <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '320px' }}>
               {(activeChat?.animationHistory ?? []).map((item, i) => (
                 <button
@@ -873,10 +873,10 @@ export default function Home() {
                   onClick={() => showAnimation(item.code)}
                   style={{
                     background: activeChat?.currentCode === item.code ? '#2563eb' : '#111',
-                    border: `1px solid ${activeChat?.currentCode === item.code ? '#2563eb' : '#2a2a2a'}`,
+                    border: `1px solid ${activeChat?.currentCode === item.code ? '#2563eb' : '#383838'}`,
                     borderRadius: '12px',
                     padding: '3px 10px',
-                    color: activeChat?.currentCode === item.code ? '#fff' : '#737373',
+                    color: activeChat?.currentCode === item.code ? '#fff' : '#909090',
                     fontSize: '11px',
                     cursor: 'pointer',
                     maxWidth: '140px',
@@ -915,19 +915,19 @@ export default function Home() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                borderBottom: '1px solid #1f1f1f',
-                flexShrink: 0,
-              }}
-            >
+              borderBottom: '1px solid #2d2d2d',
+              flexShrink: 0,
+            }}
+          >
               <span style={{ color: '#ef4444', fontSize: '11px', fontWeight: 600 }}>
                 Render Error{hasRetriedRef.current ? ' — auto-fix attempted' : ''}
               </span>
-              <button
+                <button
                 onClick={() => setDebugInfo(null)}
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#525252',
+                  color: '#6b6b6b',
                   fontSize: '14px',
                   cursor: 'pointer',
                   lineHeight: 1,
@@ -939,14 +939,14 @@ export default function Home() {
             </div>
             <div style={{ overflow: 'auto', flex: 1, padding: '10px 12px', display: 'flex', gap: '12px' }}>
               <div style={{ flex: '0 0 40%' }}>
-                <div style={{ fontSize: '10px', color: '#525252', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Error</div>
+                <div style={{ fontSize: '10px', color: '#6b6b6b', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Error</div>
                 <pre style={{ color: '#ef4444', fontSize: '11px', margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
                   {debugInfo.error}
                 </pre>
               </div>
-              <div style={{ flex: 1, borderLeft: '1px solid #1f1f1f', paddingLeft: '12px' }}>
-                <div style={{ fontSize: '10px', color: '#525252', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Generated code</div>
-                <pre style={{ color: '#a3a3a3', fontSize: '11px', margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
+              <div style={{ flex: 1, borderLeft: '1px solid #2d2d2d', paddingLeft: '12px' }}>
+                <div style={{ fontSize: '10px', color: '#6b6b6b', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Generated code</div>
+                <pre style={{ color: '#b8b8b8', fontSize: '11px', margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
                   {debugInfo.code}
                 </pre>
               </div>
