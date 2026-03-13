@@ -70,6 +70,7 @@ type Session = {
   docItems: DocItem[];
   phase: Phase;
   createdAt: number;
+  paperFileId?: string;
 };
 
 function createSession(): Session {
@@ -102,6 +103,10 @@ export default function AgenticPage() {
   const [planSlideComments, setPlanSlideComments] = useState<Map<number, string>>(new Map());
   const [courseRegenerateFeedback, setCourseRegenerateFeedback] = useState('');
   const [isRegeneratingCourse, setIsRegeneratingCourse] = useState(false);
+  const [inputMode, setInputMode] = useState<'topic' | 'pdf'>('topic');
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [pdfUploading, setPdfUploading] = useState(false);
+  const [pdfError, setPdfError] = useState('');
 
   const [slideProgress, setSlideProgress] = useState<Map<number, SlideProgress>>(new Map());
   const [globalProgress, setGlobalProgress] = useState('');
@@ -201,7 +206,53 @@ export default function AgenticPage() {
   }
 
   async function submitTopic() {
-    if (!input.trim() || !activeSession) return;
+    if (!activeSession) return;
+
+    if (inputMode === 'pdf') {
+      // PDF upload flow
+      if (!pdfFile) return;
+      setPdfUploading(true);
+      setPdfError('');
+      updateSession(activeSessionId, { sessionTitle: pdfFile.name.replace(/\.pdf$/i, ''), phase: 'planning' });
+
+      try {
+        // Step 1: Upload PDF to OpenAI
+        const formData = new FormData();
+        formData.append('file', pdfFile);
+        const uploadRes = await fetch('/api/agentic/upload', { method: 'POST', body: formData });
+        if (!uploadRes.ok) throw new Error('Upload failed');
+        const { fileId } = await uploadRes.json();
+
+        // Store fileId on session
+        updateSession(activeSessionIdRef.current, { paperFileId: fileId });
+
+        // Step 2: Plan from PDF
+        const planRes = await fetch('/api/agentic', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ mode: 'plan-from-pdf', fileId }),
+        });
+        if (!planRes.ok) throw new Error('Plan generation failed');
+        const data = await planRes.json();
+
+        updateSession(activeSessionIdRef.current, {
+          sessionTitle: data.sessionTitle || pdfFile.name.replace(/\.pdf$/i, ''),
+          topic: data.sessionTitle || pdfFile.name.replace(/\.pdf$/i, ''),
+          planItems: data.items,
+          phase: 'plan-ready',
+        });
+      } catch (err) {
+        console.error(err);
+        setPdfError(String(err));
+        updateSession(activeSessionIdRef.current, { phase: 'input' });
+      } finally {
+        setPdfUploading(false);
+      }
+      return;
+    }
+
+    // Topic flow (existing)
+    if (!input.trim()) return;
     const topic = input.trim();
     const title = activeSession.sessionTitle === 'New explainer' ? topic : activeSession.sessionTitle;
 
@@ -348,6 +399,7 @@ export default function AgenticPage() {
           items: activeSession.planItems,
           userComments: planComments,
           slideComments: Object.fromEntries(planSlideComments),
+          fileId: activeSession.paperFileId,
         }),
       });
       if (!res.ok) throw new Error('API error');
@@ -393,6 +445,7 @@ export default function AgenticPage() {
           items: activeSession.planItems,
           lessonContext,
           overallFeedback: courseRegenerateFeedback,
+          fileId: activeSession.paperFileId,
         }),
       });
       if (!res.ok) throw new Error('API error');
@@ -442,6 +495,7 @@ export default function AgenticPage() {
           error,
           currentCode: item.manimCode,
           currentFrame: slideFramesRef.current.get(itemIndex) || null,
+          fileId: session.paperFileId,
         }),
       });
       if (!res.ok) throw new Error('API error');
@@ -489,6 +543,7 @@ export default function AgenticPage() {
           sessionContext: surroundingText,
           currentCode: item.manimCode,
           currentFrame: slideFramesRef.current.get(itemIndex) || null,
+          fileId: activeSession.paperFileId,
         }),
       });
       if (!res.ok) throw new Error('API error');
@@ -752,13 +807,26 @@ export default function AgenticPage() {
                 lineHeight: 1.6,
               }}
             >
-              Pick a topic and I&apos;ll create<br />
-              an interactive explainer for it.<br />
-              <br />
-              <span style={{ color: '#606060' }}>
-                Try &ldquo;Why e^i*pi = -1&rdquo;<br />
-                or &ldquo;How derivatives work&rdquo;
-              </span>
+              {inputMode === 'topic' ? (
+                <>
+                  Pick a topic and I&apos;ll create<br />
+                  an interactive explainer for it.<br />
+                  <br />
+                  <span style={{ color: '#606060' }}>
+                    Try &ldquo;Why e^i*pi = -1&rdquo;<br />
+                    or &ldquo;How derivatives work&rdquo;
+                  </span>
+                </>
+              ) : (
+                <>
+                  Upload a research paper and<br />
+                  I&apos;ll create an explainer from it.<br />
+                  <br />
+                  <span style={{ color: '#606060' }}>
+                    Supports PDF files
+                  </span>
+                </>
+              )}
             </div>
           )}
 
@@ -957,58 +1025,171 @@ export default function AgenticPage() {
         {/* Input area — only in input phase */}
         {activeSession?.phase === 'input' && (
           <div style={{ padding: '12px 16px', borderTop: '1px solid #262626' }}>
-            <div
-              style={{
-                display: 'flex',
-                gap: '8px',
-                alignItems: 'flex-end',
-                background: '#1a1a1a',
-                borderRadius: '12px',
-                padding: '8px 12px',
-                border: '1px solid #2a2a2a',
-              }}
-            >
-              <textarea
-                ref={textareaRef}
-                value={input}
-                onChange={handleInput}
-                onKeyDown={handleKeyDown}
-                placeholder="What topic should I explain?"
-                rows={1}
-                disabled={isLoading}
-                style={{
-                  flex: 1,
-                  background: 'none',
-                  border: 'none',
-                  outline: 'none',
-                  color: '#e5e5e5',
-                  fontSize: '13px',
-                  lineHeight: '1.5',
-                  resize: 'none',
-                  fontFamily: 'inherit',
-                }}
-              />
-              <button
-                onClick={submitTopic}
-                disabled={isLoading || !input.trim()}
-                style={{
-                  background: input.trim() && !isLoading ? '#2563eb' : '#262626',
-                  color: input.trim() && !isLoading ? '#fff' : '#737373',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '5px 12px',
-                  fontSize: '12px',
-                  cursor: input.trim() && !isLoading ? 'pointer' : 'default',
-                  transition: 'background 0.15s',
-                  flexShrink: 0,
-                }}
-              >
-                Plan
-              </button>
+            {/* Mode toggle */}
+            <div style={{ display: 'flex', gap: '2px', marginBottom: '8px', background: '#1a1a1a', borderRadius: '8px', padding: '2px' }}>
+              {(['topic', 'pdf'] as const).map(mode => (
+                <button
+                  key={mode}
+                  onClick={() => setInputMode(mode)}
+                  style={{
+                    flex: 1,
+                    background: inputMode === mode ? '#2a2a2a' : 'transparent',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '5px 0',
+                    color: inputMode === mode ? '#e5e5e5' : '#606060',
+                    fontSize: '11px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  {mode === 'topic' ? 'Topic' : 'Upload Paper'}
+                </button>
+              ))}
             </div>
-            <div style={{ fontSize: '10px', color: '#606060', marginTop: '6px', textAlign: 'center' }}>
-              Enter to send
-            </div>
+
+            {inputMode === 'topic' ? (
+              /* Topic mode — existing textarea */
+              <>
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: '8px',
+                    alignItems: 'flex-end',
+                    background: '#1a1a1a',
+                    borderRadius: '12px',
+                    padding: '8px 12px',
+                    border: '1px solid #2a2a2a',
+                  }}
+                >
+                  <textarea
+                    ref={textareaRef}
+                    value={input}
+                    onChange={handleInput}
+                    onKeyDown={handleKeyDown}
+                    placeholder="What topic should I explain?"
+                    rows={1}
+                    disabled={isLoading}
+                    style={{
+                      flex: 1,
+                      background: 'none',
+                      border: 'none',
+                      outline: 'none',
+                      color: '#e5e5e5',
+                      fontSize: '13px',
+                      lineHeight: '1.5',
+                      resize: 'none',
+                      fontFamily: 'inherit',
+                    }}
+                  />
+                  <button
+                    onClick={submitTopic}
+                    disabled={isLoading || !input.trim()}
+                    style={{
+                      background: input.trim() && !isLoading ? '#2563eb' : '#262626',
+                      color: input.trim() && !isLoading ? '#fff' : '#737373',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '5px 12px',
+                      fontSize: '12px',
+                      cursor: input.trim() && !isLoading ? 'pointer' : 'default',
+                      transition: 'background 0.15s',
+                      flexShrink: 0,
+                    }}
+                  >
+                    Plan
+                  </button>
+                </div>
+                <div style={{ fontSize: '10px', color: '#606060', marginTop: '6px', textAlign: 'center' }}>
+                  Enter to send
+                </div>
+              </>
+            ) : (
+              /* PDF upload mode */
+              <>
+                <div
+                  onDragOver={e => { e.preventDefault(); e.currentTarget.style.borderColor = '#3b82f6'; }}
+                  onDragLeave={e => { e.currentTarget.style.borderColor = '#2a2a2a'; }}
+                  onDrop={e => {
+                    e.preventDefault();
+                    e.currentTarget.style.borderColor = '#2a2a2a';
+                    const file = e.dataTransfer.files[0];
+                    if (file?.type === 'application/pdf') { setPdfFile(file); setPdfError(''); }
+                    else setPdfError('Please drop a PDF file');
+                  }}
+                  onClick={() => {
+                    const inp = document.createElement('input');
+                    inp.type = 'file';
+                    inp.accept = '.pdf';
+                    inp.onchange = () => {
+                      const file = inp.files?.[0];
+                      if (file) { setPdfFile(file); setPdfError(''); }
+                    };
+                    inp.click();
+                  }}
+                  style={{
+                    border: '2px dashed #2a2a2a',
+                    borderRadius: '12px',
+                    padding: '24px 16px',
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: 'border-color 0.2s',
+                  }}
+                >
+                  {pdfFile ? (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '12px', color: '#e5e5e5' }}>{pdfFile.name}</span>
+                      <span
+                        onClick={(e) => { e.stopPropagation(); setPdfFile(null); }}
+                        style={{ color: '#737373', cursor: 'pointer', fontSize: '14px' }}
+                        onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
+                        onMouseLeave={e => (e.currentTarget.style.color = '#737373')}
+                      >
+                        ×
+                      </span>
+                    </div>
+                  ) : (
+                    <>
+                      <div style={{ fontSize: '20px', color: '#404040', marginBottom: '4px' }}>↑</div>
+                      <div style={{ fontSize: '12px', color: '#606060' }}>Drop a PDF here or click to browse</div>
+                    </>
+                  )}
+                </div>
+
+                {pdfError && (
+                  <div style={{ fontSize: '11px', color: '#ef4444', marginTop: '6px', textAlign: 'center' }}>
+                    {pdfError}
+                  </div>
+                )}
+
+                <button
+                  onClick={submitTopic}
+                  disabled={!pdfFile || pdfUploading || isLoading}
+                  style={{
+                    width: '100%',
+                    background: pdfFile && !pdfUploading ? '#2563eb' : '#262626',
+                    color: pdfFile && !pdfUploading ? '#fff' : '#737373',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '8px 16px',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    cursor: pdfFile && !pdfUploading ? 'pointer' : 'default',
+                    transition: 'background 0.15s',
+                    marginTop: '8px',
+                  }}
+                  onMouseEnter={e => {
+                    if (pdfFile && !pdfUploading) e.currentTarget.style.background = '#1d4ed8';
+                  }}
+                  onMouseLeave={e => {
+                    if (pdfFile && !pdfUploading) e.currentTarget.style.background = '#2563eb';
+                  }}
+                >
+                  {pdfUploading ? 'Uploading & planning...' : 'Generate Plan'}
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>

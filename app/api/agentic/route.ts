@@ -39,6 +39,8 @@ export async function POST(request: NextRequest) {
 
     if (mode === 'plan') {
       return handlePlan(openai, body);
+    } else if (mode === 'plan-from-pdf') {
+      return handlePlanFromPdf(openai, body);
     } else if (mode === 'generate') {
       return handleGenerate(openai, body);
     } else if (mode === 'regenerate-slide') {
@@ -97,6 +99,142 @@ async function handlePlan(openai: OpenAI, body: { topic: string }) {
 
   const content = JSON.parse(response.choices[0].message.content!);
   return NextResponse.json(content);
+}
+
+const PLAN_FROM_PDF_SYSTEM_PROMPT = `You are a mathematics explainer that plans interactive visual documents based on research papers.
+
+You will receive a research paper (PDF). Read it carefully and produce a document outline that alternates short text snippets with interactive slide descriptions. The document should explain the key ideas from the paper clearly — as if walking someone through the concepts on a whiteboard.
+
+Rules:
+- Start with a single motivating sentence about the paper's main contribution.
+- Between each slide, write 1–2 short bridge sentences that set up what the next slide shows. Keep language simple and conversational — a smart high-schooler should understand.
+- Each slide description should specify exactly what interactive visualization to build (what shapes, what's draggable/interactive, what the user can explore).
+- Aim for 3–5 slides total. More is fine if the paper warrants it, but don't pad.
+- The whole document should tell a coherent story from motivation to conclusion.
+- Do NOT write long paragraphs. Every text item is 1–2 sentences max.
+- Ground ALL content strictly in the paper. Do not add claims or formulas not present in the paper.`;
+
+async function handlePlanFromPdf(openai: OpenAI, body: { fileId: string }) {
+  const response = await (openai as any).responses.create({
+    model: 'gpt-4o',
+    input: [
+      {
+        role: 'system',
+        content: PLAN_FROM_PDF_SYSTEM_PROMPT,
+      },
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'input_file',
+            file_id: body.fileId,
+          },
+          {
+            type: 'input_text',
+            text: 'Read this research paper and create an interactive explainer document plan based on its contents.',
+          },
+        ],
+      },
+    ],
+    text: {
+      format: {
+        type: 'json_schema',
+        name: 'explainer_plan',
+        strict: true,
+        schema: {
+          type: 'object',
+          properties: {
+            sessionTitle: {
+              type: 'string',
+              description: 'Short title for this explainer (3-8 words)',
+            },
+            items: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  type: { type: 'string', enum: ['text', 'slide'] },
+                  content: { type: 'string', description: 'For text items: the 1-2 sentence text. For slides: empty string.' },
+                  title: { type: 'string', description: 'For slide items: the slide title. For text: empty string.' },
+                  description: { type: 'string', description: 'For slide items: what the visualization should show. For text: empty string.' },
+                },
+                required: ['type', 'content', 'title', 'description'],
+                additionalProperties: false,
+              },
+            },
+          },
+          required: ['sessionTitle', 'items'],
+          additionalProperties: false,
+        },
+      },
+    },
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const textOutput = response.output.find((o: any) => o.type === 'message');
+  const textContent = textOutput?.content?.[0]?.text;
+  if (!textContent) throw new Error('No text output from plan-from-pdf');
+  const content = JSON.parse(textContent);
+  return NextResponse.json(content);
+}
+
+async function extractSlideContext(
+  openai: OpenAI,
+  fileId: string,
+  slideTitle: string,
+  slideDescription: string,
+): Promise<string> {
+  const response = await (openai as any).responses.create({
+    model: 'gpt-4o',
+    input: [
+      {
+        role: 'system',
+        content: 'You are a research paper analyst. Given a paper and a slide description, extract the specific content from the paper that is relevant to creating this visualization. Include exact formulas, definitions, theorems, data points, and any other details the animation creator would need to accurately represent this concept. Be thorough but focused — only include content relevant to this specific slide.',
+      },
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'input_file',
+            file_id: fileId,
+          },
+          {
+            type: 'input_text',
+            text: `Extract the relevant content from this paper for the following slide:\n\nSlide title: "${slideTitle}"\nSlide description: ${slideDescription}\n\nReturn the specific paper content (formulas, definitions, examples, data) needed to accurately create this visualization.`,
+          },
+        ],
+      },
+    ],
+    text: {
+      format: {
+        type: 'json_schema',
+        name: 'slide_context',
+        strict: true,
+        schema: {
+          type: 'object',
+          properties: {
+            relevantContent: {
+              type: 'string',
+              description: 'The specific content from the paper relevant to this slide, including formulas, definitions, theorems, data points, and explanations.',
+            },
+          },
+          required: ['relevantContent'],
+          additionalProperties: false,
+        },
+      },
+    },
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const textOutput = response.output.find((o: any) => o.type === 'message');
+  const textContent = textOutput?.content?.[0]?.text;
+  if (!textContent) return '';
+  try {
+    const parsed = JSON.parse(textContent);
+    return parsed.relevantContent || '';
+  } catch {
+    return '';
+  }
 }
 
 function generateTextItems(
@@ -161,6 +299,7 @@ function generateSlidesInParallel(
     topic: string;
     items: Array<{ type: string; content: string; title: string; description: string }>;
     slideComments?: Record<string, string>;
+    fileId?: string;
   },
   textMap: Map<number, string>,
   send: (event: Record<string, unknown>) => void,
@@ -185,20 +324,40 @@ function generateSlidesInParallel(
     });
 
     const slideComment = body.slideComments?.[String(planIndex)] || '';
-    const spec: SlideSpec = {
-      topic: body.topic,
-      title: item.title,
-      description: item.description + (slideComment ? `\n\nUser comment: ${slideComment}` : ''),
-      context: contextParts.join(' '),
-    };
 
-    return generateAndIterateSlide(openai, spec, (stage, message) => {
-      send({ type: 'progress', slideIndex: planIndex, stage, message });
-    }).then(result => {
-      send({
-        type: 'item',
-        index: planIndex,
-        item: { type: 'slide', title: item.title, manimCode: result.manimCode },
+    // If we have a PDF file, extract per-slide context first
+    const contextPromise = body.fileId
+      ? (async () => {
+          send({
+            type: 'progress',
+            slideIndex: planIndex,
+            stage: 'extracting',
+            message: `Extracting paper context for "${item.title}"...`,
+          });
+          return extractSlideContext(openai, body.fileId!, item.title, item.description);
+        })()
+      : Promise.resolve('');
+
+    return contextPromise.then(paperContext => {
+      const fullContext = paperContext
+        ? `${contextParts.join(' ')}\n\n--- Relevant content from the paper ---\n${paperContext}`
+        : contextParts.join(' ');
+
+      const spec: SlideSpec = {
+        topic: body.topic,
+        title: item.title,
+        description: item.description + (slideComment ? `\n\nUser comment: ${slideComment}` : ''),
+        context: fullContext,
+      };
+
+      return generateAndIterateSlide(openai, spec, (stage, message) => {
+        send({ type: 'progress', slideIndex: planIndex, stage, message });
+      }).then(result => {
+        send({
+          type: 'item',
+          index: planIndex,
+          item: { type: 'slide', title: item.title, manimCode: result.manimCode },
+        });
       });
     });
   });
@@ -213,6 +372,7 @@ async function handleGenerate(
     items: Array<{ type: string; content: string; title: string; description: string }>;
     userComments: string;
     slideComments?: Record<string, string>;
+    fileId?: string;
   },
 ) {
   const encoder = new TextEncoder();
@@ -264,10 +424,20 @@ type ImagePart = { type: 'image_url'; image_url: { url: string } };
 type MessageContent = string | (TextPart | ImagePart)[];
 type ApiMessage = { role: 'system' | 'user'; content: MessageContent };
 
-async function handleRegenerateSlide(openai: OpenAI, body: { topic: string; slideTitle: string; slideDescription: string; userComment: string; sessionContext: string; failedCode?: string; error?: string; currentCode?: string; currentFrame?: string }) {
+async function handleRegenerateSlide(openai: OpenAI, body: { topic: string; slideTitle: string; slideDescription: string; userComment: string; sessionContext: string; failedCode?: string; error?: string; currentCode?: string; currentFrame?: string; fileId?: string }) {
+  // If we have a paper file, extract targeted context for this slide
+  let paperContext = '';
+  if (body.fileId) {
+    try {
+      paperContext = await extractSlideContext(openai, body.fileId, body.slideTitle, body.slideDescription);
+    } catch (e) {
+      console.error('Failed to extract slide context from paper:', e);
+    }
+  }
+
   let userPrompt = `Topic: ${body.topic}
 Slide: "${body.slideTitle}" — ${body.slideDescription}
-Context in the document: ${body.sessionContext}`;
+Context in the document: ${body.sessionContext}${paperContext ? `\n\n--- Relevant content from the paper ---\n${paperContext}` : ''}`;
 
   if (body.currentCode) {
     userPrompt += `\n\nCurrent code for this slide:\n\`\`\`javascript\n${body.currentCode}\n\`\`\``;
@@ -340,6 +510,7 @@ async function handleRegenerateCourse(
     items: Array<{ type: string; content: string; title: string; description: string }>;
     lessonContext: Array<{ type: string; content?: string; title?: string; description?: string; manimCode?: string; comment?: string }>;
     overallFeedback: string;
+    fileId?: string;
   },
 ) {
   const encoder = new TextEncoder();
@@ -418,7 +589,7 @@ async function handleRegenerateCourse(
 
         await generateSlidesInParallel(
           openai,
-          { topic: body.topic, items: body.items, slideComments },
+          { topic: body.topic, items: body.items, slideComments, fileId: body.fileId },
           textMap,
           send,
         );

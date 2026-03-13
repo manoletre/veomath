@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 
 const ManimRenderer = dynamic(() => import('./components/ManimRenderer'), { ssr: false });
 
@@ -547,18 +548,45 @@ export default function Home() {
           {(!activeChat || activeChat.messages.length === 0) && !loading && (
             <div
               style={{
-              color: '#6b6b6b',
-              fontSize: '13px',
-              textAlign: 'center',
+                color: '#6b6b6b',
+                fontSize: '13px',
+                textAlign: 'center',
                 marginTop: '40px',
                 lineHeight: 1.6,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '24px',
               }}
             >
-              Ask me to visualize any math concept.
-              <br />
-              Try &ldquo;Show me the Pythagorean theorem&rdquo;
-              <br />
-              or &ldquo;Animate the unit circle&rdquo;.
+              <div>
+                Ask me to visualize any math concept.
+                <br />
+                Try &ldquo;Show me the Pythagorean theorem&rdquo;
+                <br />
+                or &ldquo;Animate the unit circle&rdquo;.
+              </div>
+              <Link
+                href="/agentic"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  background: '#1a1a1a',
+                  border: '1px solid #383838',
+                  borderRadius: '12px',
+                  padding: '12px 20px',
+                  color: '#e5e5e5',
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  textDecoration: 'none',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = '#555'; e.currentTarget.style.background = '#252525'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#383838'; e.currentTarget.style.background = '#1a1a1a'; }}
+              >
+                ✨ Create a coherent storyline of animations
+              </Link>
             </div>
           )}
 
