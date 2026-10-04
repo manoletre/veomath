@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-normal-empirical",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "13.71% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=3 checkboxes=1 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.31% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 174216,
+        "inputTokens": 4708,
+        "cachedInputTokens": 4480,
+        "outputTokens": 20460,
+        "costUsd": 0.308928,
+        "rawResponse": "{ \"explanation\": \"The 68-95-99.7 rule (empirical rule) says that for a normal distribution, about 68% of values lie within 1 standard deviation of the mean, 95% within 2, and 99.7% within 3. The visualization shows the standard normal curve with the ±1σ, ±2σ, and ±3σ regions shaded in layers, labeled with their percentages. Drag the orange dot along the axis (or use the buttons) to shade P(μ−kσ ≤ X ≤ μ+kσ) for any k and see the exact probability — notice it hits 68.27%, 95.45%, and 99.73% at k = 1, 2, 3.\", \"manimCode\": \"// ---------- Title ----------\\nconst title = new Text({ text: 'The 68-95-99.7 Rule', color: WHITE, fontSize: 36 });\\ntitle.moveTo([-0.6, 3.5, 0]);\\nconst subtitle = new Text({ text: '(Empirical Rule) for a normal distribution', color: GRAY, fontSize: 20 });\\nsubtitle.moveTo([-0.6, 3.08, 0]);\\nawait scene.play(new Write(title));\\nawait scene.play(new FadeIn(subtitle));\\n\\n// ---------- Axes & bell curve ----------\\nconst ax = new Axes({ xRange: [-4, 4, 1], yRange: [0, 0.5, 0.1], xLength: 10, yLength: 4.4, tips: false });\\nax.moveTo([0, -0.7, 0]);\\nconst pdf = function (x) { return Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI); };\\nconst curve = ax.plot(pdf, { color: WHITE, xRange: [-3.8, 3.8], numSamples: 200 });\\ncurve.setStrokeWidth(3);\\nawait scene.play(new FadeIn(ax));\\nawait scene.play(new Create(curve));\\n\\n// ---------- Shaded bands: 3σ, 2σ, 1σ ----------\\nconst area3 = ax.getArea(curve, [-3, 3], { color: BLUE_E, opacity: 0.30 });\\nconst area2 = ax.getArea(curve, [-2, 2], { color: BLUE_D, opacity: 0.40 });\\nconst area1 = ax.getArea(curve, [-1, 1], { color: BLUE_C, opacity: 0.55 });\\nawait scene.play(new FadeIn(area3));\\nawait scene.play(new FadeIn(area2));\\nawait scene.play(new FadeIn(area1));\\n\\n// ---------- σ tick labels under the axis ----------\\nconst sigmaNames = ['μ-3σ', 'μ-2σ', 'μ-σ', 'μ', 'μ+σ', 'μ+2σ', 'μ+3σ'];\\nconst sigmaLabels = [];\\nfor (let i = -3; i <= 3; i++) {\\n  const s = new Text({ text: sigmaNames[i + 3], color: WHITE, fontSize: 18 });\\n  const p = ax.c2p(i, 0);\\n  s.moveTo([p[0], p[1] - 0.38, 0]);\\n  sigmaLabels.push(s);\\n}\\nawait scene.play(new FadeIn(new VGroup(...sigmaLabels)));\\n\\n// ---------- Separator lines at ±1σ, ±2σ, ±3σ ----------\\nconst sepLines = [];\\nfor (const i of [-3, -2, -1, 1, 2, 3]) {\\n  const ln = new Line({ start: ax.c2p(i, 0), end: ax.c2p(i, pdf(i)), color: WHITE });\\n  ln.setStrokeWidth(1.5);\\n  ln.setOpacity(0.35);\\n  sepLines.push(ln);\\n}\\nawait scene.play(new FadeIn(new VGroup(...sepLines)));\\n\\n// ---------- Percentage labels ----------\\nconst lbl68 = new Text({ text: '68%', color: WHITE, fontSize: 30 });\\nlbl68.moveTo(ax.c2p(0, 0.12));\\nconst lbl95 = new Text({ text: '95%', color: WHITE, fontSize: 24 });\\nlbl95.moveTo(ax.c2p(0, 0.235));\\nconst lbl997 = new Text({ text: '99.7%', color: WHITE, fontSize: 20 });\\nlbl997.moveTo(ax.c2p(0, 0.33));\\nawait scene.play(new AnimationGroup([new FadeIn(lbl68), new FadeIn(lbl95), new FadeIn(lbl997)]));\\n\\n// ---------- Probability readout ----------\\nconst formula = new Text({ text: 'P(μ-kσ ≤ X ≤ μ+kσ) =', color: WHITE, fontSize: 24 });\\nformula.moveTo([-2.6, 2.55, 0]);\\nawait scene.play(new Write(formula));\\n\\nlet k = 1;\\nlet pctText = new Text({ text: '68.27%', color: ORANGE, fontSize: 30 });\\npctText.moveTo([1.45, 2.55, 0]);\\nlet kText = new Text({ text: 'k = 1.00', color: WHITE, fontSize: 20 });\\nkText.moveTo([1.45, 2.12, 0]);\\nawait scene.play(new AnimationGroup([new FadeIn(pctText), new FadeIn(kText)]));\\n\\n// ---------- Interactive probe region (±kσ) ----------\\nlet probeArea = ax.getArea(curve, [-1, 1], { color: ORANGE, opacity: 0.45 });\\nconst segL = new Polygon({ vertices: [ax.c2p(-1, 0), ax.c2p(-1, pdf(1))], color: ORANGE });\\nsegL.setStrokeWidth(3).setFillOpacity(0);\\nconst segR = new Polygon({ vertices: [ax.c2p(1, 0), ax.c2p(1, pdf(1))], color: ORANGE });\\nsegR.setStrokeWidth(3).setFillOpacity(0);\\nconst dotK = new Dot({ point: ax.c2p(1, 0), color: ORANGE });\\nawait scene.play(new AnimationGroup([new FadeIn(probeArea), new FadeIn(segL), new FadeIn(segR), new FadeIn(dotK)]));\\n\\nconst hint = new Text({ text: 'drag me!', color: YELLOW, fontSize: 18 });\\nhint.moveTo([2.95, -2.3, 0]);\\nconst hintArrow = new Arrow({ start: [2.7, -2.35, 0], end: [1.45, -2.75, 0], color: YELLOW });\\nawait scene.play(new AnimationGroup([new FadeIn(hint), new FadeIn(hintArrow)]));\\n\\n// ---------- Helpers ----------\\nfunction normalCDF(x) {\\n  const t = 1 / (1 + 0.2316419 * Math.abs(x));\\n  const d = Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);\\n  const p = 1 - d * t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));\\n  return x >= 0 ? p : 1 - p;\\n}\\nfunction areaWithin(kk) { return (normalCDF(kk) - normalCDF(-kk)) * 100; }\\n\\nconst x0 = ax.c2p(0, 0)[0];\\nconst xUnit = ax.c2p(1, 0)[0] - x0;\\nconst y0 = ax.c2p(0, 0)[1];\\n\\nfunction updateProbe() {\\n  const kk = Math.max(k, 0.02);\\n  scene.remove(probeArea);\\n  probeArea = ax.getArea(curve, [-kk, kk], { color: ORANGE, opacity: 0.45 });\\n  scene.add(probeArea);\\n  segL.setVertices([ax.c2p(-kk, 0), ax.c2p(-kk, pdf(kk))]);\\n  segR.setVertices([ax.c2p(kk, 0), ax.c2p(kk, pdf(kk))]);\\n  scene.remove(segL); scene.add(segL);\\n  scene.remove(segR); scene.add(segR);\\n  scene.remove(dotK); scene.add(dotK);\\n  const pPos = pctText.getCenter();\\n  scene.remove(pctText);\\n  pctText = new Text({ text: areaWithin(k).toFixed(2) + '%', color: ORANGE, fontSize: 30 });\\n  pctText.moveTo(pPos);\\n  scene.add(pctText);\\n  const kPos = kText.getCenter();\\n  scene.remove(kText);\\n  kText = new Text({ text: 'k = ' + k.toFixed(2), color: WHITE, fontSize: 20 });\\n  kText.moveTo(kPos);\\n  scene.add(kText);\\n}\\n\\nfunction setK(v) {\\n  k = v;\\n  dotK.moveTo(ax.c2p(v, 0));\\n  updateProbe();\\n}\\n\\nmakeDraggable(dotK, scene, {\\n  constrainX: [ax.c2p(-3.4, 0)[0], ax.c2p(3.4, 0)[0]],\\n  constrainY: [y0, y0],\\n  onDrag: function (mob) {\\n    const cx = mob.getCenter()[0];\\n    k = Math.min(3.4, Math.abs(cx - x0) / xUnit);\\n    updateProbe();\\n  }\\n});\\n\\n// ---------- Controls ----------\\nconst controls = new Controls(scene, { position: 'top-right', width: 190 });\\ncontrols.addButton({ label: 'k = 1σ', onClick: function () { setK(1); } });\\ncontrols.addButton({ label: 'k = 2σ', onClick: function () { setK(2); } });\\ncontrols.addButton({ label: 'k = 3σ', onClick: function () { setK(3); } });\\n\\nconst bandMobs = [\\n  { mob: area3, base: 0.30 },\\n  { mob: area2, base: 0.40 },\\n  { mob: area1, base: 0.55 },\\n  { mob: lbl68, base: 1 },\\n  { mob: lbl95, base: 1 },\\n  { mob: lbl997, base: 1 }\\n];\\nfor (const ln of sepLines) bandMobs.push({ mob: ln, base: 0.35 });\\ncontrols.addCheckbox({ label: 'Show bands', checked: true, onChange: function (c) {\\n  for (const b of bandMobs) b.mob.setOpacity(c ? b.base : 0);\\n}});\\n\\nawait scene.wait(999999);\" }",
+        "explanation": "The 68-95-99.7 rule (empirical rule) says that for a normal distribution, about 68% of values lie within 1 standard deviation of the mean, 95% within 2, and 99.7% within 3. The visualization shows the standard normal curve with the ±1σ, ±2σ, and ±3σ regions shaded in layers, labeled with their percentages. Drag the orange dot along the axis (or use the buttons) to shade P(μ−kσ ≤ X ≤ μ+kσ) for any k and see the exact probability — notice it hits 68.27%, 95.45%, and 99.73% at k = 1, 2, 3."
+      },
+      "code": "// ---------- Title ----------\nconst title = new Text({ text: 'The 68-95-99.7 Rule', color: WHITE, fontSize: 36 });\ntitle.moveTo([-0.6, 3.5, 0]);\nconst subtitle = new Text({ text: '(Empirical Rule) for a normal distribution', color: GRAY, fontSize: 20 });\nsubtitle.moveTo([-0.6, 3.08, 0]);\nawait scene.play(new Write(title));\nawait scene.play(new FadeIn(subtitle));\n\n// ---------- Axes & bell curve ----------\nconst ax = new Axes({ xRange: [-4, 4, 1], yRange: [0, 0.5, 0.1], xLength: 10, yLength: 4.4, tips: false });\nax.moveTo([0, -0.7, 0]);\nconst pdf = function (x) { return Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI); };\nconst curve = ax.plot(pdf, { color: WHITE, xRange: [-3.8, 3.8], numSamples: 200 });\ncurve.setStrokeWidth(3);\nawait scene.play(new FadeIn(ax));\nawait scene.play(new Create(curve));\n\n// ---------- Shaded bands: 3σ, 2σ, 1σ ----------\nconst area3 = ax.getArea(curve, [-3, 3], { color: BLUE_E, opacity: 0.30 });\nconst area2 = ax.getArea(curve, [-2, 2], { color: BLUE_D, opacity: 0.40 });\nconst area1 = ax.getArea(curve, [-1, 1], { color: BLUE_C, opacity: 0.55 });\nawait scene.play(new FadeIn(area3));\nawait scene.play(new FadeIn(area2));\nawait scene.play(new FadeIn(area1));\n\n// ---------- σ tick labels under the axis ----------\nconst sigmaNames = ['μ-3σ', 'μ-2σ', 'μ-σ', 'μ', 'μ+σ', 'μ+2σ', 'μ+3σ'];\nconst sigmaLabels = [];\nfor (let i = -3; i <= 3; i++) {\n  const s = new Text({ text: sigmaNames[i + 3], color: WHITE, fontSize: 18 });\n  const p = ax.c2p(i, 0);\n  s.moveTo([p[0], p[1] - 0.38, 0]);\n  sigmaLabels.push(s);\n}\nawait scene.play(new FadeIn(new VGroup(...sigmaLabels)));\n\n// ---------- Separator lines at ±1σ, ±2σ, ±3σ ----------\nconst sepLines = [];\nfor (const i of [-3, -2, -1, 1, 2, 3]) {\n  const ln = new Line({ start: ax.c2p(i, 0), end: ax.c2p(i, pdf(i)), color: WHITE });\n  ln.setStrokeWidth(1.5);\n  ln.setOpacity(0.35);\n  sepLines.push(ln);\n}\nawait scene.play(new FadeIn(new VGroup(...sepLines)));\n\n// ---------- Percentage labels ----------\nconst lbl68 = new Text({ text: '68%', color: WHITE, fontSize: 30 });\nlbl68.moveTo(ax.c2p(0, 0.12));\nconst lbl95 = new Text({ text: '95%', color: WHITE, fontSize: 24 });\nlbl95.moveTo(ax.c2p(0, 0.235));\nconst lbl997 = new Text({ text: '99.7%', color: WHITE, fontSize: 20 });\nlbl997.moveTo(ax.c2p(0, 0.33));\nawait scene.play(new AnimationGroup([new FadeIn(lbl68), new FadeIn(lbl95), new FadeIn(lbl997)]));\n\n// ---------- Probability readout ----------\nconst formula = new Text({ text: 'P(μ-kσ ≤ X ≤ μ+kσ) =', color: WHITE, fontSize: 24 });\nformula.moveTo([-2.6, 2.55, 0]);\nawait scene.play(new Write(formula));\n\nlet k = 1;\nlet pctText = new Text({ text: '68.27%', color: ORANGE, fontSize: 30 });\npctText.moveTo([1.45, 2.55, 0]);\nlet kText = new Text({ text: 'k = 1.00', color: WHITE, fontSize: 20 });\nkText.moveTo([1.45, 2.12, 0]);\nawait scene.play(new AnimationGroup([new FadeIn(pctText), new FadeIn(kText)]));\n\n// ---------- Interactive probe region (±kσ) ----------\nlet probeArea = ax.getArea(curve, [-1, 1], { color: ORANGE, opacity: 0.45 });\nconst segL = new Polygon({ vertices: [ax.c2p(-1, 0), ax.c2p(-1, pdf(1))], color: ORANGE });\nsegL.setStrokeWidth(3).setFillOpacity(0);\nconst segR = new Polygon({ vertices: [ax.c2p(1, 0), ax.c2p(1, pdf(1))], color: ORANGE });\nsegR.setStrokeWidth(3).setFillOpacity(0);\nconst dotK = new Dot({ point: ax.c2p(1, 0), color: ORANGE });\nawait scene.play(new AnimationGroup([new FadeIn(probeArea), new FadeIn(segL), new FadeIn(segR), new FadeIn(dotK)]));\n\nconst hint = new Text({ text: 'drag me!', color: YELLOW, fontSize: 18 });\nhint.moveTo([2.95, -2.3, 0]);\nconst hintArrow = new Arrow({ start: [2.7, -2.35, 0], end: [1.45, -2.75, 0], color: YELLOW });\nawait scene.play(new AnimationGroup([new FadeIn(hint), new FadeIn(hintArrow)]));\n\n// ---------- Helpers ----------\nfunction normalCDF(x) {\n  const t = 1 / (1 + 0.2316419 * Math.abs(x));\n  const d = Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);\n  const p = 1 - d * t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429))));\n  return x >= 0 ? p : 1 - p;\n}\nfunction areaWithin(kk) { return (normalCDF(kk) - normalCDF(-kk)) * 100; }\n\nconst x0 = ax.c2p(0, 0)[0];\nconst xUnit = ax.c2p(1, 0)[0] - x0;\nconst y0 = ax.c2p(0, 0)[1];\n\nfunction updateProbe() {\n  const kk = Math.max(k, 0.02);\n  scene.remove(probeArea);\n  probeArea = ax.getArea(curve, [-kk, kk], { color: ORANGE, opacity: 0.45 });\n  scene.add(probeArea);\n  segL.setVertices([ax.c2p(-kk, 0), ax.c2p(-kk, pdf(kk))]);\n  segR.setVertices([ax.c2p(kk, 0), ax.c2p(kk, pdf(kk))]);\n  scene.remove(segL); scene.add(segL);\n  scene.remove(segR); scene.add(segR);\n  scene.remove(dotK); scene.add(dotK);\n  const pPos = pctText.getCenter();\n  scene.remove(pctText);\n  pctText = new Text({ text: areaWithin(k).toFixed(2) + '%', color: ORANGE, fontSize: 30 });\n  pctText.moveTo(pPos);\n  scene.add(pctText);\n  const kPos = kText.getCenter();\n  scene.remove(kText);\n  kText = new Text({ text: 'k = ' + k.toFixed(2), color: WHITE, fontSize: 20 });\n  kText.moveTo(kPos);\n  scene.add(kText);\n}\n\nfunction setK(v) {\n  k = v;\n  dotK.moveTo(ax.c2p(v, 0));\n  updateProbe();\n}\n\nmakeDraggable(dotK, scene, {\n  constrainX: [ax.c2p(-3.4, 0)[0], ax.c2p(3.4, 0)[0]],\n  constrainY: [y0, y0],\n  onDrag: function (mob) {\n    const cx = mob.getCenter()[0];\n    k = Math.min(3.4, Math.abs(cx - x0) / xUnit);\n    updateProbe();\n  }\n});\n\n// ---------- Controls ----------\nconst controls = new Controls(scene, { position: 'top-right', width: 190 });\ncontrols.addButton({ label: 'k = 1σ', onClick: function () { setK(1); } });\ncontrols.addButton({ label: 'k = 2σ', onClick: function () { setK(2); } });\ncontrols.addButton({ label: 'k = 3σ', onClick: function () { setK(3); } });\n\nconst bandMobs = [\n  { mob: area3, base: 0.30 },\n  { mob: area2, base: 0.40 },\n  { mob: area1, base: 0.55 },\n  { mob: lbl68, base: 1 },\n  { mob: lbl95, base: 1 },\n  { mob: lbl997, base: 1 }\n];\nfor (const ln of sepLines) bandMobs.push({ mob: ln, base: 0.35 });\ncontrols.addCheckbox({ label: 'Show bands', checked: true, onChange: function (c) {\n  for (const b of bandMobs) b.mob.setOpacity(c ? b.base : 0);\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 20363,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 14,
+        "controls": {
+          "sliders": 0,
+          "buttons": 3,
+          "checkboxes": 1
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/stats-normal-empirical.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/stats-normal-empirical.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:58:28.728Z"
+}

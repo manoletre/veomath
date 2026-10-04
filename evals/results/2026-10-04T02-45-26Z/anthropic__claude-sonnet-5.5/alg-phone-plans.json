@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-phone-plans",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.99% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.17% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 9983,
+        "inputTokens": 7992,
+        "cachedInputTokens": 7476,
+        "outputTokens": 1346,
+        "costUsd": 0.0170152,
+        "rawResponse": "{\"explanation\":\"Set 20 + 0.10m equal to 35 + 0.05m. That gives 0.05m = 15, so m = 300 minutes, where both plans cost $50. Plan A is cheaper below 300 minutes and Plan B is cheaper above it. The graph shows this as the crossing point of the two lines. Use the slider to move along the minutes axis and compare the two costs.\",\"manimCode\":\"const ax = new Axes({ xRange: [0, 500, 100], yRange: [0, 80, 20], xLength: 9, yLength: 5, tips: false });\\nax.moveTo([0, -0.3, 0]);\\nconst fA = m => 20 + 0.1 * m;\\nconst fB = m => 35 + 0.05 * m;\\nconst cA = ax.plot(fA, { color: BLUE });\\nconst cB = ax.plot(fB, { color: ORANGE });\\nscene.add(ax);\\nawait scene.play(new Create(cA));\\nawait scene.play(new Create(cB));\\n\\nconst tA = new Text({ text: 'Plan A: 20 + 0.10m', color: BLUE, fontSize: 24 });\\nconst tB = new Text({ text: 'Plan B: 35 + 0.05m', color: ORANGE, fontSize: 24 });\\ntA.moveTo([-3.5, 3.5, 0]);\\ntB.moveTo([-3.5, 3.0, 0]);\\nconst xl = new Text({ text: 'minutes', color: WHITE, fontSize: 22 });\\nxl.moveTo([5.3, -3.2, 0]);\\nconst yl = new Text({ text: 'cost ($)', color: WHITE, fontSize: 22 });\\nyl.moveTo([-4.5, 2.6, 0]);\\nscene.add(tA, tB, xl, yl);\\n\\nconst inter = new Dot({ point: ax.c2p(300, 50), color: YELLOW });\\nconst il = new Text({ text: '300 min, $50', color: YELLOW, fontSize: 24 });\\nil.moveTo([ax.c2p(300, 50)[0], ax.c2p(300, 50)[1] - 0.6, 0]);\\nawait scene.play(new FadeIn(inter));\\nawait scene.play(new Write(il));\\n\\nlet m = 100;\\nconst dA = new Dot({ point: ax.c2p(m, fA(m)), color: BLUE });\\nconst dB = new Dot({ point: ax.c2p(m, fB(m)), color: ORANGE });\\ndA.addUpdater(() => dA.moveTo(ax.c2p(m, fA(m))));\\ndB.addUpdater(() => dB.moveTo(ax.c2p(m, fB(m))));\\nscene.add(dA, dB);\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'Minutes', min: 0, max: 500, value: 100, step: 10, onChange: v => { m = v; } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Set 20 + 0.10m equal to 35 + 0.05m. That gives 0.05m = 15, so m = 300 minutes, where both plans cost $50. Plan A is cheaper below 300 minutes and Plan B is cheaper above it. The graph shows this as the crossing point of the two lines. Use the slider to move along the minutes axis and compare the two costs."
+      },
+      "code": "const ax = new Axes({ xRange: [0, 500, 100], yRange: [0, 80, 20], xLength: 9, yLength: 5, tips: false });\nax.moveTo([0, -0.3, 0]);\nconst fA = m => 20 + 0.1 * m;\nconst fB = m => 35 + 0.05 * m;\nconst cA = ax.plot(fA, { color: BLUE });\nconst cB = ax.plot(fB, { color: ORANGE });\nscene.add(ax);\nawait scene.play(new Create(cA));\nawait scene.play(new Create(cB));\n\nconst tA = new Text({ text: 'Plan A: 20 + 0.10m', color: BLUE, fontSize: 24 });\nconst tB = new Text({ text: 'Plan B: 35 + 0.05m', color: ORANGE, fontSize: 24 });\ntA.moveTo([-3.5, 3.5, 0]);\ntB.moveTo([-3.5, 3.0, 0]);\nconst xl = new Text({ text: 'minutes', color: WHITE, fontSize: 22 });\nxl.moveTo([5.3, -3.2, 0]);\nconst yl = new Text({ text: 'cost ($)', color: WHITE, fontSize: 22 });\nyl.moveTo([-4.5, 2.6, 0]);\nscene.add(tA, tB, xl, yl);\n\nconst inter = new Dot({ point: ax.c2p(300, 50), color: YELLOW });\nconst il = new Text({ text: '300 min, $50', color: YELLOW, fontSize: 24 });\nil.moveTo([ax.c2p(300, 50)[0], ax.c2p(300, 50)[1] - 0.6, 0]);\nawait scene.play(new FadeIn(inter));\nawait scene.play(new Write(il));\n\nlet m = 100;\nconst dA = new Dot({ point: ax.c2p(m, fA(m)), color: BLUE });\nconst dB = new Dot({ point: ax.c2p(m, fB(m)), color: ORANGE });\ndA.addUpdater(() => dA.moveTo(ax.c2p(m, fA(m))));\ndB.addUpdater(() => dB.moveTo(ax.c2p(m, fB(m))));\nscene.add(dA, dB);\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'Minutes', min: 0, max: 500, value: 100, step: 10, onChange: v => { m = v; } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 10974,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 4,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/alg-phone-plans.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/alg-phone-plans.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:34:02.831Z"
+}

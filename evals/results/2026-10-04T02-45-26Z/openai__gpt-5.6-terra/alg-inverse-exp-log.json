@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-inverse-exp-log",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.11% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.23% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 34104,
+        "inputTokens": 11744,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1442,
+        "costUsd": 0.0209776,
+        "rawResponse": "{\"explanation\":\"The inverse of a function reverses its input and output coordinates. Since \\\\(\\\\ln(e^x)=x\\\\), every point \\\\((x,e^x)\\\\) on \\\\(y=e^x\\\\) corresponds to \\\\((e^x,x)\\\\) on \\\\(y=\\\\ln x\\\\); swapping coordinates is exactly reflection across \\\\(y=x\\\\). Use the slider to move a matched pair of reflected points.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-3, 7, 1],\\n  yRange: [-3, 7, 1],\\n  xLength: 6.2,\\n  yLength: 6.2,\\n  tips: true\\n});\\nax.moveTo([-0.4, -0.45, 0]);\\n\\nconst expCurve = ax.plot(x => Math.exp(x), {\\n  color: BLUE,\\n  xRange: [-2.5, 1.9],\\n  numSamples: 300\\n});\\nconst logCurve = ax.plot(x => Math.log(x), {\\n  color: ORANGE,\\n  xRange: [0.06, 7],\\n  numSamples: 300\\n});\\n\\nconst diagonal = new Polygon({\\n  vertices: [ax.c2p(-3, -3), ax.c2p(7, 7)],\\n  color: GRAY\\n});\\ndiagonal.setStrokeWidth(2).setFillOpacity(0);\\n\\nconst title = new Text({ text: 'Inverse functions reflect across y = x', color: WHITE, fontSize: 28 });\\ntitle.moveTo([0, 3.55, 0]);\\n\\nconst expLabel = new MathTex({ latex: 'y=e^x', color: BLUE });\\nawait expLabel.waitForRender();\\nexpLabel.moveTo([2.2, 2.25, 0]);\\n\\nconst logLabel = new MathTex({ latex: 'y=\\\\\\\\ln(x)', color: ORANGE });\\nawait logLabel.waitForRender();\\nlogLabel.moveTo([3.55, 0.75, 0]);\\n\\nconst diagLabel = new MathTex({ latex: 'y=x', color: GRAY });\\nawait diagLabel.waitForRender();\\ndiagLabel.moveTo([-2.5, 1.9, 0]);\\n\\nlet a = 0.45;\\nconst blueDot = new Dot({ point: ax.c2p(a, Math.exp(a)), color: YELLOW });\\nconst orangeDot = new Dot({ point: ax.c2p(Math.exp(a), a), color: YELLOW });\\nconst reflectionSegment = new Polygon({\\n  vertices: [blueDot.getCenter(), orangeDot.getCenter()],\\n  color: YELLOW\\n});\\nreflectionSegment.setStrokeWidth(2).setFillOpacity(0);\\n\\nblueDot.addUpdater(d => d.moveTo(ax.c2p(a, Math.exp(a))));\\norangeDot.addUpdater(d => d.moveTo(ax.c2p(Math.exp(a), a)));\\nreflectionSegment.addUpdater(s => {\\n  s.setVertices([blueDot.getCenter(), orangeDot.getCenter()]);\\n});\\n\\nscene.add(ax, diagonal, expCurve, logCurve, title, expLabel, logLabel, diagLabel);\\nawait scene.play(new AnimationGroup([\\n  new FadeIn(blueDot),\\n  new FadeIn(orangeDot),\\n  new Create(reflectionSegment)\\n]));\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 250 });\\ncontrols.addSlider({\\n  label: 'Input x',\\n  min: -2.3,\\n  max: 1.9,\\n  value: a,\\n  step: 0.05,\\n  onChange: v => { a = v; }\\n});\\ncontrols.addButton({\\n  label: 'Reset point',\\n  onClick: () => { a = 0.45; }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The inverse of a function reverses its input and output coordinates. Since \\(\\ln(e^x)=x\\), every point \\((x,e^x)\\) on \\(y=e^x\\) corresponds to \\((e^x,x)\\) on \\(y=\\ln x\\); swapping coordinates is exactly reflection across \\(y=x\\). Use the slider to move a matched pair of reflected points."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-3, 7, 1],\n  yRange: [-3, 7, 1],\n  xLength: 6.2,\n  yLength: 6.2,\n  tips: true\n});\nax.moveTo([-0.4, -0.45, 0]);\n\nconst expCurve = ax.plot(x => Math.exp(x), {\n  color: BLUE,\n  xRange: [-2.5, 1.9],\n  numSamples: 300\n});\nconst logCurve = ax.plot(x => Math.log(x), {\n  color: ORANGE,\n  xRange: [0.06, 7],\n  numSamples: 300\n});\n\nconst diagonal = new Polygon({\n  vertices: [ax.c2p(-3, -3), ax.c2p(7, 7)],\n  color: GRAY\n});\ndiagonal.setStrokeWidth(2).setFillOpacity(0);\n\nconst title = new Text({ text: 'Inverse functions reflect across y = x', color: WHITE, fontSize: 28 });\ntitle.moveTo([0, 3.55, 0]);\n\nconst expLabel = new MathTex({ latex: 'y=e^x', color: BLUE });\nawait expLabel.waitForRender();\nexpLabel.moveTo([2.2, 2.25, 0]);\n\nconst logLabel = new MathTex({ latex: 'y=\\\\ln(x)', color: ORANGE });\nawait logLabel.waitForRender();\nlogLabel.moveTo([3.55, 0.75, 0]);\n\nconst diagLabel = new MathTex({ latex: 'y=x', color: GRAY });\nawait diagLabel.waitForRender();\ndiagLabel.moveTo([-2.5, 1.9, 0]);\n\nlet a = 0.45;\nconst blueDot = new Dot({ point: ax.c2p(a, Math.exp(a)), color: YELLOW });\nconst orangeDot = new Dot({ point: ax.c2p(Math.exp(a), a), color: YELLOW });\nconst reflectionSegment = new Polygon({\n  vertices: [blueDot.getCenter(), orangeDot.getCenter()],\n  color: YELLOW\n});\nreflectionSegment.setStrokeWidth(2).setFillOpacity(0);\n\nblueDot.addUpdater(d => d.moveTo(ax.c2p(a, Math.exp(a))));\norangeDot.addUpdater(d => d.moveTo(ax.c2p(Math.exp(a), a)));\nreflectionSegment.addUpdater(s => {\n  s.setVertices([blueDot.getCenter(), orangeDot.getCenter()]);\n});\n\nscene.add(ax, diagonal, expCurve, logCurve, title, expLabel, logLabel, diagLabel);\nawait scene.play(new AnimationGroup([\n  new FadeIn(blueDot),\n  new FadeIn(orangeDot),\n  new Create(reflectionSegment)\n]));\n\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 250 });\ncontrols.addSlider({\n  label: 'Input x',\n  min: -2.3,\n  max: 1.9,\n  value: a,\n  step: 0.05,\n  onChange: v => { a = v; }\n});\ncontrols.addButton({\n  label: 'Reset point',\n  onClick: () => { a = 0.45; }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5710,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/alg-inverse-exp-log.0.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/alg-inverse-exp-log.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:57:09.524Z"
+}

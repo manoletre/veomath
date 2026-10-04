@@ -1,0 +1,344 @@
+{
+  "version": 1,
+  "description": "High-school (grades 10-12) math visualization prompts. Tags mark the failure modes each item stresses.",
+  "tagLegend": {
+    "axes": "Curves and points must line up with the axes",
+    "latex": "Needs rendered math notation",
+    "interact": "The concept calls for sliders or dragging",
+    "seq": "Multi-step animation where order and timing matter",
+    "discont": "Has asymptotes, holes, or jumps",
+    "aspect": "Only correct with equal x/y scaling (angles, circles, reflections)",
+    "dense": "Many labels competing for space",
+    "3d": "Needs a 3D or pseudo-3D view",
+    "precise": "Specific values must be exactly right",
+    "word-problem": "Phrased as a word problem rather than a topic",
+    "vague": "Loosely phrased, the way a student might actually ask"
+  },
+  "items": [
+    {
+      "id": "alg-vertex-form",
+      "category": "Algebra & Functions",
+      "grade": 10,
+      "prompt": "Show me how a, h, and k change the parabola y = a(x - h)^2 + k.",
+      "tags": ["axes", "interact", "latex"],
+      "checklist": [
+        "A parabola is drawn on labeled axes",
+        "There are controls for a, h, and k",
+        "The vertex (h, k) is marked and moves with h and k",
+        "The equation is shown in rendered math notation"
+      ]
+    },
+    {
+      "id": "alg-completing-square",
+      "category": "Algebra & Functions",
+      "grade": 10,
+      "prompt": "Explain completing the square for x^2 + 6x using an area model.",
+      "tags": ["seq", "dense", "latex"],
+      "checklist": [
+        "An x-by-x square and two x-by-3 rectangles are shown",
+        "The missing 3-by-3 corner is highlighted as the piece that completes the square",
+        "The result (x + 3)^2 - 9 is shown",
+        "Side lengths are labeled"
+      ]
+    },
+    {
+      "id": "alg-phone-plans",
+      "category": "Algebra & Functions",
+      "grade": 10,
+      "prompt": "Phone plan A costs $20 plus $0.10 per minute. Plan B costs $35 plus $0.05 per minute. When do they cost the same? Visualize it.",
+      "tags": ["word-problem", "axes", "precise"],
+      "checklist": [
+        "Two lines are graphed with a y-intercept of 20 and 35",
+        "The intersection is marked at (300, 50)",
+        "Axes are labeled with minutes and cost",
+        "Each line is labeled with its plan"
+      ]
+    },
+    {
+      "id": "alg-discriminant",
+      "category": "Algebra & Functions",
+      "grade": 11,
+      "prompt": "Show how the discriminant b^2 - 4ac decides whether a quadratic has 2, 1, or 0 real roots.",
+      "tags": ["axes", "interact", "precise", "latex"],
+      "checklist": [
+        "A parabola is graphed on axes",
+        "A control changes a coefficient and the parabola moves",
+        "The value of the discriminant is displayed",
+        "Real roots are marked where the parabola meets the x-axis"
+      ]
+    },
+    {
+      "id": "alg-inverse-exp-log",
+      "category": "Algebra & Functions",
+      "grade": 11,
+      "prompt": "Show that e^x and ln(x) are inverses by reflecting across y = x.",
+      "tags": ["aspect", "axes", "latex"],
+      "checklist": [
+        "Both curves and the line y = x are drawn",
+        "The x and y axes use the same scale, so the reflection looks symmetric",
+        "A point (a, e^a) and its mirror (e^a, a) are shown",
+        "Each curve is labeled"
+      ]
+    },
+    {
+      "id": "alg-rational-asymptotes",
+      "category": "Algebra & Functions",
+      "grade": 11,
+      "prompt": "Graph f(x) = (2x + 1)/(x - 3) and show its asymptotes.",
+      "tags": ["discont", "axes", "precise"],
+      "checklist": [
+        "A dashed vertical asymptote is drawn at x = 3",
+        "A dashed horizontal asymptote is drawn at y = 2",
+        "No line connects the two branches across x = 3",
+        "Both branches approach the asymptotes"
+      ]
+    },
+    {
+      "id": "geo-pythagorean-proof",
+      "category": "Geometry",
+      "grade": 10,
+      "prompt": "Prove the Pythagorean theorem by rearranging four copies of a right triangle inside a square.",
+      "tags": ["seq", "aspect", "latex"],
+      "checklist": [
+        "Four congruent right triangles are placed inside a large square",
+        "The triangles move into a second arrangement",
+        "The leftover areas c^2 and a^2 + b^2 are highlighted",
+        "The conclusion a^2 + b^2 = c^2 is shown"
+      ]
+    },
+    {
+      "id": "geo-triangle-angle-sum",
+      "category": "Geometry",
+      "grade": 10,
+      "prompt": "Why do the angles of a triangle always add up to 180 degrees?",
+      "tags": ["seq", "vague"],
+      "checklist": [
+        "A triangle is drawn with its three angles marked",
+        "The angles are moved or copied so they sit side by side on a straight line",
+        "The total of 180 degrees is shown",
+        "The triangle can be reshaped, or the explanation covers any triangle"
+      ]
+    },
+    {
+      "id": "geo-inscribed-angle",
+      "category": "Geometry",
+      "grade": 10,
+      "prompt": "Demonstrate the inscribed angle theorem: let me drag a point around the circle and watch the angle stay the same.",
+      "tags": ["interact", "aspect", "precise"],
+      "checklist": [
+        "A circle is drawn with a fixed chord or arc",
+        "A draggable point sits on the circle",
+        "The inscribed angle's measure is displayed",
+        "The central angle is shown and is twice the inscribed angle"
+      ]
+    },
+    {
+      "id": "geo-similar-area",
+      "category": "Geometry",
+      "grade": 10,
+      "prompt": "If you scale a triangle by a factor k, why does its area scale by k^2?",
+      "tags": ["dense", "interact", "latex"],
+      "checklist": [
+        "An original triangle and a scaled copy are shown",
+        "The scale factor k is displayed or adjustable",
+        "Both areas, or their ratio, are shown",
+        "The k^2 relationship is stated"
+      ]
+    },
+    {
+      "id": "geo-cone-cylinder",
+      "category": "Geometry",
+      "grade": 11,
+      "prompt": "Show why a cone's volume is one third of a cylinder's with the same base and height.",
+      "tags": ["3d", "latex"],
+      "checklist": [
+        "A cone and a cylinder with the same radius and height are drawn",
+        "The radius and height are labeled",
+        "V = (1/3) pi r^2 h and V = pi r^2 h are shown",
+        "Some visual shows three cones filling one cylinder"
+      ]
+    },
+    {
+      "id": "trig-unit-circle-sine",
+      "category": "Trigonometry",
+      "grade": 11,
+      "prompt": "Why is the sine graph wavy?",
+      "tags": ["vague", "axes", "seq", "aspect"],
+      "checklist": [
+        "A unit circle with a rotating point is shown",
+        "The point's height is traced onto a sine graph next to the circle",
+        "The circle's radius matches the graph's amplitude",
+        "Angle and sin(theta) are labeled"
+      ]
+    },
+    {
+      "id": "trig-radian",
+      "category": "Trigonometry",
+      "grade": 11,
+      "prompt": "What is a radian? Animate it.",
+      "tags": ["aspect", "precise", "vague"],
+      "checklist": [
+        "A circle with a highlighted radius is drawn",
+        "An arc with the same length as the radius is marked on the circle",
+        "The angle of that arc is labeled as 1 radian",
+        "Optionally, about 6.28 radii fit around the circle"
+      ]
+    },
+    {
+      "id": "trig-sinusoid-params",
+      "category": "Trigonometry",
+      "grade": 11,
+      "prompt": "Let me play with A, B, C, D in y = A sin(B(x - C)) + D.",
+      "tags": ["interact", "axes", "latex"],
+      "checklist": [
+        "A sine curve is drawn on axes",
+        "There are four controls labeled A, B, C, and D",
+        "The curve updates when a control changes",
+        "The equation is shown"
+      ]
+    },
+    {
+      "id": "trig-law-of-cosines",
+      "category": "Trigonometry",
+      "grade": 11,
+      "prompt": "Explain the law of cosines as the Pythagorean theorem plus a correction term.",
+      "tags": ["latex", "dense", "interact"],
+      "checklist": [
+        "A triangle with sides a, b, c and angle C is drawn",
+        "c^2 = a^2 + b^2 - 2ab cos(C) is shown",
+        "At C = 90 degrees the correction term goes to zero",
+        "The labels do not overlap the triangle edges"
+      ]
+    },
+    {
+      "id": "trig-tangent-graph",
+      "category": "Trigonometry",
+      "grade": 11,
+      "prompt": "Graph y = tan(x) from -2pi to 2pi and explain the vertical asymptotes.",
+      "tags": ["discont", "axes", "precise"],
+      "checklist": [
+        "Several branches of tan(x) are drawn",
+        "Vertical asymptotes are drawn at odd multiples of pi/2",
+        "No vertical lines connect the branches",
+        "The x-axis is labeled in terms of pi"
+      ]
+    },
+    {
+      "id": "seq-geometric-series",
+      "category": "Sequences & Series",
+      "grade": 12,
+      "prompt": "Show that 1/2 + 1/4 + 1/8 + ... = 1 by filling in a square.",
+      "tags": ["seq", "latex"],
+      "checklist": [
+        "A unit square is drawn",
+        "Regions of 1/2, 1/4, 1/8, ... are filled one after another",
+        "Each region is labeled with its fraction",
+        "The sum approaching 1 is stated"
+      ]
+    },
+    {
+      "id": "seq-compound-interest-e",
+      "category": "Sequences & Series",
+      "grade": 12,
+      "prompt": "I put $1 in a bank at 100% yearly interest. What happens as it compounds more and more often?",
+      "tags": ["word-problem", "precise", "interact"],
+      "checklist": [
+        "(1 + 1/n)^n is shown",
+        "The value is shown for growing n (1, 2, 12, 365, ...)",
+        "The value approaches e ≈ 2.718",
+        "n is controllable, or the steps are animated"
+      ]
+    },
+    {
+      "id": "stats-normal-empirical",
+      "category": "Probability & Statistics",
+      "grade": 12,
+      "prompt": "Show the 68-95-99.7 rule on a normal distribution.",
+      "tags": ["axes", "precise"],
+      "checklist": [
+        "A bell curve is drawn on axes",
+        "The regions within 1, 2, and 3 standard deviations are shaded differently",
+        "Each region is labeled with 68%, 95%, or 99.7%",
+        "The x-axis is marked in standard deviations from the mean"
+      ]
+    },
+    {
+      "id": "stats-galton-board",
+      "category": "Probability & Statistics",
+      "grade": 12,
+      "prompt": "Animate a Galton board and show how it produces a binomial distribution.",
+      "tags": ["seq", "dense"],
+      "checklist": [
+        "Rows of pegs are drawn in a triangle",
+        "Balls fall through the pegs over time",
+        "Balls collect in bins at the bottom",
+        "The bins form a bell-like shape"
+      ]
+    },
+    {
+      "id": "stats-bayes-medical",
+      "category": "Probability & Statistics",
+      "grade": 12,
+      "prompt": "A disease affects 1% of people. A test is 90% accurate for both sick and healthy people. If I test positive, what is the chance I'm sick? Visualize it.",
+      "tags": ["word-problem", "dense", "precise"],
+      "checklist": [
+        "A tree diagram or population grid splits people into sick and healthy",
+        "True and false positives are shown separately",
+        "The answer of about 8.3% is shown",
+        "The probabilities on each branch are labeled"
+      ]
+    },
+    {
+      "id": "stats-regression-drag",
+      "category": "Probability & Statistics",
+      "grade": 12,
+      "prompt": "Show a scatter plot with a line of best fit that updates when I drag the points.",
+      "tags": ["interact", "axes"],
+      "checklist": [
+        "Several data points are plotted on axes",
+        "A best-fit line is drawn",
+        "The points are draggable and the line updates",
+        "Residuals or the line's equation are shown"
+      ]
+    },
+    {
+      "id": "calc-secant-tangent",
+      "category": "Precalculus & Calculus",
+      "grade": 12,
+      "prompt": "Show how a secant line becomes a tangent line as h goes to 0.",
+      "tags": ["interact", "axes", "latex"],
+      "checklist": [
+        "A curve is drawn with two points, x and x + h",
+        "A secant line passes through both points",
+        "Shrinking h moves the second point toward the first",
+        "The difference quotient or the slope value is shown"
+      ]
+    },
+    {
+      "id": "calc-riemann-sums",
+      "category": "Precalculus & Calculus",
+      "grade": 12,
+      "prompt": "Show Riemann sums approximating the area under y = x^2 from 0 to 2, with a slider for the number of rectangles.",
+      "tags": ["interact", "axes", "precise"],
+      "checklist": [
+        "y = x^2 is drawn on axes from 0 to 2",
+        "The rectangles sit on the x-axis and their tops touch the curve",
+        "A slider changes the number of rectangles",
+        "The approximate area and the exact value 8/3 are shown"
+      ]
+    },
+    {
+      "id": "calc-matrix-transform",
+      "category": "Precalculus & Calculus",
+      "grade": 12,
+      "prompt": "Show what the matrix [[2, 1], [0, 1]] does to the plane, and how the determinant relates to area.",
+      "tags": ["seq", "aspect", "latex"],
+      "checklist": [
+        "A grid and basis vectors i-hat and j-hat are shown",
+        "The grid transforms smoothly",
+        "The unit square becomes a parallelogram of area 2",
+        "The matrix and det = 2 are displayed"
+      ]
+    }
+  ]
+}

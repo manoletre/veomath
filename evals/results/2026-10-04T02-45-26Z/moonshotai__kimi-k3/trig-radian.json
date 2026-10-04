@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-radian",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "7.30% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=3 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "8.51% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 121677,
+        "inputTokens": 4702,
+        "cachedInputTokens": 4480,
+        "outputTokens": 14866,
+        "costUsd": 0.225,
+        "rawResponse": "{\n  \"explanation\": \"A radian is a way of measuring angles using the circle itself: it is the central angle formed when the arc length along the circle is exactly equal to the radius. Since angle = arc length / radius (θ = s/r), one radian is about 57.3°, and a full circle (s = 2πr) is 2π ≈ 6.28 radians. In the animation, watch the radius sweep out until the yellow arc has the same length as r — that angle is exactly 1 radian. Then drag the orange point around the circle or use the slider to see how arc length, radians, and degrees stay linked.\",\n  \"manimCode\": \"// ---- What is a radian? ----\\nconst C = [-2.5, 0, 0];\\nconst R = 2;\\nlet ang = 0;\\n\\n// Static pieces\\nconst title = new Text({ text: 'What is a radian?', color: WHITE, fontSize: 42 });\\ntitle.moveTo([0, 3.4, 0]);\\n\\nconst circle = new Circle({ radius: R, color: BLUE });\\ncircle.moveTo(C);\\nconst centerDot = new Dot({ point: [C[0], C[1], 0], color: WHITE });\\n\\nconst fixedRadius = new Line({ start: [C[0], C[1], 0], end: [C[0] + R, C[1], 0], color: WHITE });\\nconst rLabel = new Text({ text: 'r', color: WHITE, fontSize: 30 });\\nrLabel.moveTo([C[0] + R / 2, C[1] - 0.35, 0]);\\n\\n// Moving radius (2-vertex polygon so endpoints can update)\\nconst movingRadius = new Polygon({ vertices: [[C[0], C[1], 0], [C[0] + R, C[1], 0]], color: ORANGE });\\nmovingRadius.setStrokeWidth(4).setFillOpacity(0);\\nmovingRadius.addUpdater(() => {\\n  movingRadius.setVertices([\\n    [C[0], C[1], 0],\\n    [C[0] + R * Math.cos(ang), C[1] + R * Math.sin(ang), 0]\\n  ]);\\n});\\n\\n// Filled sector showing the angle\\nconst sector = new Polygon({ vertices: [[C[0], C[1], 0], [C[0] + R, C[1], 0], [C[0] + R, C[1] + 0.001, 0]], color: YELLOW });\\nsector.setFill(YELLOW, 0.25);\\nsector.setStrokeWidth(2);\\nsector.addUpdater(() => {\\n  const a = Math.max(ang, 0.0001);\\n  const pts = [[C[0], C[1], 0]];\\n  const n = Math.max(2, Math.ceil(72 * a / (2 * Math.PI)));\\n  for (let i = 0; i <= n; i++) {\\n    const t0 = a * i / n;\\n    pts.push([C[0] + R * Math.cos(t0), C[1] + R * Math.sin(t0), 0]);\\n  }\\n  sector.setVertices(pts);\\n});\\n\\n// Draggable tip of the moving radius\\nconst tip = new Dot({ point: [C[0] + R, C[1], 0], color: ORANGE });\\n\\n// Highlighted arc (rebuilt whenever the angle changes)\\nlet arcGroup = null;\\nfunction makeArcGroup(a) {\\n  const segs = [];\\n  const n = Math.max(2, Math.ceil(96 * a / (2 * Math.PI)));\\n  for (let i = 0; i < n; i++) {\\n    const a0 = a * i / n;\\n    const a1 = a * (i + 1) / n;\\n    const seg = new Line({\\n      start: [C[0] + R * Math.cos(a0), C[1] + R * Math.sin(a0), 0],\\n      end: [C[0] + R * Math.cos(a1), C[1] + R * Math.sin(a1), 0],\\n      color: YELLOW\\n    });\\n    seg.setStrokeWidth(6);\\n    segs.push(seg);\\n  }\\n  return new VGroup(...segs);\\n}\\nfunction rebuildArc(a) {\\n  if (arcGroup) scene.remove(arcGroup);\\n  arcGroup = null;\\n  if (a > 0.005) {\\n    arcGroup = makeArcGroup(a);\\n    scene.add(arcGroup);\\n  }\\n}\\n\\n// Little \\\"s\\\" label riding the arc midpoint\\nlet sLabel = null;\\nfunction updateSLabel(a) {\\n  if (sLabel) { scene.remove(sLabel); sLabel = null; }\\n  if (a > 0.15) {\\n    sLabel = new Text({ text: 's', color: YELLOW, fontSize: 30 });\\n    const mid = a / 2;\\n    sLabel.moveTo([C[0] + (R + 0.55) * Math.cos(mid), C[1] + (R + 0.55) * Math.sin(mid), 0]);\\n    scene.add(sLabel);\\n  }\\n}\\n\\n// Numeric readout (Text is immutable -> remove + recreate)\\nlet valLabel = null;\\nfunction updateValLabel(a) {\\n  const deg = a * 180 / Math.PI;\\n  const str = 's = ' + a.toFixed(2) + ' r     θ = ' + a.toFixed(2) + ' rad  =  ' + deg.toFixed(1) + '°';\\n  if (valLabel) scene.remove(valLabel);\\n  valLabel = new Text({ text: str, color: WHITE, fontSize: 24 });\\n  valLabel.moveTo([3.2, 1.0, 0]);\\n  scene.add(valLabel);\\n}\\n\\nfunction setAngle(a) {\\n  ang = Math.min(Math.max(a, 0), 2 * Math.PI);\\n  tip.moveTo([C[0] + R * Math.cos(ang), C[1] + R * Math.sin(ang), 0]);\\n  rebuildArc(ang);\\n  updateSLabel(ang);\\n  updateValLabel(ang);\\n}\\n\\n// ---- Intro animation ----\\nawait scene.play(new Write(title));\\nawait scene.play(new Create(circle));\\nawait scene.play(new FadeIn(centerDot));\\nawait scene.play(new Create(fixedRadius));\\nawait scene.play(new Write(rLabel));\\nscene.add(sector, movingRadius, tip);\\n\\n// Sweep the radius until the arc length equals r (1 radian)\\nfor (let i = 1; i <= 40; i++) {\\n  ang = i / 40;\\n  tip.moveTo([C[0] + R * Math.cos(ang), C[1] + R * Math.sin(ang), 0]);\\n  await scene.wait(0.03);\\n}\\n\\narcGroup = makeArcGroup(1);\\nawait scene.play(new FadeIn(arcGroup));\\nupdateSLabel(1);\\n\\nconst formula = new MathTex({ latex: '\\\\\\\\theta = \\\\\\\\frac{s}{r}' });\\nawait formula.waitForRender();\\nformula.moveTo([3.2, 2.4, 0]);\\nawait scene.play(new Write(formula));\\n\\nconst approx = new Text({ text: '1 radian ≈ 57.30°', color: GOLD, fontSize: 28 });\\napprox.moveTo([3.2, 1.7, 0]);\\nawait scene.play(new Write(approx));\\n\\nupdateValLabel(1);\\n\\nconst note1 = new Text({ text: 'When the arc length s equals the radius r, the angle is exactly 1 radian.', color: GRAY, fontSize: 20 });\\nnote1.moveTo([0, -3.05, 0]);\\nconst note2 = new Text({ text: 'A full circle has s = 2πr, so a full turn is 2π ≈ 6.28 radians.', color: GRAY, fontSize: 20 });\\nnote2.moveTo([0, -3.5, 0]);\\nawait scene.play(new FadeIn(note1));\\nawait scene.play(new FadeIn(note2));\\n\\n// ---- Interactivity ----\\nmakeDraggable(tip, scene, {\\n  onDrag: (mob, pos) => {\\n    let a = Math.atan2(pos[1] - C[1], pos[0] - C[0]);\\n    if (a < 0) a += 2 * Math.PI;\\n    setAngle(a);\\n  }\\n});\\n\\nconst controls = new Controls(scene, { position: 'bottom-right' });\\ncontrols.addSlider({ label: 'Arc length s (units of r)', min: 0, max: 2 * Math.PI, value: 1, step: 0.01, onChange: (v) => setAngle(v) });\\ncontrols.addButton({ label: 's = r  (1 rad)', onClick: () => setAngle(1) });\\ncontrols.addButton({ label: 's = πr  (π rad)', onClick: () => setAngle(Math.PI) });\\ncontrols.addButton({ label: 's = 2πr (full turn)', onClick: () => setAngle(2 * Math.PI) });\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "A radian is a way of measuring angles using the circle itself: it is the central angle formed when the arc length along the circle is exactly equal to the radius. Since angle = arc length / radius (θ = s/r), one radian is about 57.3°, and a full circle (s = 2πr) is 2π ≈ 6.28 radians. In the animation, watch the radius sweep out until the yellow arc has the same length as r — that angle is exactly 1 radian. Then drag the orange point around the circle or use the slider to see how arc length, radians, and degrees stay linked."
+      },
+      "code": "// ---- What is a radian? ----\nconst C = [-2.5, 0, 0];\nconst R = 2;\nlet ang = 0;\n\n// Static pieces\nconst title = new Text({ text: 'What is a radian?', color: WHITE, fontSize: 42 });\ntitle.moveTo([0, 3.4, 0]);\n\nconst circle = new Circle({ radius: R, color: BLUE });\ncircle.moveTo(C);\nconst centerDot = new Dot({ point: [C[0], C[1], 0], color: WHITE });\n\nconst fixedRadius = new Line({ start: [C[0], C[1], 0], end: [C[0] + R, C[1], 0], color: WHITE });\nconst rLabel = new Text({ text: 'r', color: WHITE, fontSize: 30 });\nrLabel.moveTo([C[0] + R / 2, C[1] - 0.35, 0]);\n\n// Moving radius (2-vertex polygon so endpoints can update)\nconst movingRadius = new Polygon({ vertices: [[C[0], C[1], 0], [C[0] + R, C[1], 0]], color: ORANGE });\nmovingRadius.setStrokeWidth(4).setFillOpacity(0);\nmovingRadius.addUpdater(() => {\n  movingRadius.setVertices([\n    [C[0], C[1], 0],\n    [C[0] + R * Math.cos(ang), C[1] + R * Math.sin(ang), 0]\n  ]);\n});\n\n// Filled sector showing the angle\nconst sector = new Polygon({ vertices: [[C[0], C[1], 0], [C[0] + R, C[1], 0], [C[0] + R, C[1] + 0.001, 0]], color: YELLOW });\nsector.setFill(YELLOW, 0.25);\nsector.setStrokeWidth(2);\nsector.addUpdater(() => {\n  const a = Math.max(ang, 0.0001);\n  const pts = [[C[0], C[1], 0]];\n  const n = Math.max(2, Math.ceil(72 * a / (2 * Math.PI)));\n  for (let i = 0; i <= n; i++) {\n    const t0 = a * i / n;\n    pts.push([C[0] + R * Math.cos(t0), C[1] + R * Math.sin(t0), 0]);\n  }\n  sector.setVertices(pts);\n});\n\n// Draggable tip of the moving radius\nconst tip = new Dot({ point: [C[0] + R, C[1], 0], color: ORANGE });\n\n// Highlighted arc (rebuilt whenever the angle changes)\nlet arcGroup = null;\nfunction makeArcGroup(a) {\n  const segs = [];\n  const n = Math.max(2, Math.ceil(96 * a / (2 * Math.PI)));\n  for (let i = 0; i < n; i++) {\n    const a0 = a * i / n;\n    const a1 = a * (i + 1) / n;\n    const seg = new Line({\n      start: [C[0] + R * Math.cos(a0), C[1] + R * Math.sin(a0), 0],\n      end: [C[0] + R * Math.cos(a1), C[1] + R * Math.sin(a1), 0],\n      color: YELLOW\n    });\n    seg.setStrokeWidth(6);\n    segs.push(seg);\n  }\n  return new VGroup(...segs);\n}\nfunction rebuildArc(a) {\n  if (arcGroup) scene.remove(arcGroup);\n  arcGroup = null;\n  if (a > 0.005) {\n    arcGroup = makeArcGroup(a);\n    scene.add(arcGroup);\n  }\n}\n\n// Little \"s\" label riding the arc midpoint\nlet sLabel = null;\nfunction updateSLabel(a) {\n  if (sLabel) { scene.remove(sLabel); sLabel = null; }\n  if (a > 0.15) {\n    sLabel = new Text({ text: 's', color: YELLOW, fontSize: 30 });\n    const mid = a / 2;\n    sLabel.moveTo([C[0] + (R + 0.55) * Math.cos(mid), C[1] + (R + 0.55) * Math.sin(mid), 0]);\n    scene.add(sLabel);\n  }\n}\n\n// Numeric readout (Text is immutable -> remove + recreate)\nlet valLabel = null;\nfunction updateValLabel(a) {\n  const deg = a * 180 / Math.PI;\n  const str = 's = ' + a.toFixed(2) + ' r     θ = ' + a.toFixed(2) + ' rad  =  ' + deg.toFixed(1) + '°';\n  if (valLabel) scene.remove(valLabel);\n  valLabel = new Text({ text: str, color: WHITE, fontSize: 24 });\n  valLabel.moveTo([3.2, 1.0, 0]);\n  scene.add(valLabel);\n}\n\nfunction setAngle(a) {\n  ang = Math.min(Math.max(a, 0), 2 * Math.PI);\n  tip.moveTo([C[0] + R * Math.cos(ang), C[1] + R * Math.sin(ang), 0]);\n  rebuildArc(ang);\n  updateSLabel(ang);\n  updateValLabel(ang);\n}\n\n// ---- Intro animation ----\nawait scene.play(new Write(title));\nawait scene.play(new Create(circle));\nawait scene.play(new FadeIn(centerDot));\nawait scene.play(new Create(fixedRadius));\nawait scene.play(new Write(rLabel));\nscene.add(sector, movingRadius, tip);\n\n// Sweep the radius until the arc length equals r (1 radian)\nfor (let i = 1; i <= 40; i++) {\n  ang = i / 40;\n  tip.moveTo([C[0] + R * Math.cos(ang), C[1] + R * Math.sin(ang), 0]);\n  await scene.wait(0.03);\n}\n\narcGroup = makeArcGroup(1);\nawait scene.play(new FadeIn(arcGroup));\nupdateSLabel(1);\n\nconst formula = new MathTex({ latex: '\\\\theta = \\\\frac{s}{r}' });\nawait formula.waitForRender();\nformula.moveTo([3.2, 2.4, 0]);\nawait scene.play(new Write(formula));\n\nconst approx = new Text({ text: '1 radian ≈ 57.30°', color: GOLD, fontSize: 28 });\napprox.moveTo([3.2, 1.7, 0]);\nawait scene.play(new Write(approx));\n\nupdateValLabel(1);\n\nconst note1 = new Text({ text: 'When the arc length s equals the radius r, the angle is exactly 1 radian.', color: GRAY, fontSize: 20 });\nnote1.moveTo([0, -3.05, 0]);\nconst note2 = new Text({ text: 'A full circle has s = 2πr, so a full turn is 2π ≈ 6.28 radians.', color: GRAY, fontSize: 20 });\nnote2.moveTo([0, -3.5, 0]);\nawait scene.play(new FadeIn(note1));\nawait scene.play(new FadeIn(note2));\n\n// ---- Interactivity ----\nmakeDraggable(tip, scene, {\n  onDrag: (mob, pos) => {\n    let a = Math.atan2(pos[1] - C[1], pos[0] - C[0]);\n    if (a < 0) a += 2 * Math.PI;\n    setAngle(a);\n  }\n});\n\nconst controls = new Controls(scene, { position: 'bottom-right' });\ncontrols.addSlider({ label: 'Arc length s (units of r)', min: 0, max: 2 * Math.PI, value: 1, step: 0.01, onChange: (v) => setAngle(v) });\ncontrols.addButton({ label: 's = r  (1 rad)', onClick: () => setAngle(1) });\ncontrols.addButton({ label: 's = πr  (π rad)', onClick: () => setAngle(Math.PI) });\ncontrols.addButton({ label: 's = 2πr (full turn)', onClick: () => setAngle(2 * Math.PI) });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 19707,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 10,
+        "controls": {
+          "sliders": 1,
+          "buttons": 3,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/trig-radian.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/trig-radian.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:56:04.324Z"
+}

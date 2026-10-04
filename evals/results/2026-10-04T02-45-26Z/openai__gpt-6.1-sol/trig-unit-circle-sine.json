@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-unit-circle-sine",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.38% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=2"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.30% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 35291,
+        "inputTokens": 4596,
+        "cachedInputTokens": 4581,
+        "outputTokens": 1644,
+        "costUsd": 0.0169281,
+        "rawResponse": "{\"explanation\":\"The sine graph is wavy because sine measures the height of a point moving around a circle. As the point turns, its height rises to a peak, falls through zero to a trough, and rises again—smoothly repeating with every turn. The graph shows that height against the angle; use the slider to see how one trip around the circle makes one wave.\",\"manimCode\":\"const heading = new Text({ text: 'Sine is the height of a rotating point', color: WHITE, fontSize: 29 });\\nheading.moveTo([-1.1, 3.15, 0]);\\nscene.add(heading);\\n\\nconst ax = new Axes({ xRange: [0, 2 * Math.PI, Math.PI / 2], yRange: [-1.5, 1.5, 0.5], xLength: 6.2, yLength: 3.75, tips: false });\\nax.moveTo([1.25, -0.3, 0]);\\nconst baseline = ax.coordsToPoint(0, 0)[1];\\nconst centerPt = [-4.35, baseline, 0];\\nconst radiusVal = 1.25;\\nconst circleShape = new Circle({ radius: radiusVal, color: GRAY });\\ncircleShape.moveTo(centerPt);\\nconst centerDot = new Dot({ point: centerPt, color: GRAY });\\nconst circleCaption = new Text({ text: 'Turn around the circle', color: WHITE, fontSize: 21 });\\ncircleCaption.moveTo([-4.25, 2.05, 0]);\\nconst graphCaption = new Text({ text: 'Record the height', color: BLUE, fontSize: 23 });\\ngraphCaption.moveTo([1.2, 2.05, 0]);\\nconst axisCaption = new Text({ text: 'angle:  0                         2π', color: GRAY, fontSize: 20 });\\naxisCaption.moveTo([1.25, -2.55, 0]);\\nconst footer = new Text({ text: 'One full turn = one repeating wave', color: YELLOW, fontSize: 23 });\\nfooter.moveTo([1.1, -3.15, 0]);\\nscene.add(ax, circleShape, centerDot, circleCaption, graphCaption, axisCaption, footer);\\n\\nconst theta = new ValueTracker(0);\\nfunction circlePoint() {\\n  const a = theta.getValue();\\n  return [centerPt[0] + radiusVal * Math.cos(a), baseline + radiusVal * Math.sin(a), 0];\\n}\\nfunction graphPoint() {\\n  const a = theta.getValue();\\n  return ax.coordsToPoint(a, Math.sin(a));\\n}\\nconst orbitDot = new Dot({ point: circlePoint(), color: YELLOW });\\nconst waveDot = new Dot({ point: graphPoint(), color: YELLOW });\\nconst radialSegment = new Polygon({ vertices: [centerPt, circlePoint()], color: WHITE });\\nradialSegment.setFillOpacity(0);\\nradialSegment.setStrokeWidth(2);\\nconst heightSegment = new Polygon({ vertices: [[circlePoint()[0], baseline, 0], circlePoint()], color: YELLOW });\\nheightSegment.setFillOpacity(0);\\nheightSegment.setStrokeWidth(4);\\nconst matchingHeight = new Polygon({ vertices: [circlePoint(), graphPoint()], color: YELLOW });\\nmatchingHeight.setFillOpacity(0);\\nmatchingHeight.setStrokeWidth(1);\\nmatchingHeight.setOpacity(0.35);\\n\\norbitDot.addUpdater(d => d.moveTo(circlePoint()));\\nwaveDot.addUpdater(d => d.moveTo(graphPoint()));\\nradialSegment.addUpdater(p => p.setVertices([centerPt, circlePoint()]));\\nheightSegment.addUpdater(p => {\\n  const pt = circlePoint();\\n  p.setVertices([[pt[0], baseline, 0], pt]);\\n});\\nmatchingHeight.addUpdater(p => p.setVertices([circlePoint(), graphPoint()]));\\nscene.add(radialSegment, matchingHeight, heightSegment, orbitDot, waveDot);\\n\\nconst sineCurve = ax.plot(x => Math.sin(x), { color: BLUE, xRange: [0, 2 * Math.PI], numSamples: 250 });\\nawait scene.play(new AnimationGroup([new Create(sineCurve), theta.animateTo(2 * Math.PI)]));\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 230 });\\ncontrols.addSlider({ label: 'Angle (radians)', min: 0, max: 2 * Math.PI, value: 2 * Math.PI, step: 0.01, onChange: value => { theta.setValue(value); } });\\nmakeHoverable(orbitDot, scene, { hoverScale: 1.5, hoverColor: ORANGE });\\nmakeHoverable(waveDot, scene, { hoverScale: 1.5, hoverColor: ORANGE });\\nawait scene.wait(999999);\"}",
+        "explanation": "The sine graph is wavy because sine measures the height of a point moving around a circle. As the point turns, its height rises to a peak, falls through zero to a trough, and rises again—smoothly repeating with every turn. The graph shows that height against the angle; use the slider to see how one trip around the circle makes one wave."
+      },
+      "code": "const heading = new Text({ text: 'Sine is the height of a rotating point', color: WHITE, fontSize: 29 });\nheading.moveTo([-1.1, 3.15, 0]);\nscene.add(heading);\n\nconst ax = new Axes({ xRange: [0, 2 * Math.PI, Math.PI / 2], yRange: [-1.5, 1.5, 0.5], xLength: 6.2, yLength: 3.75, tips: false });\nax.moveTo([1.25, -0.3, 0]);\nconst baseline = ax.coordsToPoint(0, 0)[1];\nconst centerPt = [-4.35, baseline, 0];\nconst radiusVal = 1.25;\nconst circleShape = new Circle({ radius: radiusVal, color: GRAY });\ncircleShape.moveTo(centerPt);\nconst centerDot = new Dot({ point: centerPt, color: GRAY });\nconst circleCaption = new Text({ text: 'Turn around the circle', color: WHITE, fontSize: 21 });\ncircleCaption.moveTo([-4.25, 2.05, 0]);\nconst graphCaption = new Text({ text: 'Record the height', color: BLUE, fontSize: 23 });\ngraphCaption.moveTo([1.2, 2.05, 0]);\nconst axisCaption = new Text({ text: 'angle:  0                         2π', color: GRAY, fontSize: 20 });\naxisCaption.moveTo([1.25, -2.55, 0]);\nconst footer = new Text({ text: 'One full turn = one repeating wave', color: YELLOW, fontSize: 23 });\nfooter.moveTo([1.1, -3.15, 0]);\nscene.add(ax, circleShape, centerDot, circleCaption, graphCaption, axisCaption, footer);\n\nconst theta = new ValueTracker(0);\nfunction circlePoint() {\n  const a = theta.getValue();\n  return [centerPt[0] + radiusVal * Math.cos(a), baseline + radiusVal * Math.sin(a), 0];\n}\nfunction graphPoint() {\n  const a = theta.getValue();\n  return ax.coordsToPoint(a, Math.sin(a));\n}\nconst orbitDot = new Dot({ point: circlePoint(), color: YELLOW });\nconst waveDot = new Dot({ point: graphPoint(), color: YELLOW });\nconst radialSegment = new Polygon({ vertices: [centerPt, circlePoint()], color: WHITE });\nradialSegment.setFillOpacity(0);\nradialSegment.setStrokeWidth(2);\nconst heightSegment = new Polygon({ vertices: [[circlePoint()[0], baseline, 0], circlePoint()], color: YELLOW });\nheightSegment.setFillOpacity(0);\nheightSegment.setStrokeWidth(4);\nconst matchingHeight = new Polygon({ vertices: [circlePoint(), graphPoint()], color: YELLOW });\nmatchingHeight.setFillOpacity(0);\nmatchingHeight.setStrokeWidth(1);\nmatchingHeight.setOpacity(0.35);\n\norbitDot.addUpdater(d => d.moveTo(circlePoint()));\nwaveDot.addUpdater(d => d.moveTo(graphPoint()));\nradialSegment.addUpdater(p => p.setVertices([centerPt, circlePoint()]));\nheightSegment.addUpdater(p => {\n  const pt = circlePoint();\n  p.setVertices([[pt[0], baseline, 0], pt]);\n});\nmatchingHeight.addUpdater(p => p.setVertices([circlePoint(), graphPoint()]));\nscene.add(radialSegment, matchingHeight, heightSegment, orbitDot, waveDot);\n\nconst sineCurve = ax.plot(x => Math.sin(x), { color: BLUE, xRange: [0, 2 * Math.PI], numSamples: 250 });\nawait scene.play(new AnimationGroup([new Create(sineCurve), theta.animateTo(2 * Math.PI)]));\n\nconst controls = new Controls(scene, { position: 'top-right', width: 230 });\ncontrols.addSlider({ label: 'Angle (radians)', min: 0, max: 2 * Math.PI, value: 2 * Math.PI, step: 0.01, onChange: value => { theta.setValue(value); } });\nmakeHoverable(orbitDot, scene, { hoverScale: 1.5, hoverColor: ORANGE });\nmakeHoverable(waveDot, scene, { hoverScale: 1.5, hoverColor: ORANGE });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 6516,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 2
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/trig-unit-circle-sine.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/trig-unit-circle-sine.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:03.608Z"
+}

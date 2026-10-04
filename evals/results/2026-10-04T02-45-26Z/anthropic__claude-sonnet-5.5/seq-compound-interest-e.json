@@ -1,0 +1,80 @@
+{
+  "itemId": "seq-compound-interest-e",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.93% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Axes [x -2.37..6.75, y -3.88..5.22] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.36% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 7759,
+        "inputTokens": 7968,
+        "cachedInputTokens": 7476,
+        "outputTokens": 905,
+        "costUsd": 0.0125092,
+        "rawResponse": "{\"explanation\":\"If you compound n times a year at 100% interest, your $1 becomes (1 + 1/n)^n dollars. With n=1 you get $2, with n=2 you get $2.25, monthly gives about $2.613, and daily about $2.7146. The growth doesn't blow up. It levels off at e ≈ 2.71828, even if you compound continuously. Drag the slider to change n and watch the dot climb toward the dashed line at e.\",\"manimCode\":\"const axes = new Axes({ xRange: [0, 50, 10], yRange: [1.5, 3, 0.5], xLength: 9, yLength: 4.5, tips: false });\\naxes.moveTo([0, -0.4, 0]);\\nconst f = (n) => Math.pow(1 + 1 / n, n);\\nconst curve = axes.plot(x => f(x), { color: BLUE, xRange: [1, 50], numSamples: 200 });\\nconst eLine = axes.plot(x => Math.E, { color: YELLOW });\\nscene.add(axes, curve, eLine);\\n\\nconst eLabel = new MathTex({ latex: 'e \\\\\\\\approx 2.71828' });\\nawait eLabel.waitForRender();\\neLabel.moveTo([3.8, 2.3, 0]);\\nscene.add(eLabel);\\n\\nconst title = new MathTex({ latex: '\\\\\\\\left(1+\\\\\\\\frac{1}{n}\\\\\\\\right)^n' });\\nawait title.waitForRender();\\ntitle.moveTo([-3.5, 3.2, 0]);\\nscene.add(title);\\n\\nconst dot = new Dot({ point: axes.c2p(1, 2), color: RED });\\nscene.add(dot);\\n\\nlet valLabel = new Text({ text: 'n = 1, value = 2.00000', color: WHITE, fontSize: 24 });\\nvalLabel.moveTo([0, -3.6, 0]);\\nscene.add(valLabel);\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'n (compounds/year)', min: 1, max: 50, value: 1, step: 1, onChange: (n) => {\\n  dot.moveTo(axes.c2p(n, f(n)));\\n  scene.remove(valLabel);\\n  valLabel = new Text({ text: 'n = ' + n + ', value = ' + f(n).toFixed(5), color: WHITE, fontSize: 24 });\\n  valLabel.moveTo([0, -3.6, 0]);\\n  scene.add(valLabel);\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "If you compound n times a year at 100% interest, your $1 becomes (1 + 1/n)^n dollars. With n=1 you get $2, with n=2 you get $2.25, monthly gives about $2.613, and daily about $2.7146. The growth doesn't blow up. It levels off at e ≈ 2.71828, even if you compound continuously. Drag the slider to change n and watch the dot climb toward the dashed line at e."
+      },
+      "code": "const axes = new Axes({ xRange: [0, 50, 10], yRange: [1.5, 3, 0.5], xLength: 9, yLength: 4.5, tips: false });\naxes.moveTo([0, -0.4, 0]);\nconst f = (n) => Math.pow(1 + 1 / n, n);\nconst curve = axes.plot(x => f(x), { color: BLUE, xRange: [1, 50], numSamples: 200 });\nconst eLine = axes.plot(x => Math.E, { color: YELLOW });\nscene.add(axes, curve, eLine);\n\nconst eLabel = new MathTex({ latex: 'e \\\\approx 2.71828' });\nawait eLabel.waitForRender();\neLabel.moveTo([3.8, 2.3, 0]);\nscene.add(eLabel);\n\nconst title = new MathTex({ latex: '\\\\left(1+\\\\frac{1}{n}\\\\right)^n' });\nawait title.waitForRender();\ntitle.moveTo([-3.5, 3.2, 0]);\nscene.add(title);\n\nconst dot = new Dot({ point: axes.c2p(1, 2), color: RED });\nscene.add(dot);\n\nlet valLabel = new Text({ text: 'n = 1, value = 2.00000', color: WHITE, fontSize: 24 });\nvalLabel.moveTo([0, -3.6, 0]);\nscene.add(valLabel);\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'n (compounds/year)', min: 1, max: 50, value: 1, step: 1, onChange: (n) => {\n  dot.moveTo(axes.c2p(n, f(n)));\n  scene.remove(valLabel);\n  valLabel = new Text({ text: 'n = ' + n + ', value = ' + f(n).toFixed(5), color: WHITE, fontSize: 24 });\n  valLabel.moveTo([0, -3.6, 0]);\n  scene.add(valLabel);\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3201,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/seq-compound-interest-e.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/seq-compound-interest-e.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:34:54.965Z"
+}

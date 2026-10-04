@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-triangle-angle-sum",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.48% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=3 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "3.54% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 25564,
+        "inputTokens": 8047,
+        "cachedInputTokens": 7569,
+        "outputTokens": 2914,
+        "costUsd": 0.06360980000000001,
+        "rawResponse": "{\"explanation\":\"Draw a line through the top vertex C that runs parallel to the bottom side AB. Where the two slanted sides cross the two parallel lines, they make alternate interior angles, which are equal. So a copy of angle A (blue) and a copy of angle B (green) fit at C, one on each side of angle C (red). The three angles now sit side by side along a straight line, and a straight line is 180°. That's why the sum is always 180°, whatever shape the triangle has. Drag the yellow corners to try it: the angles change, the sum doesn't. This only works on a flat plane. On a curved surface like a sphere, there's no single parallel line through C, so the sum can be different.\",\"manimCode\":\"const N = 24;\\nconst R = 0.6;\\nfunction sub(p, q) { return [p[0]-q[0], p[1]-q[1], 0]; }\\nfunction unit(v) { const l = Math.hypot(v[0], v[1]) || 1; return [v[0]/l, v[1]/l, 0]; }\\nfunction sectorVerts(c, d1, d2, r) {\\n  const a1 = Math.atan2(d1[1], d1[0]);\\n  let a2 = Math.atan2(d2[1], d2[0]);\\n  let d = a2 - a1;\\n  while (d > Math.PI) d -= 2*Math.PI;\\n  while (d <= -Math.PI) d += 2*Math.PI;\\n  const pts = [[c[0], c[1], 0]];\\n  for (let i = 0; i <= N; i++) {\\n    const a = a1 + d * i / N;\\n    pts.push([c[0] + r*Math.cos(a), c[1] + r*Math.sin(a), 0]);\\n  }\\n  return pts;\\n}\\nfunction angleBetween(u, v) {\\n  const a = unit(u), b = unit(v);\\n  return Math.acos(Math.max(-1, Math.min(1, a[0]*b[0] + a[1]*b[1])));\\n}\\nfunction mkSector(col) {\\n  const p = new Polygon({ vertices: sectorVerts([0,0,0],[1,0,0],[0,1,0],R), color: col });\\n  p.setFill(col, 0.55); p.setStrokeWidth(1);\\n  return p;\\n}\\n\\nconst dotA = new Dot({ point: [-3, -1.8, 0], color: YELLOW });\\nconst dotB = new Dot({ point: [2.5, -1.8, 0], color: YELLOW });\\nconst dotC = new Dot({ point: [-0.5, 1.5, 0], color: YELLOW });\\n\\nconst tri = new Polygon({ vertices: [dotA.getCenter(), dotB.getCenter(), dotC.getCenter()], color: WHITE });\\ntri.setFill(GRAY, 0.15);\\n\\nconst parLine = new Polygon({ vertices: [[0,0,0],[1,0,0]], color: GRAY });\\nparLine.setStrokeWidth(2); parLine.setFillOpacity(0);\\n\\nconst secA = mkSector(BLUE), secB = mkSector(GREEN), secC = mkSector(RED);\\nconst copyA = mkSector(BLUE), copyB = mkSector(GREEN);\\n\\nlet info = null;\\nlet sumLabel = null;\\n\\nfunction update() {\\n  const A = dotA.getCenter(), B = dotB.getCenter(), C = dotC.getCenter();\\n  tri.setVertices([A, B, C]);\\n  const u = unit(sub(B, A));\\n  const mu = [-u[0], -u[1], 0];\\n  parLine.setVertices([[C[0]-3.5*u[0], C[1]-3.5*u[1], 0], [C[0]+3.5*u[0], C[1]+3.5*u[1], 0]]);\\n  secA.setVertices(sectorVerts(A, sub(B, A), sub(C, A), R));\\n  secB.setVertices(sectorVerts(B, sub(A, B), sub(C, B), R));\\n  secC.setVertices(sectorVerts(C, sub(A, C), sub(B, C), R));\\n  copyA.setVertices(sectorVerts(C, mu, sub(A, C), R*0.85));\\n  copyB.setVertices(sectorVerts(C, sub(B, C), u, R*0.85));\\n\\n  const a = angleBetween(sub(B, A), sub(C, A)) * 180 / Math.PI;\\n  const b = angleBetween(sub(A, B), sub(C, B)) * 180 / Math.PI;\\n  const c = 180 - a - b;\\n  if (info) scene.remove(info);\\n  if (sumLabel) scene.remove(sumLabel);\\n  info = new Text({ text: 'A = ' + a.toFixed(1) + '°   B = ' + b.toFixed(1) + '°   C = ' + c.toFixed(1) + '°', color: WHITE, fontSize: 26 });\\n  info.moveTo([0, -3.0, 0]);\\n  sumLabel = new Text({ text: 'A + B + C = ' + (a + b + c).toFixed(1) + '°', color: YELLOW, fontSize: 30 });\\n  sumLabel.moveTo([0, -3.55, 0]);\\n  scene.add(info, sumLabel);\\n}\\n\\nconst title = new Text({ text: 'Copies of A and B at C make a straight line', color: WHITE, fontSize: 28 });\\ntitle.moveTo([0, 3.5, 0]);\\n\\nupdate();\\nscene.add(title, parLine, tri, secA, secB, secC, copyA, copyB, dotA, dotB, dotC);\\n\\nconst lab = (s, col) => new Text({ text: s, color: col, fontSize: 24 });\\nconst lA = lab('A', BLUE), lB = lab('B', GREEN), lC = lab('C', RED);\\nscene.add(lA, lB, lC);\\nfunction placeLabels() {\\n  const A = dotA.getCenter(), B = dotB.getCenter(), C = dotC.getCenter();\\n  const g = [(A[0]+B[0]+C[0])/3, (A[1]+B[1]+C[1])/3];\\n  [[lA, A], [lB, B], [lC, C]].forEach(([l, P]) => {\\n    const d = unit([P[0]-g[0], P[1]-g[1], 0]);\\n    l.moveTo([P[0] + 0.35*d[0], P[1] + 0.35*d[1], 0]);\\n  });\\n}\\nplaceLabels();\\n\\nconst opts = { constrainX: [-5.5, 5.5], constrainY: [-2.4, 2.9], onDrag: () => { update(); placeLabels(); } };\\nmakeDraggable(dotA, scene, opts);\\nmakeDraggable(dotB, scene, opts);\\nmakeDraggable(dotC, scene, opts);\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Draw a line through the top vertex C that runs parallel to the bottom side AB. Where the two slanted sides cross the two parallel lines, they make alternate interior angles, which are equal. So a copy of angle A (blue) and a copy of angle B (green) fit at C, one on each side of angle C (red). The three angles now sit side by side along a straight line, and a straight line is 180°. That's why the sum is always 180°, whatever shape the triangle has. Drag the yellow corners to try it: the angles change, the sum doesn't. This only works on a flat plane. On a curved surface like a sphere, there's no single parallel line through C, so the sum can be different."
+      },
+      "code": "const N = 24;\nconst R = 0.6;\nfunction sub(p, q) { return [p[0]-q[0], p[1]-q[1], 0]; }\nfunction unit(v) { const l = Math.hypot(v[0], v[1]) || 1; return [v[0]/l, v[1]/l, 0]; }\nfunction sectorVerts(c, d1, d2, r) {\n  const a1 = Math.atan2(d1[1], d1[0]);\n  let a2 = Math.atan2(d2[1], d2[0]);\n  let d = a2 - a1;\n  while (d > Math.PI) d -= 2*Math.PI;\n  while (d <= -Math.PI) d += 2*Math.PI;\n  const pts = [[c[0], c[1], 0]];\n  for (let i = 0; i <= N; i++) {\n    const a = a1 + d * i / N;\n    pts.push([c[0] + r*Math.cos(a), c[1] + r*Math.sin(a), 0]);\n  }\n  return pts;\n}\nfunction angleBetween(u, v) {\n  const a = unit(u), b = unit(v);\n  return Math.acos(Math.max(-1, Math.min(1, a[0]*b[0] + a[1]*b[1])));\n}\nfunction mkSector(col) {\n  const p = new Polygon({ vertices: sectorVerts([0,0,0],[1,0,0],[0,1,0],R), color: col });\n  p.setFill(col, 0.55); p.setStrokeWidth(1);\n  return p;\n}\n\nconst dotA = new Dot({ point: [-3, -1.8, 0], color: YELLOW });\nconst dotB = new Dot({ point: [2.5, -1.8, 0], color: YELLOW });\nconst dotC = new Dot({ point: [-0.5, 1.5, 0], color: YELLOW });\n\nconst tri = new Polygon({ vertices: [dotA.getCenter(), dotB.getCenter(), dotC.getCenter()], color: WHITE });\ntri.setFill(GRAY, 0.15);\n\nconst parLine = new Polygon({ vertices: [[0,0,0],[1,0,0]], color: GRAY });\nparLine.setStrokeWidth(2); parLine.setFillOpacity(0);\n\nconst secA = mkSector(BLUE), secB = mkSector(GREEN), secC = mkSector(RED);\nconst copyA = mkSector(BLUE), copyB = mkSector(GREEN);\n\nlet info = null;\nlet sumLabel = null;\n\nfunction update() {\n  const A = dotA.getCenter(), B = dotB.getCenter(), C = dotC.getCenter();\n  tri.setVertices([A, B, C]);\n  const u = unit(sub(B, A));\n  const mu = [-u[0], -u[1], 0];\n  parLine.setVertices([[C[0]-3.5*u[0], C[1]-3.5*u[1], 0], [C[0]+3.5*u[0], C[1]+3.5*u[1], 0]]);\n  secA.setVertices(sectorVerts(A, sub(B, A), sub(C, A), R));\n  secB.setVertices(sectorVerts(B, sub(A, B), sub(C, B), R));\n  secC.setVertices(sectorVerts(C, sub(A, C), sub(B, C), R));\n  copyA.setVertices(sectorVerts(C, mu, sub(A, C), R*0.85));\n  copyB.setVertices(sectorVerts(C, sub(B, C), u, R*0.85));\n\n  const a = angleBetween(sub(B, A), sub(C, A)) * 180 / Math.PI;\n  const b = angleBetween(sub(A, B), sub(C, B)) * 180 / Math.PI;\n  const c = 180 - a - b;\n  if (info) scene.remove(info);\n  if (sumLabel) scene.remove(sumLabel);\n  info = new Text({ text: 'A = ' + a.toFixed(1) + '°   B = ' + b.toFixed(1) + '°   C = ' + c.toFixed(1) + '°', color: WHITE, fontSize: 26 });\n  info.moveTo([0, -3.0, 0]);\n  sumLabel = new Text({ text: 'A + B + C = ' + (a + b + c).toFixed(1) + '°', color: YELLOW, fontSize: 30 });\n  sumLabel.moveTo([0, -3.55, 0]);\n  scene.add(info, sumLabel);\n}\n\nconst title = new Text({ text: 'Copies of A and B at C make a straight line', color: WHITE, fontSize: 28 });\ntitle.moveTo([0, 3.5, 0]);\n\nupdate();\nscene.add(title, parLine, tri, secA, secB, secC, copyA, copyB, dotA, dotB, dotC);\n\nconst lab = (s, col) => new Text({ text: s, color: col, fontSize: 24 });\nconst lA = lab('A', BLUE), lB = lab('B', GREEN), lC = lab('C', RED);\nscene.add(lA, lB, lC);\nfunction placeLabels() {\n  const A = dotA.getCenter(), B = dotB.getCenter(), C = dotC.getCenter();\n  const g = [(A[0]+B[0]+C[0])/3, (A[1]+B[1]+C[1])/3];\n  [[lA, A], [lB, B], [lC, C]].forEach(([l, P]) => {\n    const d = unit([P[0]-g[0], P[1]-g[1], 0]);\n    l.moveTo([P[0] + 0.35*d[0], P[1] + 0.35*d[1], 0]);\n  });\n}\nplaceLabels();\n\nconst opts = { constrainX: [-5.5, 5.5], constrainY: [-2.4, 2.9], onDrag: () => { update(); placeLabels(); } };\nmakeDraggable(dotA, scene, opts);\nmakeDraggable(dotB, scene, opts);\nmakeDraggable(dotC, scene, opts);\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5360,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 3,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/geo-triangle-angle-sum.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/geo-triangle-angle-sum.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:20.221Z"
+}

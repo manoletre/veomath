@@ -1,0 +1,109 @@
+{
+  "itemId": "seq-geometric-series",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "6.79% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=0 clickables=4 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ click Polygon at (-1.6, 0.0) — 2.28% changed\n✓ click Rectangle at (2.3, -1.1) — 1.80% changed\n✓ click Text at (2.3, -1.1) — 0.63% changed\n✓ click Text at (2.3, -1.9) — 8.17% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ click Polygon at (-1.6, 0.0) — 2.28% changed\n✓ click Rectangle at (2.3, -1.1) — 1.80% changed\n✓ click Text at (2.3, -1.1) — 0.63% changed\n✓ click Text at (2.3, -1.9) — 8.17% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 46429,
+        "inputTokens": 5321,
+        "cachedInputTokens": 5287,
+        "outputTokens": 2123,
+        "costUsd": 0.0218267,
+        "rawResponse": "{\"explanation\":\"Fill half the square, then half of the remaining space, and keep repeating. After n pieces, the unfilled area is 1/2ⁿ, which approaches zero as n grows. Thus the infinite sum fills the whole square: 1/2 + 1/4 + 1/8 + ⋯ = 1.\",\"manimCode\":\"const heading = new Text({ text: 'An infinite sum fills one square', fontSize: 30, color: WHITE });\\nheading.moveTo([0, 3.15, 0]);\\nconst formula = new MathTex({ latex: '\\\\\\\\frac12 + \\\\\\\\frac14 + \\\\\\\\frac18 + \\\\\\\\cdots = 1' });\\nawait formula.waitForRender();\\nformula.moveTo([0, 2.4, 0]);\\nscene.add(heading, formula);\\n\\nconst left = -3.9;\\nconst bottom = -1.5;\\nconst side = 3;\\nconst maxSteps = 12;\\nlet n = 1;\\nconst palette = [BLUE, TEAL, GREEN, PURPLE, ORANGE];\\nconst bounds = [{ x: left, y: bottom, w: side, h: side }];\\nconst pieces = [];\\nfunction vertices(b) {\\n  return [[b.x, b.y, 0], [b.x + b.w, b.y, 0], [b.x + b.w, b.y + b.h, 0], [b.x, b.y + b.h, 0]];\\n}\\nfor (let i = 0; i < maxSteps; i++) {\\n  const b = bounds[i];\\n  let pieceBounds;\\n  let nextBounds;\\n  if (i % 2 === 0) {\\n    pieceBounds = { x: b.x, y: b.y, w: b.w / 2, h: b.h };\\n    nextBounds = { x: b.x + b.w / 2, y: b.y, w: b.w / 2, h: b.h };\\n  } else {\\n    pieceBounds = { x: b.x, y: b.y, w: b.w, h: b.h / 2 };\\n    nextBounds = { x: b.x, y: b.y + b.h / 2, w: b.w, h: b.h / 2 };\\n  }\\n  const tile = new Polygon({ vertices: vertices(pieceBounds), color: palette[i % palette.length] });\\n  tile.setFill(palette[i % palette.length], 0.9);\\n  tile.setStrokeWidth(1);\\n  pieces.push(tile);\\n  bounds.push(nextBounds);\\n}\\nconst outline = new Square({ sideLength: side, color: WHITE });\\noutline.moveTo([left + side / 2, 0, 0]);\\noutline.setFillOpacity(0);\\nconst remainder = new Polygon({ vertices: vertices(bounds[n]), color: YELLOW });\\nremainder.setFill(YELLOW, 0.12);\\nremainder.setStrokeWidth(2);\\n\\nconst firstLabel = new MathTex({ latex: '\\\\\\\\frac12', color: WHITE });\\nconst secondLabel = new MathTex({ latex: '\\\\\\\\frac14', color: WHITE });\\nconst thirdLabel = new MathTex({ latex: '\\\\\\\\frac18', color: WHITE });\\nawait Promise.all([firstLabel.waitForRender(), secondLabel.waitForRender(), thirdLabel.waitForRender()]);\\nfirstLabel.moveTo([-3.15, 0, 0]);\\nsecondLabel.moveTo([-1.65, -0.75, 0]);\\nthirdLabel.moveTo([-2.025, 0.75, 0]);\\nthirdLabel.scale(0.75);\\n\\nconst countLabel = new Text({ text: '', fontSize: 25, color: WHITE });\\ncountLabel.moveTo([2.25, 1.25, 0]);\\nconst filledLabel = new Text({ text: '', fontSize: 25, color: TEAL });\\nfilledLabel.moveTo([2.25, 0.55, 0]);\\nconst gapLabel = new Text({ text: '', fontSize: 24, color: YELLOW });\\ngapLabel.moveTo([2.25, -0.1, 0]);\\nconst button = new Rectangle({ width: 2.8, height: 0.65, color: YELLOW });\\nbutton.moveTo([2.25, -1.05, 0]);\\nbutton.setFill(YELLOW, 0.15);\\nconst buttonLabel = new Text({ text: 'Add next half', fontSize: 23, color: YELLOW });\\nbuttonLabel.moveTo([2.25, -1.05, 0]);\\nconst resetLabel = new Text({ text: 'Reset', fontSize: 21, color: GRAY });\\nresetLabel.moveTo([2.25, -1.85, 0]);\\nconst limitNote = new Text({ text: 'The gap approaches 0; the filled area approaches 1.', fontSize: 23, color: WHITE });\\nlimitNote.moveTo([0, -2.65, 0]);\\nconst hint = new Text({ text: 'Click the yellow remainder or “Add next half”.', fontSize: 21, color: GRAY });\\nhint.moveTo([0, -3.25, 0]);\\n\\nawait scene.play(new Create(outline));\\nscene.add(...pieces, remainder, firstLabel, secondLabel, thirdLabel, countLabel, filledLabel, gapLabel, button, buttonLabel, resetLabel, limitNote, hint);\\n// Keep the border above the filled pieces.\\nscene.remove(outline);\\nscene.add(outline);\\nfunction update() {\\n  pieces.forEach((tile, i) => tile.setOpacity(i < n ? 1 : 0));\\n  remainder.setVertices(vertices(bounds[n]));\\n  firstLabel.setOpacity(n >= 1 ? 1 : 0);\\n  secondLabel.setOpacity(n >= 2 ? 1 : 0);\\n  thirdLabel.setOpacity(n >= 3 ? 1 : 0);\\n  countLabel.setText(n + (n === 1 ? ' piece added' : ' pieces added'));\\n  filledLabel.setText('Filled = ' + (1 - Math.pow(2, -n)).toFixed(6));\\n  gapLabel.setText(n === 0 ? 'Unfilled = 1' : 'Unfilled = 1/' + Math.pow(2, n));\\n  buttonLabel.setText(n === maxSteps ? 'Start again' : 'Add next half');\\n}\\nfunction advance() {\\n  n = n === maxSteps ? 0 : n + 1;\\n  update();\\n}\\nupdate();\\nmakeClickable(remainder, scene, { onClick: advance });\\nmakeClickable(button, scene, { onClick: advance });\\nmakeClickable(buttonLabel, scene, { onClick: advance });\\nmakeClickable(resetLabel, scene, { onClick: () => { n = 0; update(); } });\\nawait scene.wait(999999);\"}",
+        "explanation": "Fill half the square, then half of the remaining space, and keep repeating. After n pieces, the unfilled area is 1/2ⁿ, which approaches zero as n grows. Thus the infinite sum fills the whole square: 1/2 + 1/4 + 1/8 + ⋯ = 1."
+      },
+      "code": "const heading = new Text({ text: 'An infinite sum fills one square', fontSize: 30, color: WHITE });\nheading.moveTo([0, 3.15, 0]);\nconst formula = new MathTex({ latex: '\\\\frac12 + \\\\frac14 + \\\\frac18 + \\\\cdots = 1' });\nawait formula.waitForRender();\nformula.moveTo([0, 2.4, 0]);\nscene.add(heading, formula);\n\nconst left = -3.9;\nconst bottom = -1.5;\nconst side = 3;\nconst maxSteps = 12;\nlet n = 1;\nconst palette = [BLUE, TEAL, GREEN, PURPLE, ORANGE];\nconst bounds = [{ x: left, y: bottom, w: side, h: side }];\nconst pieces = [];\nfunction vertices(b) {\n  return [[b.x, b.y, 0], [b.x + b.w, b.y, 0], [b.x + b.w, b.y + b.h, 0], [b.x, b.y + b.h, 0]];\n}\nfor (let i = 0; i < maxSteps; i++) {\n  const b = bounds[i];\n  let pieceBounds;\n  let nextBounds;\n  if (i % 2 === 0) {\n    pieceBounds = { x: b.x, y: b.y, w: b.w / 2, h: b.h };\n    nextBounds = { x: b.x + b.w / 2, y: b.y, w: b.w / 2, h: b.h };\n  } else {\n    pieceBounds = { x: b.x, y: b.y, w: b.w, h: b.h / 2 };\n    nextBounds = { x: b.x, y: b.y + b.h / 2, w: b.w, h: b.h / 2 };\n  }\n  const tile = new Polygon({ vertices: vertices(pieceBounds), color: palette[i % palette.length] });\n  tile.setFill(palette[i % palette.length], 0.9);\n  tile.setStrokeWidth(1);\n  pieces.push(tile);\n  bounds.push(nextBounds);\n}\nconst outline = new Square({ sideLength: side, color: WHITE });\noutline.moveTo([left + side / 2, 0, 0]);\noutline.setFillOpacity(0);\nconst remainder = new Polygon({ vertices: vertices(bounds[n]), color: YELLOW });\nremainder.setFill(YELLOW, 0.12);\nremainder.setStrokeWidth(2);\n\nconst firstLabel = new MathTex({ latex: '\\\\frac12', color: WHITE });\nconst secondLabel = new MathTex({ latex: '\\\\frac14', color: WHITE });\nconst thirdLabel = new MathTex({ latex: '\\\\frac18', color: WHITE });\nawait Promise.all([firstLabel.waitForRender(), secondLabel.waitForRender(), thirdLabel.waitForRender()]);\nfirstLabel.moveTo([-3.15, 0, 0]);\nsecondLabel.moveTo([-1.65, -0.75, 0]);\nthirdLabel.moveTo([-2.025, 0.75, 0]);\nthirdLabel.scale(0.75);\n\nconst countLabel = new Text({ text: '', fontSize: 25, color: WHITE });\ncountLabel.moveTo([2.25, 1.25, 0]);\nconst filledLabel = new Text({ text: '', fontSize: 25, color: TEAL });\nfilledLabel.moveTo([2.25, 0.55, 0]);\nconst gapLabel = new Text({ text: '', fontSize: 24, color: YELLOW });\ngapLabel.moveTo([2.25, -0.1, 0]);\nconst button = new Rectangle({ width: 2.8, height: 0.65, color: YELLOW });\nbutton.moveTo([2.25, -1.05, 0]);\nbutton.setFill(YELLOW, 0.15);\nconst buttonLabel = new Text({ text: 'Add next half', fontSize: 23, color: YELLOW });\nbuttonLabel.moveTo([2.25, -1.05, 0]);\nconst resetLabel = new Text({ text: 'Reset', fontSize: 21, color: GRAY });\nresetLabel.moveTo([2.25, -1.85, 0]);\nconst limitNote = new Text({ text: 'The gap approaches 0; the filled area approaches 1.', fontSize: 23, color: WHITE });\nlimitNote.moveTo([0, -2.65, 0]);\nconst hint = new Text({ text: 'Click the yellow remainder or “Add next half”.', fontSize: 21, color: GRAY });\nhint.moveTo([0, -3.25, 0]);\n\nawait scene.play(new Create(outline));\nscene.add(...pieces, remainder, firstLabel, secondLabel, thirdLabel, countLabel, filledLabel, gapLabel, button, buttonLabel, resetLabel, limitNote, hint);\n// Keep the border above the filled pieces.\nscene.remove(outline);\nscene.add(outline);\nfunction update() {\n  pieces.forEach((tile, i) => tile.setOpacity(i < n ? 1 : 0));\n  remainder.setVertices(vertices(bounds[n]));\n  firstLabel.setOpacity(n >= 1 ? 1 : 0);\n  secondLabel.setOpacity(n >= 2 ? 1 : 0);\n  thirdLabel.setOpacity(n >= 3 ? 1 : 0);\n  countLabel.setText(n + (n === 1 ? ' piece added' : ' pieces added'));\n  filledLabel.setText('Filled = ' + (1 - Math.pow(2, -n)).toFixed(6));\n  gapLabel.setText(n === 0 ? 'Unfilled = 1' : 'Unfilled = 1/' + Math.pow(2, n));\n  buttonLabel.setText(n === maxSteps ? 'Start again' : 'Add next half');\n}\nfunction advance() {\n  n = n === maxSteps ? 0 : n + 1;\n  update();\n}\nupdate();\nmakeClickable(remainder, scene, { onClick: advance });\nmakeClickable(button, scene, { onClick: advance });\nmakeClickable(buttonLabel, scene, { onClick: advance });\nmakeClickable(resetLabel, scene, { onClick: () => { n = 0; update(); } });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 12171,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 4,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "click",
+            "label": "Polygon at (-1.6, 0.0)",
+            "change": 0.02279513888888889,
+            "responded": true
+          },
+          {
+            "kind": "click",
+            "label": "Rectangle at (2.3, -1.1)",
+            "change": 0.017981770833333334,
+            "responded": true
+          },
+          {
+            "kind": "click",
+            "label": "Text at (2.3, -1.1)",
+            "change": 0.006319444444444444,
+            "responded": true
+          },
+          {
+            "kind": "click",
+            "label": "Text at (2.3, -1.9)",
+            "change": 0.08169921875,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/seq-geometric-series.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/seq-geometric-series.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:53:39.917Z"
+}

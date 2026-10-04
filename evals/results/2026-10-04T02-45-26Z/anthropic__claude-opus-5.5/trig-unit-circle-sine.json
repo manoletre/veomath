@@ -1,0 +1,80 @@
+{
+  "itemId": "trig-unit-circle-sine",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 0.8,
+  "firstAttemptScore": 0.8,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.8,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.90% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Axes [x 0.13..7.25, y -2.25..2.25] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=1 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "1.28% pixels changed (threshold 1.35%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 24827,
+        "inputTokens": 8037,
+        "cachedInputTokens": 7569,
+        "outputTokens": 2720,
+        "costUsd": 0.05964980000000001,
+        "rawResponse": "{\"explanation\":\"The sine graph is wavy because sine comes from going around a circle. Picture a point moving around a circle of radius 1. At angle θ, sin θ is just the point's height. As it goes around, it rises to the top (height 1), drops back through the middle (0), sinks to the bottom (−1), and climbs back again. If you plot that height against the angle, you get a smooth wave. The wave repeats every 2π because every full turn brings the point back to where it started. In the animation, turn on \\\"Auto spin\\\" or drag the angle slider. The green height on the circle traces out the blue curve.\",\"manimCode\":\"const R = 1.5;\\nconst cx = -4.5, cy = 0;\\n\\nconst ax = new Axes({\\n  xRange: [0, 2 * Math.PI, Math.PI / 2],\\n  yRange: [-1.5, 1.5, 0.5],\\n  xLength: 7, yLength: 4.5, tips: false\\n});\\nax.moveTo([2, 0, 0]);\\n\\nconst circle = new Circle({ radius: R, color: GRAY });\\ncircle.moveTo([cx, cy, 0]);\\nconst centerDot = new Dot({ point: [cx, cy, 0], color: GRAY });\\n\\nconst radiusLine = new Polygon({ vertices: [[cx, cy, 0], [cx + R, cy, 0]], color: WHITE });\\nradiusLine.setStrokeWidth(3).setFillOpacity(0);\\nconst heightLine = new Polygon({ vertices: [[cx + R, cy, 0], [cx + R, cy, 0]], color: GREEN });\\nheightLine.setStrokeWidth(5).setFillOpacity(0);\\nconst connector = new Polygon({ vertices: [[cx + R, cy, 0], [cx + R, cy, 0]], color: YELLOW });\\nconnector.setStrokeWidth(1.5).setFillOpacity(0);\\nconst graphHeight = new Polygon({ vertices: [ax.c2p(0, 0), ax.c2p(0, 0)], color: GREEN });\\ngraphHeight.setStrokeWidth(4).setFillOpacity(0);\\n\\nconst circDot = new Dot({ point: [cx + R, cy, 0], color: YELLOW });\\nconst graphDot = new Dot({ point: ax.c2p(0, 0), color: YELLOW });\\n\\nconst ghost = ax.plot(x => Math.sin(x), { color: BLUE_E });\\nghost.setOpacity(0.25);\\n\\nlet trace = null;\\n\\nscene.add(ax, ghost, circle, centerDot, radiusLine, heightLine, connector, graphHeight, circDot, graphDot);\\n\\nconst title = new MathTex({ latex: 'y = \\\\\\\\sin\\\\\\\\theta = \\\\\\\\text{height of the point}', color: WHITE });\\nawait title.waitForRender();\\ntitle.scale(0.8);\\ntitle.moveTo([0, 3.3, 0]);\\nscene.add(title);\\n\\nconst thetaLbl = new MathTex({ latex: '\\\\\\\\theta', color: YELLOW });\\nawait thetaLbl.waitForRender();\\nthetaLbl.moveTo([cx + 0.35, cy + 0.2, 0]);\\nscene.add(thetaLbl);\\n\\nlet theta = 0;\\nlet auto = true;\\n\\nfunction render() {\\n  const px = cx + R * Math.cos(theta);\\n  const py = cy + R * Math.sin(theta);\\n  const gp = ax.c2p(theta, Math.sin(theta));\\n  circDot.moveTo([px, py, 0]);\\n  graphDot.moveTo(gp);\\n  radiusLine.setVertices([[cx, cy, 0], [px, py, 0]]);\\n  heightLine.setVertices([[px, cy, 0], [px, py, 0]]);\\n  connector.setVertices([[px, py, 0], gp]);\\n  graphHeight.setVertices([ax.c2p(theta, 0), gp]);\\n  if (trace) { scene.remove(trace); trace = null; }\\n  if (theta > 0.02) {\\n    trace = ax.plot(x => Math.sin(x), { color: BLUE, xRange: [0, theta] });\\n    trace.setStrokeWidth(5);\\n    scene.add(trace);\\n  }\\n}\\n\\nrender();\\n\\ncircDot.addUpdater((m, dt) => {\\n  if (!auto) return;\\n  const step = (typeof dt === 'number' && dt > 0 && dt < 0.2) ? dt : 1 / 60;\\n  theta += step * 0.8;\\n  if (theta > 2 * Math.PI) theta = 0;\\n  render();\\n});\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addCheckbox({ label: 'Auto spin', checked: true, onChange: (c) => { auto = c; } });\\ncontrols.addSlider({\\n  label: 'Angle θ', min: 0, max: 2 * Math.PI, value: 0, step: 0.05,\\n  onChange: (v) => { auto = false; theta = v; render(); }\\n});\\ncontrols.addButton({ label: 'Reset', onClick: () => { theta = 0; render(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The sine graph is wavy because sine comes from going around a circle. Picture a point moving around a circle of radius 1. At angle θ, sin θ is just the point's height. As it goes around, it rises to the top (height 1), drops back through the middle (0), sinks to the bottom (−1), and climbs back again. If you plot that height against the angle, you get a smooth wave. The wave repeats every 2π because every full turn brings the point back to where it started. In the animation, turn on \"Auto spin\" or drag the angle slider. The green height on the circle traces out the blue curve."
+      },
+      "code": "const R = 1.5;\nconst cx = -4.5, cy = 0;\n\nconst ax = new Axes({\n  xRange: [0, 2 * Math.PI, Math.PI / 2],\n  yRange: [-1.5, 1.5, 0.5],\n  xLength: 7, yLength: 4.5, tips: false\n});\nax.moveTo([2, 0, 0]);\n\nconst circle = new Circle({ radius: R, color: GRAY });\ncircle.moveTo([cx, cy, 0]);\nconst centerDot = new Dot({ point: [cx, cy, 0], color: GRAY });\n\nconst radiusLine = new Polygon({ vertices: [[cx, cy, 0], [cx + R, cy, 0]], color: WHITE });\nradiusLine.setStrokeWidth(3).setFillOpacity(0);\nconst heightLine = new Polygon({ vertices: [[cx + R, cy, 0], [cx + R, cy, 0]], color: GREEN });\nheightLine.setStrokeWidth(5).setFillOpacity(0);\nconst connector = new Polygon({ vertices: [[cx + R, cy, 0], [cx + R, cy, 0]], color: YELLOW });\nconnector.setStrokeWidth(1.5).setFillOpacity(0);\nconst graphHeight = new Polygon({ vertices: [ax.c2p(0, 0), ax.c2p(0, 0)], color: GREEN });\ngraphHeight.setStrokeWidth(4).setFillOpacity(0);\n\nconst circDot = new Dot({ point: [cx + R, cy, 0], color: YELLOW });\nconst graphDot = new Dot({ point: ax.c2p(0, 0), color: YELLOW });\n\nconst ghost = ax.plot(x => Math.sin(x), { color: BLUE_E });\nghost.setOpacity(0.25);\n\nlet trace = null;\n\nscene.add(ax, ghost, circle, centerDot, radiusLine, heightLine, connector, graphHeight, circDot, graphDot);\n\nconst title = new MathTex({ latex: 'y = \\\\sin\\\\theta = \\\\text{height of the point}', color: WHITE });\nawait title.waitForRender();\ntitle.scale(0.8);\ntitle.moveTo([0, 3.3, 0]);\nscene.add(title);\n\nconst thetaLbl = new MathTex({ latex: '\\\\theta', color: YELLOW });\nawait thetaLbl.waitForRender();\nthetaLbl.moveTo([cx + 0.35, cy + 0.2, 0]);\nscene.add(thetaLbl);\n\nlet theta = 0;\nlet auto = true;\n\nfunction render() {\n  const px = cx + R * Math.cos(theta);\n  const py = cy + R * Math.sin(theta);\n  const gp = ax.c2p(theta, Math.sin(theta));\n  circDot.moveTo([px, py, 0]);\n  graphDot.moveTo(gp);\n  radiusLine.setVertices([[cx, cy, 0], [px, py, 0]]);\n  heightLine.setVertices([[px, cy, 0], [px, py, 0]]);\n  connector.setVertices([[px, py, 0], gp]);\n  graphHeight.setVertices([ax.c2p(theta, 0), gp]);\n  if (trace) { scene.remove(trace); trace = null; }\n  if (theta > 0.02) {\n    trace = ax.plot(x => Math.sin(x), { color: BLUE, xRange: [0, theta] });\n    trace.setStrokeWidth(5);\n    scene.add(trace);\n  }\n}\n\nrender();\n\ncircDot.addUpdater((m, dt) => {\n  if (!auto) return;\n  const step = (typeof dt === 'number' && dt > 0 && dt < 0.2) ? dt : 1 / 60;\n  theta += step * 0.8;\n  if (theta > 2 * Math.PI) theta = 0;\n  render();\n});\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addCheckbox({ label: 'Auto spin', checked: true, onChange: (c) => { auto = c; } });\ncontrols.addSlider({\n  label: 'Angle θ', min: 0, max: 2 * Math.PI, value: 0, step: 0.05,\n  onChange: (v) => { auto = false; theta = v; render(); }\n});\ncontrols.addButton({ label: 'Reset', onClick: () => { theta = 0; render(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 7501,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 1
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/trig-unit-circle-sine.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/trig-unit-circle-sine.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:10.260Z"
+}

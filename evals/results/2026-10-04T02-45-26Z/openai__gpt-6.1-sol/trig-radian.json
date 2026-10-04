@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-radian",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.62% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.43% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 37948,
+        "inputTokens": 4597,
+        "cachedInputTokens": 4581,
+        "outputTokens": 1896,
+        "costUsd": 0.0194501,
+        "rawResponse": "{\"explanation\":\"A radian measures an angle by comparing the length of its circular arc to the circle’s radius: θ = arc length ÷ radius. One radian is the angle that makes the arc exactly as long as the radius—about 57.3°. Watch the yellow arc grow, then move the slider to compare the two lengths.\",\"manimCode\":\"const radius = 1.8;\\nconst center = [-2, 0.35, 0];\\nconst angleTracker = new ValueTracker(0.15);\\nconst pointAt = a => [center[0] + radius * Math.cos(a), center[1] + radius * Math.sin(a), 0];\\n\\nconst heading = new Text({ text: 'What is a radian?', fontSize: 36, color: WHITE });\\nheading.moveTo([0, 3.15, 0]);\\nconst circle = new Circle({ radius, color: GRAY });\\ncircle.moveTo(center);\\ncircle.setStrokeWidth(2);\\nconst fixedRadius = new Line({ start: center, end: pointAt(0), color: BLUE });\\nfixedRadius.setStrokeWidth(5);\\nconst movingRadius = new Polygon({ vertices: [center, pointAt(0.15)], color: WHITE });\\nmovingRadius.setFillOpacity(0);\\nmovingRadius.setStrokeWidth(3);\\nconst arc = new Polygon({ vertices: [pointAt(0), pointAt(0.15)], color: YELLOW });\\narc.setFillOpacity(0);\\narc.setStrokeWidth(7);\\nconst wedge = new Polygon({ vertices: [center, pointAt(0), pointAt(0.15)], color: YELLOW });\\nwedge.setFill(YELLOW, 0.12);\\nwedge.setStrokeWidth(0);\\nconst endpoint = new Dot({ point: pointAt(0.15), color: YELLOW });\\nconst radiusLabel = new Text({ text: 'r', fontSize: 26, color: BLUE });\\nradiusLabel.moveTo([-1.1, 0.05, 0]);\\n\\nconst formula = new MathTex({ latex: '\\\\\\\\theta = \\\\\\\\frac{s}{r}', color: WHITE });\\nawait formula.waitForRender();\\nformula.moveTo([2.8, 1.4, 0]);\\nconst definition = new MathTex({ latex: 's = r \\\\\\\\quad \\\\\\\\Longrightarrow \\\\\\\\quad \\\\\\\\theta = 1\\\\\\\\,\\\\\\\\mathrm{rad}', color: YELLOW });\\nawait definition.waitForRender();\\ndefinition.scale(0.8);\\ndefinition.moveTo([2.8, 0.35, 0]);\\nlet readout = new Text({ text: '0.15 rad = 8.6 degrees', fontSize: 23, color: WHITE });\\nreadout.moveTo([2.8, -0.6, 0]);\\n\\nconst rulerStart = [-3.8, -2.05, 0];\\nconst arcRuler = new Polygon({ vertices: [rulerStart, [-3.8 + radius * 0.15, -2.05, 0]], color: YELLOW });\\narcRuler.setFillOpacity(0);\\narcRuler.setStrokeWidth(7);\\nconst radiusRuler = new Line({ start: [-3.8, -2.55, 0], end: [-2, -2.55, 0], color: BLUE });\\nradiusRuler.setStrokeWidth(7);\\nconst arcCaption = new Text({ text: 'Arc s', fontSize: 22, color: YELLOW });\\narcCaption.moveTo([-4.75, -2.05, 0]);\\nconst radiusCaption = new Text({ text: 'Radius r', fontSize: 22, color: BLUE });\\nradiusCaption.moveTo([-4.75, -2.55, 0]);\\nconst footer = new Text({ text: 'One radian: the yellow and blue lengths match.', fontSize: 25, color: WHITE });\\nfooter.moveTo([0, -3.25, 0]);\\n\\nawait scene.play(new Write(heading));\\nawait scene.play(new Create(circle));\\nscene.add(wedge, fixedRadius, movingRadius, arc, endpoint, radiusLabel);\\nscene.add(formula, definition, readout, arcRuler, radiusRuler, arcCaption, radiusCaption, footer);\\n\\nlet previousValue = '';\\nfunction updateAngle() {\\n  const a = angleTracker.getValue();\\n  const arcPoints = [];\\n  for (let i = 0; i <= 90; i++) arcPoints.push(pointAt(a * i / 90));\\n  arc.setVertices(arcPoints);\\n  wedge.setVertices([center, ...arcPoints]);\\n  movingRadius.setVertices([center, pointAt(a)]);\\n  endpoint.moveTo(pointAt(a));\\n  arcRuler.setVertices([rulerStart, [-3.8 + radius * a, -2.05, 0]]);\\n  const value = a.toFixed(2) + ' rad = ' + (a * 180 / Math.PI).toFixed(1) + ' degrees';\\n  if (value !== previousValue) {\\n    scene.remove(readout);\\n    readout = new Text({ text: value, fontSize: 23, color: WHITE });\\n    readout.moveTo([2.8, -0.6, 0]);\\n    scene.add(readout);\\n    previousValue = value;\\n  }\\n}\\nendpoint.addUpdater(() => updateAngle());\\nawait scene.play(angleTracker.animateTo(1));\\nawait scene.wait(1.5);\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\ncontrols.addSlider({ label: 'Angle (radians)', min: 0.15, max: 2.5, value: 1, step: 0.01, onChange: value => {\\n  angleTracker.setValue(value);\\n  updateAngle();\\n} });\\ncontrols.addButton({ label: 'Show exactly 1 radian', onClick: () => {\\n  angleTracker.setValue(1);\\n  updateAngle();\\n} });\\nawait scene.wait(999999);\"}",
+        "explanation": "A radian measures an angle by comparing the length of its circular arc to the circle’s radius: θ = arc length ÷ radius. One radian is the angle that makes the arc exactly as long as the radius—about 57.3°. Watch the yellow arc grow, then move the slider to compare the two lengths."
+      },
+      "code": "const radius = 1.8;\nconst center = [-2, 0.35, 0];\nconst angleTracker = new ValueTracker(0.15);\nconst pointAt = a => [center[0] + radius * Math.cos(a), center[1] + radius * Math.sin(a), 0];\n\nconst heading = new Text({ text: 'What is a radian?', fontSize: 36, color: WHITE });\nheading.moveTo([0, 3.15, 0]);\nconst circle = new Circle({ radius, color: GRAY });\ncircle.moveTo(center);\ncircle.setStrokeWidth(2);\nconst fixedRadius = new Line({ start: center, end: pointAt(0), color: BLUE });\nfixedRadius.setStrokeWidth(5);\nconst movingRadius = new Polygon({ vertices: [center, pointAt(0.15)], color: WHITE });\nmovingRadius.setFillOpacity(0);\nmovingRadius.setStrokeWidth(3);\nconst arc = new Polygon({ vertices: [pointAt(0), pointAt(0.15)], color: YELLOW });\narc.setFillOpacity(0);\narc.setStrokeWidth(7);\nconst wedge = new Polygon({ vertices: [center, pointAt(0), pointAt(0.15)], color: YELLOW });\nwedge.setFill(YELLOW, 0.12);\nwedge.setStrokeWidth(0);\nconst endpoint = new Dot({ point: pointAt(0.15), color: YELLOW });\nconst radiusLabel = new Text({ text: 'r', fontSize: 26, color: BLUE });\nradiusLabel.moveTo([-1.1, 0.05, 0]);\n\nconst formula = new MathTex({ latex: '\\\\theta = \\\\frac{s}{r}', color: WHITE });\nawait formula.waitForRender();\nformula.moveTo([2.8, 1.4, 0]);\nconst definition = new MathTex({ latex: 's = r \\\\quad \\\\Longrightarrow \\\\quad \\\\theta = 1\\\\,\\\\mathrm{rad}', color: YELLOW });\nawait definition.waitForRender();\ndefinition.scale(0.8);\ndefinition.moveTo([2.8, 0.35, 0]);\nlet readout = new Text({ text: '0.15 rad = 8.6 degrees', fontSize: 23, color: WHITE });\nreadout.moveTo([2.8, -0.6, 0]);\n\nconst rulerStart = [-3.8, -2.05, 0];\nconst arcRuler = new Polygon({ vertices: [rulerStart, [-3.8 + radius * 0.15, -2.05, 0]], color: YELLOW });\narcRuler.setFillOpacity(0);\narcRuler.setStrokeWidth(7);\nconst radiusRuler = new Line({ start: [-3.8, -2.55, 0], end: [-2, -2.55, 0], color: BLUE });\nradiusRuler.setStrokeWidth(7);\nconst arcCaption = new Text({ text: 'Arc s', fontSize: 22, color: YELLOW });\narcCaption.moveTo([-4.75, -2.05, 0]);\nconst radiusCaption = new Text({ text: 'Radius r', fontSize: 22, color: BLUE });\nradiusCaption.moveTo([-4.75, -2.55, 0]);\nconst footer = new Text({ text: 'One radian: the yellow and blue lengths match.', fontSize: 25, color: WHITE });\nfooter.moveTo([0, -3.25, 0]);\n\nawait scene.play(new Write(heading));\nawait scene.play(new Create(circle));\nscene.add(wedge, fixedRadius, movingRadius, arc, endpoint, radiusLabel);\nscene.add(formula, definition, readout, arcRuler, radiusRuler, arcCaption, radiusCaption, footer);\n\nlet previousValue = '';\nfunction updateAngle() {\n  const a = angleTracker.getValue();\n  const arcPoints = [];\n  for (let i = 0; i <= 90; i++) arcPoints.push(pointAt(a * i / 90));\n  arc.setVertices(arcPoints);\n  wedge.setVertices([center, ...arcPoints]);\n  movingRadius.setVertices([center, pointAt(a)]);\n  endpoint.moveTo(pointAt(a));\n  arcRuler.setVertices([rulerStart, [-3.8 + radius * a, -2.05, 0]]);\n  const value = a.toFixed(2) + ' rad = ' + (a * 180 / Math.PI).toFixed(1) + ' degrees';\n  if (value !== previousValue) {\n    scene.remove(readout);\n    readout = new Text({ text: value, fontSize: 23, color: WHITE });\n    readout.moveTo([2.8, -0.6, 0]);\n    scene.add(readout);\n    previousValue = value;\n  }\n}\nendpoint.addUpdater(() => updateAngle());\nawait scene.play(angleTracker.animateTo(1));\nawait scene.wait(1.5);\n\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\ncontrols.addSlider({ label: 'Angle (radians)', min: 0.15, max: 2.5, value: 1, step: 0.01, onChange: value => {\n  angleTracker.setValue(value);\n  updateAngle();\n} });\ncontrols.addButton({ label: 'Show exactly 1 radian', onClick: () => {\n  angleTracker.setValue(1);\n  updateAngle();\n} });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 11165,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 3,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/trig-radian.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/trig-radian.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:14.793Z"
+}

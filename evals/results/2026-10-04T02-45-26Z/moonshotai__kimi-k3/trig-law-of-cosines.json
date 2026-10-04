@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-law-of-cosines",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "7.29% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.65% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 150439,
+        "inputTokens": 4710,
+        "cachedInputTokens": 4480,
+        "outputTokens": 18599,
+        "costUsd": 0.28101899999999996,
+        "rawResponse": "{\"explanation\":\"The law of cosines, c² = a² + b² − 2ab·cos(C), is best read as the Pythagorean theorem plus a correction term. The part a² + b² is what c² *would* equal if angle C were exactly 90°; the term −2ab·cos(C) corrects for the fact that it usually isn't. If C is acute, cos(C) is positive, so the correction subtracts from the Pythagorean sum (the triangle is \\\"pinched\\\" and c is shorter than the hypotenuse would be); if C is obtuse, the correction adds (the triangle is \\\"stretched\\\"). At exactly 90°, cos(C) = 0, the correction vanishes, and you recover the plain Pythagorean theorem — drag point A in the visualization to see the red/green correction segment shrink or grow the bar from a² + b² to c².\",\"manimCode\":\"const a = 2.5, b = 3.3;\\nconst C0 = [-3.7, -2.2, 0];\\nconst Bv = [-0.4, -2.2, 0];\\nconst S = a * a + b * b;\\nconst TWOAB = 2 * a * b;\\nlet theta = 1.15;\\n\\nfunction pointA(th) { return [C0[0] + a * Math.cos(th), C0[1] + a * Math.sin(th), 0]; }\\nfunction wedgeVerts(th) {\\n  const r = 0.6, pts = [[C0[0], C0[1], 0]];\\n  const n = Math.max(3, Math.ceil(th / 0.07));\\n  for (let i = 0; i <= n; i++) {\\n    const t = th * i / n;\\n    pts.push([C0[0] + r * Math.cos(t), C0[1] + r * Math.sin(t), 0]);\\n  }\\n  return pts;\\n}\\nfunction rectVerts(xa, ya, xb, yb) { return [[xa, ya, 0], [xb, ya, 0], [xb, yb, 0], [xa, yb, 0]]; }\\n\\n// --- triangle ---\\nconst triangle = new Polygon({ vertices: [[C0[0], C0[1], 0], [Bv[0], Bv[1], 0], pointA(theta)], color: WHITE });\\ntriangle.setFill(BLUE_E, 0.35);\\ntriangle.setStrokeWidth(3);\\nconst wedge = new Polygon({ vertices: wedgeVerts(theta), color: YELLOW });\\nwedge.setFill(YELLOW, 0.45);\\nconst dotA = new Dot({ point: pointA(theta), color: YELLOW });\\nconst dotC = new Dot({ point: [C0[0], C0[1], 0], color: WHITE });\\nconst dotB = new Dot({ point: [Bv[0], Bv[1], 0], color: WHITE });\\n\\n// --- right-angle ghost (pure Pythagoras reference) ---\\nconst A90 = [C0[0], C0[1] + a, 0];\\nconst ghostSide = new Polygon({ vertices: [[C0[0], C0[1], 0], A90], color: GRAY });\\nghostSide.setStrokeWidth(2).setFillOpacity(0).setOpacity(0.55);\\nconst ghostHyp = new Polygon({ vertices: [A90, [Bv[0], Bv[1], 0]], color: GRAY });\\nghostHyp.setStrokeWidth(2).setFillOpacity(0).setOpacity(0.55);\\nconst ghostLab = new Text({ text: 'if C = 90°', color: GRAY, fontSize: 18 });\\nghostLab.moveTo([-1.55, -0.5, 0]);\\n\\n// --- bars: a²+b² vs c², with the correction segment between ---\\nconst x0 = 1.9, k = 4.3 / 37;\\nconst vx = (v) => x0 + k * v;\\nconst xS = vx(S);\\nconst c0sq = S - TWOAB * Math.cos(theta);\\nconst pBar = new Polygon({ vertices: rectVerts(x0, 1.55, xS, 1.95), color: BLUE_C });\\npBar.setFill(BLUE_C, 0.4);\\nconst cBar = new Polygon({ vertices: rectVerts(x0, 0.85, vx(c0sq), 1.25), color: BLUE });\\ncBar.setFill(BLUE, 0.85);\\nconst corrSeg = new Polygon({ vertices: rectVerts(Math.min(xS, vx(c0sq)), 1.36, Math.max(xS, vx(c0sq)), 1.48), color: RED });\\ncorrSeg.setFill(RED, 0.9);\\nconst refLine = new Polygon({ vertices: [[xS, 0.78, 0], [xS, 2.02, 0]], color: GRAY });\\nrefLine.setStrokeWidth(1.5).setFillOpacity(0).setOpacity(0.7);\\nconst axisLine = new Polygon({ vertices: [[x0, 0.78, 0], [x0, 2.02, 0]], color: WHITE });\\naxisLine.setStrokeWidth(1.5).setFillOpacity(0);\\n\\n// --- labels ---\\nconst sideALab = new Text({ text: 'a', color: WHITE, fontSize: 26 });\\nconst sideBLab = new Text({ text: 'b', color: WHITE, fontSize: 26 });\\nsideBLab.moveTo([-2.05, -2.56, 0]);\\nconst sideCLab = new Text({ text: 'c', color: WHITE, fontSize: 26 });\\nconst hint = new Text({ text: 'drag A', color: GRAY, fontSize: 18 });\\nconst vC = new Text({ text: 'C', color: WHITE, fontSize: 22 });\\nvC.moveTo([-4.05, -2.55, 0]);\\nconst vB = new Text({ text: 'B', color: WHITE, fontSize: 22 });\\nvB.moveTo([-0.25, -2.55, 0]);\\nconst barPLab = new Text({ text: 'a² + b²', color: BLUE_C, fontSize: 22 });\\nbarPLab.moveTo([1.42, 1.75, 0]);\\nconst barCLab = new Text({ text: 'c²', color: BLUE, fontSize: 22 });\\nbarCLab.moveTo([1.62, 1.05, 0]);\\nconst note = new Text({ text: 'Drag A to change angle C — at 90° the correction vanishes: pure Pythagoras!', color: GRAY, fontSize: 24 });\\nnote.moveTo([0, -3.4, 0]);\\n\\n// --- dynamic texts ---\\nlet thetaTex = null, r1 = null, r2 = null, r3 = null;\\nfunction drawText(current, opts, pos) {\\n  if (current) scene.remove(current);\\n  const t = new Text(opts);\\n  t.moveTo(pos);\\n  scene.add(t);\\n  return t;\\n}\\n\\nfunction updateAll(th) {\\n  const cosC = Math.cos(th);\\n  const corr = -TWOAB * cosC;\\n  let c2 = S + corr;\\n  if (c2 < 0.02) c2 = 0.02;\\n  const A = pointA(th);\\n\\n  triangle.setVertices([[C0[0], C0[1], 0], [Bv[0], Bv[1], 0], A]);\\n  wedge.setVertices(wedgeVerts(th));\\n\\n  const xC = vx(c2);\\n  cBar.setVertices(rectVerts(x0, 0.85, xC, 1.25));\\n  const lo = Math.min(xS, xC), hi = Math.max(xS, xC);\\n  corrSeg.setVertices(rectVerts(lo, 1.36, hi, 1.48));\\n  const col = (c2 <= S) ? RED : GREEN;\\n  corrSeg.setColor(col);\\n  corrSeg.setFill(col, 0.9);\\n\\n  sideALab.moveTo([C0[0] + (a / 2) * Math.cos(th) - Math.sin(th) * 0.34, C0[1] + (a / 2) * Math.sin(th) + Math.cos(th) * 0.34, 0]);\\n  const mx = (A[0] + Bv[0]) / 2, my = (A[1] + Bv[1]) / 2;\\n  let nx = mx - C0[0], ny = my - C0[1];\\n  const L = Math.hypot(nx, ny) || 1; nx /= L; ny /= L;\\n  sideCLab.moveTo([mx + nx * 0.4, my + ny * 0.4, 0]);\\n  hint.moveTo([A[0] + 0.1, A[1] + 0.4, 0]);\\n\\n  const deg = Math.round(th * 180 / Math.PI);\\n  const sgn = corr >= 0 ? '+' : '-';\\n  thetaTex = drawText(thetaTex, { text: deg + '°', color: YELLOW, fontSize: 22 }, [C0[0] + 1.05 * Math.cos(th / 2), C0[1] + 1.05 * Math.sin(th / 2), 0]);\\n  r1 = drawText(r1, { text: 'C = ' + deg + '°    cos C = ' + cosC.toFixed(2), color: WHITE, fontSize: 24 }, [4.0, 2.75, 0]);\\n  r2 = drawText(r2, { text: 'correction = -2ab·cos C = ' + sgn + Math.abs(corr).toFixed(2), color: col, fontSize: 24 }, [4.0, 2.28, 0]);\\n  r3 = drawText(r3, { text: 'c² = ' + S.toFixed(2) + ' ' + sgn + ' ' + Math.abs(corr).toFixed(2) + ' = ' + c2.toFixed(2), color: WHITE, fontSize: 24 }, [4.0, 0.3, 0]);\\n}\\n\\n// --- title formula ---\\nconst formula = new MathTex({ latex: \\\"c^2 = \\\\\\\\underbrace{a^2 + b^2}_{\\\\\\\\text{Pythagoras}} \\\\\\\\;+\\\\\\\\; \\\\\\\\underbrace{(-2ab\\\\\\\\cos C)}_{\\\\\\\\text{correction}}\\\", fontSize: 40 });\\nawait formula.waitForRender();\\nformula.moveTo([0.3, 3.35, 0]);\\n\\nscene.add(ghostSide, ghostHyp, ghostLab, dotC, dotB, sideBLab, vC, vB, pBar, cBar, corrSeg, refLine, axisLine, barPLab, barCLab, note, sideALab, sideCLab, hint);\\nawait scene.play(new FadeIn(formula));\\nawait scene.play(new AnimationGroup([new Create(triangle), new Create(wedge), new FadeIn(dotA)]));\\nupdateAll(theta);\\n\\nmakeDraggable(dotA, scene, { onDrag: (mob, pos) => {\\n  let th = Math.atan2(pos[1] - C0[1], pos[0] - C0[0]);\\n  if (th < 0.25) th = 0.25;\\n  if (th > Math.PI - 0.25) th = Math.PI - 0.25;\\n  theta = th;\\n  mob.moveTo(pointA(th));\\n  updateAll(th);\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The law of cosines, c² = a² + b² − 2ab·cos(C), is best read as the Pythagorean theorem plus a correction term. The part a² + b² is what c² *would* equal if angle C were exactly 90°; the term −2ab·cos(C) corrects for the fact that it usually isn't. If C is acute, cos(C) is positive, so the correction subtracts from the Pythagorean sum (the triangle is \"pinched\" and c is shorter than the hypotenuse would be); if C is obtuse, the correction adds (the triangle is \"stretched\"). At exactly 90°, cos(C) = 0, the correction vanishes, and you recover the plain Pythagorean theorem — drag point A in the visualization to see the red/green correction segment shrink or grow the bar from a² + b² to c²."
+      },
+      "code": "const a = 2.5, b = 3.3;\nconst C0 = [-3.7, -2.2, 0];\nconst Bv = [-0.4, -2.2, 0];\nconst S = a * a + b * b;\nconst TWOAB = 2 * a * b;\nlet theta = 1.15;\n\nfunction pointA(th) { return [C0[0] + a * Math.cos(th), C0[1] + a * Math.sin(th), 0]; }\nfunction wedgeVerts(th) {\n  const r = 0.6, pts = [[C0[0], C0[1], 0]];\n  const n = Math.max(3, Math.ceil(th / 0.07));\n  for (let i = 0; i <= n; i++) {\n    const t = th * i / n;\n    pts.push([C0[0] + r * Math.cos(t), C0[1] + r * Math.sin(t), 0]);\n  }\n  return pts;\n}\nfunction rectVerts(xa, ya, xb, yb) { return [[xa, ya, 0], [xb, ya, 0], [xb, yb, 0], [xa, yb, 0]]; }\n\n// --- triangle ---\nconst triangle = new Polygon({ vertices: [[C0[0], C0[1], 0], [Bv[0], Bv[1], 0], pointA(theta)], color: WHITE });\ntriangle.setFill(BLUE_E, 0.35);\ntriangle.setStrokeWidth(3);\nconst wedge = new Polygon({ vertices: wedgeVerts(theta), color: YELLOW });\nwedge.setFill(YELLOW, 0.45);\nconst dotA = new Dot({ point: pointA(theta), color: YELLOW });\nconst dotC = new Dot({ point: [C0[0], C0[1], 0], color: WHITE });\nconst dotB = new Dot({ point: [Bv[0], Bv[1], 0], color: WHITE });\n\n// --- right-angle ghost (pure Pythagoras reference) ---\nconst A90 = [C0[0], C0[1] + a, 0];\nconst ghostSide = new Polygon({ vertices: [[C0[0], C0[1], 0], A90], color: GRAY });\nghostSide.setStrokeWidth(2).setFillOpacity(0).setOpacity(0.55);\nconst ghostHyp = new Polygon({ vertices: [A90, [Bv[0], Bv[1], 0]], color: GRAY });\nghostHyp.setStrokeWidth(2).setFillOpacity(0).setOpacity(0.55);\nconst ghostLab = new Text({ text: 'if C = 90°', color: GRAY, fontSize: 18 });\nghostLab.moveTo([-1.55, -0.5, 0]);\n\n// --- bars: a²+b² vs c², with the correction segment between ---\nconst x0 = 1.9, k = 4.3 / 37;\nconst vx = (v) => x0 + k * v;\nconst xS = vx(S);\nconst c0sq = S - TWOAB * Math.cos(theta);\nconst pBar = new Polygon({ vertices: rectVerts(x0, 1.55, xS, 1.95), color: BLUE_C });\npBar.setFill(BLUE_C, 0.4);\nconst cBar = new Polygon({ vertices: rectVerts(x0, 0.85, vx(c0sq), 1.25), color: BLUE });\ncBar.setFill(BLUE, 0.85);\nconst corrSeg = new Polygon({ vertices: rectVerts(Math.min(xS, vx(c0sq)), 1.36, Math.max(xS, vx(c0sq)), 1.48), color: RED });\ncorrSeg.setFill(RED, 0.9);\nconst refLine = new Polygon({ vertices: [[xS, 0.78, 0], [xS, 2.02, 0]], color: GRAY });\nrefLine.setStrokeWidth(1.5).setFillOpacity(0).setOpacity(0.7);\nconst axisLine = new Polygon({ vertices: [[x0, 0.78, 0], [x0, 2.02, 0]], color: WHITE });\naxisLine.setStrokeWidth(1.5).setFillOpacity(0);\n\n// --- labels ---\nconst sideALab = new Text({ text: 'a', color: WHITE, fontSize: 26 });\nconst sideBLab = new Text({ text: 'b', color: WHITE, fontSize: 26 });\nsideBLab.moveTo([-2.05, -2.56, 0]);\nconst sideCLab = new Text({ text: 'c', color: WHITE, fontSize: 26 });\nconst hint = new Text({ text: 'drag A', color: GRAY, fontSize: 18 });\nconst vC = new Text({ text: 'C', color: WHITE, fontSize: 22 });\nvC.moveTo([-4.05, -2.55, 0]);\nconst vB = new Text({ text: 'B', color: WHITE, fontSize: 22 });\nvB.moveTo([-0.25, -2.55, 0]);\nconst barPLab = new Text({ text: 'a² + b²', color: BLUE_C, fontSize: 22 });\nbarPLab.moveTo([1.42, 1.75, 0]);\nconst barCLab = new Text({ text: 'c²', color: BLUE, fontSize: 22 });\nbarCLab.moveTo([1.62, 1.05, 0]);\nconst note = new Text({ text: 'Drag A to change angle C — at 90° the correction vanishes: pure Pythagoras!', color: GRAY, fontSize: 24 });\nnote.moveTo([0, -3.4, 0]);\n\n// --- dynamic texts ---\nlet thetaTex = null, r1 = null, r2 = null, r3 = null;\nfunction drawText(current, opts, pos) {\n  if (current) scene.remove(current);\n  const t = new Text(opts);\n  t.moveTo(pos);\n  scene.add(t);\n  return t;\n}\n\nfunction updateAll(th) {\n  const cosC = Math.cos(th);\n  const corr = -TWOAB * cosC;\n  let c2 = S + corr;\n  if (c2 < 0.02) c2 = 0.02;\n  const A = pointA(th);\n\n  triangle.setVertices([[C0[0], C0[1], 0], [Bv[0], Bv[1], 0], A]);\n  wedge.setVertices(wedgeVerts(th));\n\n  const xC = vx(c2);\n  cBar.setVertices(rectVerts(x0, 0.85, xC, 1.25));\n  const lo = Math.min(xS, xC), hi = Math.max(xS, xC);\n  corrSeg.setVertices(rectVerts(lo, 1.36, hi, 1.48));\n  const col = (c2 <= S) ? RED : GREEN;\n  corrSeg.setColor(col);\n  corrSeg.setFill(col, 0.9);\n\n  sideALab.moveTo([C0[0] + (a / 2) * Math.cos(th) - Math.sin(th) * 0.34, C0[1] + (a / 2) * Math.sin(th) + Math.cos(th) * 0.34, 0]);\n  const mx = (A[0] + Bv[0]) / 2, my = (A[1] + Bv[1]) / 2;\n  let nx = mx - C0[0], ny = my - C0[1];\n  const L = Math.hypot(nx, ny) || 1; nx /= L; ny /= L;\n  sideCLab.moveTo([mx + nx * 0.4, my + ny * 0.4, 0]);\n  hint.moveTo([A[0] + 0.1, A[1] + 0.4, 0]);\n\n  const deg = Math.round(th * 180 / Math.PI);\n  const sgn = corr >= 0 ? '+' : '-';\n  thetaTex = drawText(thetaTex, { text: deg + '°', color: YELLOW, fontSize: 22 }, [C0[0] + 1.05 * Math.cos(th / 2), C0[1] + 1.05 * Math.sin(th / 2), 0]);\n  r1 = drawText(r1, { text: 'C = ' + deg + '°    cos C = ' + cosC.toFixed(2), color: WHITE, fontSize: 24 }, [4.0, 2.75, 0]);\n  r2 = drawText(r2, { text: 'correction = -2ab·cos C = ' + sgn + Math.abs(corr).toFixed(2), color: col, fontSize: 24 }, [4.0, 2.28, 0]);\n  r3 = drawText(r3, { text: 'c² = ' + S.toFixed(2) + ' ' + sgn + ' ' + Math.abs(corr).toFixed(2) + ' = ' + c2.toFixed(2), color: WHITE, fontSize: 24 }, [4.0, 0.3, 0]);\n}\n\n// --- title formula ---\nconst formula = new MathTex({ latex: \"c^2 = \\\\underbrace{a^2 + b^2}_{\\\\text{Pythagoras}} \\\\;+\\\\; \\\\underbrace{(-2ab\\\\cos C)}_{\\\\text{correction}}\", fontSize: 40 });\nawait formula.waitForRender();\nformula.moveTo([0.3, 3.35, 0]);\n\nscene.add(ghostSide, ghostHyp, ghostLab, dotC, dotB, sideBLab, vC, vB, pBar, cBar, corrSeg, refLine, axisLine, barPLab, barCLab, note, sideALab, sideCLab, hint);\nawait scene.play(new FadeIn(formula));\nawait scene.play(new AnimationGroup([new Create(triangle), new Create(wedge), new FadeIn(dotA)]));\nupdateAll(theta);\n\nmakeDraggable(dotA, scene, { onDrag: (mob, pos) => {\n  let th = Math.atan2(pos[1] - C0[1], pos[0] - C0[0]);\n  if (th < 0.25) th = 0.25;\n  if (th > Math.PI - 0.25) th = Math.PI - 0.25;\n  theta = th;\n  mob.moveTo(pointA(th));\n  updateAll(th);\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 8989,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 2,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/trig-law-of-cosines.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/trig-law-of-cosines.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:56:44.923Z"
+}

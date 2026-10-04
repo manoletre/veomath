@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-bayes-medical",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "17.03% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=0 checkboxes=1 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.54% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 34403,
+        "inputTokens": 8078,
+        "cachedInputTokens": 0,
+        "outputTokens": 3618,
+        "costUsd": 0.136976,
+        "rawResponse": "{\"explanation\":\"There's only about an **8.3%** chance you're sick, even though the test is 90% accurate. Picture 1,000 people. About 10 of them are sick, and the test catches 9 of those. The other 990 are healthy, but the test wrongly flags 10% of them, which is 99 people. So 108 people test positive and only 9 of them are actually sick: 9 / 108 ≈ 8.3%. This is Bayes' theorem: P(sick | +) = (0.9 × 0.01) / (0.9 × 0.01 + 0.1 × 0.99). Because the disease is rare, the healthy people who test positive by mistake far outnumber the sick people who test positive. In the visualization, tick \\\"Show only positive tests\\\" to dim everyone who tested negative. The few red squares (sick and positive) are surrounded by many orange squares (healthy and positive). Use the sliders to change how common the disease is and how accurate the test is, and see how the answer changes.\",\"manimCode\":\"const N = 1000, cols = 40, cell = 0.155;\\nconst x0 = -6.35, yTop = 2.35;\\nlet prev = 1, sens = 90, spec = 90, focus = false;\\n\\nconst C_TP = RED, C_FN = MAROON, C_FP = ORANGE, C_TN = BLUE_E;\\n\\nconst title = new Text({ text: '1000 people get tested', color: WHITE, fontSize: 30 });\\ntitle.moveTo([-3.3, 3.2, 0]);\\nscene.add(title);\\n\\nconst cells = [];\\nfor (let i = 0; i < N; i++) {\\n  const r = Math.floor(i / cols), c = i % cols;\\n  const sq = new Rectangle({ width: cell * 0.82, height: cell * 0.82, color: GRAY });\\n  sq.setStrokeWidth(0);\\n  sq.setFill(GRAY, 0.6);\\n  sq.moveTo([x0 + c * cell, yTop - r * cell, 0]);\\n  cells.push(sq);\\n}\\nconst grid = new VGroup(...cells);\\nawait scene.play(new FadeIn(grid));\\n\\n// Legend\\nconst legendItems = [\\n  [C_TP, 'Sick, test +'], [C_FN, 'Sick, test -'],\\n  [C_FP, 'Healthy, test +'], [C_TN, 'Healthy, test -']\\n];\\nlegendItems.forEach(([col, lab], k) => {\\n  const x = -6.2 + (k % 2) * 3.4, y = -2.15 - Math.floor(k / 2) * 0.5;\\n  const sw = new Rectangle({ width: 0.25, height: 0.25, color: col });\\n  sw.setStrokeWidth(0); sw.setFill(col, 1); sw.moveTo([x, y, 0]);\\n  const t = new Text({ text: lab, color: WHITE, fontSize: 20 });\\n  t.moveTo([x + 0.25 + 0.9, y, 0]);\\n  scene.add(sw, t);\\n});\\n\\nconst formula = new MathTex({ latex: 'P(S\\\\\\\\mid +)=\\\\\\\\frac{P(+\\\\\\\\mid S)\\\\\\\\,P(S)}{P(+\\\\\\\\mid S)P(S)+P(+\\\\\\\\mid H)P(H)}', color: WHITE });\\nawait formula.waitForRender();\\nformula.scale(0.55);\\nformula.moveTo([3.6, 3.2, 0]);\\nscene.add(formula);\\n\\nlet lines = [];\\nfunction setLines(arr) {\\n  lines.forEach(l => scene.remove(l));\\n  lines = arr.map(([str, col, fs, y]) => {\\n    const t = new Text({ text: str, color: col, fontSize: fs });\\n    t.moveTo([3.6, y, 0]);\\n    scene.add(t);\\n    return t;\\n  });\\n}\\n\\nfunction update() {\\n  const p = prev / 100, se = sens / 100, sp = spec / 100;\\n  const sick = Math.round(N * p);\\n  const tp = Math.round(sick * se);\\n  const fn = sick - tp;\\n  const healthy = N - sick;\\n  const fp = Math.round(healthy * (1 - sp));\\n  const tn = healthy - fp;\\n  for (let i = 0; i < N; i++) {\\n    let col, neg;\\n    if (i < tp) { col = C_TP; neg = false; }\\n    else if (i < sick) { col = C_FN; neg = true; }\\n    else if (i < sick + fp) { col = C_FP; neg = false; }\\n    else { col = C_TN; neg = true; }\\n    cells[i].setFill(col, focus && neg ? 0.12 : 1);\\n  }\\n  const exact = (se * p) / (se * p + (1 - sp) * (1 - p));\\n  setLines([\\n    ['Sick: ' + sick + '   Healthy: ' + healthy, WHITE, 22, 2.3],\\n    ['Sick & positive: ' + tp, C_TP, 24, 1.8],\\n    ['Healthy & positive: ' + fp, C_FP, 24, 1.35],\\n    ['P(sick | +) = ' + tp + ' / (' + tp + ' + ' + fp + ')', WHITE, 24, 0.85],\\n    ['≈ ' + (exact * 100).toFixed(1) + '%', YELLOW, 44, 0.2]\\n  ]);\\n}\\nupdate();\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\\ncontrols.addSlider({ label: 'Prevalence (%)', min: 0.1, max: 30, value: 1, step: 0.1, onChange: v => { prev = v; update(); } });\\ncontrols.addSlider({ label: 'Sensitivity (%)', min: 50, max: 100, value: 90, step: 1, onChange: v => { sens = v; update(); } });\\ncontrols.addSlider({ label: 'Specificity (%)', min: 50, max: 100, value: 90, step: 0.5, onChange: v => { spec = v; update(); } });\\ncontrols.addCheckbox({ label: 'Show only positive tests', checked: false, onChange: c => { focus = c; update(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "There's only about an **8.3%** chance you're sick, even though the test is 90% accurate. Picture 1,000 people. About 10 of them are sick, and the test catches 9 of those. The other 990 are healthy, but the test wrongly flags 10% of them, which is 99 people. So 108 people test positive and only 9 of them are actually sick: 9 / 108 ≈ 8.3%. This is Bayes' theorem: P(sick | +) = (0.9 × 0.01) / (0.9 × 0.01 + 0.1 × 0.99). Because the disease is rare, the healthy people who test positive by mistake far outnumber the sick people who test positive. In the visualization, tick \"Show only positive tests\" to dim everyone who tested negative. The few red squares (sick and positive) are surrounded by many orange squares (healthy and positive). Use the sliders to change how common the disease is and how accurate the test is, and see how the answer changes."
+      },
+      "code": "const N = 1000, cols = 40, cell = 0.155;\nconst x0 = -6.35, yTop = 2.35;\nlet prev = 1, sens = 90, spec = 90, focus = false;\n\nconst C_TP = RED, C_FN = MAROON, C_FP = ORANGE, C_TN = BLUE_E;\n\nconst title = new Text({ text: '1000 people get tested', color: WHITE, fontSize: 30 });\ntitle.moveTo([-3.3, 3.2, 0]);\nscene.add(title);\n\nconst cells = [];\nfor (let i = 0; i < N; i++) {\n  const r = Math.floor(i / cols), c = i % cols;\n  const sq = new Rectangle({ width: cell * 0.82, height: cell * 0.82, color: GRAY });\n  sq.setStrokeWidth(0);\n  sq.setFill(GRAY, 0.6);\n  sq.moveTo([x0 + c * cell, yTop - r * cell, 0]);\n  cells.push(sq);\n}\nconst grid = new VGroup(...cells);\nawait scene.play(new FadeIn(grid));\n\n// Legend\nconst legendItems = [\n  [C_TP, 'Sick, test +'], [C_FN, 'Sick, test -'],\n  [C_FP, 'Healthy, test +'], [C_TN, 'Healthy, test -']\n];\nlegendItems.forEach(([col, lab], k) => {\n  const x = -6.2 + (k % 2) * 3.4, y = -2.15 - Math.floor(k / 2) * 0.5;\n  const sw = new Rectangle({ width: 0.25, height: 0.25, color: col });\n  sw.setStrokeWidth(0); sw.setFill(col, 1); sw.moveTo([x, y, 0]);\n  const t = new Text({ text: lab, color: WHITE, fontSize: 20 });\n  t.moveTo([x + 0.25 + 0.9, y, 0]);\n  scene.add(sw, t);\n});\n\nconst formula = new MathTex({ latex: 'P(S\\\\mid +)=\\\\frac{P(+\\\\mid S)\\\\,P(S)}{P(+\\\\mid S)P(S)+P(+\\\\mid H)P(H)}', color: WHITE });\nawait formula.waitForRender();\nformula.scale(0.55);\nformula.moveTo([3.6, 3.2, 0]);\nscene.add(formula);\n\nlet lines = [];\nfunction setLines(arr) {\n  lines.forEach(l => scene.remove(l));\n  lines = arr.map(([str, col, fs, y]) => {\n    const t = new Text({ text: str, color: col, fontSize: fs });\n    t.moveTo([3.6, y, 0]);\n    scene.add(t);\n    return t;\n  });\n}\n\nfunction update() {\n  const p = prev / 100, se = sens / 100, sp = spec / 100;\n  const sick = Math.round(N * p);\n  const tp = Math.round(sick * se);\n  const fn = sick - tp;\n  const healthy = N - sick;\n  const fp = Math.round(healthy * (1 - sp));\n  const tn = healthy - fp;\n  for (let i = 0; i < N; i++) {\n    let col, neg;\n    if (i < tp) { col = C_TP; neg = false; }\n    else if (i < sick) { col = C_FN; neg = true; }\n    else if (i < sick + fp) { col = C_FP; neg = false; }\n    else { col = C_TN; neg = true; }\n    cells[i].setFill(col, focus && neg ? 0.12 : 1);\n  }\n  const exact = (se * p) / (se * p + (1 - sp) * (1 - p));\n  setLines([\n    ['Sick: ' + sick + '   Healthy: ' + healthy, WHITE, 22, 2.3],\n    ['Sick & positive: ' + tp, C_TP, 24, 1.8],\n    ['Healthy & positive: ' + fp, C_FP, 24, 1.35],\n    ['P(sick | +) = ' + tp + ' / (' + tp + ' + ' + fp + ')', WHITE, 24, 0.85],\n    ['≈ ' + (exact * 100).toFixed(1) + '%', YELLOW, 44, 0.2]\n  ]);\n}\nupdate();\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\ncontrols.addSlider({ label: 'Prevalence (%)', min: 0.1, max: 30, value: 1, step: 0.1, onChange: v => { prev = v; update(); } });\ncontrols.addSlider({ label: 'Sensitivity (%)', min: 50, max: 100, value: 90, step: 1, onChange: v => { sens = v; update(); } });\ncontrols.addSlider({ label: 'Specificity (%)', min: 50, max: 100, value: 90, step: 0.5, onChange: v => { spec = v; update(); } });\ncontrols.addCheckbox({ label: 'Show only positive tests', checked: false, onChange: c => { focus = c; update(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 7744,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 3,
+          "buttons": 0,
+          "checkboxes": 1
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/stats-bayes-medical.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/stats-bayes-medical.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:33:32.936Z"
+}

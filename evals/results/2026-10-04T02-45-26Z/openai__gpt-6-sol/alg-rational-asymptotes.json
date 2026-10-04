@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-rational-asymptotes",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.72% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.21% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 52457,
+        "inputTokens": 12280,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1993,
+        "costUsd": 0.024675600000000002,
+        "rawResponse": "{\"explanation\":\"Rewrite the function as f(x) = 2 + 7/(x − 3). As x approaches 3, the graph shoots toward infinity, giving the vertical asymptote x = 3; as x moves far from 3, the fraction approaches zero, giving the horizontal asymptote y = 2.\",\"manimCode\":\"const f = x => 2 + 7 / (x - 3);\\nconst ax = new Axes({\\n  xRange: [-7, 7, 1], yRange: [-5, 7, 1],\\n  xLength: 10, yLength: 5.5, tips: false\\n});\\nax.moveTo([0, -0.35, 0]);\\n\\nconst leftBranch = ax.plot(f, { color: BLUE, xRange: [-7, 2], numSamples: 400 });\\nconst rightBranch = ax.plot(f, { color: BLUE, xRange: [4.4, 7], numSamples: 400 });\\nconst vertical = new Line({ start: ax.c2p(3, -5), end: ax.c2p(3, 7), color: ORANGE });\\nconst horizontal = new Line({ start: ax.c2p(-7, 2), end: ax.c2p(7, 2), color: YELLOW });\\nvertical.setStrokeWidth(3);\\nhorizontal.setStrokeWidth(3);\\n\\nconst title = new Text({ text: 'f(x) = (2x + 1)/(x - 3)', color: WHITE, fontSize: 29 });\\ntitle.moveTo([-3.2, 3.35, 0]);\\nconst vLabel = new Text({ text: 'x = 3', color: ORANGE, fontSize: 23 });\\nvLabel.moveTo([2.85, -2.65, 0]);\\nconst hLabel = new Text({ text: 'y = 2', color: YELLOW, fontSize: 23 });\\nhLabel.moveTo([-4.2, 0.55, 0]);\\n\\nawait scene.play(new Create(ax));\\nawait scene.play(new AnimationGroup([new Create(leftBranch), new Create(rightBranch)]));\\nawait scene.play(new AnimationGroup([new Create(vertical), new Create(horizontal)]));\\nscene.add(title, vLabel, hLabel);\\n\\nconst dot = new Dot({ point: ax.c2p(-6, f(-6)), color: GREEN });\\nlet readout = new Text({ text: 'x = -6.0,  f(x) = 1.22', color: GREEN, fontSize: 21 });\\nreadout.moveTo([-3.4, -3.4, 0]);\\nscene.add(dot, readout);\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 240 });\\ncontrols.addSlider({\\n  label: 'Explore left branch', min: -6, max: 1.9, value: -6, step: 0.1,\\n  onChange: x => {\\n    const y = f(x);\\n    dot.moveTo(ax.c2p(x, y));\\n    scene.remove(readout);\\n    readout = new Text({ text: `x = ${x.toFixed(1)},  f(x) = ${y.toFixed(2)}`, color: GREEN, fontSize: 21 });\\n    readout.moveTo([-3.4, -3.4, 0]);\\n    scene.add(readout);\\n  }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Rewrite the function as f(x) = 2 + 7/(x − 3). As x approaches 3, the graph shoots toward infinity, giving the vertical asymptote x = 3; as x moves far from 3, the fraction approaches zero, giving the horizontal asymptote y = 2."
+      },
+      "code": "const f = x => 2 + 7 / (x - 3);\nconst ax = new Axes({\n  xRange: [-7, 7, 1], yRange: [-5, 7, 1],\n  xLength: 10, yLength: 5.5, tips: false\n});\nax.moveTo([0, -0.35, 0]);\n\nconst leftBranch = ax.plot(f, { color: BLUE, xRange: [-7, 2], numSamples: 400 });\nconst rightBranch = ax.plot(f, { color: BLUE, xRange: [4.4, 7], numSamples: 400 });\nconst vertical = new Line({ start: ax.c2p(3, -5), end: ax.c2p(3, 7), color: ORANGE });\nconst horizontal = new Line({ start: ax.c2p(-7, 2), end: ax.c2p(7, 2), color: YELLOW });\nvertical.setStrokeWidth(3);\nhorizontal.setStrokeWidth(3);\n\nconst title = new Text({ text: 'f(x) = (2x + 1)/(x - 3)', color: WHITE, fontSize: 29 });\ntitle.moveTo([-3.2, 3.35, 0]);\nconst vLabel = new Text({ text: 'x = 3', color: ORANGE, fontSize: 23 });\nvLabel.moveTo([2.85, -2.65, 0]);\nconst hLabel = new Text({ text: 'y = 2', color: YELLOW, fontSize: 23 });\nhLabel.moveTo([-4.2, 0.55, 0]);\n\nawait scene.play(new Create(ax));\nawait scene.play(new AnimationGroup([new Create(leftBranch), new Create(rightBranch)]));\nawait scene.play(new AnimationGroup([new Create(vertical), new Create(horizontal)]));\nscene.add(title, vLabel, hLabel);\n\nconst dot = new Dot({ point: ax.c2p(-6, f(-6)), color: GREEN });\nlet readout = new Text({ text: 'x = -6.0,  f(x) = 1.22', color: GREEN, fontSize: 21 });\nreadout.moveTo([-3.4, -3.4, 0]);\nscene.add(dot, readout);\n\nconst controls = new Controls(scene, { position: 'top-right', width: 240 });\ncontrols.addSlider({\n  label: 'Explore left branch', min: -6, max: 1.9, value: -6, step: 0.1,\n  onChange: x => {\n    const y = f(x);\n    dot.moveTo(ax.c2p(x, y));\n    scene.remove(readout);\n    readout = new Text({ text: `x = ${x.toFixed(1)},  f(x) = ${y.toFixed(2)}`, color: GREEN, fontSize: 21 });\n    readout.moveTo([-3.4, -3.4, 0]);\n    scene.add(readout);\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 11737,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 3,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/alg-rational-asymptotes.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/alg-rational-asymptotes.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:09.887Z"
+}

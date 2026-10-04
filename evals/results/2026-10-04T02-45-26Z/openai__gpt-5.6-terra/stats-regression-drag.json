@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-regression-drag",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.46% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=1 checkboxes=0 draggables=7 clickables=0 hoverables=7"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.00% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 31832,
+        "inputTokens": 11743,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1547,
+        "costUsd": 0.0222356,
+        "rawResponse": "{\"explanation\":\"A least-squares line is the line that minimizes the total squared vertical distance from the data points. Drag any yellow point: the slope and intercept are recalculated immediately, so the cyan best-fit line moves with the data.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-5, 5, 1],\\n  yRange: [-3, 3, 1],\\n  xLength: 10,\\n  yLength: 5.4,\\n  tips: true\\n});\\nconst axisLabels = ax.getAxisLabels();\\n\\nconst title = new Text({ text: 'Interactive line of best fit', color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.45, 0]);\\nconst hint = new Text({ text: 'Drag a point to update the least-squares fit', color: GRAY, fontSize: 20 });\\nhint.moveTo([0, -3.45, 0]);\\n\\nconst samples = [\\n  [-4, -1.7], [-2.8, -1.0], [-1.4, -0.7],\\n  [0.1, 0.25], [1.5, 0.7], [2.8, 1.65], [4.1, 1.45]\\n];\\nconst dots = samples.map(([x, y]) => new Dot({ point: ax.c2p(x, y), color: YELLOW }));\\n\\nconst fitLine = new Polygon({ vertices: [ax.c2p(-5, -1), ax.c2p(5, 1)], color: TEAL });\\nfitLine.setStrokeWidth(5).setFillOpacity(0);\\n\\nconst fitLabel = new Text({ text: 'best-fit line', color: TEAL, fontSize: 19 });\\nfitLabel.moveTo([4.45, 2.55, 0]);\\n\\nconst origin = ax.c2p(0, 0);\\nconst unitX = ax.c2p(1, 0)[0] - origin[0];\\nconst unitY = ax.c2p(0, 1)[1] - origin[1];\\n\\nfunction pointToData(point) {\\n  return [\\n    (point[0] - origin[0]) / unitX,\\n    (point[1] - origin[1]) / unitY\\n  ];\\n}\\n\\nfunction updateFit() {\\n  const values = dots.map(dot => pointToData(dot.getCenter()));\\n  const n = values.length;\\n  const meanX = values.reduce((sum, p) => sum + p[0], 0) / n;\\n  const meanY = values.reduce((sum, p) => sum + p[1], 0) / n;\\n  let numerator = 0;\\n  let denominator = 0;\\n  values.forEach(([x, y]) => {\\n    numerator += (x - meanX) * (y - meanY);\\n    denominator += (x - meanX) * (x - meanX);\\n  });\\n  const slope = denominator === 0 ? 0 : numerator / denominator;\\n  const intercept = meanY - slope * meanX;\\n  fitLine.setVertices([\\n    ax.c2p(-5, slope * -5 + intercept),\\n    ax.c2p(5, slope * 5 + intercept)\\n  ]);\\n}\\n\\nscene.add(ax, axisLabels, fitLine, ...dots, fitLabel, title, hint);\\nupdateFit();\\n\\ndots.forEach(dot => {\\n  makeDraggable(dot, scene, {\\n    constrainX: [ax.c2p(-5, 0)[0], ax.c2p(5, 0)[0]],\\n    constrainY: [ax.c2p(0, -3)[1], ax.c2p(0, 3)[1]],\\n    onDrag: updateFit\\n  });\\n  makeHoverable(dot, scene, { hoverScale: 1.35, hoverColor: ORANGE, cursor: 'grab' });\\n});\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 210 });\\ncontrols.addButton({ label: 'Reset points', onClick: () => {\\n  dots.forEach((dot, index) => dot.moveTo(ax.c2p(samples[index][0], samples[index][1])));\\n  updateFit();\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A least-squares line is the line that minimizes the total squared vertical distance from the data points. Drag any yellow point: the slope and intercept are recalculated immediately, so the cyan best-fit line moves with the data."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-5, 5, 1],\n  yRange: [-3, 3, 1],\n  xLength: 10,\n  yLength: 5.4,\n  tips: true\n});\nconst axisLabels = ax.getAxisLabels();\n\nconst title = new Text({ text: 'Interactive line of best fit', color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.45, 0]);\nconst hint = new Text({ text: 'Drag a point to update the least-squares fit', color: GRAY, fontSize: 20 });\nhint.moveTo([0, -3.45, 0]);\n\nconst samples = [\n  [-4, -1.7], [-2.8, -1.0], [-1.4, -0.7],\n  [0.1, 0.25], [1.5, 0.7], [2.8, 1.65], [4.1, 1.45]\n];\nconst dots = samples.map(([x, y]) => new Dot({ point: ax.c2p(x, y), color: YELLOW }));\n\nconst fitLine = new Polygon({ vertices: [ax.c2p(-5, -1), ax.c2p(5, 1)], color: TEAL });\nfitLine.setStrokeWidth(5).setFillOpacity(0);\n\nconst fitLabel = new Text({ text: 'best-fit line', color: TEAL, fontSize: 19 });\nfitLabel.moveTo([4.45, 2.55, 0]);\n\nconst origin = ax.c2p(0, 0);\nconst unitX = ax.c2p(1, 0)[0] - origin[0];\nconst unitY = ax.c2p(0, 1)[1] - origin[1];\n\nfunction pointToData(point) {\n  return [\n    (point[0] - origin[0]) / unitX,\n    (point[1] - origin[1]) / unitY\n  ];\n}\n\nfunction updateFit() {\n  const values = dots.map(dot => pointToData(dot.getCenter()));\n  const n = values.length;\n  const meanX = values.reduce((sum, p) => sum + p[0], 0) / n;\n  const meanY = values.reduce((sum, p) => sum + p[1], 0) / n;\n  let numerator = 0;\n  let denominator = 0;\n  values.forEach(([x, y]) => {\n    numerator += (x - meanX) * (y - meanY);\n    denominator += (x - meanX) * (x - meanX);\n  });\n  const slope = denominator === 0 ? 0 : numerator / denominator;\n  const intercept = meanY - slope * meanX;\n  fitLine.setVertices([\n    ax.c2p(-5, slope * -5 + intercept),\n    ax.c2p(5, slope * 5 + intercept)\n  ]);\n}\n\nscene.add(ax, axisLabels, fitLine, ...dots, fitLabel, title, hint);\nupdateFit();\n\ndots.forEach(dot => {\n  makeDraggable(dot, scene, {\n    constrainX: [ax.c2p(-5, 0)[0], ax.c2p(5, 0)[0]],\n    constrainY: [ax.c2p(0, -3)[1], ax.c2p(0, 3)[1]],\n    onDrag: updateFit\n  });\n  makeHoverable(dot, scene, { hoverScale: 1.35, hoverColor: ORANGE, cursor: 'grab' });\n});\n\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 210 });\ncontrols.addButton({ label: 'Reset points', onClick: () => {\n  dots.forEach((dot, index) => dot.moveTo(ax.c2p(samples[index][0], samples[index][1])));\n  updateFit();\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 6776,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 7,
+        "clickables": 0,
+        "hoverables": 7
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/stats-regression-drag.0.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/stats-regression-drag.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T03:00:03.138Z"
+}

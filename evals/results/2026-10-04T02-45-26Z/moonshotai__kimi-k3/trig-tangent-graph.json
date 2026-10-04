@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-tangent-graph",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.15% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.53% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 85764,
+        "inputTokens": 4713,
+        "cachedInputTokens": 64,
+        "outputTokens": 11189,
+        "costUsd": 0.18180120000000002,
+        "rawResponse": "{\"explanation\":\"The tangent function is defined as tan(x) = sin(x)/cos(x), so it is undefined wherever cos(x) = 0 — at x = ±π/2 and ±3π/2 within [−2π, 2π]. At these x-values the graph has vertical asymptotes: as x approaches one of them, sin(x) is near ±1 while cos(x) shrinks toward 0, so the quotient explodes toward +∞ or −∞ (the sign depends on the side you approach from, since cos changes sign there). That is why the graph splits into separate S-shaped branches between consecutive asymptotes. Use the slider to move x toward an asymptote and watch cos(x) → 0 while tan(x) blows up.\",\"manimCode\":\"const PI = Math.PI;\\nconst eps = 0.21;\\n\\nconst axes = new Axes({\\n  xRange: [-2*PI, 2*PI, PI/2],\\n  yRange: [-5, 5, 1],\\n  xLength: 12,\\n  yLength: 6,\\n  tips: false\\n});\\nconst axisLabels = axes.getAxisLabels();\\n\\nconst title = new MathTex({ latex: 'y = \\\\\\\\tan(x) = \\\\\\\\dfrac{\\\\\\\\sin(x)}{\\\\\\\\cos(x)}' });\\nawait title.waitForRender();\\ntitle.scale(0.85);\\ntitle.toCorner(UL);\\n\\nawait scene.play(new FadeIn(axes));\\nscene.add(axisLabels);\\nawait scene.play(new Write(title));\\n\\nconst branchRanges = [\\n  [-2*PI, -3*PI/2 - eps],\\n  [-3*PI/2 + eps, -PI/2 - eps],\\n  [-PI/2 + eps, PI/2 - eps],\\n  [PI/2 + eps, 3*PI/2 - eps],\\n  [3*PI/2 + eps, 2*PI]\\n];\\nconst branches = branchRanges.map(function(r) {\\n  return axes.plot(function(x) { return Math.tan(x); }, { color: BLUE, xRange: r, numSamples: 300 });\\n});\\nawait scene.play(new AnimationGroup(branches.map(function(b) { return new Create(b); })));\\n\\nconst asymXs = [-3*PI/2, -PI/2, PI/2, 3*PI/2];\\nconst asymLines = asymXs.map(function(a) {\\n  const ln = new Line({ start: axes.c2p(a, -5), end: axes.c2p(a, 5), color: RED });\\n  ln.setStrokeWidth(2);\\n  ln.setOpacity(0.7);\\n  return ln;\\n});\\nawait scene.play(new AnimationGroup(asymLines.map(function(l) { return new Create(l); })));\\n\\nconst labelInfo = [\\n  { a: -3*PI/2, latex: 'x=-\\\\\\\\dfrac{3\\\\\\\\pi}{2}', y: -3.2 },\\n  { a: -PI/2, latex: 'x=-\\\\\\\\dfrac{\\\\\\\\pi}{2}', y: 3.2 },\\n  { a: PI/2, latex: 'x=\\\\\\\\dfrac{\\\\\\\\pi}{2}', y: 3.2 },\\n  { a: 3*PI/2, latex: 'x=\\\\\\\\dfrac{3\\\\\\\\pi}{2}', y: -3.2 }\\n];\\nconst asymLabels = [];\\nfor (const info of labelInfo) {\\n  const lbl = new MathTex({ latex: info.latex });\\n  await lbl.waitForRender();\\n  lbl.scale(0.5);\\n  lbl.setColor(RED);\\n  const px = axes.c2p(info.a, 0)[0];\\n  lbl.moveTo([px, info.y, 0]);\\n  asymLabels.push(lbl);\\n}\\nawait scene.play(new AnimationGroup(asymLabels.map(function(l) { return new FadeIn(l); })));\\n\\nlet xVal = 0.5;\\nfunction clampTan(x) {\\n  const t = Math.tan(x);\\n  return Math.max(-4.9, Math.min(4.9, t));\\n}\\n\\nconst guide = new Polygon({ vertices: [axes.c2p(xVal, 0), axes.c2p(xVal, clampTan(xVal))], color: YELLOW });\\nguide.setStrokeWidth(3);\\nguide.setFillOpacity(0);\\nguide.addUpdater(function() {\\n  guide.setVertices([axes.c2p(xVal, 0), axes.c2p(xVal, clampTan(xVal))]);\\n});\\n\\nconst dot = new Dot({ point: axes.c2p(xVal, clampTan(xVal)), color: YELLOW });\\ndot.addUpdater(function() {\\n  dot.moveTo(axes.c2p(xVal, clampTan(xVal)));\\n});\\nscene.add(guide, dot);\\n\\nlet readout = null;\\nfunction updateReadout() {\\n  const t = Math.tan(xVal);\\n  const c = Math.cos(xVal);\\n  let tStr;\\n  if (Math.abs(t) > 50) {\\n    tStr = t > 0 ? '+∞ (blows up!)' : '-∞ (blows up!)';\\n  } else {\\n    tStr = t.toFixed(3);\\n  }\\n  const s = 'x = ' + xVal.toFixed(2) + '    tan(x) = ' + tStr + '    cos(x) = ' + c.toFixed(3);\\n  const pos = readout ? readout.getCenter() : [0, -3.55, 0];\\n  if (readout) { scene.remove(readout); }\\n  readout = new Text({ text: s, color: WHITE, fontSize: 20 });\\n  readout.moveTo(pos);\\n  scene.add(readout);\\n}\\nupdateReadout();\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'x value', min: -6.28, max: 6.28, value: xVal, step: 0.01, onChange: function(v) {\\n  xVal = v;\\n  updateReadout();\\n}});\\ncontrols.addButton({ label: 'Approach x = π/2', onClick: function() {\\n  xVal = PI/2 - 0.005;\\n  updateReadout();\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The tangent function is defined as tan(x) = sin(x)/cos(x), so it is undefined wherever cos(x) = 0 — at x = ±π/2 and ±3π/2 within [−2π, 2π]. At these x-values the graph has vertical asymptotes: as x approaches one of them, sin(x) is near ±1 while cos(x) shrinks toward 0, so the quotient explodes toward +∞ or −∞ (the sign depends on the side you approach from, since cos changes sign there). That is why the graph splits into separate S-shaped branches between consecutive asymptotes. Use the slider to move x toward an asymptote and watch cos(x) → 0 while tan(x) blows up."
+      },
+      "code": "const PI = Math.PI;\nconst eps = 0.21;\n\nconst axes = new Axes({\n  xRange: [-2*PI, 2*PI, PI/2],\n  yRange: [-5, 5, 1],\n  xLength: 12,\n  yLength: 6,\n  tips: false\n});\nconst axisLabels = axes.getAxisLabels();\n\nconst title = new MathTex({ latex: 'y = \\\\tan(x) = \\\\dfrac{\\\\sin(x)}{\\\\cos(x)}' });\nawait title.waitForRender();\ntitle.scale(0.85);\ntitle.toCorner(UL);\n\nawait scene.play(new FadeIn(axes));\nscene.add(axisLabels);\nawait scene.play(new Write(title));\n\nconst branchRanges = [\n  [-2*PI, -3*PI/2 - eps],\n  [-3*PI/2 + eps, -PI/2 - eps],\n  [-PI/2 + eps, PI/2 - eps],\n  [PI/2 + eps, 3*PI/2 - eps],\n  [3*PI/2 + eps, 2*PI]\n];\nconst branches = branchRanges.map(function(r) {\n  return axes.plot(function(x) { return Math.tan(x); }, { color: BLUE, xRange: r, numSamples: 300 });\n});\nawait scene.play(new AnimationGroup(branches.map(function(b) { return new Create(b); })));\n\nconst asymXs = [-3*PI/2, -PI/2, PI/2, 3*PI/2];\nconst asymLines = asymXs.map(function(a) {\n  const ln = new Line({ start: axes.c2p(a, -5), end: axes.c2p(a, 5), color: RED });\n  ln.setStrokeWidth(2);\n  ln.setOpacity(0.7);\n  return ln;\n});\nawait scene.play(new AnimationGroup(asymLines.map(function(l) { return new Create(l); })));\n\nconst labelInfo = [\n  { a: -3*PI/2, latex: 'x=-\\\\dfrac{3\\\\pi}{2}', y: -3.2 },\n  { a: -PI/2, latex: 'x=-\\\\dfrac{\\\\pi}{2}', y: 3.2 },\n  { a: PI/2, latex: 'x=\\\\dfrac{\\\\pi}{2}', y: 3.2 },\n  { a: 3*PI/2, latex: 'x=\\\\dfrac{3\\\\pi}{2}', y: -3.2 }\n];\nconst asymLabels = [];\nfor (const info of labelInfo) {\n  const lbl = new MathTex({ latex: info.latex });\n  await lbl.waitForRender();\n  lbl.scale(0.5);\n  lbl.setColor(RED);\n  const px = axes.c2p(info.a, 0)[0];\n  lbl.moveTo([px, info.y, 0]);\n  asymLabels.push(lbl);\n}\nawait scene.play(new AnimationGroup(asymLabels.map(function(l) { return new FadeIn(l); })));\n\nlet xVal = 0.5;\nfunction clampTan(x) {\n  const t = Math.tan(x);\n  return Math.max(-4.9, Math.min(4.9, t));\n}\n\nconst guide = new Polygon({ vertices: [axes.c2p(xVal, 0), axes.c2p(xVal, clampTan(xVal))], color: YELLOW });\nguide.setStrokeWidth(3);\nguide.setFillOpacity(0);\nguide.addUpdater(function() {\n  guide.setVertices([axes.c2p(xVal, 0), axes.c2p(xVal, clampTan(xVal))]);\n});\n\nconst dot = new Dot({ point: axes.c2p(xVal, clampTan(xVal)), color: YELLOW });\ndot.addUpdater(function() {\n  dot.moveTo(axes.c2p(xVal, clampTan(xVal)));\n});\nscene.add(guide, dot);\n\nlet readout = null;\nfunction updateReadout() {\n  const t = Math.tan(xVal);\n  const c = Math.cos(xVal);\n  let tStr;\n  if (Math.abs(t) > 50) {\n    tStr = t > 0 ? '+∞ (blows up!)' : '-∞ (blows up!)';\n  } else {\n    tStr = t.toFixed(3);\n  }\n  const s = 'x = ' + xVal.toFixed(2) + '    tan(x) = ' + tStr + '    cos(x) = ' + c.toFixed(3);\n  const pos = readout ? readout.getCenter() : [0, -3.55, 0];\n  if (readout) { scene.remove(readout); }\n  readout = new Text({ text: s, color: WHITE, fontSize: 20 });\n  readout.moveTo(pos);\n  scene.add(readout);\n}\nupdateReadout();\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'x value', min: -6.28, max: 6.28, value: xVal, step: 0.01, onChange: function(v) {\n  xVal = v;\n  updateReadout();\n}});\ncontrols.addButton({ label: 'Approach x = π/2', onClick: function() {\n  xVal = PI/2 - 0.005;\n  updateReadout();\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 13206,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 5,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/trig-tangent-graph.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/trig-tangent-graph.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:56:37.717Z"
+}

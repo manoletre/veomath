@@ -1,0 +1,81 @@
+{
+  "itemId": "alg-discriminant",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 0.8,
+  "firstAttemptScore": 0.8,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.8,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "6.05% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "FunctionGraph [x -3.20..3.20, y -1.08..8.64] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "MathTex \"x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}\" overlaps Text \"Sign of Δ = number of x-axis crossings\" (100%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=3 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.73% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 139787,
+        "inputTokens": 4721,
+        "cachedInputTokens": 4480,
+        "outputTokens": 16089,
+        "costUsd": 0.243402,
+        "rawResponse": "{ \"explanation\": \"For a quadratic ax² + bx + c, the roots come from the quadratic formula, and the quantity under the square root — the discriminant Δ = b² − 4ac — controls everything. If Δ > 0 the square root is real and nonzero, giving two distinct roots (the parabola crosses the x-axis twice); if Δ = 0 the ± vanishes, giving one repeated root (the parabola is tangent to the axis); if Δ < 0 the square root is imaginary, so there are no real roots (the parabola never touches the axis). Use the sliders for a, b, and c (or the preset buttons) to watch the parabola, the value of Δ, and the root count change together.\", \"manimCode\": \"// ---------- Axes ----------\\nconst axes = new Axes({\\n  xRange: [-4, 4, 1],\\n  yRange: [-5, 5, 1],\\n  xLength: 6.4,\\n  yLength: 4.8,\\n  tips: true\\n});\\naxes.moveTo([-1.0, -0.15, 0]);\\n\\n// ---------- State ----------\\nlet A = 1, B = -1, C = -2;\\nlet curve = null;\\nlet rootDots = [];\\nlet eqText = null;\\nlet discText = null;\\nlet statusText = null;\\n\\nfunction fmt(v) {\\n  let r = Math.round(v * 10) / 10;\\n  if (Object.is(r, -0)) r = 0;\\n  return r.toString().replace('-', '−');\\n}\\n\\nfunction fmt2(v) {\\n  let r = Math.round(v * 100) / 100;\\n  if (Object.is(r, -0)) r = 0;\\n  return r.toString().replace('-', '−');\\n}\\n\\nfunction eqString() {\\n  if (A === 0) {\\n    if (B === 0 && C === 0) return 'y = 0';\\n    let s = 'y = ';\\n    if (B !== 0) s += (B === 1 ? '' : B === -1 ? '−' : fmt(B)) + 'x';\\n    if (C !== 0) s += (B !== 0 ? (C > 0 ? ' + ' : ' − ') : (C < 0 ? '−' : '')) + fmt(Math.abs(C));\\n    return s;\\n  }\\n  let s = 'y = ' + (A === 1 ? '' : A === -1 ? '−' : fmt(A)) + 'x²';\\n  if (B !== 0) s += (B > 0 ? ' + ' : ' − ') + (Math.abs(B) === 1 ? '' : fmt(Math.abs(B))) + 'x';\\n  if (C !== 0) s += (C > 0 ? ' + ' : ' − ') + fmt(Math.abs(C));\\n  return s;\\n}\\n\\nfunction replaceLine(oldLine, str, color, y, size) {\\n  if (oldLine) { scene.remove(oldLine); }\\n  const t = new Text({ text: str, color: color, fontSize: size });\\n  t.moveTo([-0.8, y, 0]);\\n  scene.add(t);\\n  return t;\\n}\\n\\nfunction refresh() {\\n  let D = B * B - 4 * A * C;\\n  if (A !== 0 && Math.abs(D) <= 0.11) D = 0; // snap so tangency is easy to find\\n\\n  let mode = 'two';\\n  let col = GREEN;\\n  if (A === 0) { mode = 'linear'; col = GRAY; }\\n  else if (D > 0) { mode = 'two'; col = GREEN; }\\n  else if (D < 0) { mode = 'none'; col = RED; }\\n  else { mode = 'one'; col = GOLD; }\\n\\n  // Parabola (remove old, plot new)\\n  if (curve) { scene.remove(curve); }\\n  curve = axes.plot(function (x) { return A * x * x + B * x + C; }, { color: col, numSamples: 400 });\\n  scene.add(curve);\\n\\n  // Root dots\\n  for (let i = 0; i < rootDots.length; i++) { scene.remove(rootDots[i]); }\\n  rootDots = [];\\n\\n  let statusStr = '';\\n  if (mode === 'two') {\\n    const s = Math.sqrt(D);\\n    const r1 = Math.min((-B - s) / (2 * A), (-B + s) / (2 * A));\\n    const r2 = Math.max((-B - s) / (2 * A), (-B + s) / (2 * A));\\n    const rs = [r1, r2];\\n    for (let i = 0; i < rs.length; i++) {\\n      if (Math.abs(rs[i]) <= 4.3) {\\n        const d = new Dot({ point: axes.c2p(rs[i], 0), color: col });\\n        rootDots.push(d);\\n        scene.add(d);\\n      }\\n    }\\n    statusStr = 'Two real roots:  x₁ = ' + fmt2(r1) + ',   x₂ = ' + fmt2(r2);\\n  } else if (mode === 'one') {\\n    const r = -B / (2 * A);\\n    if (Math.abs(r) <= 4.3) {\\n      const d = new Dot({ point: axes.c2p(r, 0), color: col, radius: 0.12 });\\n      rootDots.push(d);\\n      scene.add(d);\\n    }\\n    statusStr = 'One repeated root:  x = ' + fmt2(r) + '  — tangent to the x-axis';\\n  } else if (mode === 'none') {\\n    const re = -B / (2 * A);\\n    const im = Math.sqrt(-D) / Math.abs(2 * A);\\n    statusStr = 'No real roots — complex pair:  ' + fmt2(re) + ' ± ' + fmt2(im) + 'i';\\n  } else {\\n    statusStr = 'a = 0 makes a straight line — choose a ≠ 0 for a parabola';\\n  }\\n\\n  eqText = replaceLine(eqText, eqString(), WHITE, -2.95, 24);\\n  discText = replaceLine(discText, 'Δ = b² − 4ac = ' + fmt2(D), col, -3.38, 24);\\n  statusText = replaceLine(statusText, statusStr, col, -3.78, 21);\\n}\\n\\n// ---------- Title & formula ----------\\nconst title = new Text({ text: 'The Discriminant  Δ = b² − 4ac', color: WHITE, fontSize: 30 });\\ntitle.moveTo([-2.4, 3.6, 0]);\\nawait scene.play(new Write(title));\\n\\nconst formula = new MathTex({ latex: 'x = \\\\\\\\frac{-b \\\\\\\\pm \\\\\\\\sqrt{b^2 - 4ac}}{2a}' });\\nawait formula.waitForRender();\\nformula.moveTo([-2.4, 2.9, 0]);\\nawait scene.play(new Write(formula));\\n\\nconst sub = new Text({ text: 'Sign of Δ = number of x-axis crossings', color: GRAY, fontSize: 18 });\\nsub.moveTo([-2.4, 2.4, 0]);\\nscene.add(sub);\\n\\n// ---------- Axes intro ----------\\nawait scene.play(new Create(axes));\\nscene.add(axes.getAxisLabels());\\n\\nrefresh();\\nawait scene.wait(0.5);\\n\\n// ---------- Controls ----------\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'a — steepness', min: -2, max: 2, value: A, step: 0.1, onChange: function (v) { A = Math.round(v * 100) / 100; refresh(); } });\\ncontrols.addSlider({ label: 'b — tilt / shift', min: -4, max: 4, value: B, step: 0.1, onChange: function (v) { B = Math.round(v * 100) / 100; refresh(); } });\\ncontrols.addSlider({ label: 'c — up / down', min: -4, max: 4, value: C, step: 0.1, onChange: function (v) { C = Math.round(v * 100) / 100; refresh(); } });\\ncontrols.addButton({ label: '2 roots preset', onClick: function () { A = 1; B = -1; C = -2; refresh(); } });\\ncontrols.addButton({ label: '1 root (tangent)', onClick: function () { A = 1; B = 2; C = 1; refresh(); } });\\ncontrols.addButton({ label: '0 real roots', onClick: function () { A = 1; B = 0; C = 2; refresh(); } });\\n\\nawait scene.wait(999999);\" }",
+        "explanation": "For a quadratic ax² + bx + c, the roots come from the quadratic formula, and the quantity under the square root — the discriminant Δ = b² − 4ac — controls everything. If Δ > 0 the square root is real and nonzero, giving two distinct roots (the parabola crosses the x-axis twice); if Δ = 0 the ± vanishes, giving one repeated root (the parabola is tangent to the axis); if Δ < 0 the square root is imaginary, so there are no real roots (the parabola never touches the axis). Use the sliders for a, b, and c (or the preset buttons) to watch the parabola, the value of Δ, and the root count change together."
+      },
+      "code": "// ---------- Axes ----------\nconst axes = new Axes({\n  xRange: [-4, 4, 1],\n  yRange: [-5, 5, 1],\n  xLength: 6.4,\n  yLength: 4.8,\n  tips: true\n});\naxes.moveTo([-1.0, -0.15, 0]);\n\n// ---------- State ----------\nlet A = 1, B = -1, C = -2;\nlet curve = null;\nlet rootDots = [];\nlet eqText = null;\nlet discText = null;\nlet statusText = null;\n\nfunction fmt(v) {\n  let r = Math.round(v * 10) / 10;\n  if (Object.is(r, -0)) r = 0;\n  return r.toString().replace('-', '−');\n}\n\nfunction fmt2(v) {\n  let r = Math.round(v * 100) / 100;\n  if (Object.is(r, -0)) r = 0;\n  return r.toString().replace('-', '−');\n}\n\nfunction eqString() {\n  if (A === 0) {\n    if (B === 0 && C === 0) return 'y = 0';\n    let s = 'y = ';\n    if (B !== 0) s += (B === 1 ? '' : B === -1 ? '−' : fmt(B)) + 'x';\n    if (C !== 0) s += (B !== 0 ? (C > 0 ? ' + ' : ' − ') : (C < 0 ? '−' : '')) + fmt(Math.abs(C));\n    return s;\n  }\n  let s = 'y = ' + (A === 1 ? '' : A === -1 ? '−' : fmt(A)) + 'x²';\n  if (B !== 0) s += (B > 0 ? ' + ' : ' − ') + (Math.abs(B) === 1 ? '' : fmt(Math.abs(B))) + 'x';\n  if (C !== 0) s += (C > 0 ? ' + ' : ' − ') + fmt(Math.abs(C));\n  return s;\n}\n\nfunction replaceLine(oldLine, str, color, y, size) {\n  if (oldLine) { scene.remove(oldLine); }\n  const t = new Text({ text: str, color: color, fontSize: size });\n  t.moveTo([-0.8, y, 0]);\n  scene.add(t);\n  return t;\n}\n\nfunction refresh() {\n  let D = B * B - 4 * A * C;\n  if (A !== 0 && Math.abs(D) <= 0.11) D = 0; // snap so tangency is easy to find\n\n  let mode = 'two';\n  let col = GREEN;\n  if (A === 0) { mode = 'linear'; col = GRAY; }\n  else if (D > 0) { mode = 'two'; col = GREEN; }\n  else if (D < 0) { mode = 'none'; col = RED; }\n  else { mode = 'one'; col = GOLD; }\n\n  // Parabola (remove old, plot new)\n  if (curve) { scene.remove(curve); }\n  curve = axes.plot(function (x) { return A * x * x + B * x + C; }, { color: col, numSamples: 400 });\n  scene.add(curve);\n\n  // Root dots\n  for (let i = 0; i < rootDots.length; i++) { scene.remove(rootDots[i]); }\n  rootDots = [];\n\n  let statusStr = '';\n  if (mode === 'two') {\n    const s = Math.sqrt(D);\n    const r1 = Math.min((-B - s) / (2 * A), (-B + s) / (2 * A));\n    const r2 = Math.max((-B - s) / (2 * A), (-B + s) / (2 * A));\n    const rs = [r1, r2];\n    for (let i = 0; i < rs.length; i++) {\n      if (Math.abs(rs[i]) <= 4.3) {\n        const d = new Dot({ point: axes.c2p(rs[i], 0), color: col });\n        rootDots.push(d);\n        scene.add(d);\n      }\n    }\n    statusStr = 'Two real roots:  x₁ = ' + fmt2(r1) + ',   x₂ = ' + fmt2(r2);\n  } else if (mode === 'one') {\n    const r = -B / (2 * A);\n    if (Math.abs(r) <= 4.3) {\n      const d = new Dot({ point: axes.c2p(r, 0), color: col, radius: 0.12 });\n      rootDots.push(d);\n      scene.add(d);\n    }\n    statusStr = 'One repeated root:  x = ' + fmt2(r) + '  — tangent to the x-axis';\n  } else if (mode === 'none') {\n    const re = -B / (2 * A);\n    const im = Math.sqrt(-D) / Math.abs(2 * A);\n    statusStr = 'No real roots — complex pair:  ' + fmt2(re) + ' ± ' + fmt2(im) + 'i';\n  } else {\n    statusStr = 'a = 0 makes a straight line — choose a ≠ 0 for a parabola';\n  }\n\n  eqText = replaceLine(eqText, eqString(), WHITE, -2.95, 24);\n  discText = replaceLine(discText, 'Δ = b² − 4ac = ' + fmt2(D), col, -3.38, 24);\n  statusText = replaceLine(statusText, statusStr, col, -3.78, 21);\n}\n\n// ---------- Title & formula ----------\nconst title = new Text({ text: 'The Discriminant  Δ = b² − 4ac', color: WHITE, fontSize: 30 });\ntitle.moveTo([-2.4, 3.6, 0]);\nawait scene.play(new Write(title));\n\nconst formula = new MathTex({ latex: 'x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}' });\nawait formula.waitForRender();\nformula.moveTo([-2.4, 2.9, 0]);\nawait scene.play(new Write(formula));\n\nconst sub = new Text({ text: 'Sign of Δ = number of x-axis crossings', color: GRAY, fontSize: 18 });\nsub.moveTo([-2.4, 2.4, 0]);\nscene.add(sub);\n\n// ---------- Axes intro ----------\nawait scene.play(new Create(axes));\nscene.add(axes.getAxisLabels());\n\nrefresh();\nawait scene.wait(0.5);\n\n// ---------- Controls ----------\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'a — steepness', min: -2, max: 2, value: A, step: 0.1, onChange: function (v) { A = Math.round(v * 100) / 100; refresh(); } });\ncontrols.addSlider({ label: 'b — tilt / shift', min: -4, max: 4, value: B, step: 0.1, onChange: function (v) { B = Math.round(v * 100) / 100; refresh(); } });\ncontrols.addSlider({ label: 'c — up / down', min: -4, max: 4, value: C, step: 0.1, onChange: function (v) { C = Math.round(v * 100) / 100; refresh(); } });\ncontrols.addButton({ label: '2 roots preset', onClick: function () { A = 1; B = -1; C = -2; refresh(); } });\ncontrols.addButton({ label: '1 root (tangent)', onClick: function () { A = 1; B = 2; C = 1; refresh(); } });\ncontrols.addButton({ label: '0 real roots', onClick: function () { A = 1; B = 0; C = 2; refresh(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 8782,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 3,
+        "controls": {
+          "sliders": 3,
+          "buttons": 3,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/alg-discriminant.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/alg-discriminant.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:54:02.268Z"
+}

@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-similar-area",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "5.71% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=1 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "7.70% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 122893,
+        "inputTokens": 4712,
+        "cachedInputTokens": 4480,
+        "outputTokens": 13458,
+        "costUsd": 0.20390999999999998,
+        "rawResponse": "{ \"explanation\": \"Area is a product of two lengths: for a triangle, A = ½·base·height. When you scale the triangle by k, *both* the base and the height get multiplied by k, so the new area is ½·(kb)·(kh) = k²·(½bh) = k²·A₀ — the factor k shows up once for each of the two dimensions. This is true for every shape: lengths scale by k, areas by k² (and volumes by k³). Use the slider to scale the triangle and drag the yellow apex to reshape it — the area always tracks k² times the original, which the unit grid lets you verify by counting squares.\", \"manimCode\": \"// Title\\nconst title = new Text({ text: 'Scaling a triangle by k multiplies its area by k²', fontSize: 26, color: WHITE });\\ntitle.moveTo([0, 3.55, 0]);\\n\\n// Faint unit grid: each square = 1 unit of area\\nconst gridLines = [];\\nfor (let gx = -6; gx <= 6; gx++) {\\n  const ln = new Line({ start: [gx, -3.4, 0], end: [gx, 3.4, 0], color: GRAY });\\n  ln.setOpacity(0.15);\\n  ln.setStrokeWidth(1);\\n  gridLines.push(ln);\\n  scene.add(ln);\\n}\\nfor (let gy = -3; gy <= 3; gy++) {\\n  const ln = new Line({ start: [-6.5, gy, 0], end: [6.5, gy, 0], color: GRAY });\\n  ln.setOpacity(0.15);\\n  ln.setStrokeWidth(1);\\n  gridLines.push(ln);\\n  scene.add(ln);\\n}\\n\\n// Triangle defined relative to pivot (midpoint of base), so scaling keeps base centered\\nconst pivot = [-1.5, -1.5, 0];\\nlet k = 1;\\nconst A_rel = [-1.5, 0, 0];   // base half-width 1.5  =>  b = 3\\nconst B_rel = [1.5, 0, 0];\\nconst C_rel = [0, 2.5, 0];    // apex, h = 2.5 (draggable)\\n\\nfunction wp(rel, kk) {\\n  return [pivot[0] + kk * rel[0], pivot[1] + kk * rel[1], 0];\\n}\\n\\n// Ghost = original triangle (k = 1)\\nconst ghost = new Polygon({ vertices: [wp(A_rel, 1), wp(B_rel, 1), wp(C_rel, 1)], color: GRAY });\\nghost.setFillOpacity(0);\\nghost.setStrokeWidth(2);\\n\\n// Scaled triangle\\nconst tri = new Polygon({ vertices: [wp(A_rel, 1), wp(B_rel, 1), wp(C_rel, 1)], color: BLUE });\\ntri.setFill(BLUE, 0.3);\\ntri.setStrokeWidth(3);\\n\\n// Height segment + right-angle marker\\nconst C0 = wp(C_rel, 1);\\nconst heightSeg = new Polygon({ vertices: [C0, [C0[0], pivot[1], 0]], color: GREEN });\\nheightSeg.setFillOpacity(0);\\nheightSeg.setStrokeWidth(2);\\nconst m0 = 0.15;\\nconst marker = new Polygon({ vertices: [\\n  [C0[0], pivot[1], 0], [C0[0] + m0, pivot[1], 0],\\n  [C0[0] + m0, pivot[1] + m0, 0], [C0[0], pivot[1] + m0, 0]\\n], color: WHITE });\\nmarker.setFillOpacity(0);\\nmarker.setStrokeWidth(1.5);\\n\\n// Draggable apex\\nconst dot = new Dot({ point: C0, color: YELLOW });\\n\\nfunction makeLabel(str, pos, size, color) {\\n  const t = new Text({ text: str, fontSize: size, color: color });\\n  t.moveTo(pos);\\n  return t;\\n}\\nfunction swapLabel(oldT, str, pos, size, color) {\\n  scene.remove(oldT);\\n  const nt = makeLabel(str, pos, size, color);\\n  scene.add(nt);\\n  return nt;\\n}\\n\\n// Initial labels\\nlet kbLabel = makeLabel('kb = 3.0', [pivot[0], -2.0, 0], 22, BLUE);\\nlet khLabel = makeLabel('kh = 2.5', [C0[0] + 0.62, (C0[1] + pivot[1]) / 2, 0], 22, GREEN);\\nlet kText = makeLabel('k = 1.00', [3.2, 1.5, 0], 26, YELLOW);\\nlet ratioText = makeLabel('Area ratio = k² = 1.00', [3.2, 0.75, 0], 24, WHITE);\\nlet areaText = makeLabel('A = 3.75 · k² = 3.75', [3.2, 0.05, 0], 24, WHITE);\\nconst hint = makeLabel('drag the yellow dot to reshape the triangle', [-1.5, -2.55, 0], 18, GRAY);\\nconst caption = makeLabel('gray outline = original (k = 1), each grid square = 1 unit²', [-1.5, -3.05, 0], 18, GRAY);\\n\\nfunction refresh() {\\n  const A = wp(A_rel, k), B = wp(B_rel, k), C = wp(C_rel, k);\\n  tri.setVertices([A, B, C]);\\n  ghost.setVertices([wp(A_rel, 1), wp(B_rel, 1), wp(C_rel, 1)]);\\n  const foot = [C[0], pivot[1], 0];\\n  heightSeg.setVertices([C, foot]);\\n  const m = 0.15;\\n  marker.setVertices([\\n    [foot[0], foot[1], 0], [foot[0] + m, foot[1], 0],\\n    [foot[0] + m, foot[1] + m, 0], [foot[0], foot[1] + m, 0]\\n  ]);\\n  const b = 3, h = C_rel[1];\\n  const A0 = 0.5 * b * h;\\n  const area = A0 * k * k;\\n  kbLabel = swapLabel(kbLabel, 'kb = ' + (b * k).toFixed(1), [pivot[0], -2.0, 0], 22, BLUE);\\n  khLabel = swapLabel(khLabel, 'kh = ' + (h * k).toFixed(1), [C[0] + 0.62, (C[1] + pivot[1]) / 2, 0], 22, GREEN);\\n  kText = swapLabel(kText, 'k = ' + k.toFixed(2), [3.2, 1.5, 0], 26, YELLOW);\\n  ratioText = swapLabel(ratioText, 'Area ratio = k² = ' + (k * k).toFixed(2), [3.2, 0.75, 0], 24, WHITE);\\n  areaText = swapLabel(areaText, 'A = ' + A0.toFixed(2) + ' · k² = ' + area.toFixed(2), [3.2, 0.05, 0], 24, WHITE);\\n}\\n\\n// Formula: why k² appears\\nconst formula = new MathTex({ latex: 'A = \\\\\\\\frac{1}{2}(kb)(kh) = k^2 \\\\\\\\cdot \\\\\\\\frac{1}{2}bh = k^2 A_0' });\\nawait formula.waitForRender();\\nformula.scale(0.85);\\nformula.moveTo([3.1, 2.45, 0]);\\n\\n// Intro animations\\nawait scene.play(new Write(title));\\nawait scene.play(new Create(ghost));\\nawait scene.play(new FadeIn(tri));\\nawait scene.play(new AnimationGroup([new Create(heightSeg), new Create(marker), new FadeIn(dot)]));\\nscene.add(kbLabel, khLabel, kText, ratioText, areaText, hint, caption);\\nawait scene.play(new Write(formula));\\n\\n// Short demo sweep: k from 1 to 1.7 and back\\nfor (let i = 0; i <= 14; i++) {\\n  k = 1 + i * 0.05;\\n  dot.moveTo(wp(C_rel, k));\\n  refresh();\\n  await scene.wait(0.06);\\n}\\nfor (let i = 14; i >= 0; i--) {\\n  k = 1 + i * 0.05;\\n  dot.moveTo(wp(C_rel, k));\\n  refresh();\\n  await scene.wait(0.06);\\n}\\nk = 1;\\ndot.moveTo(wp(C_rel, 1));\\nrefresh();\\n\\n// Controls\\nconst controls = new Controls(scene, { position: 'bottom-right' });\\ncontrols.addSlider({ label: 'scale factor k', min: 0.4, max: 2, value: 1, step: 0.05, onChange: (val) => {\\n  k = val;\\n  dot.moveTo(wp(C_rel, k));\\n  refresh();\\n}});\\ncontrols.addCheckbox({ label: 'show unit grid', checked: true, onChange: (checked) => {\\n  for (const ln of gridLines) ln.setOpacity(checked ? 0.15 : 0);\\n}});\\n\\n// Draggable apex: reshape the triangle, k² law still holds\\nmakeDraggable(dot, scene, {\\n  constrainX: [-5.2, 2.2],\\n  constrainY: [-0.6, 3.5],\\n  onDrag: (mob, pos) => {\\n    let rx = (pos[0] - pivot[0]) / k;\\n    let ry = (pos[1] - pivot[1]) / k;\\n    rx = Math.max(-1.7, Math.min(1.7, rx));\\n    ry = Math.max(0.6, Math.min(2.5, ry));\\n    C_rel[0] = rx;\\n    C_rel[1] = ry;\\n    mob.moveTo(wp(C_rel, k));\\n    refresh();\\n  }\\n});\\n\\nawait scene.wait(999999);\" }",
+        "explanation": "Area is a product of two lengths: for a triangle, A = ½·base·height. When you scale the triangle by k, *both* the base and the height get multiplied by k, so the new area is ½·(kb)·(kh) = k²·(½bh) = k²·A₀ — the factor k shows up once for each of the two dimensions. This is true for every shape: lengths scale by k, areas by k² (and volumes by k³). Use the slider to scale the triangle and drag the yellow apex to reshape it — the area always tracks k² times the original, which the unit grid lets you verify by counting squares."
+      },
+      "code": "// Title\nconst title = new Text({ text: 'Scaling a triangle by k multiplies its area by k²', fontSize: 26, color: WHITE });\ntitle.moveTo([0, 3.55, 0]);\n\n// Faint unit grid: each square = 1 unit of area\nconst gridLines = [];\nfor (let gx = -6; gx <= 6; gx++) {\n  const ln = new Line({ start: [gx, -3.4, 0], end: [gx, 3.4, 0], color: GRAY });\n  ln.setOpacity(0.15);\n  ln.setStrokeWidth(1);\n  gridLines.push(ln);\n  scene.add(ln);\n}\nfor (let gy = -3; gy <= 3; gy++) {\n  const ln = new Line({ start: [-6.5, gy, 0], end: [6.5, gy, 0], color: GRAY });\n  ln.setOpacity(0.15);\n  ln.setStrokeWidth(1);\n  gridLines.push(ln);\n  scene.add(ln);\n}\n\n// Triangle defined relative to pivot (midpoint of base), so scaling keeps base centered\nconst pivot = [-1.5, -1.5, 0];\nlet k = 1;\nconst A_rel = [-1.5, 0, 0];   // base half-width 1.5  =>  b = 3\nconst B_rel = [1.5, 0, 0];\nconst C_rel = [0, 2.5, 0];    // apex, h = 2.5 (draggable)\n\nfunction wp(rel, kk) {\n  return [pivot[0] + kk * rel[0], pivot[1] + kk * rel[1], 0];\n}\n\n// Ghost = original triangle (k = 1)\nconst ghost = new Polygon({ vertices: [wp(A_rel, 1), wp(B_rel, 1), wp(C_rel, 1)], color: GRAY });\nghost.setFillOpacity(0);\nghost.setStrokeWidth(2);\n\n// Scaled triangle\nconst tri = new Polygon({ vertices: [wp(A_rel, 1), wp(B_rel, 1), wp(C_rel, 1)], color: BLUE });\ntri.setFill(BLUE, 0.3);\ntri.setStrokeWidth(3);\n\n// Height segment + right-angle marker\nconst C0 = wp(C_rel, 1);\nconst heightSeg = new Polygon({ vertices: [C0, [C0[0], pivot[1], 0]], color: GREEN });\nheightSeg.setFillOpacity(0);\nheightSeg.setStrokeWidth(2);\nconst m0 = 0.15;\nconst marker = new Polygon({ vertices: [\n  [C0[0], pivot[1], 0], [C0[0] + m0, pivot[1], 0],\n  [C0[0] + m0, pivot[1] + m0, 0], [C0[0], pivot[1] + m0, 0]\n], color: WHITE });\nmarker.setFillOpacity(0);\nmarker.setStrokeWidth(1.5);\n\n// Draggable apex\nconst dot = new Dot({ point: C0, color: YELLOW });\n\nfunction makeLabel(str, pos, size, color) {\n  const t = new Text({ text: str, fontSize: size, color: color });\n  t.moveTo(pos);\n  return t;\n}\nfunction swapLabel(oldT, str, pos, size, color) {\n  scene.remove(oldT);\n  const nt = makeLabel(str, pos, size, color);\n  scene.add(nt);\n  return nt;\n}\n\n// Initial labels\nlet kbLabel = makeLabel('kb = 3.0', [pivot[0], -2.0, 0], 22, BLUE);\nlet khLabel = makeLabel('kh = 2.5', [C0[0] + 0.62, (C0[1] + pivot[1]) / 2, 0], 22, GREEN);\nlet kText = makeLabel('k = 1.00', [3.2, 1.5, 0], 26, YELLOW);\nlet ratioText = makeLabel('Area ratio = k² = 1.00', [3.2, 0.75, 0], 24, WHITE);\nlet areaText = makeLabel('A = 3.75 · k² = 3.75', [3.2, 0.05, 0], 24, WHITE);\nconst hint = makeLabel('drag the yellow dot to reshape the triangle', [-1.5, -2.55, 0], 18, GRAY);\nconst caption = makeLabel('gray outline = original (k = 1), each grid square = 1 unit²', [-1.5, -3.05, 0], 18, GRAY);\n\nfunction refresh() {\n  const A = wp(A_rel, k), B = wp(B_rel, k), C = wp(C_rel, k);\n  tri.setVertices([A, B, C]);\n  ghost.setVertices([wp(A_rel, 1), wp(B_rel, 1), wp(C_rel, 1)]);\n  const foot = [C[0], pivot[1], 0];\n  heightSeg.setVertices([C, foot]);\n  const m = 0.15;\n  marker.setVertices([\n    [foot[0], foot[1], 0], [foot[0] + m, foot[1], 0],\n    [foot[0] + m, foot[1] + m, 0], [foot[0], foot[1] + m, 0]\n  ]);\n  const b = 3, h = C_rel[1];\n  const A0 = 0.5 * b * h;\n  const area = A0 * k * k;\n  kbLabel = swapLabel(kbLabel, 'kb = ' + (b * k).toFixed(1), [pivot[0], -2.0, 0], 22, BLUE);\n  khLabel = swapLabel(khLabel, 'kh = ' + (h * k).toFixed(1), [C[0] + 0.62, (C[1] + pivot[1]) / 2, 0], 22, GREEN);\n  kText = swapLabel(kText, 'k = ' + k.toFixed(2), [3.2, 1.5, 0], 26, YELLOW);\n  ratioText = swapLabel(ratioText, 'Area ratio = k² = ' + (k * k).toFixed(2), [3.2, 0.75, 0], 24, WHITE);\n  areaText = swapLabel(areaText, 'A = ' + A0.toFixed(2) + ' · k² = ' + area.toFixed(2), [3.2, 0.05, 0], 24, WHITE);\n}\n\n// Formula: why k² appears\nconst formula = new MathTex({ latex: 'A = \\\\frac{1}{2}(kb)(kh) = k^2 \\\\cdot \\\\frac{1}{2}bh = k^2 A_0' });\nawait formula.waitForRender();\nformula.scale(0.85);\nformula.moveTo([3.1, 2.45, 0]);\n\n// Intro animations\nawait scene.play(new Write(title));\nawait scene.play(new Create(ghost));\nawait scene.play(new FadeIn(tri));\nawait scene.play(new AnimationGroup([new Create(heightSeg), new Create(marker), new FadeIn(dot)]));\nscene.add(kbLabel, khLabel, kText, ratioText, areaText, hint, caption);\nawait scene.play(new Write(formula));\n\n// Short demo sweep: k from 1 to 1.7 and back\nfor (let i = 0; i <= 14; i++) {\n  k = 1 + i * 0.05;\n  dot.moveTo(wp(C_rel, k));\n  refresh();\n  await scene.wait(0.06);\n}\nfor (let i = 14; i >= 0; i--) {\n  k = 1 + i * 0.05;\n  dot.moveTo(wp(C_rel, k));\n  refresh();\n  await scene.wait(0.06);\n}\nk = 1;\ndot.moveTo(wp(C_rel, 1));\nrefresh();\n\n// Controls\nconst controls = new Controls(scene, { position: 'bottom-right' });\ncontrols.addSlider({ label: 'scale factor k', min: 0.4, max: 2, value: 1, step: 0.05, onChange: (val) => {\n  k = val;\n  dot.moveTo(wp(C_rel, k));\n  refresh();\n}});\ncontrols.addCheckbox({ label: 'show unit grid', checked: true, onChange: (checked) => {\n  for (const ln of gridLines) ln.setOpacity(checked ? 0.15 : 0);\n}});\n\n// Draggable apex: reshape the triangle, k² law still holds\nmakeDraggable(dot, scene, {\n  constrainX: [-5.2, 2.2],\n  constrainY: [-0.6, 3.5],\n  onDrag: (mob, pos) => {\n    let rx = (pos[0] - pivot[0]) / k;\n    let ry = (pos[1] - pivot[1]) / k;\n    rx = Math.max(-1.7, Math.min(1.7, rx));\n    ry = Math.max(0.6, Math.min(2.5, ry));\n    C_rel[0] = rx;\n    C_rel[1] = ry;\n    mob.moveTo(wp(C_rel, k));\n    refresh();\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 14675,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 5,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 1
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/geo-similar-area.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/geo-similar-area.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:55:13.414Z"
+}

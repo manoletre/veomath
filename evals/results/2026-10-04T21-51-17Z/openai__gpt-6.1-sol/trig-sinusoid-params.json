@@ -1,0 +1,109 @@
+{
+  "itemId": "trig-sinusoid-params",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.07% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=4 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (0.3, 1.0) — 2.04% changed\n✓ drag Dot at (2.4, 0.0) — 2.79% changed\n✓ drag Dot at (-0.5, 0.0) — 2.27% changed\n✓ drag Dot at (-5.0, 0.0) — 3.39% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (0.3, 1.0) — 2.04% changed\n✓ drag Dot at (2.4, 0.0) — 2.79% changed\n✓ drag Dot at (-0.5, 0.0) — 2.27% changed\n✓ drag Dot at (-5.0, 0.0) — 3.39% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 51298,
+        "inputTokens": 5318,
+        "cachedInputTokens": 5287,
+        "outputTokens": 2335,
+        "costUsd": 0.023940700000000002,
+        "rawResponse": "{\"explanation\":\"Drag the four colored handles to change the sine wave directly: A controls its signed amplitude, B controls its frequency, C shifts it horizontally, and D shifts it vertically. The period is 2π/B, so moving the B handle closer to C makes the oscillations faster. Drag A below the midline to flip the wave.\",\"manimCode\":\"const ax = new Axes({ xRange: [-6, 6, 1], yRange: [-3, 3, 1], xLength: 11, yLength: 4.6, tips: false });\\nlet A = 1.3;\\nlet B = 2;\\nlet C = -0.5;\\nlet D = 0;\\nconst f = x => A * Math.sin(B * (x - C)) + D;\\nconst clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));\\n\\nconst title = new Text({ text: 'Shape a sine wave', fontSize: 30, color: WHITE });\\ntitle.moveTo([0, 3.3, 0]);\\nconst equation = new Text({ text: '', fontSize: 25, color: WHITE });\\nequation.moveTo([0, 2.75, 0]);\\nconst curve = ax.plot(f, { color: BLUE });\\ncurve.setStrokeWidth(4);\\nconst midline = new DashedLine({ start: ax.c2p(-6, D), end: ax.c2p(6, D), color: GRAY });\\nconst amplitudeGuide = new Line({ start: ax.c2p(C + Math.PI / (2 * B), D), end: ax.c2p(C + Math.PI / (2 * B), D + A), color: GREEN });\\n\\nconst handleA = new Dot({ point: ax.c2p(C + Math.PI / (2 * B), D + A), radius: 0.13, color: GREEN });\\nconst handleB = new Dot({ point: ax.c2p(C + 2 * Math.PI / B, D), radius: 0.13, color: YELLOW });\\nconst handleC = new Dot({ point: ax.c2p(C, D), radius: 0.13, color: ORANGE });\\nconst handleD = new Dot({ point: ax.c2p(-5.5, D), radius: 0.13, color: PURPLE });\\nconst labelA = new Text({ text: 'A', fontSize: 23, color: GREEN });\\nconst labelB = new Text({ text: 'B', fontSize: 23, color: YELLOW });\\nconst labelC = new Text({ text: 'C', fontSize: 23, color: ORANGE });\\nconst labelD = new Text({ text: 'D', fontSize: 23, color: PURPLE });\\n\\nconst periodLine = new Line({ start: [0, -2.5, 0], end: [1, -2.5, 0], color: YELLOW });\\nconst periodLeft = new Line({ start: [0, -2.42, 0], end: [0, -2.58, 0], color: YELLOW });\\nconst periodRight = new Line({ start: [1, -2.42, 0], end: [1, -2.58, 0], color: YELLOW });\\nconst readout = new Text({ text: '', fontSize: 22, color: WHITE });\\nreadout.moveTo([0, -2.95, 0]);\\nconst hint = new Text({ text: 'Drag A up/down · B left/right · C left/right · D up/down', fontSize: 20, color: GRAY });\\nhint.moveTo([0, -3.45, 0]);\\n\\nfunction update() {\\n  const peakX = C + Math.PI / (2 * B);\\n  const endX = C + 2 * Math.PI / B;\\n  curve.setFunction(f);\\n  midline.setStart(ax.c2p(-6, D));\\n  midline.setEnd(ax.c2p(6, D));\\n  amplitudeGuide.setStart(ax.c2p(peakX, D));\\n  amplitudeGuide.setEnd(ax.c2p(peakX, D + A));\\n  handleA.moveTo(ax.c2p(peakX, D + A));\\n  handleB.moveTo(ax.c2p(endX, D));\\n  handleC.moveTo(ax.c2p(C, D));\\n  handleD.moveTo(ax.c2p(-5.5, D));\\n  labelA.moveTo(ax.c2p(peakX, D + A)).shift([0, A >= 0 ? 0.26 : -0.26, 0]);\\n  labelB.moveTo(ax.c2p(endX, D)).shift([0.23, 0.26, 0]);\\n  labelC.moveTo(ax.c2p(C, D)).shift([-0.23, -0.28, 0]);\\n  labelD.moveTo(ax.c2p(-5.5, D)).shift([0, 0.28, 0]);\\n  const leftX = ax.c2p(C, 0)[0];\\n  const rightX = ax.c2p(endX, 0)[0];\\n  periodLine.setStart([leftX, -2.5, 0]);\\n  periodLine.setEnd([rightX, -2.5, 0]);\\n  periodLeft.setStart([leftX, -2.42, 0]);\\n  periodLeft.setEnd([leftX, -2.58, 0]);\\n  periodRight.setStart([rightX, -2.42, 0]);\\n  periodRight.setEnd([rightX, -2.58, 0]);\\n  const inside = C < 0 ? '(x + ' + Math.abs(C).toFixed(2) + ')' : '(x − ' + C.toFixed(2) + ')';\\n  const offset = D < 0 ? ' − ' + Math.abs(D).toFixed(2) : ' + ' + D.toFixed(2);\\n  equation.setText('y = ' + A.toFixed(2) + ' sin[' + B.toFixed(2) + inside + ']' + offset);\\n  readout.setText('Amplitude = ' + Math.abs(A).toFixed(2) + '     Period = 2π/B = ' + (2 * Math.PI / B).toFixed(2) + '     Midline: y = ' + D.toFixed(2));\\n}\\n\\nscene.add(ax, midline, amplitudeGuide, title, equation);\\nupdate();\\nawait scene.play(new Create(curve));\\nscene.add(periodLine, periodLeft, periodRight, handleA, handleB, handleC, handleD, labelA, labelB, labelC, labelD, readout, hint);\\n\\nmakeDraggable(handleA, scene, { onDrag: (mob, pos) => {\\n  A = clamp(ax.pointToCoords(pos)[1] - D, -1.8, 1.8);\\n  update();\\n} });\\nmakeDraggable(handleB, scene, { onDrag: (mob, pos) => {\\n  const separation = clamp(ax.pointToCoords(pos)[0] - C, 2 * Math.PI / 4, 2 * Math.PI / 1.5);\\n  B = 2 * Math.PI / separation;\\n  update();\\n} });\\nmakeDraggable(handleC, scene, { onDrag: (mob, pos) => {\\n  C = clamp(ax.pointToCoords(pos)[0], -1.5, 1.5);\\n  update();\\n} });\\nmakeDraggable(handleD, scene, { onDrag: (mob, pos) => {\\n  D = clamp(ax.pointToCoords(pos)[1], -0.8, 0.8);\\n  update();\\n} });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Drag the four colored handles to change the sine wave directly: A controls its signed amplitude, B controls its frequency, C shifts it horizontally, and D shifts it vertically. The period is 2π/B, so moving the B handle closer to C makes the oscillations faster. Drag A below the midline to flip the wave."
+      },
+      "code": "const ax = new Axes({ xRange: [-6, 6, 1], yRange: [-3, 3, 1], xLength: 11, yLength: 4.6, tips: false });\nlet A = 1.3;\nlet B = 2;\nlet C = -0.5;\nlet D = 0;\nconst f = x => A * Math.sin(B * (x - C)) + D;\nconst clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));\n\nconst title = new Text({ text: 'Shape a sine wave', fontSize: 30, color: WHITE });\ntitle.moveTo([0, 3.3, 0]);\nconst equation = new Text({ text: '', fontSize: 25, color: WHITE });\nequation.moveTo([0, 2.75, 0]);\nconst curve = ax.plot(f, { color: BLUE });\ncurve.setStrokeWidth(4);\nconst midline = new DashedLine({ start: ax.c2p(-6, D), end: ax.c2p(6, D), color: GRAY });\nconst amplitudeGuide = new Line({ start: ax.c2p(C + Math.PI / (2 * B), D), end: ax.c2p(C + Math.PI / (2 * B), D + A), color: GREEN });\n\nconst handleA = new Dot({ point: ax.c2p(C + Math.PI / (2 * B), D + A), radius: 0.13, color: GREEN });\nconst handleB = new Dot({ point: ax.c2p(C + 2 * Math.PI / B, D), radius: 0.13, color: YELLOW });\nconst handleC = new Dot({ point: ax.c2p(C, D), radius: 0.13, color: ORANGE });\nconst handleD = new Dot({ point: ax.c2p(-5.5, D), radius: 0.13, color: PURPLE });\nconst labelA = new Text({ text: 'A', fontSize: 23, color: GREEN });\nconst labelB = new Text({ text: 'B', fontSize: 23, color: YELLOW });\nconst labelC = new Text({ text: 'C', fontSize: 23, color: ORANGE });\nconst labelD = new Text({ text: 'D', fontSize: 23, color: PURPLE });\n\nconst periodLine = new Line({ start: [0, -2.5, 0], end: [1, -2.5, 0], color: YELLOW });\nconst periodLeft = new Line({ start: [0, -2.42, 0], end: [0, -2.58, 0], color: YELLOW });\nconst periodRight = new Line({ start: [1, -2.42, 0], end: [1, -2.58, 0], color: YELLOW });\nconst readout = new Text({ text: '', fontSize: 22, color: WHITE });\nreadout.moveTo([0, -2.95, 0]);\nconst hint = new Text({ text: 'Drag A up/down · B left/right · C left/right · D up/down', fontSize: 20, color: GRAY });\nhint.moveTo([0, -3.45, 0]);\n\nfunction update() {\n  const peakX = C + Math.PI / (2 * B);\n  const endX = C + 2 * Math.PI / B;\n  curve.setFunction(f);\n  midline.setStart(ax.c2p(-6, D));\n  midline.setEnd(ax.c2p(6, D));\n  amplitudeGuide.setStart(ax.c2p(peakX, D));\n  amplitudeGuide.setEnd(ax.c2p(peakX, D + A));\n  handleA.moveTo(ax.c2p(peakX, D + A));\n  handleB.moveTo(ax.c2p(endX, D));\n  handleC.moveTo(ax.c2p(C, D));\n  handleD.moveTo(ax.c2p(-5.5, D));\n  labelA.moveTo(ax.c2p(peakX, D + A)).shift([0, A >= 0 ? 0.26 : -0.26, 0]);\n  labelB.moveTo(ax.c2p(endX, D)).shift([0.23, 0.26, 0]);\n  labelC.moveTo(ax.c2p(C, D)).shift([-0.23, -0.28, 0]);\n  labelD.moveTo(ax.c2p(-5.5, D)).shift([0, 0.28, 0]);\n  const leftX = ax.c2p(C, 0)[0];\n  const rightX = ax.c2p(endX, 0)[0];\n  periodLine.setStart([leftX, -2.5, 0]);\n  periodLine.setEnd([rightX, -2.5, 0]);\n  periodLeft.setStart([leftX, -2.42, 0]);\n  periodLeft.setEnd([leftX, -2.58, 0]);\n  periodRight.setStart([rightX, -2.42, 0]);\n  periodRight.setEnd([rightX, -2.58, 0]);\n  const inside = C < 0 ? '(x + ' + Math.abs(C).toFixed(2) + ')' : '(x − ' + C.toFixed(2) + ')';\n  const offset = D < 0 ? ' − ' + Math.abs(D).toFixed(2) : ' + ' + D.toFixed(2);\n  equation.setText('y = ' + A.toFixed(2) + ' sin[' + B.toFixed(2) + inside + ']' + offset);\n  readout.setText('Amplitude = ' + Math.abs(A).toFixed(2) + '     Period = 2π/B = ' + (2 * Math.PI / B).toFixed(2) + '     Midline: y = ' + D.toFixed(2));\n}\n\nscene.add(ax, midline, amplitudeGuide, title, equation);\nupdate();\nawait scene.play(new Create(curve));\nscene.add(periodLine, periodLeft, periodRight, handleA, handleB, handleC, handleD, labelA, labelB, labelC, labelD, readout, hint);\n\nmakeDraggable(handleA, scene, { onDrag: (mob, pos) => {\n  A = clamp(ax.pointToCoords(pos)[1] - D, -1.8, 1.8);\n  update();\n} });\nmakeDraggable(handleB, scene, { onDrag: (mob, pos) => {\n  const separation = clamp(ax.pointToCoords(pos)[0] - C, 2 * Math.PI / 4, 2 * Math.PI / 1.5);\n  B = 2 * Math.PI / separation;\n  update();\n} });\nmakeDraggable(handleC, scene, { onDrag: (mob, pos) => {\n  C = clamp(ax.pointToCoords(pos)[0], -1.5, 1.5);\n  update();\n} });\nmakeDraggable(handleD, scene, { onDrag: (mob, pos) => {\n  D = clamp(ax.pointToCoords(pos)[1], -0.8, 0.8);\n  update();\n} });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 10858,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 4,
+        "clickables": 0,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "drag",
+            "label": "Dot at (0.3, 1.0)",
+            "change": 0.020364583333333332,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (2.4, 0.0)",
+            "change": 0.027862413194444446,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (-0.5, 0.0)",
+            "change": 0.022676866319444444,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (-5.0, 0.0)",
+            "change": 0.03385850694444444,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/trig-sinusoid-params.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/trig-sinusoid-params.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:53:09.659Z"
+}

@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-cone-cylinder",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "7.72% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=2"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.49% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 42575,
+        "inputTokens": 4608,
+        "cachedInputTokens": 4581,
+        "outputTokens": 2168,
+        "costUsd": 0.022192100000000003,
+        "rawResponse": "{\"explanation\":\"At height z above the base, the cone’s radius is R(1 − z/h), so its horizontal slice has area πR²(1 − z/h)². The cylinder’s slices all have area πR². Adding the slices over the full height gives the cone a volume of πR²h/3—exactly one third of the cylinder’s. Move the slider to compare their cross-sections.\",\"manimCode\":\"const title = new Text({ text: 'Same base. Same height. Why one third?', fontSize: 28, color: WHITE });\\ntitle.moveTo([-0.8, 3.15, 0]);\\nawait scene.play(new Write(title));\\n\\nconst baseY = -1.25;\\nconst h = 3;\\nconst radius = 1;\\nconst cylinderX = -3.1;\\nconst coneX = 0.3;\\n\\nfunction ellipseVertices(cx, cy, rx, ry) {\\n  const pts = [];\\n  for (let i = 0; i < 64; i++) {\\n    const a = 2 * Math.PI * i / 64;\\n    pts.push([cx + rx * Math.cos(a), cy + ry * Math.sin(a), 0]);\\n  }\\n  return pts;\\n}\\nfunction ellipse(cx, cy, rx, ry, color, opacity) {\\n  const obj = new Polygon({ vertices: ellipseVertices(cx, cy, rx, ry), color });\\n  obj.setFill(color, opacity);\\n  obj.setStrokeWidth(2);\\n  return obj;\\n}\\n\\nconst cylinderBody = new Polygon({ vertices: [\\n  [cylinderX-radius, baseY, 0], [cylinderX+radius, baseY, 0],\\n  [cylinderX+radius, baseY+h, 0], [cylinderX-radius, baseY+h, 0]\\n], color: BLUE });\\ncylinderBody.setFill(BLUE, 0.16);\\nconst cylinderBase = ellipse(cylinderX, baseY, radius, 0.22, BLUE, 0.2);\\nconst cylinderTop = ellipse(cylinderX, baseY+h, radius, 0.22, BLUE, 0.14);\\nconst coneBody = new Polygon({ vertices: [\\n  [coneX-radius, baseY, 0], [coneX+radius, baseY, 0], [coneX, baseY+h, 0]\\n], color: ORANGE });\\nconeBody.setFill(ORANGE, 0.18);\\nconst coneBase = ellipse(coneX, baseY, radius, 0.22, ORANGE, 0.22);\\n\\nconst cylinderLabel = new Text({ text: 'Cylinder', fontSize: 25, color: BLUE });\\ncylinderLabel.moveTo([cylinderX, 2.3, 0]);\\nconst coneLabel = new Text({ text: 'Cone', fontSize: 25, color: ORANGE });\\nconeLabel.moveTo([coneX, 2.3, 0]);\\nawait scene.play(new AnimationGroup([\\n  new FadeIn(cylinderBody), new FadeIn(cylinderBase), new FadeIn(cylinderTop),\\n  new FadeIn(coneBody), new FadeIn(coneBase), new Write(cylinderLabel), new Write(coneLabel)\\n]));\\n\\nlet fraction = 0.5;\\nconst cylinderSlice = ellipse(cylinderX, baseY + h*fraction, radius, 0.22, YELLOW, 0.65);\\nconst coneSlice = ellipse(coneX, baseY + h*fraction, radius*(1-fraction), 0.22*(1-fraction), YELLOW, 0.65);\\nconst levelGuide = new Polygon({ vertices: [\\n  [cylinderX-radius, baseY+h*fraction, 0], [coneX+radius, baseY+h*fraction, 0]\\n], color: GRAY });\\nlevelGuide.setFillOpacity(0);\\nlevelGuide.setStrokeWidth(1);\\nscene.add(levelGuide, cylinderSlice, coneSlice);\\nlet heightLabel;\\nlet ratioLabel;\\nfunction refreshSlices(v) {\\n  fraction = v;\\n  const yy = baseY + h*v;\\n  const rr = radius*(1-v);\\n  cylinderSlice.setVertices(ellipseVertices(cylinderX, yy, radius, 0.22));\\n  coneSlice.setVertices(ellipseVertices(coneX, yy, Math.max(rr, 0.001), Math.max(0.22*(1-v), 0.001)));\\n  levelGuide.setVertices([[cylinderX-radius, yy, 0], [coneX+radius, yy, 0]]);\\n  if (heightLabel) scene.remove(heightLabel);\\n  if (ratioLabel) scene.remove(ratioLabel);\\n  heightLabel = new Text({ text: 'Height: ' + v.toFixed(2) + ' h', fontSize: 23, color: WHITE });\\n  heightLabel.moveTo([3.75, 0.25, 0]);\\n  ratioLabel = new Text({ text: 'Slice area: ' + (100*(1-v)*(1-v)).toFixed(1) + '%', fontSize: 23, color: YELLOW });\\n  ratioLabel.moveTo([3.75, -0.3, 0]);\\n  scene.add(heightLabel, ratioLabel);\\n}\\nrefreshSlices(fraction);\\nconst comparisonNote = new Text({ text: 'of the cylinder slice', fontSize: 20, color: GRAY });\\ncomparisonNote.moveTo([3.75, -0.75, 0]);\\nscene.add(comparisonNote);\\n\\nconst sliceFormula = new MathTex({ latex: 'A_{\\\\\\\\mathrm{cone}}(z)=\\\\\\\\pi R^2\\\\\\\\left(1-\\\\\\\\frac{z}{h}\\\\\\\\right)^2' });\\nawait sliceFormula.waitForRender();\\nsliceFormula.scale(0.76);\\nsliceFormula.moveTo([-0.5, -2.15, 0]);\\nawait scene.play(new Write(sliceFormula));\\nconst volumeFormula = new MathTex({ latex: 'V_{\\\\\\\\mathrm{cone}}=\\\\\\\\int_0^h A_{\\\\\\\\mathrm{cone}}(z)\\\\\\\\,dz=\\\\\\\\frac{1}{3}\\\\\\\\pi R^2h=\\\\\\\\frac{1}{3}V_{\\\\\\\\mathrm{cylinder}}' });\\nawait volumeFormula.waitForRender();\\nvolumeFormula.scale(0.73);\\nvolumeFormula.moveTo([0, -3.05, 0]);\\nawait scene.play(new Write(volumeFormula));\\n\\nfor (const v of [0.25, 0.5, 0.75, 0.5]) {\\n  refreshSlices(v);\\n  await scene.wait(0.8);\\n}\\nconst controls = new Controls(scene, { position: 'top-right', width: 240 });\\ncontrols.addSlider({ label: 'Slice height z / h', min: 0, max: 1, value: 0.5, step: 0.01, onChange: refreshSlices });\\nmakeHoverable(coneSlice, scene, { hoverColor: WHITE, hoverScale: 1 });\\nmakeHoverable(cylinderSlice, scene, { hoverColor: WHITE, hoverScale: 1 });\\nawait scene.wait(999999);\"}",
+        "explanation": "At height z above the base, the cone’s radius is R(1 − z/h), so its horizontal slice has area πR²(1 − z/h)². The cylinder’s slices all have area πR². Adding the slices over the full height gives the cone a volume of πR²h/3—exactly one third of the cylinder’s. Move the slider to compare their cross-sections."
+      },
+      "code": "const title = new Text({ text: 'Same base. Same height. Why one third?', fontSize: 28, color: WHITE });\ntitle.moveTo([-0.8, 3.15, 0]);\nawait scene.play(new Write(title));\n\nconst baseY = -1.25;\nconst h = 3;\nconst radius = 1;\nconst cylinderX = -3.1;\nconst coneX = 0.3;\n\nfunction ellipseVertices(cx, cy, rx, ry) {\n  const pts = [];\n  for (let i = 0; i < 64; i++) {\n    const a = 2 * Math.PI * i / 64;\n    pts.push([cx + rx * Math.cos(a), cy + ry * Math.sin(a), 0]);\n  }\n  return pts;\n}\nfunction ellipse(cx, cy, rx, ry, color, opacity) {\n  const obj = new Polygon({ vertices: ellipseVertices(cx, cy, rx, ry), color });\n  obj.setFill(color, opacity);\n  obj.setStrokeWidth(2);\n  return obj;\n}\n\nconst cylinderBody = new Polygon({ vertices: [\n  [cylinderX-radius, baseY, 0], [cylinderX+radius, baseY, 0],\n  [cylinderX+radius, baseY+h, 0], [cylinderX-radius, baseY+h, 0]\n], color: BLUE });\ncylinderBody.setFill(BLUE, 0.16);\nconst cylinderBase = ellipse(cylinderX, baseY, radius, 0.22, BLUE, 0.2);\nconst cylinderTop = ellipse(cylinderX, baseY+h, radius, 0.22, BLUE, 0.14);\nconst coneBody = new Polygon({ vertices: [\n  [coneX-radius, baseY, 0], [coneX+radius, baseY, 0], [coneX, baseY+h, 0]\n], color: ORANGE });\nconeBody.setFill(ORANGE, 0.18);\nconst coneBase = ellipse(coneX, baseY, radius, 0.22, ORANGE, 0.22);\n\nconst cylinderLabel = new Text({ text: 'Cylinder', fontSize: 25, color: BLUE });\ncylinderLabel.moveTo([cylinderX, 2.3, 0]);\nconst coneLabel = new Text({ text: 'Cone', fontSize: 25, color: ORANGE });\nconeLabel.moveTo([coneX, 2.3, 0]);\nawait scene.play(new AnimationGroup([\n  new FadeIn(cylinderBody), new FadeIn(cylinderBase), new FadeIn(cylinderTop),\n  new FadeIn(coneBody), new FadeIn(coneBase), new Write(cylinderLabel), new Write(coneLabel)\n]));\n\nlet fraction = 0.5;\nconst cylinderSlice = ellipse(cylinderX, baseY + h*fraction, radius, 0.22, YELLOW, 0.65);\nconst coneSlice = ellipse(coneX, baseY + h*fraction, radius*(1-fraction), 0.22*(1-fraction), YELLOW, 0.65);\nconst levelGuide = new Polygon({ vertices: [\n  [cylinderX-radius, baseY+h*fraction, 0], [coneX+radius, baseY+h*fraction, 0]\n], color: GRAY });\nlevelGuide.setFillOpacity(0);\nlevelGuide.setStrokeWidth(1);\nscene.add(levelGuide, cylinderSlice, coneSlice);\nlet heightLabel;\nlet ratioLabel;\nfunction refreshSlices(v) {\n  fraction = v;\n  const yy = baseY + h*v;\n  const rr = radius*(1-v);\n  cylinderSlice.setVertices(ellipseVertices(cylinderX, yy, radius, 0.22));\n  coneSlice.setVertices(ellipseVertices(coneX, yy, Math.max(rr, 0.001), Math.max(0.22*(1-v), 0.001)));\n  levelGuide.setVertices([[cylinderX-radius, yy, 0], [coneX+radius, yy, 0]]);\n  if (heightLabel) scene.remove(heightLabel);\n  if (ratioLabel) scene.remove(ratioLabel);\n  heightLabel = new Text({ text: 'Height: ' + v.toFixed(2) + ' h', fontSize: 23, color: WHITE });\n  heightLabel.moveTo([3.75, 0.25, 0]);\n  ratioLabel = new Text({ text: 'Slice area: ' + (100*(1-v)*(1-v)).toFixed(1) + '%', fontSize: 23, color: YELLOW });\n  ratioLabel.moveTo([3.75, -0.3, 0]);\n  scene.add(heightLabel, ratioLabel);\n}\nrefreshSlices(fraction);\nconst comparisonNote = new Text({ text: 'of the cylinder slice', fontSize: 20, color: GRAY });\ncomparisonNote.moveTo([3.75, -0.75, 0]);\nscene.add(comparisonNote);\n\nconst sliceFormula = new MathTex({ latex: 'A_{\\\\mathrm{cone}}(z)=\\\\pi R^2\\\\left(1-\\\\frac{z}{h}\\\\right)^2' });\nawait sliceFormula.waitForRender();\nsliceFormula.scale(0.76);\nsliceFormula.moveTo([-0.5, -2.15, 0]);\nawait scene.play(new Write(sliceFormula));\nconst volumeFormula = new MathTex({ latex: 'V_{\\\\mathrm{cone}}=\\\\int_0^h A_{\\\\mathrm{cone}}(z)\\\\,dz=\\\\frac{1}{3}\\\\pi R^2h=\\\\frac{1}{3}V_{\\\\mathrm{cylinder}}' });\nawait volumeFormula.waitForRender();\nvolumeFormula.scale(0.73);\nvolumeFormula.moveTo([0, -3.05, 0]);\nawait scene.play(new Write(volumeFormula));\n\nfor (const v of [0.25, 0.5, 0.75, 0.5]) {\n  refreshSlices(v);\n  await scene.wait(0.8);\n}\nconst controls = new Controls(scene, { position: 'top-right', width: 240 });\ncontrols.addSlider({ label: 'Slice height z / h', min: 0, max: 1, value: 0.5, step: 0.01, onChange: refreshSlices });\nmakeHoverable(coneSlice, scene, { hoverColor: WHITE, hoverScale: 1 });\nmakeHoverable(cylinderSlice, scene, { hoverColor: WHITE, hoverScale: 1 });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 11263,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 4,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 2
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/geo-cone-cylinder.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/geo-cone-cylinder.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:15.798Z"
+}

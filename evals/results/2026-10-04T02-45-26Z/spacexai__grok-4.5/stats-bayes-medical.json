@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-bayes-medical",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "6.62% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=2 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "9.50% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 128565,
+        "inputTokens": 5071,
+        "cachedInputTokens": 128,
+        "outputTokens": 7660,
+        "costUsd": 0.0558844,
+        "rawResponse": "{\n  \"explanation\": \"This is Bayes' theorem in action. The disease is rare (1 in 100), so even though the test correctly flags 90% of sick people, it also falsely flags 10% of the much larger healthy population. Those false positives outnumber the true ones, leaving only about an 8.3% chance that a positive result means you actually have the disease.\",\n  \"manimCode\": \"let prevalence = 0.01;\\nlet accuracy = 0.9;\\n\\nconst title = new Text({ text: \\\"Positive test — what's the chance you're sick?\\\", fontSize: 28, color: WHITE });\\ntitle.moveTo([0, 3.5, 0]);\\nawait scene.play(new Write(title));\\n\\nconst formul = new MathTex({ latex: 'P(D|+) = \\\\\\\\frac{P(+|D)P(D)}{P(+|D)P(D)+P(+|\\\\\\\\neg D)P(\\\\\\\\neg D)}' });\\nawait formul.waitForRender();\\nformul.scale(0.55);\\nformul.moveTo([0, 2.7, 0]);\\nawait scene.play(new Write(formul));\\n\\nconst hint = new Text({ text: \\\"Drag sliders to explore how rarity & accuracy change the result\\\", fontSize: 16, color: GRAY });\\nhint.moveTo([0, -3.5, 0]);\\nscene.add(hint);\\n\\nlet tpCircle = null;\\nlet fpCircle = null;\\nlet tpLabel = null;\\nlet fpLabel = null;\\nlet totalLabel = null;\\nlet resultLabel = null;\\nlet desc1 = null;\\nlet desc2 = null;\\nlet desc3 = null;\\nlet desc4 = null;\\nlet braceLabel = null;\\n\\nfunction clearDynamic() {\\n  [tpCircle, fpCircle, tpLabel, fpLabel, totalLabel, resultLabel, desc1, desc2, desc3, desc4, braceLabel].forEach(m => {\\n    if (m) scene.remove(m);\\n  });\\n}\\n\\nfunction updateViz() {\\n  clearDynamic();\\n  const N = 1000;\\n  const sick = N * prevalence;\\n  const healthy = N - sick;\\n  const TP = sick * accuracy;\\n  const FP = healthy * (1 - accuracy);\\n  const totalPos = TP + FP;\\n  const post = totalPos > 0 ? (TP / totalPos) * 100 : 0;\\n\\n  desc1 = new Text({ text: `Imagine ${N} people`, fontSize: 22, color: WHITE });\\n  desc1.moveTo([-4.2, 1.6, 0]);\\n  desc2 = new Text({ text: `${sick.toFixed(0)} sick   •   ${healthy.toFixed(0)} healthy`, fontSize: 18, color: BLUE_B });\\n  desc2.moveTo([-4.2, 1.15, 0]);\\n  desc3 = new Text({ text: `True positives:  ${TP.toFixed(1)}`, fontSize: 20, color: RED });\\n  desc3.moveTo([-4.2, 0.5, 0]);\\n  desc4 = new Text({ text: `False positives:  ${FP.toFixed(1)}`, fontSize: 20, color: ORANGE });\\n  desc4.moveTo([-4.2, 0.05, 0]);\\n  scene.add(desc1, desc2, desc3, desc4);\\n\\n  const tpR = Math.max(0.25, Math.sqrt(TP) * 0.09);\\n  const fpR = Math.max(0.25, Math.sqrt(FP) * 0.09);\\n\\n  tpCircle = new Circle({ radius: tpR, color: RED });\\n  tpCircle.setFill(RED, 0.65);\\n  tpCircle.moveTo([1.3, 0.3, 0]);\\n\\n  fpCircle = new Circle({ radius: fpR, color: ORANGE });\\n  fpCircle.setFill(ORANGE, 0.65);\\n  fpCircle.moveTo([4.0, 0.3, 0]);\\n\\n  scene.add(tpCircle, fpCircle);\\n\\n  tpLabel = new Text({ text: `TP: ${TP.toFixed(1)}`, fontSize: 18, color: WHITE });\\n  tpLabel.nextTo(tpCircle, DOWN, 0.15);\\n  fpLabel = new Text({ text: `FP: ${FP.toFixed(1)}`, fontSize: 18, color: WHITE });\\n  fpLabel.nextTo(fpCircle, DOWN, 0.15);\\n  scene.add(tpLabel, fpLabel);\\n\\n  braceLabel = new Text({ text: \\\"← positive tests →\\\", fontSize: 16, color: YELLOW });\\n  braceLabel.moveTo([2.65, 1.5, 0]);\\n  scene.add(braceLabel);\\n\\n  totalLabel = new Text({ text: `Total positives: ${totalPos.toFixed(1)}`, fontSize: 22, color: YELLOW });\\n  totalLabel.moveTo([2.65, -1.1, 0]);\\n  scene.add(totalLabel);\\n\\n  resultLabel = new Text({ text: `P(sick | positive) ≈ ${post.toFixed(1)}%`, fontSize: 30, color: GREEN });\\n  resultLabel.moveTo([0, -2.3, 0]);\\n  scene.add(resultLabel);\\n}\\n\\nupdateViz();\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\ncontrols.addSlider({\\n  label: 'Prevalence %',\\n  min: 0.1,\\n  max: 25,\\n  value: 1,\\n  step: 0.1,\\n  onChange: (v) => {\\n    prevalence = v / 100;\\n    updateViz();\\n  }\\n});\\ncontrols.addSlider({\\n  label: 'Test accuracy %',\\n  min: 50,\\n  max: 99,\\n  value: 90,\\n  step: 1,\\n  onChange: (v) => {\\n    accuracy = v / 100;\\n    updateViz();\\n  }\\n});\\ncontrols.addButton({\\n  label: 'Reset to 1% / 90%',\\n  onClick: () => {\\n    prevalence = 0.01;\\n    accuracy = 0.9;\\n    updateViz();\\n  }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "This is Bayes' theorem in action. The disease is rare (1 in 100), so even though the test correctly flags 90% of sick people, it also falsely flags 10% of the much larger healthy population. Those false positives outnumber the true ones, leaving only about an 8.3% chance that a positive result means you actually have the disease."
+      },
+      "code": "let prevalence = 0.01;\nlet accuracy = 0.9;\n\nconst title = new Text({ text: \"Positive test — what's the chance you're sick?\", fontSize: 28, color: WHITE });\ntitle.moveTo([0, 3.5, 0]);\nawait scene.play(new Write(title));\n\nconst formul = new MathTex({ latex: 'P(D|+) = \\\\frac{P(+|D)P(D)}{P(+|D)P(D)+P(+|\\\\neg D)P(\\\\neg D)}' });\nawait formul.waitForRender();\nformul.scale(0.55);\nformul.moveTo([0, 2.7, 0]);\nawait scene.play(new Write(formul));\n\nconst hint = new Text({ text: \"Drag sliders to explore how rarity & accuracy change the result\", fontSize: 16, color: GRAY });\nhint.moveTo([0, -3.5, 0]);\nscene.add(hint);\n\nlet tpCircle = null;\nlet fpCircle = null;\nlet tpLabel = null;\nlet fpLabel = null;\nlet totalLabel = null;\nlet resultLabel = null;\nlet desc1 = null;\nlet desc2 = null;\nlet desc3 = null;\nlet desc4 = null;\nlet braceLabel = null;\n\nfunction clearDynamic() {\n  [tpCircle, fpCircle, tpLabel, fpLabel, totalLabel, resultLabel, desc1, desc2, desc3, desc4, braceLabel].forEach(m => {\n    if (m) scene.remove(m);\n  });\n}\n\nfunction updateViz() {\n  clearDynamic();\n  const N = 1000;\n  const sick = N * prevalence;\n  const healthy = N - sick;\n  const TP = sick * accuracy;\n  const FP = healthy * (1 - accuracy);\n  const totalPos = TP + FP;\n  const post = totalPos > 0 ? (TP / totalPos) * 100 : 0;\n\n  desc1 = new Text({ text: `Imagine ${N} people`, fontSize: 22, color: WHITE });\n  desc1.moveTo([-4.2, 1.6, 0]);\n  desc2 = new Text({ text: `${sick.toFixed(0)} sick   •   ${healthy.toFixed(0)} healthy`, fontSize: 18, color: BLUE_B });\n  desc2.moveTo([-4.2, 1.15, 0]);\n  desc3 = new Text({ text: `True positives:  ${TP.toFixed(1)}`, fontSize: 20, color: RED });\n  desc3.moveTo([-4.2, 0.5, 0]);\n  desc4 = new Text({ text: `False positives:  ${FP.toFixed(1)}`, fontSize: 20, color: ORANGE });\n  desc4.moveTo([-4.2, 0.05, 0]);\n  scene.add(desc1, desc2, desc3, desc4);\n\n  const tpR = Math.max(0.25, Math.sqrt(TP) * 0.09);\n  const fpR = Math.max(0.25, Math.sqrt(FP) * 0.09);\n\n  tpCircle = new Circle({ radius: tpR, color: RED });\n  tpCircle.setFill(RED, 0.65);\n  tpCircle.moveTo([1.3, 0.3, 0]);\n\n  fpCircle = new Circle({ radius: fpR, color: ORANGE });\n  fpCircle.setFill(ORANGE, 0.65);\n  fpCircle.moveTo([4.0, 0.3, 0]);\n\n  scene.add(tpCircle, fpCircle);\n\n  tpLabel = new Text({ text: `TP: ${TP.toFixed(1)}`, fontSize: 18, color: WHITE });\n  tpLabel.nextTo(tpCircle, DOWN, 0.15);\n  fpLabel = new Text({ text: `FP: ${FP.toFixed(1)}`, fontSize: 18, color: WHITE });\n  fpLabel.nextTo(fpCircle, DOWN, 0.15);\n  scene.add(tpLabel, fpLabel);\n\n  braceLabel = new Text({ text: \"← positive tests →\", fontSize: 16, color: YELLOW });\n  braceLabel.moveTo([2.65, 1.5, 0]);\n  scene.add(braceLabel);\n\n  totalLabel = new Text({ text: `Total positives: ${totalPos.toFixed(1)}`, fontSize: 22, color: YELLOW });\n  totalLabel.moveTo([2.65, -1.1, 0]);\n  scene.add(totalLabel);\n\n  resultLabel = new Text({ text: `P(sick | positive) ≈ ${post.toFixed(1)}%`, fontSize: 30, color: GREEN });\n  resultLabel.moveTo([0, -2.3, 0]);\n  scene.add(resultLabel);\n}\n\nupdateViz();\n\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\ncontrols.addSlider({\n  label: 'Prevalence %',\n  min: 0.1,\n  max: 25,\n  value: 1,\n  step: 0.1,\n  onChange: (v) => {\n    prevalence = v / 100;\n    updateViz();\n  }\n});\ncontrols.addSlider({\n  label: 'Test accuracy %',\n  min: 50,\n  max: 99,\n  value: 90,\n  step: 1,\n  onChange: (v) => {\n    accuracy = v / 100;\n    updateViz();\n  }\n});\ncontrols.addButton({\n  label: 'Reset to 1% / 90%',\n  onClick: () => {\n    prevalence = 0.01;\n    accuracy = 0.9;\n    updateViz();\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5535,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 2,
+        "controls": {
+          "sliders": 2,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/stats-bayes-medical.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/stats-bayes-medical.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:50:44.281Z"
+}

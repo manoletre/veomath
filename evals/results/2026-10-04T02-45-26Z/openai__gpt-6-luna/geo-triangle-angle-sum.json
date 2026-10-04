@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-triangle-angle-sum",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.66% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.00% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 14408,
+        "inputTokens": 12271,
+        "cachedInputTokens": 12032,
+        "outputTokens": 521,
+        "costUsd": 0.00040472,
+        "rawResponse": "{\"explanation\":\"In Euclidean geometry, draw a line through one vertex parallel to the opposite side. The other two angles match the angles formed at that line by the triangle’s sides (alternate interior angles), and those three angles make a straight angle of 180°. This depends on Euclidean parallel lines; on curved surfaces, a triangle’s angle sum can differ.\",\"manimCode\":\"const A = [-2.2, -1.2, 0], B = [2.2, -1.2, 0], C = [-0.4, 2.0, 0];\\nconst tri = new Polygon({ vertices: [A, B, C], color: WHITE });\\ntri.setFill(BLUE_E, 0.18);\\nconst parallel = new Line({ start: [-3.0, 2.0, 0], end: [3.0, 2.0, 0], color: GOLD });\\nconst sideCA = new Line({ start: C, end: A, color: TEAL });\\nconst sideCB = new Line({ start: C, end: B, color: ORANGE });\\nconst aLabel = new Text({ text: 'α', color: TEAL, fontSize: 30 }); aLabel.moveTo([-1.55, -0.88, 0]);\\nconst bLabel = new Text({ text: 'β', color: ORANGE, fontSize: 30 }); bLabel.moveTo([1.55, -0.88, 0]);\\nconst cLabel = new Text({ text: 'γ', color: YELLOW, fontSize: 30 }); cLabel.moveTo([-0.4, 1.62, 0]);\\nconst straight = new Text({ text: 'α + γ + β = 180°', color: WHITE, fontSize: 32 }); straight.moveTo([0, -2.55, 0]);\\nconst parallelNote = new Text({ text: 'Through the top vertex: a parallel to the base', color: GOLD, fontSize: 20 }); parallelNote.moveTo([0, 2.7, 0]);\\nscene.add(tri, parallel, sideCA, sideCB, aLabel, bLabel, cLabel, straight, parallelNote);\\nmakeDraggable(tri, scene);\\nawait scene.wait(999999);\"}",
+        "explanation": "In Euclidean geometry, draw a line through one vertex parallel to the opposite side. The other two angles match the angles formed at that line by the triangle’s sides (alternate interior angles), and those three angles make a straight angle of 180°. This depends on Euclidean parallel lines; on curved surfaces, a triangle’s angle sum can differ."
+      },
+      "code": "const A = [-2.2, -1.2, 0], B = [2.2, -1.2, 0], C = [-0.4, 2.0, 0];\nconst tri = new Polygon({ vertices: [A, B, C], color: WHITE });\ntri.setFill(BLUE_E, 0.18);\nconst parallel = new Line({ start: [-3.0, 2.0, 0], end: [3.0, 2.0, 0], color: GOLD });\nconst sideCA = new Line({ start: C, end: A, color: TEAL });\nconst sideCB = new Line({ start: C, end: B, color: ORANGE });\nconst aLabel = new Text({ text: 'α', color: TEAL, fontSize: 30 }); aLabel.moveTo([-1.55, -0.88, 0]);\nconst bLabel = new Text({ text: 'β', color: ORANGE, fontSize: 30 }); bLabel.moveTo([1.55, -0.88, 0]);\nconst cLabel = new Text({ text: 'γ', color: YELLOW, fontSize: 30 }); cLabel.moveTo([-0.4, 1.62, 0]);\nconst straight = new Text({ text: 'α + γ + β = 180°', color: WHITE, fontSize: 32 }); straight.moveTo([0, -2.55, 0]);\nconst parallelNote = new Text({ text: 'Through the top vertex: a parallel to the base', color: GOLD, fontSize: 20 }); parallelNote.moveTo([0, 2.7, 0]);\nscene.add(tri, parallel, sideCA, sideCB, aLabel, bLabel, cLabel, straight, parallelNote);\nmakeDraggable(tri, scene);\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 6266,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/geo-triangle-angle-sum.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/geo-triangle-angle-sum.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:54:18.614Z"
+}

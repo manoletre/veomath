@@ -1,0 +1,103 @@
+{
+  "itemId": "alg-vertex-form",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.02% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=1 checkboxes=0 draggables=2 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✗ button \"Reset\" — 0.00% changed\n✓ drag Dot at (-0.8, -0.4) — 1.50% changed\n✓ drag Dot at (1.4, 1.0) — 0.82% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (-0.8, -0.4) — 1.50% changed\n✓ drag Dot at (1.4, 1.0) — 0.82% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 48148,
+        "inputTokens": 5318,
+        "cachedInputTokens": 0,
+        "outputTokens": 2102,
+        "costUsd": 0.031656000000000004,
+        "rawResponse": "{\"explanation\":\"In y = a(x − h)² + k, the vertex is (h, k): h shifts the parabola horizontally, and k shifts it vertically. The parameter a controls its opening: positive opens upward, negative opens downward, and larger |a| makes it narrower; a = 0 gives a horizontal line. Drag the yellow vertex to change h and k, and drag the orange point vertically to change a.\",\"manimCode\":\"const ax = new Axes({ xRange: [-5, 5, 1], yRange: [-4, 4, 1], xLength: 10, yLength: 4.8, tips: false });\\nlet a = 0.7;\\nlet h = -0.8;\\nlet k = -0.7;\\nconst offset = 1.4;\\nlet curve = null;\\n\\nconst title = new MathTex({ latex: 'y = a(x-h)^2+k', color: WHITE });\\nawait title.waitForRender();\\ntitle.moveTo([0, 3.25, 0]);\\nconst readout = new Text({ text: '', fontSize: 23, color: WHITE });\\nreadout.moveTo([0, 2.7, 0]);\\nconst hint = new Text({ text: 'Drag yellow: vertex (h, k)   |   Drag orange vertically: a', fontSize: 20, color: GRAY });\\nhint.moveTo([0, -3.35, 0]);\\nconst effect = new Text({ text: '', fontSize: 22, color: BLUE });\\neffect.moveTo([0, -2.85, 0]);\\n\\nconst symmetry = new DashedLine({ start: ax.c2p(h, -4), end: ax.c2p(h, 4), color: GRAY });\\nconst rise = new Line({ start: ax.c2p(h + offset, k), end: ax.c2p(h + offset, k + a * offset * offset), color: ORANGE });\\nconst run = new DashedLine({ start: ax.c2p(h, k), end: ax.c2p(h + offset, k), color: GRAY });\\nconst vertex = new Dot({ point: ax.c2p(h, k), radius: 0.14, color: YELLOW });\\nconst bend = new Dot({ point: ax.c2p(h + offset, k + a * offset * offset), radius: 0.14, color: ORANGE });\\nconst vertexLabel = new Text({ text: '(h, k)', fontSize: 20, color: YELLOW });\\nconst bendLabel = new Text({ text: 'change a', fontSize: 18, color: ORANGE });\\nscene.add(ax, title, readout, symmetry, run, rise, vertex, bend, vertexLabel, bendLabel, effect, hint);\\n\\nfunction update() {\\n  const f = x => a * (x - h) * (x - h) + k;\\n  // Rebuild the plotted domain so the visible parabola stays inside the axes.\\n  let left = -5;\\n  let right = 5;\\n  if (Math.abs(a) > 0.00001) {\\n    const boundary = a > 0 ? 4 : -4;\\n    const radius = Math.sqrt((boundary - k) / a);\\n    left = Math.max(-5, h - radius);\\n    right = Math.min(5, h + radius);\\n  }\\n  if (curve) scene.remove(curve);\\n  curve = ax.plot(f, { xRange: [left, right, 0.025], color: BLUE });\\n  curve.setStrokeWidth(4);\\n  scene.add(curve);\\n  symmetry.setStart(ax.c2p(h, -4));\\n  symmetry.setEnd(ax.c2p(h, 4));\\n  run.setStart(ax.c2p(h, k));\\n  run.setEnd(ax.c2p(h + offset, k));\\n  rise.setStart(ax.c2p(h + offset, k));\\n  rise.setEnd(ax.c2p(h + offset, f(h + offset)));\\n  vertex.moveTo(ax.c2p(h, k));\\n  bend.moveTo(ax.c2p(h + offset, f(h + offset)));\\n  const vp = ax.c2p(h, k);\\n  const bp = ax.c2p(h + offset, f(h + offset));\\n  vertexLabel.moveTo([vp[0] - 0.48, vp[1] - 0.32, 0]);\\n  bendLabel.moveTo([bp[0], bp[1] + (a >= 0 ? 0.3 : -0.3), 0]);\\n  readout.setText('a = ' + a.toFixed(2) + '     h = ' + h.toFixed(2) + '     k = ' + k.toFixed(2));\\n  if (Math.abs(a) < 0.00001) {\\n    effect.setText('a = 0: horizontal line y = k');\\n  } else {\\n    effect.setText((a > 0 ? 'Opens upward' : 'Opens downward') + '   |   larger |a| = narrower');\\n  }\\n  // Keep the handles and their labels above the newly plotted curve.\\n  scene.remove(vertex, bend, vertexLabel, bendLabel);\\n  scene.add(vertex, bend, vertexLabel, bendLabel);\\n}\\nupdate();\\n\\nconst clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));\\nmakeDraggable(vertex, scene, { onDrag: (mob, pos) => {\\n  const coordinates = ax.pointToCoords(pos);\\n  h = clamp(coordinates[0], -3, 3);\\n  k = clamp(coordinates[1], -1.2, 1.2);\\n  update();\\n} });\\nmakeDraggable(bend, scene, { onDrag: (mob, pos) => {\\n  const coordinates = ax.pointToCoords(pos);\\n  a = clamp((coordinates[1] - k) / (offset * offset), -1.2, 1.2);\\n  if (Math.abs(a) < 0.025) a = 0;\\n  update();\\n} });\\n\\nconst controls = new Controls(scene, { position: 'bottom-right' });\\ncontrols.addButton({ label: 'Reset', onClick: () => {\\n  a = 0.7; h = -0.8; k = -0.7;\\n  update();\\n} });\\nawait scene.wait(999999);\"}",
+        "explanation": "In y = a(x − h)² + k, the vertex is (h, k): h shifts the parabola horizontally, and k shifts it vertically. The parameter a controls its opening: positive opens upward, negative opens downward, and larger |a| makes it narrower; a = 0 gives a horizontal line. Drag the yellow vertex to change h and k, and drag the orange point vertically to change a."
+      },
+      "code": "const ax = new Axes({ xRange: [-5, 5, 1], yRange: [-4, 4, 1], xLength: 10, yLength: 4.8, tips: false });\nlet a = 0.7;\nlet h = -0.8;\nlet k = -0.7;\nconst offset = 1.4;\nlet curve = null;\n\nconst title = new MathTex({ latex: 'y = a(x-h)^2+k', color: WHITE });\nawait title.waitForRender();\ntitle.moveTo([0, 3.25, 0]);\nconst readout = new Text({ text: '', fontSize: 23, color: WHITE });\nreadout.moveTo([0, 2.7, 0]);\nconst hint = new Text({ text: 'Drag yellow: vertex (h, k)   |   Drag orange vertically: a', fontSize: 20, color: GRAY });\nhint.moveTo([0, -3.35, 0]);\nconst effect = new Text({ text: '', fontSize: 22, color: BLUE });\neffect.moveTo([0, -2.85, 0]);\n\nconst symmetry = new DashedLine({ start: ax.c2p(h, -4), end: ax.c2p(h, 4), color: GRAY });\nconst rise = new Line({ start: ax.c2p(h + offset, k), end: ax.c2p(h + offset, k + a * offset * offset), color: ORANGE });\nconst run = new DashedLine({ start: ax.c2p(h, k), end: ax.c2p(h + offset, k), color: GRAY });\nconst vertex = new Dot({ point: ax.c2p(h, k), radius: 0.14, color: YELLOW });\nconst bend = new Dot({ point: ax.c2p(h + offset, k + a * offset * offset), radius: 0.14, color: ORANGE });\nconst vertexLabel = new Text({ text: '(h, k)', fontSize: 20, color: YELLOW });\nconst bendLabel = new Text({ text: 'change a', fontSize: 18, color: ORANGE });\nscene.add(ax, title, readout, symmetry, run, rise, vertex, bend, vertexLabel, bendLabel, effect, hint);\n\nfunction update() {\n  const f = x => a * (x - h) * (x - h) + k;\n  // Rebuild the plotted domain so the visible parabola stays inside the axes.\n  let left = -5;\n  let right = 5;\n  if (Math.abs(a) > 0.00001) {\n    const boundary = a > 0 ? 4 : -4;\n    const radius = Math.sqrt((boundary - k) / a);\n    left = Math.max(-5, h - radius);\n    right = Math.min(5, h + radius);\n  }\n  if (curve) scene.remove(curve);\n  curve = ax.plot(f, { xRange: [left, right, 0.025], color: BLUE });\n  curve.setStrokeWidth(4);\n  scene.add(curve);\n  symmetry.setStart(ax.c2p(h, -4));\n  symmetry.setEnd(ax.c2p(h, 4));\n  run.setStart(ax.c2p(h, k));\n  run.setEnd(ax.c2p(h + offset, k));\n  rise.setStart(ax.c2p(h + offset, k));\n  rise.setEnd(ax.c2p(h + offset, f(h + offset)));\n  vertex.moveTo(ax.c2p(h, k));\n  bend.moveTo(ax.c2p(h + offset, f(h + offset)));\n  const vp = ax.c2p(h, k);\n  const bp = ax.c2p(h + offset, f(h + offset));\n  vertexLabel.moveTo([vp[0] - 0.48, vp[1] - 0.32, 0]);\n  bendLabel.moveTo([bp[0], bp[1] + (a >= 0 ? 0.3 : -0.3), 0]);\n  readout.setText('a = ' + a.toFixed(2) + '     h = ' + h.toFixed(2) + '     k = ' + k.toFixed(2));\n  if (Math.abs(a) < 0.00001) {\n    effect.setText('a = 0: horizontal line y = k');\n  } else {\n    effect.setText((a > 0 ? 'Opens upward' : 'Opens downward') + '   |   larger |a| = narrower');\n  }\n  // Keep the handles and their labels above the newly plotted curve.\n  scene.remove(vertex, bend, vertexLabel, bendLabel);\n  scene.add(vertex, bend, vertexLabel, bendLabel);\n}\nupdate();\n\nconst clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));\nmakeDraggable(vertex, scene, { onDrag: (mob, pos) => {\n  const coordinates = ax.pointToCoords(pos);\n  h = clamp(coordinates[0], -3, 3);\n  k = clamp(coordinates[1], -1.2, 1.2);\n  update();\n} });\nmakeDraggable(bend, scene, { onDrag: (mob, pos) => {\n  const coordinates = ax.pointToCoords(pos);\n  a = clamp((coordinates[1] - k) / (offset * offset), -1.2, 1.2);\n  if (Math.abs(a) < 0.025) a = 0;\n  update();\n} });\n\nconst controls = new Controls(scene, { position: 'bottom-right' });\ncontrols.addButton({ label: 'Reset', onClick: () => {\n  a = 0.7; h = -0.8; k = -0.7;\n  update();\n} });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9927,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 2,
+        "clickables": 0,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "button",
+            "label": "\"Reset\"",
+            "change": 0,
+            "responded": false
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (-0.8, -0.4)",
+            "change": 0.014971788194444445,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (1.4, 1.0)",
+            "change": 0.008219401041666666,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/alg-vertex-form.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/alg-vertex-form.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:52:21.844Z"
+}

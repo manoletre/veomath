@@ -1,0 +1,92 @@
+{
+  "itemId": "geo-similar-area",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 0.9090909090909091,
+  "firstAttemptScore": 0.9090909090909091,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9090909090909091,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "7.56% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "Text \"Two scaled lengths → a squared area\" overlaps MathTex \"A_{mathrm{new}}=\\frac12(kb)(kh)=k^2 A_{m\" (40%)\nMathTex \"A_{mathrm{new}}=\\frac12(kb)(kh)=k^2 A_{m\" overlaps Text \"k = 1.50   Area = 3.38\" (53%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (1.2, 0.9) — 3.32% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (1.2, 0.9) — 3.32% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 39283,
+        "inputTokens": 5314,
+        "cachedInputTokens": 5287,
+        "outputTokens": 1803,
+        "costUsd": 0.0186127,
+        "rawResponse": "{\"explanation\":\"A triangle’s area is half its base times its height: A = ½bh. Scaling by k multiplies both the base and the perpendicular height by k, so the new area is ½(kb)(kh) = k²A. Drag the yellow vertex to see both lengths—and their product—change together.\",\"manimCode\":\"const title = new Text({ text: 'Two scaled lengths → a squared area', fontSize: 32, color: WHITE });\\ntitle.moveTo([0, 3.25, 0]);\\nconst formula = new MathTex({ latex: 'A_{\\\\mathrm{new}}=\\\\\\\\frac12(kb)(kh)=k^2 A_{\\\\mathrm{original}}' });\\nawait formula.waitForRender();\\nformula.moveTo([0, 2.65, 0]);\\nscene.add(title, formula);\\n\\nlet k = 1.5;\\nconst base = 2;\\nconst height = 1.5;\\nconst originalArea = base * height / 2;\\nconst origin = [0.2, -1.3, 0];\\nconst originalVertices = [[-4.8, -1.3, 0], [-2.8, -1.3, 0], [-4.1, 0.2, 0]];\\nconst original = new Polygon({ vertices: originalVertices, color: BLUE });\\noriginal.setFill(BLUE, 0.28);\\nconst originalHeight = new DashedLine({ start: [-4.1, -1.3, 0], end: [-4.1, 0.2, 0], color: TEAL });\\nconst originalBaseLabel = new Text({ text: 'b = 2', fontSize: 24, color: BLUE });\\noriginalBaseLabel.moveTo([-3.8, -1.75, 0]);\\nconst originalHeightLabel = new Text({ text: 'h = 1.5', fontSize: 22, color: TEAL });\\noriginalHeightLabel.moveTo([-5.45, -0.45, 0]);\\nconst originalLabel = new Text({ text: 'Original area = 1.50', fontSize: 24, color: BLUE });\\noriginalLabel.moveTo([-3.7, 0.85, 0]);\\n\\nconst enlarged = new Polygon({ vertices: [origin, [3.2, -1.3, 0], [1.25, 0.95, 0]], color: GREEN });\\nenlarged.setFill(GREEN, 0.28);\\nconst scaledHeight = new DashedLine({ start: origin, end: [0.2, 1, 0], color: TEAL });\\nconst handle = new Dot({ point: [1.25, 0.95, 0], radius: 0.14, color: YELLOW });\\nconst scaledBaseLabel = new Text({ text: '', fontSize: 24, color: GREEN });\\nconst scaledHeightLabel = new Text({ text: '', fontSize: 22, color: TEAL });\\nconst readout = new Text({ text: '', fontSize: 24, color: GREEN });\\nreadout.moveTo([2.5, 2.05, 0]);\\nconst ratio = new Text({ text: '', fontSize: 27, color: YELLOW });\\nratio.moveTo([0, -2.55, 0]);\\nconst hint = new Text({ text: 'Drag the yellow vertex: base and height scale together', fontSize: 21, color: GRAY });\\nhint.moveTo([0, -3.25, 0]);\\nscene.add(original, originalHeight, originalBaseLabel, originalHeightLabel, originalLabel);\\nscene.add(enlarged, scaledHeight, handle, scaledBaseLabel, scaledHeightLabel, readout, ratio, hint);\\n\\nfunction update() {\\n  const apex = [origin[0] + 0.7 * k, origin[1] + height * k, 0];\\n  const rightCorner = [origin[0] + base * k, origin[1], 0];\\n  enlarged.setVertices([origin, rightCorner, apex]);\\n  scaledHeight.setStart([apex[0], origin[1], 0]);\\n  scaledHeight.setEnd(apex);\\n  handle.moveTo(apex);\\n  scaledBaseLabel.setText('kb = ' + (base * k).toFixed(2));\\n  scaledBaseLabel.moveTo([origin[0] + base * k / 2, -1.75, 0]);\\n  scaledHeightLabel.setText('kh = ' + (height * k).toFixed(2));\\n  scaledHeightLabel.moveTo([rightCorner[0] + 0.65, origin[1] + height * k / 2, 0]);\\n  readout.setText('k = ' + k.toFixed(2) + '   Area = ' + (originalArea * k * k).toFixed(2));\\n  ratio.setText('Length factor: ' + k.toFixed(2) + '    Area factor: ' + (k * k).toFixed(2));\\n}\\nupdate();\\nmakeDraggable(handle, scene, {\\n  onDrag: (mob, pos) => {\\n    const dx = pos[0] - origin[0];\\n    const dy = pos[1] - origin[1];\\n    k = Math.max(0.55, Math.min(2, (0.7 * dx + height * dy) / (0.7 * 0.7 + height * height)));\\n    update();\\n  }\\n});\\nawait scene.wait(999999);\"}",
+        "explanation": "A triangle’s area is half its base times its height: A = ½bh. Scaling by k multiplies both the base and the perpendicular height by k, so the new area is ½(kb)(kh) = k²A. Drag the yellow vertex to see both lengths—and their product—change together."
+      },
+      "code": "const title = new Text({ text: 'Two scaled lengths → a squared area', fontSize: 32, color: WHITE });\ntitle.moveTo([0, 3.25, 0]);\nconst formula = new MathTex({ latex: 'A_{\\mathrm{new}}=\\\\frac12(kb)(kh)=k^2 A_{\\mathrm{original}}' });\nawait formula.waitForRender();\nformula.moveTo([0, 2.65, 0]);\nscene.add(title, formula);\n\nlet k = 1.5;\nconst base = 2;\nconst height = 1.5;\nconst originalArea = base * height / 2;\nconst origin = [0.2, -1.3, 0];\nconst originalVertices = [[-4.8, -1.3, 0], [-2.8, -1.3, 0], [-4.1, 0.2, 0]];\nconst original = new Polygon({ vertices: originalVertices, color: BLUE });\noriginal.setFill(BLUE, 0.28);\nconst originalHeight = new DashedLine({ start: [-4.1, -1.3, 0], end: [-4.1, 0.2, 0], color: TEAL });\nconst originalBaseLabel = new Text({ text: 'b = 2', fontSize: 24, color: BLUE });\noriginalBaseLabel.moveTo([-3.8, -1.75, 0]);\nconst originalHeightLabel = new Text({ text: 'h = 1.5', fontSize: 22, color: TEAL });\noriginalHeightLabel.moveTo([-5.45, -0.45, 0]);\nconst originalLabel = new Text({ text: 'Original area = 1.50', fontSize: 24, color: BLUE });\noriginalLabel.moveTo([-3.7, 0.85, 0]);\n\nconst enlarged = new Polygon({ vertices: [origin, [3.2, -1.3, 0], [1.25, 0.95, 0]], color: GREEN });\nenlarged.setFill(GREEN, 0.28);\nconst scaledHeight = new DashedLine({ start: origin, end: [0.2, 1, 0], color: TEAL });\nconst handle = new Dot({ point: [1.25, 0.95, 0], radius: 0.14, color: YELLOW });\nconst scaledBaseLabel = new Text({ text: '', fontSize: 24, color: GREEN });\nconst scaledHeightLabel = new Text({ text: '', fontSize: 22, color: TEAL });\nconst readout = new Text({ text: '', fontSize: 24, color: GREEN });\nreadout.moveTo([2.5, 2.05, 0]);\nconst ratio = new Text({ text: '', fontSize: 27, color: YELLOW });\nratio.moveTo([0, -2.55, 0]);\nconst hint = new Text({ text: 'Drag the yellow vertex: base and height scale together', fontSize: 21, color: GRAY });\nhint.moveTo([0, -3.25, 0]);\nscene.add(original, originalHeight, originalBaseLabel, originalHeightLabel, originalLabel);\nscene.add(enlarged, scaledHeight, handle, scaledBaseLabel, scaledHeightLabel, readout, ratio, hint);\n\nfunction update() {\n  const apex = [origin[0] + 0.7 * k, origin[1] + height * k, 0];\n  const rightCorner = [origin[0] + base * k, origin[1], 0];\n  enlarged.setVertices([origin, rightCorner, apex]);\n  scaledHeight.setStart([apex[0], origin[1], 0]);\n  scaledHeight.setEnd(apex);\n  handle.moveTo(apex);\n  scaledBaseLabel.setText('kb = ' + (base * k).toFixed(2));\n  scaledBaseLabel.moveTo([origin[0] + base * k / 2, -1.75, 0]);\n  scaledHeightLabel.setText('kh = ' + (height * k).toFixed(2));\n  scaledHeightLabel.moveTo([rightCorner[0] + 0.65, origin[1] + height * k / 2, 0]);\n  readout.setText('k = ' + k.toFixed(2) + '   Area = ' + (originalArea * k * k).toFixed(2));\n  ratio.setText('Length factor: ' + k.toFixed(2) + '    Area factor: ' + (k * k).toFixed(2));\n}\nupdate();\nmakeDraggable(handle, scene, {\n  onDrag: (mob, pos) => {\n    const dx = pos[0] - origin[0];\n    const dy = pos[1] - origin[1];\n    k = Math.max(0.55, Math.min(2, (0.7 * dx + height * dy) / (0.7 * 0.7 + height * height)));\n    update();\n  }\n});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5272,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "drag",
+            "label": "Dot at (1.2, 0.9)",
+            "change": 0.03315972222222222,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/geo-similar-area.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/geo-similar-area.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:52:46.581Z"
+}

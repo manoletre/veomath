@@ -1,0 +1,80 @@
+{
+  "itemId": "trig-law-of-cosines",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "6.04% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "Text \"red segment = b·cos γ (shadow of b on a)\" is hidden under the controls panel (31%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=3 checkboxes=0 draggables=2 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "4.55% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 34971,
+        "inputTokens": 8052,
+        "cachedInputTokens": 7569,
+        "outputTokens": 4032,
+        "costUsd": 0.0860098,
+        "rawResponse": "{\"explanation\":\"The law of cosines says c² = a² + b² − 2ab·cos γ, where γ is the angle between sides a and b. You can read it as the Pythagorean theorem plus a correction term. When γ = 90°, cos γ = 0, so the correction disappears and you get a² + b² = c². When γ is smaller than 90°, the side opposite it is shorter than Pythagoras would predict, so the term subtracts. When γ is larger than 90°, cos γ is negative, so the term adds and c² comes out bigger. In the picture, b·cos γ is the signed length of b's shadow on side a (the red segment). The correction is just −2 × a × that shadow. Drag the yellow point A, or the point B, to watch the correction change sign.\",\"manimCode\":\"const C = [-5, -2, 0];\\nconst baseY = -2;\\n\\nconst title = new MathTex({ latex: 'c^2 = \\\\\\\\underbrace{a^2 + b^2}_{\\\\\\\\text{Pythagoras}} \\\\\\\\; \\\\\\\\underbrace{-\\\\\\\\,2ab\\\\\\\\cos\\\\\\\\gamma}_{\\\\\\\\text{correction}}' });\\nawait title.waitForRender();\\ntitle.scale(0.8);\\ntitle.moveTo([0, 3.1, 0]);\\nscene.add(title);\\n\\nconst dotA = new Dot({ point: [-3.8, 1.0, 0], color: YELLOW });\\nconst dotB = new Dot({ point: [-1.5, baseY, 0], color: WHITE });\\nconst dotC = new Dot({ point: C, color: WHITE });\\n\\nfunction seg(color, w) {\\n  const p = new Polygon({ vertices: [[0,0,0],[1,0,0]], color: color });\\n  p.setStrokeWidth(w).setFillOpacity(0);\\n  return p;\\n}\\n\\nconst fillTri = new Polygon({ vertices: [C, [-1.5, baseY, 0], [-3.8, 1, 0]], color: WHITE });\\nfillTri.setStrokeWidth(0);\\nfillTri.setFill(BLUE_E, 0.25);\\n\\nconst sideA = seg(BLUE, 5);\\nconst sideB = seg(GREEN, 5);\\nconst sideC = seg(YELLOW, 5);\\nconst dropLine = seg(GRAY, 2);\\nconst shadow = seg(RED, 7);\\nconst baseExt = seg(GRAY_D, 1);\\n\\nconst sector = new Polygon({ vertices: [C, [C[0]+0.5, C[1], 0], [C[0], C[1]+0.5, 0]], color: ORANGE });\\nsector.setStrokeWidth(1);\\nsector.setFill(ORANGE, 0.35);\\n\\nscene.add(fillTri, baseExt, sector, dropLine, shadow, sideA, sideB, sideC, dotC, dotB, dotA);\\n\\nlet labels = [];\\nlet readouts = [];\\n\\nfunction mkText(str, color, size, pos) {\\n  const t = new Text({ text: str, color: color, fontSize: size });\\n  t.moveTo(pos);\\n  scene.add(t);\\n  return t;\\n}\\n\\nfunction update() {\\n  const A = dotA.getCenter();\\n  const B = dotB.getCenter();\\n  const a = Math.hypot(B[0]-C[0], B[1]-C[1]);\\n  const b = Math.hypot(A[0]-C[0], A[1]-C[1]);\\n  const c = Math.hypot(A[0]-B[0], A[1]-B[1]);\\n  const gamma = Math.atan2(A[1]-C[1], A[0]-C[0]);\\n  const cosG = Math.cos(gamma);\\n  const H = [C[0] + b*cosG, baseY, 0];\\n\\n  fillTri.setVertices([C, B, A]);\\n  sideA.setVertices([C, B]);\\n  sideB.setVertices([C, A]);\\n  sideC.setVertices([B, A]);\\n  dropLine.setVertices([A, H]);\\n  shadow.setVertices([[C[0], baseY - 0.18, 0], [H[0], baseY - 0.18, 0]]);\\n  baseExt.setVertices([[Math.min(H[0], C[0]) - 0.3, baseY, 0], [Math.max(B[0], H[0]) + 0.3, baseY, 0]]);\\n\\n  const pts = [C];\\n  const r = 0.55;\\n  for (let i = 0; i <= 20; i++) {\\n    const th = gamma * i / 20;\\n    pts.push([C[0] + r*Math.cos(th), C[1] + r*Math.sin(th), 0]);\\n  }\\n  sector.setVertices(pts);\\n\\n  labels.forEach(l => scene.remove(l));\\n  readouts.forEach(l => scene.remove(l));\\n  labels = [];\\n  readouts = [];\\n\\n  labels.push(mkText('a', BLUE, 28, [(C[0]+B[0])/2, baseY - 0.5, 0]));\\n  labels.push(mkText('b', GREEN, 28, [(C[0]+A[0])/2 - 0.3*Math.sin(gamma), (C[1]+A[1])/2 + 0.3*Math.cos(gamma), 0]));\\n  labels.push(mkText('c', YELLOW, 28, [(A[0]+B[0])/2 + 0.3, (A[1]+B[1])/2 + 0.2, 0]));\\n  labels.push(mkText('γ', ORANGE, 26, [C[0] + 0.85*Math.cos(gamma/2), C[1] + 0.85*Math.sin(gamma/2), 0]));\\n  labels.push(mkText('A', YELLOW, 24, [A[0], A[1] + 0.35, 0]));\\n\\n  const deg = gamma * 180 / Math.PI;\\n  const pyth = a*a + b*b;\\n  const corr = -2*a*b*cosG;\\n  const x0 = 3.6;\\n  readouts.push(mkText('a = ' + a.toFixed(2) + '   b = ' + b.toFixed(2), WHITE, 24, [x0, 1.6, 0]));\\n  readouts.push(mkText('γ = ' + deg.toFixed(1) + '°   cos γ = ' + cosG.toFixed(3), ORANGE, 24, [x0, 1.0, 0]));\\n  readouts.push(mkText('a² + b² = ' + pyth.toFixed(2), WHITE, 26, [x0, 0.2, 0]));\\n  readouts.push(mkText('−2ab cos γ = ' + (corr >= 0 ? '+' : '') + corr.toFixed(2), RED, 26, [x0, -0.4, 0]));\\n  readouts.push(mkText('c² = ' + (pyth + corr).toFixed(2) + '   (measured: ' + (c*c).toFixed(2) + ')', YELLOW, 24, [x0, -1.0, 0]));\\n  let msg, col;\\n  if (Math.abs(deg - 90) < 1.5) { msg = 'γ = 90°: correction vanishes → Pythagoras!'; col = GREEN; }\\n  else if (deg < 90) { msg = 'γ < 90°: c is shorter, subtract'; col = TEAL; }\\n  else { msg = 'γ > 90°: c is longer, add'; col = RED_B; }\\n  readouts.push(mkText(msg, col, 22, [x0, -1.8, 0]));\\n  readouts.push(mkText('red segment = b·cos γ (shadow of b on a)', RED_B, 18, [x0, -2.5, 0]));\\n}\\n\\nmakeDraggable(dotA, scene, { constrainX: [-6.5, 0.5], constrainY: [-1.7, 2.4], onDrag: update });\\nmakeDraggable(dotB, scene, { constrainX: [-4, 0.5], constrainY: [baseY, baseY], onDrag: update });\\n\\nupdate();\\n\\nconst controls = new Controls(scene, { position: 'bottom-right' });\\ncontrols.addButton({ label: 'Snap to right angle', onClick: () => {\\n  const A = dotA.getCenter();\\n  const h = Math.max(0.8, Math.hypot(A[0]-C[0], A[1]-C[1]));\\n  dotA.moveTo([C[0], Math.min(baseY + h, 2.4), 0]);\\n  update();\\n}});\\ncontrols.addButton({ label: 'Acute example', onClick: () => { dotA.moveTo([-3.2, 1.0, 0]); update(); } });\\ncontrols.addButton({ label: 'Obtuse example', onClick: () => { dotA.moveTo([-6.3, 0.5, 0]); update(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The law of cosines says c² = a² + b² − 2ab·cos γ, where γ is the angle between sides a and b. You can read it as the Pythagorean theorem plus a correction term. When γ = 90°, cos γ = 0, so the correction disappears and you get a² + b² = c². When γ is smaller than 90°, the side opposite it is shorter than Pythagoras would predict, so the term subtracts. When γ is larger than 90°, cos γ is negative, so the term adds and c² comes out bigger. In the picture, b·cos γ is the signed length of b's shadow on side a (the red segment). The correction is just −2 × a × that shadow. Drag the yellow point A, or the point B, to watch the correction change sign."
+      },
+      "code": "const C = [-5, -2, 0];\nconst baseY = -2;\n\nconst title = new MathTex({ latex: 'c^2 = \\\\underbrace{a^2 + b^2}_{\\\\text{Pythagoras}} \\\\; \\\\underbrace{-\\\\,2ab\\\\cos\\\\gamma}_{\\\\text{correction}}' });\nawait title.waitForRender();\ntitle.scale(0.8);\ntitle.moveTo([0, 3.1, 0]);\nscene.add(title);\n\nconst dotA = new Dot({ point: [-3.8, 1.0, 0], color: YELLOW });\nconst dotB = new Dot({ point: [-1.5, baseY, 0], color: WHITE });\nconst dotC = new Dot({ point: C, color: WHITE });\n\nfunction seg(color, w) {\n  const p = new Polygon({ vertices: [[0,0,0],[1,0,0]], color: color });\n  p.setStrokeWidth(w).setFillOpacity(0);\n  return p;\n}\n\nconst fillTri = new Polygon({ vertices: [C, [-1.5, baseY, 0], [-3.8, 1, 0]], color: WHITE });\nfillTri.setStrokeWidth(0);\nfillTri.setFill(BLUE_E, 0.25);\n\nconst sideA = seg(BLUE, 5);\nconst sideB = seg(GREEN, 5);\nconst sideC = seg(YELLOW, 5);\nconst dropLine = seg(GRAY, 2);\nconst shadow = seg(RED, 7);\nconst baseExt = seg(GRAY_D, 1);\n\nconst sector = new Polygon({ vertices: [C, [C[0]+0.5, C[1], 0], [C[0], C[1]+0.5, 0]], color: ORANGE });\nsector.setStrokeWidth(1);\nsector.setFill(ORANGE, 0.35);\n\nscene.add(fillTri, baseExt, sector, dropLine, shadow, sideA, sideB, sideC, dotC, dotB, dotA);\n\nlet labels = [];\nlet readouts = [];\n\nfunction mkText(str, color, size, pos) {\n  const t = new Text({ text: str, color: color, fontSize: size });\n  t.moveTo(pos);\n  scene.add(t);\n  return t;\n}\n\nfunction update() {\n  const A = dotA.getCenter();\n  const B = dotB.getCenter();\n  const a = Math.hypot(B[0]-C[0], B[1]-C[1]);\n  const b = Math.hypot(A[0]-C[0], A[1]-C[1]);\n  const c = Math.hypot(A[0]-B[0], A[1]-B[1]);\n  const gamma = Math.atan2(A[1]-C[1], A[0]-C[0]);\n  const cosG = Math.cos(gamma);\n  const H = [C[0] + b*cosG, baseY, 0];\n\n  fillTri.setVertices([C, B, A]);\n  sideA.setVertices([C, B]);\n  sideB.setVertices([C, A]);\n  sideC.setVertices([B, A]);\n  dropLine.setVertices([A, H]);\n  shadow.setVertices([[C[0], baseY - 0.18, 0], [H[0], baseY - 0.18, 0]]);\n  baseExt.setVertices([[Math.min(H[0], C[0]) - 0.3, baseY, 0], [Math.max(B[0], H[0]) + 0.3, baseY, 0]]);\n\n  const pts = [C];\n  const r = 0.55;\n  for (let i = 0; i <= 20; i++) {\n    const th = gamma * i / 20;\n    pts.push([C[0] + r*Math.cos(th), C[1] + r*Math.sin(th), 0]);\n  }\n  sector.setVertices(pts);\n\n  labels.forEach(l => scene.remove(l));\n  readouts.forEach(l => scene.remove(l));\n  labels = [];\n  readouts = [];\n\n  labels.push(mkText('a', BLUE, 28, [(C[0]+B[0])/2, baseY - 0.5, 0]));\n  labels.push(mkText('b', GREEN, 28, [(C[0]+A[0])/2 - 0.3*Math.sin(gamma), (C[1]+A[1])/2 + 0.3*Math.cos(gamma), 0]));\n  labels.push(mkText('c', YELLOW, 28, [(A[0]+B[0])/2 + 0.3, (A[1]+B[1])/2 + 0.2, 0]));\n  labels.push(mkText('γ', ORANGE, 26, [C[0] + 0.85*Math.cos(gamma/2), C[1] + 0.85*Math.sin(gamma/2), 0]));\n  labels.push(mkText('A', YELLOW, 24, [A[0], A[1] + 0.35, 0]));\n\n  const deg = gamma * 180 / Math.PI;\n  const pyth = a*a + b*b;\n  const corr = -2*a*b*cosG;\n  const x0 = 3.6;\n  readouts.push(mkText('a = ' + a.toFixed(2) + '   b = ' + b.toFixed(2), WHITE, 24, [x0, 1.6, 0]));\n  readouts.push(mkText('γ = ' + deg.toFixed(1) + '°   cos γ = ' + cosG.toFixed(3), ORANGE, 24, [x0, 1.0, 0]));\n  readouts.push(mkText('a² + b² = ' + pyth.toFixed(2), WHITE, 26, [x0, 0.2, 0]));\n  readouts.push(mkText('−2ab cos γ = ' + (corr >= 0 ? '+' : '') + corr.toFixed(2), RED, 26, [x0, -0.4, 0]));\n  readouts.push(mkText('c² = ' + (pyth + corr).toFixed(2) + '   (measured: ' + (c*c).toFixed(2) + ')', YELLOW, 24, [x0, -1.0, 0]));\n  let msg, col;\n  if (Math.abs(deg - 90) < 1.5) { msg = 'γ = 90°: correction vanishes → Pythagoras!'; col = GREEN; }\n  else if (deg < 90) { msg = 'γ < 90°: c is shorter, subtract'; col = TEAL; }\n  else { msg = 'γ > 90°: c is longer, add'; col = RED_B; }\n  readouts.push(mkText(msg, col, 22, [x0, -1.8, 0]));\n  readouts.push(mkText('red segment = b·cos γ (shadow of b on a)', RED_B, 18, [x0, -2.5, 0]));\n}\n\nmakeDraggable(dotA, scene, { constrainX: [-6.5, 0.5], constrainY: [-1.7, 2.4], onDrag: update });\nmakeDraggable(dotB, scene, { constrainX: [-4, 0.5], constrainY: [baseY, baseY], onDrag: update });\n\nupdate();\n\nconst controls = new Controls(scene, { position: 'bottom-right' });\ncontrols.addButton({ label: 'Snap to right angle', onClick: () => {\n  const A = dotA.getCenter();\n  const h = Math.max(0.8, Math.hypot(A[0]-C[0], A[1]-C[1]));\n  dotA.moveTo([C[0], Math.min(baseY + h, 2.4), 0]);\n  update();\n}});\ncontrols.addButton({ label: 'Acute example', onClick: () => { dotA.moveTo([-3.2, 1.0, 0]); update(); } });\ncontrols.addButton({ label: 'Obtuse example', onClick: () => { dotA.moveTo([-6.3, 0.5, 0]); update(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9999,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 3,
+          "checkboxes": 0
+        },
+        "draggables": 2,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/trig-law-of-cosines.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/trig-law-of-cosines.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:54.396Z"
+}

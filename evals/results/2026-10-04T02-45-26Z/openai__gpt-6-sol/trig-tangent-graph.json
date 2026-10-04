@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-tangent-graph",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.04% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.13% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 58052,
+        "inputTokens": 12278,
+        "cachedInputTokens": 12032,
+        "outputTokens": 1831,
+        "costUsd": 0.0212084,
+        "rawResponse": "{\"explanation\":\"The graph of y = tan(x) repeats every π and crosses the x-axis at integer multiples of π. Its vertical asymptotes are x = π/2 + kπ: at these values cos(x) = 0, so tan(x) is undefined. As x approaches an asymptote, the curve rises or falls without bound.\",\"manimCode\":\"const pi = Math.PI;\\nconst ax = new Axes({ xRange: [-2*pi, 2*pi, pi/2], yRange: [-3.3, 3.3, 1], xLength: 11.4, yLength: 5.1, tips: false });\\nconst title = new Text({ text: 'y = tan(x)', color: WHITE, fontSize: 36 });\\ntitle.moveTo([0, 3.45, 0]);\\nscene.add(ax, title);\\n\\nconst asymptotes = [-3*pi/2, -pi/2, pi/2, 3*pi/2];\\nconst names = ['−3π/2', '−π/2', 'π/2', '3π/2'];\\nfor (let i = 0; i < asymptotes.length; i++) {\\n  const x = asymptotes[i];\\n  for (let y = -3.1; y < 3.1; y += 0.55) {\\n    const dash = new Polygon({ vertices: [ax.c2p(x, y), ax.c2p(x, Math.min(y + 0.28, 3.1))], color: RED });\\n    dash.setStrokeWidth(2);\\n    dash.setFillOpacity(0);\\n    scene.add(dash);\\n  }\\n  const label = new Text({ text: names[i], color: RED, fontSize: 21 });\\n  label.moveTo([ax.c2p(x, 0)[0], 2.8, 0]);\\n  scene.add(label);\\n}\\n\\nconst gap = 0.31;\\nconst ends = [-2*pi, ...asymptotes, 2*pi];\\nfor (let i = 0; i < ends.length - 1; i++) {\\n  const left = ends[i] + (i === 0 ? 0 : gap);\\n  const right = ends[i + 1] - (i === ends.length - 2 ? 0 : gap);\\n  const branch = ax.plot(x => Math.tan(x), { xRange: [left, right], color: BLUE_C, numSamples: 180 });\\n  await scene.play(new Create(branch));\\n}\\n\\nconst note = new Text({ text: 'Asymptotes: x = π/2 + kπ', color: RED, fontSize: 24 });\\nnote.moveTo([-3.75, -3.32, 0]);\\nscene.add(note);\\n\\nlet xValue = 0;\\nconst dot = new Dot({ point: ax.c2p(0, 0), color: YELLOW });\\ndot.addUpdater(d => d.moveTo(ax.c2p(xValue, Math.tan(xValue))));\\nscene.add(dot);\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\\ncontrols.addSlider({ label: 'Explore central branch', min: -1.25, max: 1.25, value: 0, step: 0.01, onChange: v => { xValue = v; } });\\nawait scene.wait(999999);\"}",
+        "explanation": "The graph of y = tan(x) repeats every π and crosses the x-axis at integer multiples of π. Its vertical asymptotes are x = π/2 + kπ: at these values cos(x) = 0, so tan(x) is undefined. As x approaches an asymptote, the curve rises or falls without bound."
+      },
+      "code": "const pi = Math.PI;\nconst ax = new Axes({ xRange: [-2*pi, 2*pi, pi/2], yRange: [-3.3, 3.3, 1], xLength: 11.4, yLength: 5.1, tips: false });\nconst title = new Text({ text: 'y = tan(x)', color: WHITE, fontSize: 36 });\ntitle.moveTo([0, 3.45, 0]);\nscene.add(ax, title);\n\nconst asymptotes = [-3*pi/2, -pi/2, pi/2, 3*pi/2];\nconst names = ['−3π/2', '−π/2', 'π/2', '3π/2'];\nfor (let i = 0; i < asymptotes.length; i++) {\n  const x = asymptotes[i];\n  for (let y = -3.1; y < 3.1; y += 0.55) {\n    const dash = new Polygon({ vertices: [ax.c2p(x, y), ax.c2p(x, Math.min(y + 0.28, 3.1))], color: RED });\n    dash.setStrokeWidth(2);\n    dash.setFillOpacity(0);\n    scene.add(dash);\n  }\n  const label = new Text({ text: names[i], color: RED, fontSize: 21 });\n  label.moveTo([ax.c2p(x, 0)[0], 2.8, 0]);\n  scene.add(label);\n}\n\nconst gap = 0.31;\nconst ends = [-2*pi, ...asymptotes, 2*pi];\nfor (let i = 0; i < ends.length - 1; i++) {\n  const left = ends[i] + (i === 0 ? 0 : gap);\n  const right = ends[i + 1] - (i === ends.length - 2 ? 0 : gap);\n  const branch = ax.plot(x => Math.tan(x), { xRange: [left, right], color: BLUE_C, numSamples: 180 });\n  await scene.play(new Create(branch));\n}\n\nconst note = new Text({ text: 'Asymptotes: x = π/2 + kπ', color: RED, fontSize: 24 });\nnote.moveTo([-3.75, -3.32, 0]);\nscene.add(note);\n\nlet xValue = 0;\nconst dot = new Dot({ point: ax.c2p(0, 0), color: YELLOW });\ndot.addUpdater(d => d.moveTo(ax.c2p(xValue, Math.tan(xValue))));\nscene.add(dot);\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\ncontrols.addSlider({ label: 'Explore central branch', min: -1.25, max: 1.25, value: 0, step: 0.01, onChange: v => { xValue = v; } });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 21727,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 5,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/trig-tangent-graph.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/trig-tangent-graph.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:51:06.292Z"
+}

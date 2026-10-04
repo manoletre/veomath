@@ -1,0 +1,80 @@
+{
+  "itemId": "geo-inscribed-angle",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.57% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "MathTex \"\\angle APB = \\frac{1}{2}(180^\\circ)=90^\\\" overlaps Text \"P\" (100%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.07% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 44555,
+        "inputTokens": 11750,
+        "cachedInputTokens": 0,
+        "outputTokens": 2210,
+        "costUsd": 0.05002,
+        "rawResponse": "{\"explanation\":\"The inscribed angle theorem says an angle subtending a fixed arc equals half the arc’s central angle. Here, AB is a diameter, so its intercepted arc is always a semicircle (180°), making ∠APB always 90° for every point P on the circle (except at A or B).\",\"manimCode\":\"const r = 2.55;\\nconst Apos = [-r, 0, 0];\\nconst Bpos = [r, 0, 0];\\n\\nconst title = new Text({ text: 'Inscribed Angle Theorem', color: WHITE, fontSize: 32 });\\ntitle.moveTo([0, 3.35, 0]);\\nconst hint = new Text({ text: 'Drag P around the circle', color: YELLOW, fontSize: 22 });\\nhint.moveTo([0, -3.3, 0]);\\n\\nconst formula = new MathTex({ latex: '\\\\\\\\angle APB = \\\\\\\\frac{1}{2}(180^\\\\\\\\circ)=90^\\\\\\\\circ' });\\nawait formula.waitForRender();\\nformula.scale(0.75);\\nformula.moveTo([0, 2.72, 0]);\\n\\nconst circle = new Circle({ radius: r, color: BLUE_C });\\ncircle.setStrokeWidth(4);\\nconst diameter = new Polygon({ vertices: [Apos, Bpos], color: WHITE });\\ndiameter.setStrokeWidth(3).setFillOpacity(0);\\n\\nconst dotA = new Dot({ point: Apos, color: RED });\\nconst dotB = new Dot({ point: Bpos, color: RED });\\nconst pointP = new Dot({ point: [0, r, 0], color: YELLOW });\\n\\nconst labelA = new Text({ text: 'A', color: RED, fontSize: 24 });\\nlabelA.moveTo([-r - 0.35, -0.32, 0]);\\nconst labelB = new Text({ text: 'B', color: RED, fontSize: 24 });\\nlabelB.moveTo([r + 0.35, -0.32, 0]);\\nlet labelP = new Text({ text: 'P', color: YELLOW, fontSize: 24 });\\nlabelP.moveTo([0, r + 0.35, 0]);\\n\\nconst rayA = new Polygon({ vertices: [pointP.getCenter(), Apos], color: GOLD });\\nconst rayB = new Polygon({ vertices: [pointP.getCenter(), Bpos], color: GOLD });\\nrayA.setStrokeWidth(3).setFillOpacity(0);\\nrayB.setStrokeWidth(3).setFillOpacity(0);\\nconst rightMarker = new Polygon({ vertices: [[0, 0, 0], [0, 0, 0], [0, 0, 0]], color: GREEN });\\nrightMarker.setFill(GREEN, 0.35).setStrokeWidth(2);\\n\\nfunction refreshGeometry() {\\n  const p = pointP.getCenter();\\n  const uRaw = [Apos[0] - p[0], Apos[1] - p[1]];\\n  const vRaw = [Bpos[0] - p[0], Bpos[1] - p[1]];\\n  const un = Math.max(0.001, Math.hypot(uRaw[0], uRaw[1]));\\n  const vn = Math.max(0.001, Math.hypot(vRaw[0], vRaw[1]));\\n  const u = [uRaw[0] / un, uRaw[1] / un];\\n  const v = [vRaw[0] / vn, vRaw[1] / vn];\\n  const s = 0.48;\\n  const q1 = [p[0] + s * u[0], p[1] + s * u[1], 0];\\n  const q2 = [p[0] + s * v[0], p[1] + s * v[1], 0];\\n  const corner = [q1[0] + q2[0] - p[0], q1[1] + q2[1] - p[1], 0];\\n  rayA.setVertices([p, Apos]);\\n  rayB.setVertices([p, Bpos]);\\n  rightMarker.setVertices([p, q1, corner, q2]);\\n  const oldPos = labelP.getCenter();\\n  scene.remove(labelP);\\n  labelP = new Text({ text: 'P', color: YELLOW, fontSize: 24 });\\n  labelP.moveTo([p[0] * 1.14, p[1] * 1.14, 0]);\\n  scene.add(labelP);\\n}\\n\\nawait scene.play(new AnimationGroup([new Create(circle), new Create(diameter)]));\\nscene.add(rayA, rayB, rightMarker, dotA, dotB, pointP, labelA, labelB, labelP, title, formula, hint);\\nrefreshGeometry();\\n\\nmakeDraggable(pointP, scene, {\\n  constrainX: [-2.8, 2.8],\\n  constrainY: [-2.8, 2.8],\\n  onDrag: (mob, pos) => {\\n    const d = Math.hypot(pos[0], pos[1]) || 1;\\n    mob.moveTo([r * pos[0] / d, r * pos[1] / d, 0]);\\n    refreshGeometry();\\n  }\\n});\\nmakeHoverable(pointP, scene, { hoverScale: 1.25, hoverColor: GOLD, cursor: 'grab' });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The inscribed angle theorem says an angle subtending a fixed arc equals half the arc’s central angle. Here, AB is a diameter, so its intercepted arc is always a semicircle (180°), making ∠APB always 90° for every point P on the circle (except at A or B)."
+      },
+      "code": "const r = 2.55;\nconst Apos = [-r, 0, 0];\nconst Bpos = [r, 0, 0];\n\nconst title = new Text({ text: 'Inscribed Angle Theorem', color: WHITE, fontSize: 32 });\ntitle.moveTo([0, 3.35, 0]);\nconst hint = new Text({ text: 'Drag P around the circle', color: YELLOW, fontSize: 22 });\nhint.moveTo([0, -3.3, 0]);\n\nconst formula = new MathTex({ latex: '\\\\angle APB = \\\\frac{1}{2}(180^\\\\circ)=90^\\\\circ' });\nawait formula.waitForRender();\nformula.scale(0.75);\nformula.moveTo([0, 2.72, 0]);\n\nconst circle = new Circle({ radius: r, color: BLUE_C });\ncircle.setStrokeWidth(4);\nconst diameter = new Polygon({ vertices: [Apos, Bpos], color: WHITE });\ndiameter.setStrokeWidth(3).setFillOpacity(0);\n\nconst dotA = new Dot({ point: Apos, color: RED });\nconst dotB = new Dot({ point: Bpos, color: RED });\nconst pointP = new Dot({ point: [0, r, 0], color: YELLOW });\n\nconst labelA = new Text({ text: 'A', color: RED, fontSize: 24 });\nlabelA.moveTo([-r - 0.35, -0.32, 0]);\nconst labelB = new Text({ text: 'B', color: RED, fontSize: 24 });\nlabelB.moveTo([r + 0.35, -0.32, 0]);\nlet labelP = new Text({ text: 'P', color: YELLOW, fontSize: 24 });\nlabelP.moveTo([0, r + 0.35, 0]);\n\nconst rayA = new Polygon({ vertices: [pointP.getCenter(), Apos], color: GOLD });\nconst rayB = new Polygon({ vertices: [pointP.getCenter(), Bpos], color: GOLD });\nrayA.setStrokeWidth(3).setFillOpacity(0);\nrayB.setStrokeWidth(3).setFillOpacity(0);\nconst rightMarker = new Polygon({ vertices: [[0, 0, 0], [0, 0, 0], [0, 0, 0]], color: GREEN });\nrightMarker.setFill(GREEN, 0.35).setStrokeWidth(2);\n\nfunction refreshGeometry() {\n  const p = pointP.getCenter();\n  const uRaw = [Apos[0] - p[0], Apos[1] - p[1]];\n  const vRaw = [Bpos[0] - p[0], Bpos[1] - p[1]];\n  const un = Math.max(0.001, Math.hypot(uRaw[0], uRaw[1]));\n  const vn = Math.max(0.001, Math.hypot(vRaw[0], vRaw[1]));\n  const u = [uRaw[0] / un, uRaw[1] / un];\n  const v = [vRaw[0] / vn, vRaw[1] / vn];\n  const s = 0.48;\n  const q1 = [p[0] + s * u[0], p[1] + s * u[1], 0];\n  const q2 = [p[0] + s * v[0], p[1] + s * v[1], 0];\n  const corner = [q1[0] + q2[0] - p[0], q1[1] + q2[1] - p[1], 0];\n  rayA.setVertices([p, Apos]);\n  rayB.setVertices([p, Bpos]);\n  rightMarker.setVertices([p, q1, corner, q2]);\n  const oldPos = labelP.getCenter();\n  scene.remove(labelP);\n  labelP = new Text({ text: 'P', color: YELLOW, fontSize: 24 });\n  labelP.moveTo([p[0] * 1.14, p[1] * 1.14, 0]);\n  scene.add(labelP);\n}\n\nawait scene.play(new AnimationGroup([new Create(circle), new Create(diameter)]));\nscene.add(rayA, rayB, rightMarker, dotA, dotB, pointP, labelA, labelB, labelP, title, formula, hint);\nrefreshGeometry();\n\nmakeDraggable(pointP, scene, {\n  constrainX: [-2.8, 2.8],\n  constrainY: [-2.8, 2.8],\n  onDrag: (mob, pos) => {\n    const d = Math.hypot(pos[0], pos[1]) || 1;\n    mob.moveTo([r * pos[0] / d, r * pos[1] / d, 0]);\n    refreshGeometry();\n  }\n});\nmakeHoverable(pointP, scene, { hoverScale: 1.25, hoverColor: GOLD, cursor: 'grab' });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5876,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/geo-inscribed-angle.0.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/geo-inscribed-angle.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:57:54.228Z"
+}

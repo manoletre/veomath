@@ -1,0 +1,127 @@
+{
+  "itemId": "stats-galton-board",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "6.03% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=1 checkboxes=0 draggables=1 clickables=4 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✗ button \"Clear sample\" — 0.00% changed\n✓ hover Dot at (-3.0, -2.6) — 0.14% changed\n✓ click Rectangle at (-4.0, 2.6) — 0.02% changed\n✓ click Text at (-4.0, 2.6) — 0.05% changed\n✓ click Rectangle at (-1.9, 2.6) — 0.08% changed\n✓ click Text at (-1.9, 2.6) — 0.03% changed\n✓ drag Dot at (-3.0, -2.6) — 0.72% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ click Rectangle at (-4.0, 2.6) — 0.02% changed\n✓ click Text at (-4.0, 2.6) — 0.05% changed\n✓ click Rectangle at (-1.9, 2.6) — 0.08% changed\n✓ click Text at (-1.9, 2.6) — 0.03% changed\n✓ drag Dot at (-3.0, -2.6) — 0.72% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 84467,
+        "inputTokens": 5309,
+        "cachedInputTokens": 5287,
+        "outputTokens": 3796,
+        "costUsd": 0.0385327,
+        "rawResponse": "{\"explanation\":\"A Galton board turns repeated left-or-right choices into a distribution: after 8 rows, a ball lands in bin k if it went right exactly k times. If each bounce independently goes right with probability p, then P(K = k) = C(8, k)p^k(1 − p)^(8 − k). Watch the blue experimental bars approach the gold theoretical marks as more balls fall; drag the bias handle to see how changing p shifts the distribution.\",\"manimCode\":\"const rows = 8;\\nconst centerX = -3;\\nconst spacing = 0.46;\\nconst pegTop = 1.8;\\nconst rowGap = 0.4;\\nlet probability = 0.5;\\nlet counts = Array(9).fill(0);\\nlet total = 0;\\nlet busy = false;\\nlet epoch = 0;\\n\\nconst title = new Text({ text: 'Galton board → binomial distribution', fontSize: 30, color: WHITE });\\ntitle.moveTo([0, 3.3, 0]);\\nconst formula = new MathTex({ latex: 'P(K=k)=\\\\\\\\binom{8}{k}p^k(1-p)^{8-k}', color: WHITE });\\nawait formula.waitForRender();\\nformula.scale(0.65);\\nformula.moveTo([3.1, 2.7, 0]);\\nscene.add(title, formula);\\n\\nfor (let r = 0; r < rows; r++) {\\n  for (let j = 0; j <= r; j++) {\\n    scene.add(new Dot({ point: [centerX + (2*j-r)*spacing/2, pegTop-r*rowGap, 0], radius: 0.045, color: GRAY }));\\n  }\\n}\\nconst binY = -1.68;\\nfor (let k = 0; k <= rows+1; k++) {\\n  const bx = centerX + (k-4.5)*spacing;\\n  scene.add(new Line({ start: [bx, -1.26, 0], end: [bx, binY, 0], color: GRAY }));\\n}\\nscene.add(new Line({ start: [centerX-4.5*spacing, binY, 0], end: [centerX+4.5*spacing, binY, 0], color: GRAY }));\\nfor (let k = 0; k <= rows; k++) {\\n  const label = new Text({ text: String(k), fontSize: 17, color: GRAY });\\n  label.moveTo([centerX+(k-4)*spacing, -1.92, 0]);\\n  scene.add(label);\\n}\\n\\nconst chartLeft = 0.65;\\nconst chartStep = 0.59;\\nconst baseline = -1.65;\\nconst chartHeight = 3.35;\\nscene.add(new Line({ start: [0.32, baseline, 0], end: [5.72, baseline, 0], color: GRAY }));\\nscene.add(new Line({ start: [0.32, baseline, 0], end: [0.32, 1.78, 0], color: GRAY }));\\nconst bars = [];\\nconst theoryMarks = [];\\nconst choose = [1,8,28,56,70,56,28,8,1];\\nfor (let k = 0; k <= rows; k++) {\\n  const bx = chartLeft+k*chartStep;\\n  const bar = new Polygon({ vertices: [[bx-0.22,baseline,0],[bx+0.22,baseline,0],[bx+0.22,baseline+0.01,0],[bx-0.22,baseline+0.01,0]], color: BLUE });\\n  bar.setFill(BLUE, 0.65);\\n  bar.setStrokeWidth(1);\\n  const mark = new Line({ start: [bx-0.25,baseline,0], end: [bx+0.25,baseline,0], color: GOLD });\\n  mark.setStrokeWidth(4);\\n  bars.push(bar);\\n  theoryMarks.push(mark);\\n  scene.add(bar, mark);\\n  const label = new Text({ text: String(k), fontSize: 18, color: GRAY });\\n  label.moveTo([bx,-1.92,0]);\\n  scene.add(label);\\n}\\nconst topValue = new Text({ text: '', fontSize: 16, color: GRAY });\\ntopValue.moveTo([0.03,1.75,0]);\\nconst chartCaption = new Text({ text: 'Probability / observed fraction', fontSize: 20, color: WHITE });\\nchartCaption.moveTo([3.2,2.12,0]);\\nconst legend = new Text({ text: 'Blue: observed    Gold: binomial', fontSize: 20, color: WHITE });\\nlegend.moveTo([3.2,-2.38,0]);\\nconst readout = new Text({ text: '', fontSize: 21, color: WHITE });\\nreadout.moveTo([3.15,-2.86,0]);\\nconst means = new Text({ text: '', fontSize: 19, color: GRAY });\\nmeans.moveTo([3.15,-3.28,0]);\\nscene.add(topValue, chartCaption, legend, readout, means);\\n\\nconst railLeft = -5.05;\\nconst railRight = -0.95;\\nconst railY = -2.65;\\nscene.add(new Line({ start: [railLeft,railY,0], end: [railRight,railY,0], color: GRAY }));\\nconst biasHandle = new Dot({ point: [centerX,railY,0], radius: 0.13, color: YELLOW });\\nconst biasLabel = new Text({ text: '', fontSize: 21, color: YELLOW });\\nbiasLabel.moveTo([centerX,-2.25,0]);\\nconst hint = new Text({ text: 'Drag bias • click a drop button', fontSize: 19, color: GRAY });\\nhint.moveTo([centerX,-3.27,0]);\\nconst leftHint = new Text({ text: 'Left', fontSize: 16, color: GRAY });\\nleftHint.moveTo([-5.12,-2.99,0]);\\nconst rightHint = new Text({ text: 'Right', fontSize: 16, color: GRAY });\\nrightHint.moveTo([-0.87,-2.99,0]);\\nscene.add(biasHandle, biasLabel, hint, leftHint, rightHint);\\n\\nfunction update() {\\n  const expected = choose.map((c,k) => c*Math.pow(probability,k)*Math.pow(1-probability,rows-k));\\n  const observed = counts.map(c => total ? c/total : 0);\\n  const ceiling = Math.max(0.35, ...expected, ...observed)*1.08;\\n  for (let k = 0; k <= rows; k++) {\\n    const bx = chartLeft+k*chartStep;\\n    const yObs = baseline+chartHeight*observed[k]/ceiling;\\n    const yTheory = baseline+chartHeight*expected[k]/ceiling;\\n    bars[k].setVertices([[bx-0.22,baseline,0],[bx+0.22,baseline,0],[bx+0.22,Math.max(baseline+0.002,yObs),0],[bx-0.22,Math.max(baseline+0.002,yObs),0]]);\\n    theoryMarks[k].setStart([bx-0.25,yTheory,0]);\\n    theoryMarks[k].setEnd([bx+0.25,yTheory,0]);\\n  }\\n  topValue.setText(ceiling.toFixed(2));\\n  biasHandle.moveTo([railLeft+(railRight-railLeft)*probability,railY,0]);\\n  biasLabel.setText('Right-bounce probability p = '+probability.toFixed(2));\\n  readout.setText('8 rows   •   '+total+' balls collected');\\n  const sampleMean = total ? counts.reduce((sum,c,k) => sum+c*k,0)/total : null;\\n  means.setText('Mean: '+(sampleMean === null ? '—' : sampleMean.toFixed(2))+'    Expected: '+(8*probability).toFixed(2));\\n}\\nupdate();\\n\\nmakeDraggable(biasHandle, scene, { onDrag: (mob,pos) => {\\n  const nextP = Math.max(0,Math.min(1,(pos[0]-railLeft)/(railRight-railLeft)));\\n  if (Math.abs(nextP-probability)>0.0001) {\\n    probability = nextP;\\n    counts = Array(9).fill(0);\\n    total = 0;\\n    epoch++;\\n  }\\n  update();\\n} });\\nconst hoverInfo = new Text({ text: 'Changing p clears the old sample', fontSize: 17, color: YELLOW });\\nhoverInfo.moveTo([centerX,-0.12,0]);\\nmakeHoverable(biasHandle, scene, { onHoverStart: () => scene.add(hoverInfo), onHoverEnd: () => scene.remove(hoverInfo) });\\n\\nasync function dropBalls(amount) {\\n  if (busy) return;\\n  busy = true;\\n  const runEpoch = epoch;\\n  const runP = probability;\\n  const progress = new ValueTracker(0);\\n  const flights = [];\\n  for (let b = 0; b < amount; b++) {\\n    let rights = 0;\\n    const path = [[centerX,2.13,0],[centerX,pegTop+0.08,0]];\\n    for (let r = 0; r < rows; r++) {\\n      if (Math.random()<runP) rights++;\\n      path.push([centerX+(2*rights-(r+1))*spacing/2,pegTop-(r+1)*rowGap+0.08,0]);\\n    }\\n    path.push([centerX+(2*rights-rows)*spacing/2,binY+0.08,0]);\\n    const delay = amount === 1 ? 0 : 0.32*b/(amount-1);\\n    const ball = new Dot({ point: path[0], radius: amount===1 ? 0.09 : 0.055, color: YELLOW });\\n    let counted = false;\\n    ball.addUpdater(mob => {\\n      const u = Math.max(0,Math.min(1,(progress.getValue()-delay)/(1-delay)));\\n      const index = u*(path.length-1);\\n      const i = Math.min(path.length-2,Math.floor(index));\\n      const f = index-i;\\n      const a = path[i];\\n      const z = path[i+1];\\n      mob.moveTo([a[0]+(z[0]-a[0])*f,a[1]+(z[1]-a[1])*f,0]);\\n      mob.setOpacity(progress.getValue()<delay ? 0 : 1);\\n      if (u>=0.999999 && !counted) {\\n        counted = true;\\n        if (runEpoch===epoch) { counts[rights]++; total++; update(); }\\n      }\\n    });\\n    flights.push(ball);\\n    scene.add(ball);\\n  }\\n  try {\\n    await scene.play(progress.animateTo(1));\\n    for (const ball of flights) scene.remove(ball);\\n    update();\\n  } finally { busy = false; }\\n}\\n\\nfunction addDropButton(label, x, amount) {\\n  const button = new Rectangle({ width: 1.8, height: 0.46, color: BLUE });\\n  button.setFill(BLUE,0.22);\\n  button.moveTo([x,2.62,0]);\\n  const caption = new Text({ text: label, fontSize: 21, color: WHITE });\\n  caption.moveTo([x,2.62,0]);\\n  scene.add(button, caption);\\n  makeClickable(button, scene, { onClick: async () => { await dropBalls(amount); } });\\n  makeClickable(caption, scene, { onClick: async () => { await dropBalls(amount); } });\\n}\\naddDropButton('Drop 1',-4.05,1);\\naddDropButton('Drop 40',-1.95,40);\\nconst controls = new Controls(scene, { position: 'bottom-right' });\\ncontrols.addButton({ label: 'Clear sample', onClick: () => { counts = Array(9).fill(0); total = 0; epoch++; update(); } });\\nawait dropBalls(40);\\nawait scene.wait(999999);\"}",
+        "explanation": "A Galton board turns repeated left-or-right choices into a distribution: after 8 rows, a ball lands in bin k if it went right exactly k times. If each bounce independently goes right with probability p, then P(K = k) = C(8, k)p^k(1 − p)^(8 − k). Watch the blue experimental bars approach the gold theoretical marks as more balls fall; drag the bias handle to see how changing p shifts the distribution."
+      },
+      "code": "const rows = 8;\nconst centerX = -3;\nconst spacing = 0.46;\nconst pegTop = 1.8;\nconst rowGap = 0.4;\nlet probability = 0.5;\nlet counts = Array(9).fill(0);\nlet total = 0;\nlet busy = false;\nlet epoch = 0;\n\nconst title = new Text({ text: 'Galton board → binomial distribution', fontSize: 30, color: WHITE });\ntitle.moveTo([0, 3.3, 0]);\nconst formula = new MathTex({ latex: 'P(K=k)=\\\\binom{8}{k}p^k(1-p)^{8-k}', color: WHITE });\nawait formula.waitForRender();\nformula.scale(0.65);\nformula.moveTo([3.1, 2.7, 0]);\nscene.add(title, formula);\n\nfor (let r = 0; r < rows; r++) {\n  for (let j = 0; j <= r; j++) {\n    scene.add(new Dot({ point: [centerX + (2*j-r)*spacing/2, pegTop-r*rowGap, 0], radius: 0.045, color: GRAY }));\n  }\n}\nconst binY = -1.68;\nfor (let k = 0; k <= rows+1; k++) {\n  const bx = centerX + (k-4.5)*spacing;\n  scene.add(new Line({ start: [bx, -1.26, 0], end: [bx, binY, 0], color: GRAY }));\n}\nscene.add(new Line({ start: [centerX-4.5*spacing, binY, 0], end: [centerX+4.5*spacing, binY, 0], color: GRAY }));\nfor (let k = 0; k <= rows; k++) {\n  const label = new Text({ text: String(k), fontSize: 17, color: GRAY });\n  label.moveTo([centerX+(k-4)*spacing, -1.92, 0]);\n  scene.add(label);\n}\n\nconst chartLeft = 0.65;\nconst chartStep = 0.59;\nconst baseline = -1.65;\nconst chartHeight = 3.35;\nscene.add(new Line({ start: [0.32, baseline, 0], end: [5.72, baseline, 0], color: GRAY }));\nscene.add(new Line({ start: [0.32, baseline, 0], end: [0.32, 1.78, 0], color: GRAY }));\nconst bars = [];\nconst theoryMarks = [];\nconst choose = [1,8,28,56,70,56,28,8,1];\nfor (let k = 0; k <= rows; k++) {\n  const bx = chartLeft+k*chartStep;\n  const bar = new Polygon({ vertices: [[bx-0.22,baseline,0],[bx+0.22,baseline,0],[bx+0.22,baseline+0.01,0],[bx-0.22,baseline+0.01,0]], color: BLUE });\n  bar.setFill(BLUE, 0.65);\n  bar.setStrokeWidth(1);\n  const mark = new Line({ start: [bx-0.25,baseline,0], end: [bx+0.25,baseline,0], color: GOLD });\n  mark.setStrokeWidth(4);\n  bars.push(bar);\n  theoryMarks.push(mark);\n  scene.add(bar, mark);\n  const label = new Text({ text: String(k), fontSize: 18, color: GRAY });\n  label.moveTo([bx,-1.92,0]);\n  scene.add(label);\n}\nconst topValue = new Text({ text: '', fontSize: 16, color: GRAY });\ntopValue.moveTo([0.03,1.75,0]);\nconst chartCaption = new Text({ text: 'Probability / observed fraction', fontSize: 20, color: WHITE });\nchartCaption.moveTo([3.2,2.12,0]);\nconst legend = new Text({ text: 'Blue: observed    Gold: binomial', fontSize: 20, color: WHITE });\nlegend.moveTo([3.2,-2.38,0]);\nconst readout = new Text({ text: '', fontSize: 21, color: WHITE });\nreadout.moveTo([3.15,-2.86,0]);\nconst means = new Text({ text: '', fontSize: 19, color: GRAY });\nmeans.moveTo([3.15,-3.28,0]);\nscene.add(topValue, chartCaption, legend, readout, means);\n\nconst railLeft = -5.05;\nconst railRight = -0.95;\nconst railY = -2.65;\nscene.add(new Line({ start: [railLeft,railY,0], end: [railRight,railY,0], color: GRAY }));\nconst biasHandle = new Dot({ point: [centerX,railY,0], radius: 0.13, color: YELLOW });\nconst biasLabel = new Text({ text: '', fontSize: 21, color: YELLOW });\nbiasLabel.moveTo([centerX,-2.25,0]);\nconst hint = new Text({ text: 'Drag bias • click a drop button', fontSize: 19, color: GRAY });\nhint.moveTo([centerX,-3.27,0]);\nconst leftHint = new Text({ text: 'Left', fontSize: 16, color: GRAY });\nleftHint.moveTo([-5.12,-2.99,0]);\nconst rightHint = new Text({ text: 'Right', fontSize: 16, color: GRAY });\nrightHint.moveTo([-0.87,-2.99,0]);\nscene.add(biasHandle, biasLabel, hint, leftHint, rightHint);\n\nfunction update() {\n  const expected = choose.map((c,k) => c*Math.pow(probability,k)*Math.pow(1-probability,rows-k));\n  const observed = counts.map(c => total ? c/total : 0);\n  const ceiling = Math.max(0.35, ...expected, ...observed)*1.08;\n  for (let k = 0; k <= rows; k++) {\n    const bx = chartLeft+k*chartStep;\n    const yObs = baseline+chartHeight*observed[k]/ceiling;\n    const yTheory = baseline+chartHeight*expected[k]/ceiling;\n    bars[k].setVertices([[bx-0.22,baseline,0],[bx+0.22,baseline,0],[bx+0.22,Math.max(baseline+0.002,yObs),0],[bx-0.22,Math.max(baseline+0.002,yObs),0]]);\n    theoryMarks[k].setStart([bx-0.25,yTheory,0]);\n    theoryMarks[k].setEnd([bx+0.25,yTheory,0]);\n  }\n  topValue.setText(ceiling.toFixed(2));\n  biasHandle.moveTo([railLeft+(railRight-railLeft)*probability,railY,0]);\n  biasLabel.setText('Right-bounce probability p = '+probability.toFixed(2));\n  readout.setText('8 rows   •   '+total+' balls collected');\n  const sampleMean = total ? counts.reduce((sum,c,k) => sum+c*k,0)/total : null;\n  means.setText('Mean: '+(sampleMean === null ? '—' : sampleMean.toFixed(2))+'    Expected: '+(8*probability).toFixed(2));\n}\nupdate();\n\nmakeDraggable(biasHandle, scene, { onDrag: (mob,pos) => {\n  const nextP = Math.max(0,Math.min(1,(pos[0]-railLeft)/(railRight-railLeft)));\n  if (Math.abs(nextP-probability)>0.0001) {\n    probability = nextP;\n    counts = Array(9).fill(0);\n    total = 0;\n    epoch++;\n  }\n  update();\n} });\nconst hoverInfo = new Text({ text: 'Changing p clears the old sample', fontSize: 17, color: YELLOW });\nhoverInfo.moveTo([centerX,-0.12,0]);\nmakeHoverable(biasHandle, scene, { onHoverStart: () => scene.add(hoverInfo), onHoverEnd: () => scene.remove(hoverInfo) });\n\nasync function dropBalls(amount) {\n  if (busy) return;\n  busy = true;\n  const runEpoch = epoch;\n  const runP = probability;\n  const progress = new ValueTracker(0);\n  const flights = [];\n  for (let b = 0; b < amount; b++) {\n    let rights = 0;\n    const path = [[centerX,2.13,0],[centerX,pegTop+0.08,0]];\n    for (let r = 0; r < rows; r++) {\n      if (Math.random()<runP) rights++;\n      path.push([centerX+(2*rights-(r+1))*spacing/2,pegTop-(r+1)*rowGap+0.08,0]);\n    }\n    path.push([centerX+(2*rights-rows)*spacing/2,binY+0.08,0]);\n    const delay = amount === 1 ? 0 : 0.32*b/(amount-1);\n    const ball = new Dot({ point: path[0], radius: amount===1 ? 0.09 : 0.055, color: YELLOW });\n    let counted = false;\n    ball.addUpdater(mob => {\n      const u = Math.max(0,Math.min(1,(progress.getValue()-delay)/(1-delay)));\n      const index = u*(path.length-1);\n      const i = Math.min(path.length-2,Math.floor(index));\n      const f = index-i;\n      const a = path[i];\n      const z = path[i+1];\n      mob.moveTo([a[0]+(z[0]-a[0])*f,a[1]+(z[1]-a[1])*f,0]);\n      mob.setOpacity(progress.getValue()<delay ? 0 : 1);\n      if (u>=0.999999 && !counted) {\n        counted = true;\n        if (runEpoch===epoch) { counts[rights]++; total++; update(); }\n      }\n    });\n    flights.push(ball);\n    scene.add(ball);\n  }\n  try {\n    await scene.play(progress.animateTo(1));\n    for (const ball of flights) scene.remove(ball);\n    update();\n  } finally { busy = false; }\n}\n\nfunction addDropButton(label, x, amount) {\n  const button = new Rectangle({ width: 1.8, height: 0.46, color: BLUE });\n  button.setFill(BLUE,0.22);\n  button.moveTo([x,2.62,0]);\n  const caption = new Text({ text: label, fontSize: 21, color: WHITE });\n  caption.moveTo([x,2.62,0]);\n  scene.add(button, caption);\n  makeClickable(button, scene, { onClick: async () => { await dropBalls(amount); } });\n  makeClickable(caption, scene, { onClick: async () => { await dropBalls(amount); } });\n}\naddDropButton('Drop 1',-4.05,1);\naddDropButton('Drop 40',-1.95,40);\nconst controls = new Controls(scene, { position: 'bottom-right' });\ncontrols.addButton({ label: 'Clear sample', onClick: () => { counts = Array(9).fill(0); total = 0; epoch++; update(); } });\nawait dropBalls(40);\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 12792,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 0,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 4,
+        "hoverables": 1,
+        "interactions": [
+          {
+            "kind": "button",
+            "label": "\"Clear sample\"",
+            "change": 0,
+            "responded": false
+          },
+          {
+            "kind": "hover",
+            "label": "Dot at (-3.0, -2.6)",
+            "change": 0.001376953125,
+            "responded": true
+          },
+          {
+            "kind": "click",
+            "label": "Rectangle at (-4.0, 2.6)",
+            "change": 0.0002463107638888889,
+            "responded": true
+          },
+          {
+            "kind": "click",
+            "label": "Text at (-4.0, 2.6)",
+            "change": 0.0004904513888888889,
+            "responded": true
+          },
+          {
+            "kind": "click",
+            "label": "Rectangle at (-1.9, 2.6)",
+            "change": 0.0007649739583333333,
+            "responded": true
+          },
+          {
+            "kind": "click",
+            "label": "Text at (-1.9, 2.6)",
+            "change": 0.00032660590277777777,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (-3.0, -2.6)",
+            "change": 0.007241753472222222,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/stats-galton-board.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/stats-galton-board.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:54:25.442Z"
+}

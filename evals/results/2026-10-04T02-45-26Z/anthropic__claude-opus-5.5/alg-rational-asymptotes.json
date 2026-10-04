@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-rational-asymptotes",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.89% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.27% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 19235,
+        "inputTokens": 8056,
+        "cachedInputTokens": 7569,
+        "outputTokens": 2064,
+        "costUsd": 0.0466818,
+        "rawResponse": "{\"explanation\":\"For f(x) = (2x + 1)/(x − 3), the denominator is 0 at x = 3, and the numerator isn't (it equals 7 there). That gives a vertical asymptote at x = 3, where the graph shoots up to +∞ on the right and down to −∞ on the left. The top and bottom have the same degree, so the ratio of their leading coefficients, 2/1, gives a horizontal asymptote at y = 2: for very large |x| the function behaves like 2x/x = 2. Use the slider to move the point along the curve. Near x = 3 the values blow up, and far out to either side they settle toward 2.\",\"manimCode\":\"const f = (x) => (2 * x + 1) / (x - 3);\\n\\nconst ax = new Axes({\\n  xRange: [-6, 12, 2],\\n  yRange: [-8, 12, 2],\\n  xLength: 10,\\n  yLength: 6,\\n  tips: false\\n});\\nscene.add(ax);\\n\\n// Asymptotes\\nconst vAsym = new Line({ start: ax.c2p(3, -8), end: ax.c2p(3, 12), color: RED });\\nconst hAsym = new Line({ start: ax.c2p(-6, 2), end: ax.c2p(12, 2), color: GREEN });\\nvAsym.setStrokeWidth(2);\\nhAsym.setStrokeWidth(2);\\n\\n// Two branches (avoid the discontinuity, clip to y-range)\\nconst left = ax.plot(f, { color: BLUE, xRange: [-6, 2.3], numSamples: 400 });\\nconst right = ax.plot(f, { color: BLUE, xRange: [3.7, 12], numSamples: 400 });\\n\\nconst title = new MathTex({ latex: 'f(x)=\\\\\\\\frac{2x+1}{x-3}', color: WHITE });\\nawait title.waitForRender();\\ntitle.scale(0.8);\\ntitle.moveTo([-4.6, 3.4, 0]);\\n\\nconst vLab = new MathTex({ latex: 'x=3', color: RED });\\nawait vLab.waitForRender();\\nvLab.scale(0.7);\\nvLab.moveTo([ax.c2p(3, 11)[0] + 0.55, ax.c2p(3, 11)[1], 0]);\\n\\nconst hLab = new MathTex({ latex: 'y=2', color: GREEN });\\nawait hLab.waitForRender();\\nhLab.scale(0.7);\\nhLab.moveTo([ax.c2p(11, 2)[0], ax.c2p(11, 2)[1] + 0.35, 0]);\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new AnimationGroup([new Create(left), new Create(right)]));\\nawait scene.play(new AnimationGroup([new Create(vAsym), new Create(hAsym)]));\\nawait scene.play(new AnimationGroup([new FadeIn(vLab), new FadeIn(hLab)]));\\n\\n// Interactive point\\nlet xv = -2;\\nconst dot = new Dot({ point: ax.c2p(xv, f(xv)), color: YELLOW });\\nscene.add(dot);\\n\\nlet readout = new Text({ text: 'x = -2.00, f(x) = 0.60', color: YELLOW, fontSize: 24 });\\nreadout.moveTo([-4.2, -3.6, 0]);\\nscene.add(readout);\\n\\nfunction update(v) {\\n  // Skip region where f leaves the visible window\\n  if (v > 2.3 && v < 3.7) return;\\n  xv = v;\\n  dot.moveTo(ax.c2p(xv, f(xv)));\\n  const pos = readout.getCenter();\\n  scene.remove(readout);\\n  readout = new Text({ text: 'x = ' + xv.toFixed(2) + ', f(x) = ' + f(xv).toFixed(2), color: YELLOW, fontSize: 24 });\\n  readout.moveTo(pos);\\n  scene.add(readout);\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'x', min: -6, max: 12, value: -2, step: 0.05, onChange: (v) => update(v) });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "For f(x) = (2x + 1)/(x − 3), the denominator is 0 at x = 3, and the numerator isn't (it equals 7 there). That gives a vertical asymptote at x = 3, where the graph shoots up to +∞ on the right and down to −∞ on the left. The top and bottom have the same degree, so the ratio of their leading coefficients, 2/1, gives a horizontal asymptote at y = 2: for very large |x| the function behaves like 2x/x = 2. Use the slider to move the point along the curve. Near x = 3 the values blow up, and far out to either side they settle toward 2."
+      },
+      "code": "const f = (x) => (2 * x + 1) / (x - 3);\n\nconst ax = new Axes({\n  xRange: [-6, 12, 2],\n  yRange: [-8, 12, 2],\n  xLength: 10,\n  yLength: 6,\n  tips: false\n});\nscene.add(ax);\n\n// Asymptotes\nconst vAsym = new Line({ start: ax.c2p(3, -8), end: ax.c2p(3, 12), color: RED });\nconst hAsym = new Line({ start: ax.c2p(-6, 2), end: ax.c2p(12, 2), color: GREEN });\nvAsym.setStrokeWidth(2);\nhAsym.setStrokeWidth(2);\n\n// Two branches (avoid the discontinuity, clip to y-range)\nconst left = ax.plot(f, { color: BLUE, xRange: [-6, 2.3], numSamples: 400 });\nconst right = ax.plot(f, { color: BLUE, xRange: [3.7, 12], numSamples: 400 });\n\nconst title = new MathTex({ latex: 'f(x)=\\\\frac{2x+1}{x-3}', color: WHITE });\nawait title.waitForRender();\ntitle.scale(0.8);\ntitle.moveTo([-4.6, 3.4, 0]);\n\nconst vLab = new MathTex({ latex: 'x=3', color: RED });\nawait vLab.waitForRender();\nvLab.scale(0.7);\nvLab.moveTo([ax.c2p(3, 11)[0] + 0.55, ax.c2p(3, 11)[1], 0]);\n\nconst hLab = new MathTex({ latex: 'y=2', color: GREEN });\nawait hLab.waitForRender();\nhLab.scale(0.7);\nhLab.moveTo([ax.c2p(11, 2)[0], ax.c2p(11, 2)[1] + 0.35, 0]);\n\nawait scene.play(new Write(title));\nawait scene.play(new AnimationGroup([new Create(left), new Create(right)]));\nawait scene.play(new AnimationGroup([new Create(vAsym), new Create(hAsym)]));\nawait scene.play(new AnimationGroup([new FadeIn(vLab), new FadeIn(hLab)]));\n\n// Interactive point\nlet xv = -2;\nconst dot = new Dot({ point: ax.c2p(xv, f(xv)), color: YELLOW });\nscene.add(dot);\n\nlet readout = new Text({ text: 'x = -2.00, f(x) = 0.60', color: YELLOW, fontSize: 24 });\nreadout.moveTo([-4.2, -3.6, 0]);\nscene.add(readout);\n\nfunction update(v) {\n  // Skip region where f leaves the visible window\n  if (v > 2.3 && v < 3.7) return;\n  xv = v;\n  dot.moveTo(ax.c2p(xv, f(xv)));\n  const pos = readout.getCenter();\n  scene.remove(readout);\n  readout = new Text({ text: 'x = ' + xv.toFixed(2) + ', f(x) = ' + f(xv).toFixed(2), color: YELLOW, fontSize: 24 });\n  readout.moveTo(pos);\n  scene.add(readout);\n}\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'x', min: -6, max: 12, value: -2, step: 0.05, onChange: (v) => update(v) });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 10611,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 4,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/alg-rational-asymptotes.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/alg-rational-asymptotes.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:38.641Z"
+}

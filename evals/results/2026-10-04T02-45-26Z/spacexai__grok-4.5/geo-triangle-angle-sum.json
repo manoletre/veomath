@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-triangle-angle-sum",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.67% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=1 checkboxes=1 draggables=3 clickables=0 hoverables=3"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "6.59% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 55970,
+        "inputTokens": 5047,
+        "cachedInputTokens": 4992,
+        "outputTokens": 3998,
+        "costUsd": 0.0255956,
+        "rawResponse": "{\n  \"explanation\": \"The angles in any triangle always sum to 180° because of the parallel-line theorem. Draw a line through one vertex parallel to the opposite side: the triangle’s other two angles become alternate interior angles with that line, so they match exactly. Those two angles plus the third then sit side-by-side on a straight line, which measures 180°. Drag the yellow vertices below—the colored angle markers and the live sum prove it never changes.\",\n  \"manimCode\": \"const dotA = new Dot({ point: [-2.2, -1.4, 0], color: YELLOW });\\nconst dotB = new Dot({ point: [2.4, -1.4, 0], color: YELLOW });\\nconst dotC = new Dot({ point: [0.3, 2.0, 0], color: YELLOW });\\n\\nconst triangle = new Polygon({\\n  vertices: [dotA.getCenter(), dotB.getCenter(), dotC.getCenter()],\\n  color: WHITE\\n});\\ntriangle.setFill(BLUE_E, 0.25).setStrokeWidth(3);\\n\\nscene.add(triangle, dotA, dotB, dotC);\\n\\n// Parallel line (initially hidden) and its two outer angle markers\\nlet paraLine = null;\\nlet outerArcA = null;\\nlet outerArcB = null;\\nlet showProof = false;\\n\\n// Angle labels (recreated on every update)\\nlet labA = null, labB = null, labC = null, sumLab = null;\\nlet title = null;\\n\\nfunction vecSub(u, v) { return [u[0]-v[0], u[1]-v[1], 0]; }\\nfunction vecAdd(u, v) { return [u[0]+v[0], u[1]+v[1], 0]; }\\nfunction vecScale(u, s) { return [u[0]*s, u[1]*s, 0]; }\\nfunction vecLen(u) { return Math.hypot(u[0], u[1]); }\\nfunction vecNorm(u) {\\n  const l = vecLen(u) || 1;\\n  return [u[0]/l, u[1]/l, 0];\\n}\\nfunction clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }\\n\\nfunction angleAt(vertex, p1, p2) {\\n  const v1 = vecNorm(vecSub(p1, vertex));\\n  const v2 = vecNorm(vecSub(p2, vertex));\\n  const dot = clamp(v1[0]*v2[0] + v1[1]*v2[1], -1, 1);\\n  const cross = v1[0]*v2[1] - v1[1]*v2[0];\\n  return Math.atan2(Math.abs(cross), dot) * 180 / Math.PI;\\n}\\n\\nfunction labelPos(vertex, p1, p2, dist) {\\n  const v1 = vecNorm(vecSub(p1, vertex));\\n  const v2 = vecNorm(vecSub(p2, vertex));\\n  let bis = vecNorm(vecAdd(v1, v2));\\n  // if nearly collinear fall back to perpendicular\\n  if (vecLen(bis) < 0.2) bis = [-v1[1], v1[0], 0];\\n  return vecAdd(vertex, vecScale(bis, dist));\\n}\\n\\nfunction makeAngleArc(vertex, p1, p2, radius, color) {\\n  const v1 = vecNorm(vecSub(p1, vertex));\\n  const v2 = vecNorm(vecSub(p2, vertex));\\n  let a1 = Math.atan2(v1[1], v1[0]);\\n  let a2 = Math.atan2(v2[1], v2[0]);\\n  // ensure we sweep the interior (smaller) angle\\n  let diff = a2 - a1;\\n  while (diff <= -Math.PI) diff += 2*Math.PI;\\n  while (diff > Math.PI) diff -= 2*Math.PI;\\n  const steps = 12;\\n  const pts = [];\\n  for (let i = 0; i <= steps; i++) {\\n    const t = a1 + (diff * i) / steps;\\n    pts.push([\\n      vertex[0] + radius * Math.cos(t),\\n      vertex[1] + radius * Math.sin(t),\\n      0\\n    ]);\\n  }\\n  const arc = new Polygon({ vertices: pts, color: color });\\n  arc.setFillOpacity(0).setStrokeWidth(4);\\n  return arc;\\n}\\n\\nfunction clearProofExtras() {\\n  if (paraLine) { scene.remove(paraLine); paraLine = null; }\\n  if (outerArcA) { scene.remove(outerArcA); outerArcA = null; }\\n  if (outerArcB) { scene.remove(outerArcB); outerArcB = null; }\\n}\\n\\nfunction rebuild() {\\n  const A = dotA.getCenter();\\n  const B = dotB.getCenter();\\n  const C = dotC.getCenter();\\n  triangle.setVertices([A, B, C]);\\n\\n  const angA = angleAt(A, B, C);\\n  const angB = angleAt(B, A, C);\\n  const angC = angleAt(C, A, B);\\n  const sum = angA + angB + angC;\\n\\n  // remove old labels\\n  if (labA) scene.remove(labA);\\n  if (labB) scene.remove(labB);\\n  if (labC) scene.remove(labC);\\n  if (sumLab) scene.remove(sumLab);\\n\\n  // colored interior arcs\\n  const arcA = makeAngleArc(A, B, C, 0.45, RED);\\n  const arcB = makeAngleArc(B, A, C, 0.45, GREEN);\\n  const arcC = makeAngleArc(C, A, B, 0.45, ORANGE);\\n  // remove previous arcs if any (stored on the dots for convenience)\\n  if (dotA._arc) scene.remove(dotA._arc);\\n  if (dotB._arc) scene.remove(dotB._arc);\\n  if (dotC._arc) scene.remove(dotC._arc);\\n  dotA._arc = arcA; dotB._arc = arcB; dotC._arc = arcC;\\n  scene.add(arcA, arcB, arcC);\\n\\n  labA = new Text({ text: angA.toFixed(0) + '°', color: RED, fontSize: 22 });\\n  labA.moveTo(labelPos(A, B, C, 0.7));\\n  labB = new Text({ text: angB.toFixed(0) + '°', color: GREEN, fontSize: 22 });\\n  labB.moveTo(labelPos(B, A, C, 0.7));\\n  labC = new Text({ text: angC.toFixed(0) + '°', color: ORANGE, fontSize: 22 });\\n  labC.moveTo(labelPos(C, A, B, 0.7));\\n\\n  sumLab = new Text({\\n    text: angA.toFixed(0) + '° + ' + angB.toFixed(0) + '° + ' + angC.toFixed(0) + '° = ' + sum.toFixed(0) + '°',\\n    color: WHITE,\\n    fontSize: 28\\n  });\\n  sumLab.moveTo([0, -3.2, 0]);\\n\\n  scene.add(labA, labB, labC, sumLab);\\n\\n  // Parallel-line proof overlay\\n  clearProofExtras();\\n  if (showProof) {\\n    // direction of AB\\n    const dir = vecNorm(vecSub(B, A));\\n    const left = vecAdd(C, vecScale(dir, -3.5));\\n    const right = vecAdd(C, vecScale(dir, 3.5));\\n    paraLine = new Polygon({\\n      vertices: [left, right],\\n      color: YELLOW_B\\n    });\\n    paraLine.setFillOpacity(0).setStrokeWidth(2);\\n    scene.add(paraLine);\\n\\n    // outer alternate-interior arcs (same colors as A and B)\\n    // point on the parallel line to the “outside” of A and of B\\n    const outA = vecAdd(C, vecScale(dir, -1.8));\\n    const outB = vecAdd(C, vecScale(dir, 1.8));\\n    outerArcA = makeAngleArc(C, outA, A, 0.55, RED);\\n    outerArcB = makeAngleArc(C, outB, B, 0.55, GREEN);\\n    scene.add(outerArcA, outerArcB);\\n  }\\n}\\n\\n// Initial build\\nrebuild();\\n\\n// Title\\ntitle = new Text({ text: 'Angles in a triangle always sum to 180°', color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.4, 0]);\\nscene.add(title);\\n\\n// Draggable vertices with bounds\\nconst dragOpts = {\\n  constrainX: [-5.5, 5.5],\\n  constrainY: [-2.8, 2.8],\\n  onDrag: rebuild\\n};\\nmakeDraggable(dotA, scene, dragOpts);\\nmakeDraggable(dotB, scene, dragOpts);\\nmakeDraggable(dotC, scene, dragOpts);\\nmakeHoverable(dotA, scene, { hoverScale: 1.3 });\\nmakeHoverable(dotB, scene, { hoverScale: 1.3 });\\nmakeHoverable(dotC, scene, { hoverScale: 1.3 });\\n\\n// UI controls\\nconst controls = new Controls(scene, { position: 'top-right', width: 230 });\\ncontrols.addCheckbox({\\n  label: 'Show parallel-line proof',\\n  checked: false,\\n  onChange: (v) => { showProof = v; rebuild(); }\\n});\\ncontrols.addButton({\\n  label: 'Reset triangle',\\n  onClick: () => {\\n    dotA.moveTo([-2.2, -1.4, 0]);\\n    dotB.moveTo([2.4, -1.4, 0]);\\n    dotC.moveTo([0.3, 2.0, 0]);\\n    rebuild();\\n  }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "The angles in any triangle always sum to 180° because of the parallel-line theorem. Draw a line through one vertex parallel to the opposite side: the triangle’s other two angles become alternate interior angles with that line, so they match exactly. Those two angles plus the third then sit side-by-side on a straight line, which measures 180°. Drag the yellow vertices below—the colored angle markers and the live sum prove it never changes."
+      },
+      "code": "const dotA = new Dot({ point: [-2.2, -1.4, 0], color: YELLOW });\nconst dotB = new Dot({ point: [2.4, -1.4, 0], color: YELLOW });\nconst dotC = new Dot({ point: [0.3, 2.0, 0], color: YELLOW });\n\nconst triangle = new Polygon({\n  vertices: [dotA.getCenter(), dotB.getCenter(), dotC.getCenter()],\n  color: WHITE\n});\ntriangle.setFill(BLUE_E, 0.25).setStrokeWidth(3);\n\nscene.add(triangle, dotA, dotB, dotC);\n\n// Parallel line (initially hidden) and its two outer angle markers\nlet paraLine = null;\nlet outerArcA = null;\nlet outerArcB = null;\nlet showProof = false;\n\n// Angle labels (recreated on every update)\nlet labA = null, labB = null, labC = null, sumLab = null;\nlet title = null;\n\nfunction vecSub(u, v) { return [u[0]-v[0], u[1]-v[1], 0]; }\nfunction vecAdd(u, v) { return [u[0]+v[0], u[1]+v[1], 0]; }\nfunction vecScale(u, s) { return [u[0]*s, u[1]*s, 0]; }\nfunction vecLen(u) { return Math.hypot(u[0], u[1]); }\nfunction vecNorm(u) {\n  const l = vecLen(u) || 1;\n  return [u[0]/l, u[1]/l, 0];\n}\nfunction clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }\n\nfunction angleAt(vertex, p1, p2) {\n  const v1 = vecNorm(vecSub(p1, vertex));\n  const v2 = vecNorm(vecSub(p2, vertex));\n  const dot = clamp(v1[0]*v2[0] + v1[1]*v2[1], -1, 1);\n  const cross = v1[0]*v2[1] - v1[1]*v2[0];\n  return Math.atan2(Math.abs(cross), dot) * 180 / Math.PI;\n}\n\nfunction labelPos(vertex, p1, p2, dist) {\n  const v1 = vecNorm(vecSub(p1, vertex));\n  const v2 = vecNorm(vecSub(p2, vertex));\n  let bis = vecNorm(vecAdd(v1, v2));\n  // if nearly collinear fall back to perpendicular\n  if (vecLen(bis) < 0.2) bis = [-v1[1], v1[0], 0];\n  return vecAdd(vertex, vecScale(bis, dist));\n}\n\nfunction makeAngleArc(vertex, p1, p2, radius, color) {\n  const v1 = vecNorm(vecSub(p1, vertex));\n  const v2 = vecNorm(vecSub(p2, vertex));\n  let a1 = Math.atan2(v1[1], v1[0]);\n  let a2 = Math.atan2(v2[1], v2[0]);\n  // ensure we sweep the interior (smaller) angle\n  let diff = a2 - a1;\n  while (diff <= -Math.PI) diff += 2*Math.PI;\n  while (diff > Math.PI) diff -= 2*Math.PI;\n  const steps = 12;\n  const pts = [];\n  for (let i = 0; i <= steps; i++) {\n    const t = a1 + (diff * i) / steps;\n    pts.push([\n      vertex[0] + radius * Math.cos(t),\n      vertex[1] + radius * Math.sin(t),\n      0\n    ]);\n  }\n  const arc = new Polygon({ vertices: pts, color: color });\n  arc.setFillOpacity(0).setStrokeWidth(4);\n  return arc;\n}\n\nfunction clearProofExtras() {\n  if (paraLine) { scene.remove(paraLine); paraLine = null; }\n  if (outerArcA) { scene.remove(outerArcA); outerArcA = null; }\n  if (outerArcB) { scene.remove(outerArcB); outerArcB = null; }\n}\n\nfunction rebuild() {\n  const A = dotA.getCenter();\n  const B = dotB.getCenter();\n  const C = dotC.getCenter();\n  triangle.setVertices([A, B, C]);\n\n  const angA = angleAt(A, B, C);\n  const angB = angleAt(B, A, C);\n  const angC = angleAt(C, A, B);\n  const sum = angA + angB + angC;\n\n  // remove old labels\n  if (labA) scene.remove(labA);\n  if (labB) scene.remove(labB);\n  if (labC) scene.remove(labC);\n  if (sumLab) scene.remove(sumLab);\n\n  // colored interior arcs\n  const arcA = makeAngleArc(A, B, C, 0.45, RED);\n  const arcB = makeAngleArc(B, A, C, 0.45, GREEN);\n  const arcC = makeAngleArc(C, A, B, 0.45, ORANGE);\n  // remove previous arcs if any (stored on the dots for convenience)\n  if (dotA._arc) scene.remove(dotA._arc);\n  if (dotB._arc) scene.remove(dotB._arc);\n  if (dotC._arc) scene.remove(dotC._arc);\n  dotA._arc = arcA; dotB._arc = arcB; dotC._arc = arcC;\n  scene.add(arcA, arcB, arcC);\n\n  labA = new Text({ text: angA.toFixed(0) + '°', color: RED, fontSize: 22 });\n  labA.moveTo(labelPos(A, B, C, 0.7));\n  labB = new Text({ text: angB.toFixed(0) + '°', color: GREEN, fontSize: 22 });\n  labB.moveTo(labelPos(B, A, C, 0.7));\n  labC = new Text({ text: angC.toFixed(0) + '°', color: ORANGE, fontSize: 22 });\n  labC.moveTo(labelPos(C, A, B, 0.7));\n\n  sumLab = new Text({\n    text: angA.toFixed(0) + '° + ' + angB.toFixed(0) + '° + ' + angC.toFixed(0) + '° = ' + sum.toFixed(0) + '°',\n    color: WHITE,\n    fontSize: 28\n  });\n  sumLab.moveTo([0, -3.2, 0]);\n\n  scene.add(labA, labB, labC, sumLab);\n\n  // Parallel-line proof overlay\n  clearProofExtras();\n  if (showProof) {\n    // direction of AB\n    const dir = vecNorm(vecSub(B, A));\n    const left = vecAdd(C, vecScale(dir, -3.5));\n    const right = vecAdd(C, vecScale(dir, 3.5));\n    paraLine = new Polygon({\n      vertices: [left, right],\n      color: YELLOW_B\n    });\n    paraLine.setFillOpacity(0).setStrokeWidth(2);\n    scene.add(paraLine);\n\n    // outer alternate-interior arcs (same colors as A and B)\n    // point on the parallel line to the “outside” of A and of B\n    const outA = vecAdd(C, vecScale(dir, -1.8));\n    const outB = vecAdd(C, vecScale(dir, 1.8));\n    outerArcA = makeAngleArc(C, outA, A, 0.55, RED);\n    outerArcB = makeAngleArc(C, outB, B, 0.55, GREEN);\n    scene.add(outerArcA, outerArcB);\n  }\n}\n\n// Initial build\nrebuild();\n\n// Title\ntitle = new Text({ text: 'Angles in a triangle always sum to 180°', color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.4, 0]);\nscene.add(title);\n\n// Draggable vertices with bounds\nconst dragOpts = {\n  constrainX: [-5.5, 5.5],\n  constrainY: [-2.8, 2.8],\n  onDrag: rebuild\n};\nmakeDraggable(dotA, scene, dragOpts);\nmakeDraggable(dotB, scene, dragOpts);\nmakeDraggable(dotC, scene, dragOpts);\nmakeHoverable(dotA, scene, { hoverScale: 1.3 });\nmakeHoverable(dotB, scene, { hoverScale: 1.3 });\nmakeHoverable(dotC, scene, { hoverScale: 1.3 });\n\n// UI controls\nconst controls = new Controls(scene, { position: 'top-right', width: 230 });\ncontrols.addCheckbox({\n  label: 'Show parallel-line proof',\n  checked: false,\n  onChange: (v) => { showProof = v; rebuild(); }\n});\ncontrols.addButton({\n  label: 'Reset triangle',\n  onClick: () => {\n    dotA.moveTo([-2.2, -1.4, 0]);\n    dotB.moveTo([2.4, -1.4, 0]);\n    dotC.moveTo([0.3, 2.0, 0]);\n    rebuild();\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4285,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 1,
+          "checkboxes": 1
+        },
+        "draggables": 3,
+        "clickables": 0,
+        "hoverables": 3
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/geo-triangle-angle-sum.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/geo-triangle-angle-sum.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:08.033Z"
+}

@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-galton-board",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "7.88% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "5.01% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 111513,
+        "inputTokens": 12271,
+        "cachedInputTokens": 11008,
+        "outputTokens": 4522,
+        "costUsd": 0.0499476,
+        "rawResponse": "{\"explanation\":\"Each ball makes five left-or-right choices, so its landing bin is determined by how many times it turns right. The animation follows all 32 possible paths: their bin counts are 1, 5, 10, 10, 5, 1—the coefficients of the binomial expansion. Use the slider to see how changing the probability of a right turn changes the theoretical distribution.\",\"manimCode\":\"const n = 5;\\nconst bx = -3.5;\\nconst step = 0.45;\\nconst pegGap = 0.55;\\nconst coeff = [1, 5, 10, 10, 5, 1];\\n\\nconst leftTitle = new Text({ text: 'Galton board: 5 choices', color: WHITE, fontSize: 29 });\\nleftTitle.moveTo([-3.5, 3.25, 0]);\\nconst rightTitle = new Text({ text: 'Binomial probabilities', color: WHITE, fontSize: 29 });\\nrightTitle.moveTo([3.15, 3.25, 0]);\\nscene.add(leftTitle, rightTitle);\\n\\nconst formula = new MathTex({ latex: 'P(X=k)=\\\\\\\\binom{5}{k}p^k(1-p)^{5-k}' });\\nawait formula.waitForRender();\\nformula.scale(0.77);\\nformula.moveTo([3.15, 2.48, 0]);\\nscene.add(formula);\\n\\nconst divider = new Line({ start: [-0.35, -3.15, 0], end: [-0.35, 2.85, 0], color: GRAY });\\nconst floor = new Line({ start: [bx - 1.55, -2.78, 0], end: [bx + 1.55, -2.78, 0], color: GRAY });\\nscene.add(divider, floor);\\n\\nconst pegs = [];\\nfor (let r = 0; r < n; r++) {\\n  for (let j = 0; j <= r; j++) {\\n    const x = bx + (2 * j - r) * step;\\n    const y = 2.25 - r * pegGap;\\n    pegs.push(new Dot({ point: [x, y, 0], radius: 0.055, color: GOLD }));\\n  }\\n}\\nscene.add(...pegs);\\n\\nfor (let k = 0; k <= n; k++) {\\n  const x = bx + (2 * k - n) * step;\\n  const guide = new Line({ start: [x + step, -1.12, 0], end: [x + step, -2.78, 0], color: GRAY });\\n  if (k < n) scene.add(guide);\\n  const label = new Text({ text: String(k), color: WHITE, fontSize: 23 });\\n  label.moveTo([x, -3.15, 0]);\\n  scene.add(label);\\n}\\n\\nconst boardCaption = new Text({ text: 'number of right turns', color: GRAY, fontSize: 20 });\\nboardCaption.moveTo([bx, -3.48, 0]);\\nscene.add(boardCaption);\\n\\nconst travel = new ValueTracker(0);\\nconst pileCount = [0, 0, 0, 0, 0, 0];\\nconst balls = [];\\nfor (let mask = 0; mask < 32; mask++) {\\n  const bits = Array.from({ length: n }, (_, r) => (mask >> r) & 1);\\n  const k = bits.reduce((a, b) => a + b, 0);\\n  const slot = pileCount[k]++;\\n  const xFinal = bx + (2 * k - n) * step;\\n  const route = [[bx, 2.76, 0]];\\n  let rights = 0;\\n  for (let r = 0; r < n; r++) {\\n    rights += bits[r];\\n    route.push([bx + (2 * rights - r - 1) * step, 1.98 - r * pegGap, 0]);\\n  }\\n  route.push([xFinal, -2.68 + slot * 0.135, 0]);\\n  const ball = new Dot({ point: route[0], radius: 0.067, color: TEAL });\\n  ball.addUpdater(d => {\\n    const u = Math.max(0, Math.min(6, travel.getValue()));\\n    const i = Math.min(5, Math.floor(u));\\n    const f = u - i;\\n    const a = route[i];\\n    const b = route[i + 1];\\n    d.moveTo([a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, 0]);\\n  });\\n  balls.push(ball);\\n}\\nscene.add(...balls);\\n\\nconst baseY = -2.55;\\nconst centers = Array.from({ length: 6 }, (_, k) => 0.98 + 0.86 * k);\\nconst chartBase = new Line({ start: [0.55, baseY, 0], end: [5.7, baseY, 0], color: GRAY });\\nscene.add(chartBase);\\nfor (let k = 0; k <= n; k++) {\\n  const label = new Text({ text: String(k), color: WHITE, fontSize: 23 });\\n  label.moveTo([centers[k], -2.94, 0]);\\n  scene.add(label);\\n}\\nconst chartCaption = new Text({ text: 'k right turns', color: GRAY, fontSize: 20 });\\nchartCaption.moveTo([3.15, -3.38, 0]);\\nscene.add(chartCaption);\\n\\nlet p = 0.5;\\nconst reveal = new ValueTracker(0);\\nconst bars = [];\\nfunction probability(k) {\\n  return coeff[k] * Math.pow(p, k) * Math.pow(1 - p, n - k);\\n}\\nfunction updateBar(bar, k) {\\n  const maxP = Math.max(...coeff.map((_, j) => probability(j)));\\n  const height = 2.7 * reveal.getValue() * probability(k) / maxP;\\n  const x = centers[k];\\n  const w = 0.59;\\n  bar.setVertices([[x - w / 2, baseY, 0], [x + w / 2, baseY, 0], [x + w / 2, baseY + height, 0], [x - w / 2, baseY + height, 0]]);\\n}\\nfor (let k = 0; k <= n; k++) {\\n  const x = centers[k];\\n  const bar = new Polygon({ vertices: [[x - 0.295, baseY, 0], [x + 0.295, baseY, 0], [x + 0.295, baseY + 0.001, 0], [x - 0.295, baseY + 0.001, 0]], color: BLUE });\\n  bar.setFill(BLUE, 0.8);\\n  bar.addUpdater(() => updateBar(bar, k));\\n  bars.push(bar);\\n}\\nscene.add(...bars);\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 230 });\\ncontrols.addSlider({ label: 'Right-turn chance p', min: 0.1, max: 0.9, value: 0.5, step: 0.05, onChange: v => {\\n  p = v;\\n  bars.forEach((bar, k) => updateBar(bar, k));\\n} });\\n\\nfor (let stage = 1; stage <= 6; stage++) {\\n  await scene.play(travel.animateTo(stage));\\n}\\nawait scene.play(reveal.animateTo(1));\\nawait scene.wait(999999);\"}",
+        "explanation": "Each ball makes five left-or-right choices, so its landing bin is determined by how many times it turns right. The animation follows all 32 possible paths: their bin counts are 1, 5, 10, 10, 5, 1—the coefficients of the binomial expansion. Use the slider to see how changing the probability of a right turn changes the theoretical distribution."
+      },
+      "code": "const n = 5;\nconst bx = -3.5;\nconst step = 0.45;\nconst pegGap = 0.55;\nconst coeff = [1, 5, 10, 10, 5, 1];\n\nconst leftTitle = new Text({ text: 'Galton board: 5 choices', color: WHITE, fontSize: 29 });\nleftTitle.moveTo([-3.5, 3.25, 0]);\nconst rightTitle = new Text({ text: 'Binomial probabilities', color: WHITE, fontSize: 29 });\nrightTitle.moveTo([3.15, 3.25, 0]);\nscene.add(leftTitle, rightTitle);\n\nconst formula = new MathTex({ latex: 'P(X=k)=\\\\binom{5}{k}p^k(1-p)^{5-k}' });\nawait formula.waitForRender();\nformula.scale(0.77);\nformula.moveTo([3.15, 2.48, 0]);\nscene.add(formula);\n\nconst divider = new Line({ start: [-0.35, -3.15, 0], end: [-0.35, 2.85, 0], color: GRAY });\nconst floor = new Line({ start: [bx - 1.55, -2.78, 0], end: [bx + 1.55, -2.78, 0], color: GRAY });\nscene.add(divider, floor);\n\nconst pegs = [];\nfor (let r = 0; r < n; r++) {\n  for (let j = 0; j <= r; j++) {\n    const x = bx + (2 * j - r) * step;\n    const y = 2.25 - r * pegGap;\n    pegs.push(new Dot({ point: [x, y, 0], radius: 0.055, color: GOLD }));\n  }\n}\nscene.add(...pegs);\n\nfor (let k = 0; k <= n; k++) {\n  const x = bx + (2 * k - n) * step;\n  const guide = new Line({ start: [x + step, -1.12, 0], end: [x + step, -2.78, 0], color: GRAY });\n  if (k < n) scene.add(guide);\n  const label = new Text({ text: String(k), color: WHITE, fontSize: 23 });\n  label.moveTo([x, -3.15, 0]);\n  scene.add(label);\n}\n\nconst boardCaption = new Text({ text: 'number of right turns', color: GRAY, fontSize: 20 });\nboardCaption.moveTo([bx, -3.48, 0]);\nscene.add(boardCaption);\n\nconst travel = new ValueTracker(0);\nconst pileCount = [0, 0, 0, 0, 0, 0];\nconst balls = [];\nfor (let mask = 0; mask < 32; mask++) {\n  const bits = Array.from({ length: n }, (_, r) => (mask >> r) & 1);\n  const k = bits.reduce((a, b) => a + b, 0);\n  const slot = pileCount[k]++;\n  const xFinal = bx + (2 * k - n) * step;\n  const route = [[bx, 2.76, 0]];\n  let rights = 0;\n  for (let r = 0; r < n; r++) {\n    rights += bits[r];\n    route.push([bx + (2 * rights - r - 1) * step, 1.98 - r * pegGap, 0]);\n  }\n  route.push([xFinal, -2.68 + slot * 0.135, 0]);\n  const ball = new Dot({ point: route[0], radius: 0.067, color: TEAL });\n  ball.addUpdater(d => {\n    const u = Math.max(0, Math.min(6, travel.getValue()));\n    const i = Math.min(5, Math.floor(u));\n    const f = u - i;\n    const a = route[i];\n    const b = route[i + 1];\n    d.moveTo([a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, 0]);\n  });\n  balls.push(ball);\n}\nscene.add(...balls);\n\nconst baseY = -2.55;\nconst centers = Array.from({ length: 6 }, (_, k) => 0.98 + 0.86 * k);\nconst chartBase = new Line({ start: [0.55, baseY, 0], end: [5.7, baseY, 0], color: GRAY });\nscene.add(chartBase);\nfor (let k = 0; k <= n; k++) {\n  const label = new Text({ text: String(k), color: WHITE, fontSize: 23 });\n  label.moveTo([centers[k], -2.94, 0]);\n  scene.add(label);\n}\nconst chartCaption = new Text({ text: 'k right turns', color: GRAY, fontSize: 20 });\nchartCaption.moveTo([3.15, -3.38, 0]);\nscene.add(chartCaption);\n\nlet p = 0.5;\nconst reveal = new ValueTracker(0);\nconst bars = [];\nfunction probability(k) {\n  return coeff[k] * Math.pow(p, k) * Math.pow(1 - p, n - k);\n}\nfunction updateBar(bar, k) {\n  const maxP = Math.max(...coeff.map((_, j) => probability(j)));\n  const height = 2.7 * reveal.getValue() * probability(k) / maxP;\n  const x = centers[k];\n  const w = 0.59;\n  bar.setVertices([[x - w / 2, baseY, 0], [x + w / 2, baseY, 0], [x + w / 2, baseY + height, 0], [x - w / 2, baseY + height, 0]]);\n}\nfor (let k = 0; k <= n; k++) {\n  const x = centers[k];\n  const bar = new Polygon({ vertices: [[x - 0.295, baseY, 0], [x + 0.295, baseY, 0], [x + 0.295, baseY + 0.001, 0], [x - 0.295, baseY + 0.001, 0]], color: BLUE });\n  bar.setFill(BLUE, 0.8);\n  bar.addUpdater(() => updateBar(bar, k));\n  bars.push(bar);\n}\nscene.add(...bars);\n\nconst controls = new Controls(scene, { position: 'top-right', width: 230 });\ncontrols.addSlider({ label: 'Right-turn chance p', min: 0.1, max: 0.9, value: 0.5, step: 0.05, onChange: v => {\n  p = v;\n  bars.forEach((bar, k) => updateBar(bar, k));\n} });\n\nfor (let stage = 1; stage <= 6; stage++) {\n  await scene.play(travel.animateTo(stage));\n}\nawait scene.play(reveal.animateTo(1));\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 10545,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 7,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/stats-galton-board.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/stats-galton-board.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:52:50.060Z"
+}

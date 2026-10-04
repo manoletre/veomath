@@ -1,0 +1,97 @@
+{
+  "itemId": "alg-inverse-exp-log",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 0.9090909090909091,
+  "firstAttemptScore": 0.9090909090909091,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9090909090909091,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.05% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=2 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "✓ drag Dot at (-0.2, 1.1) — 0.51% changed\n✗ drag Dot at (2.6, 0.3) — 0.00% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (-0.2, 1.1) — 0.51% changed\n✗ drag Dot at (2.6, 0.3) — 0.00% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 43959,
+        "inputTokens": 5313,
+        "cachedInputTokens": 5287,
+        "outputTokens": 1659,
+        "costUsd": 0.0171707,
+        "rawResponse": "{\"explanation\":\"Reflecting a graph across y = x swaps each point’s coordinates. A point (a, eᵃ) on y = eˣ therefore becomes (eᵃ, a), which lies on y = ln(x) because ln(eᵃ) = a. Drag either point to see this inverse relationship stay true.\",\"manimCode\":\"const ax = new Axes({ xRange: [-2, 4, 1], yRange: [-2, 4, 1], xLength: 5.6, yLength: 5.6, tips: false });\\nconst exponential = ax.plot(x => Math.exp(x), { xRange: [-2, Math.log(4), 0.025], color: BLUE });\\nconst logarithm = ax.plot(x => Math.log(x), { xRange: [Math.exp(-2), 4, 0.025], color: GREEN });\\nconst mirror = new DashedLine({ start: ax.c2p(-2, -2), end: ax.c2p(4, 4), color: GRAY });\\nlet a = 0.8;\\nconst pHandle = new Dot({ point: ax.c2p(a, Math.exp(a)), radius: 0.13, color: BLUE });\\nconst qHandle = new Dot({ point: ax.c2p(Math.exp(a), a), radius: 0.13, color: GREEN });\\nconst connector = new DashedLine({ start: pHandle.getCenter(), end: qHandle.getCenter(), color: YELLOW });\\nconst midpoint = new Dot({ point: ax.c2p(0, 0), radius: 0.045, color: YELLOW });\\nconst title = new Text({ text: 'Inverse functions are mirror images', fontSize: 28, color: WHITE });\\ntitle.moveTo([0, 3.4, 0]);\\nconst hint = new Text({ text: 'Drag either colored point · the coordinates swap', fontSize: 21, color: GRAY });\\nhint.moveTo([0, -3.4, 0]);\\nconst expLabel = new MathTex({ latex: 'y=e^x', color: BLUE });\\nconst logLabel = new MathTex({ latex: 'y=\\\\\\\\ln(x)', color: GREEN });\\nconst mirrorLabel = new MathTex({ latex: 'y=x', color: GRAY });\\nawait expLabel.waitForRender();\\nawait logLabel.waitForRender();\\nawait mirrorLabel.waitForRender();\\nexpLabel.scale(0.75).moveTo([-4.65, 1.65, 0]);\\nlogLabel.scale(0.75).moveTo([-4.65, 0.7, 0]);\\nmirrorLabel.scale(0.75).moveTo([-4.65, -0.25, 0]);\\nconst pHeading = new Text({ text: 'Exponential point', fontSize: 20, color: BLUE });\\npHeading.moveTo([4.55, 1.8, 0]);\\nconst pReadout = new Text({ text: '', fontSize: 21, color: BLUE });\\npReadout.moveTo([4.55, 1.35, 0]);\\nconst qHeading = new Text({ text: 'Logarithm point', fontSize: 20, color: GREEN });\\nqHeading.moveTo([4.55, 0.35, 0]);\\nconst qReadout = new Text({ text: '', fontSize: 21, color: GREEN });\\nqReadout.moveTo([4.55, -0.1, 0]);\\nconst swapLabel = new Text({ text: '(x, y) → (y, x)', fontSize: 21, color: YELLOW });\\nswapLabel.moveTo([4.55, -1.1, 0]);\\nscene.add(ax, mirror, title, hint, expLabel, logLabel, mirrorLabel, pHeading, pReadout, qHeading, qReadout, swapLabel);\\nawait scene.play(new AnimationGroup([new Create(exponential), new Create(logarithm)]));\\nscene.add(connector, midpoint, pHandle, qHandle);\\nfunction update() {\\n  const b = Math.exp(a);\\n  const p = ax.c2p(a, b);\\n  const q = ax.c2p(b, a);\\n  pHandle.moveTo(p);\\n  qHandle.moveTo(q);\\n  connector.setStart(p);\\n  connector.setEnd(q);\\n  midpoint.moveTo(ax.c2p((a + b) / 2, (a + b) / 2));\\n  pReadout.setText('(' + a.toFixed(2) + ', ' + b.toFixed(2) + ')');\\n  qReadout.setText('(' + b.toFixed(2) + ', ' + a.toFixed(2) + ')');\\n}\\nupdate();\\nconst clamp = v => Math.max(-1.8, Math.min(Math.log(3.8), v));\\nmakeDraggable(pHandle, scene, { onDrag: (mob, pos) => {\\n  a = clamp(ax.pointToCoords(pos)[0]);\\n  update();\\n} });\\nmakeDraggable(qHandle, scene, { onDrag: (mob, pos) => {\\n  const x = Math.max(Math.exp(-1.8), Math.min(3.8, ax.pointToCoords(pos)[0]));\\n  a = clamp(Math.log(x));\\n  update();\\n} });\\nawait scene.wait(999999);\"}",
+        "explanation": "Reflecting a graph across y = x swaps each point’s coordinates. A point (a, eᵃ) on y = eˣ therefore becomes (eᵃ, a), which lies on y = ln(x) because ln(eᵃ) = a. Drag either point to see this inverse relationship stay true."
+      },
+      "code": "const ax = new Axes({ xRange: [-2, 4, 1], yRange: [-2, 4, 1], xLength: 5.6, yLength: 5.6, tips: false });\nconst exponential = ax.plot(x => Math.exp(x), { xRange: [-2, Math.log(4), 0.025], color: BLUE });\nconst logarithm = ax.plot(x => Math.log(x), { xRange: [Math.exp(-2), 4, 0.025], color: GREEN });\nconst mirror = new DashedLine({ start: ax.c2p(-2, -2), end: ax.c2p(4, 4), color: GRAY });\nlet a = 0.8;\nconst pHandle = new Dot({ point: ax.c2p(a, Math.exp(a)), radius: 0.13, color: BLUE });\nconst qHandle = new Dot({ point: ax.c2p(Math.exp(a), a), radius: 0.13, color: GREEN });\nconst connector = new DashedLine({ start: pHandle.getCenter(), end: qHandle.getCenter(), color: YELLOW });\nconst midpoint = new Dot({ point: ax.c2p(0, 0), radius: 0.045, color: YELLOW });\nconst title = new Text({ text: 'Inverse functions are mirror images', fontSize: 28, color: WHITE });\ntitle.moveTo([0, 3.4, 0]);\nconst hint = new Text({ text: 'Drag either colored point · the coordinates swap', fontSize: 21, color: GRAY });\nhint.moveTo([0, -3.4, 0]);\nconst expLabel = new MathTex({ latex: 'y=e^x', color: BLUE });\nconst logLabel = new MathTex({ latex: 'y=\\\\ln(x)', color: GREEN });\nconst mirrorLabel = new MathTex({ latex: 'y=x', color: GRAY });\nawait expLabel.waitForRender();\nawait logLabel.waitForRender();\nawait mirrorLabel.waitForRender();\nexpLabel.scale(0.75).moveTo([-4.65, 1.65, 0]);\nlogLabel.scale(0.75).moveTo([-4.65, 0.7, 0]);\nmirrorLabel.scale(0.75).moveTo([-4.65, -0.25, 0]);\nconst pHeading = new Text({ text: 'Exponential point', fontSize: 20, color: BLUE });\npHeading.moveTo([4.55, 1.8, 0]);\nconst pReadout = new Text({ text: '', fontSize: 21, color: BLUE });\npReadout.moveTo([4.55, 1.35, 0]);\nconst qHeading = new Text({ text: 'Logarithm point', fontSize: 20, color: GREEN });\nqHeading.moveTo([4.55, 0.35, 0]);\nconst qReadout = new Text({ text: '', fontSize: 21, color: GREEN });\nqReadout.moveTo([4.55, -0.1, 0]);\nconst swapLabel = new Text({ text: '(x, y) → (y, x)', fontSize: 21, color: YELLOW });\nswapLabel.moveTo([4.55, -1.1, 0]);\nscene.add(ax, mirror, title, hint, expLabel, logLabel, mirrorLabel, pHeading, pReadout, qHeading, qReadout, swapLabel);\nawait scene.play(new AnimationGroup([new Create(exponential), new Create(logarithm)]));\nscene.add(connector, midpoint, pHandle, qHandle);\nfunction update() {\n  const b = Math.exp(a);\n  const p = ax.c2p(a, b);\n  const q = ax.c2p(b, a);\n  pHandle.moveTo(p);\n  qHandle.moveTo(q);\n  connector.setStart(p);\n  connector.setEnd(q);\n  midpoint.moveTo(ax.c2p((a + b) / 2, (a + b) / 2));\n  pReadout.setText('(' + a.toFixed(2) + ', ' + b.toFixed(2) + ')');\n  qReadout.setText('(' + b.toFixed(2) + ', ' + a.toFixed(2) + ')');\n}\nupdate();\nconst clamp = v => Math.max(-1.8, Math.min(Math.log(3.8), v));\nmakeDraggable(pHandle, scene, { onDrag: (mob, pos) => {\n  a = clamp(ax.pointToCoords(pos)[0]);\n  update();\n} });\nmakeDraggable(qHandle, scene, { onDrag: (mob, pos) => {\n  const x = Math.max(Math.exp(-1.8), Math.min(3.8, ax.pointToCoords(pos)[0]));\n  a = clamp(Math.log(x));\n  update();\n} });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9764,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 2,
+        "clickables": 0,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "drag",
+            "label": "Dot at (-0.2, 1.1)",
+            "change": 0.005100911458333334,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (2.6, 0.3)",
+            "change": 0,
+            "responded": false
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/alg-inverse-exp-log.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/alg-inverse-exp-log.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:52:11.796Z"
+}

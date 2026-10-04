@@ -1,0 +1,80 @@
+{
+  "itemId": "alg-discriminant",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.99% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "FunctionGraph [x -4.50..4.50, y -1.03..12.83] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=3 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.68% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 24203,
+        "inputTokens": 5060,
+        "cachedInputTokens": 128,
+        "outputTokens": 2109,
+        "costUsd": 0.022556399999999997,
+        "rawResponse": "{\n  \"explanation\": \"The discriminant D = b² − 4ac of a quadratic ax² + bx + c tells you how many times the parabola crosses the x-axis. When D > 0 there are two distinct real roots; when D = 0 the parabola just touches the axis at one repeated root; when D < 0 the parabola stays entirely above or below the axis and there are no real roots.\",\n  \"manimCode\": \"const ax = new Axes({\\n  xRange: [-5, 5, 1],\\n  yRange: [-6, 6, 2],\\n  xLength: 9,\\n  yLength: 5.5,\\n  tips: false\\n});\\nax.moveTo([0, 0.3, 0]);\\nscene.add(ax);\\n\\nlet a = 1;\\nlet b = -1;\\nlet c = -2;\\n\\nfunction disc() {\\n  return b * b - 4 * a * c;\\n}\\n\\nfunction roots() {\\n  const D = disc();\\n  if (D < 0 || Math.abs(a) < 1e-9) return [];\\n  const s = Math.sqrt(D);\\n  if (D === 0) return [-b / (2 * a)];\\n  return [(-b - s) / (2 * a), (-b + s) / (2 * a)];\\n}\\n\\nlet curve = ax.plot(x => a * x * x + b * x + c, { color: BLUE, xRange: [-5, 5] });\\nscene.add(curve);\\n\\nconst rootDots = [];\\nfunction clearDots() {\\n  while (rootDots.length) {\\n    const d = rootDots.pop();\\n    scene.remove(d);\\n  }\\n}\\nfunction placeDots() {\\n  clearDots();\\n  const rs = roots();\\n  for (const r of rs) {\\n    if (r < -5 || r > 5) continue;\\n    const d = new Dot({ point: ax.c2p(r, 0), color: YELLOW });\\n    d.scale(1.2);\\n    scene.add(d);\\n    rootDots.push(d);\\n  }\\n}\\nplaceDots();\\n\\nlet statusTex = null;\\nasync function updateStatus() {\\n  const D = disc();\\n  let latex;\\n  let col;\\n  if (D > 1e-9) {\\n    latex = 'D = b^2 - 4ac > 0 \\\\\\\\rightarrow 2 \\\\\\\\text{ real roots}';\\n    col = GREEN;\\n  } else if (D < -1e-9) {\\n    latex = 'D = b^2 - 4ac < 0 \\\\\\\\rightarrow 0 \\\\\\\\text{ real roots}';\\n    col = RED;\\n  } else {\\n    latex = 'D = b^2 - 4ac = 0 \\\\\\\\rightarrow 1 \\\\\\\\text{ real root}';\\n    col = YELLOW;\\n  }\\n  if (statusTex) scene.remove(statusTex);\\n  statusTex = new MathTex({ latex: latex, color: col, fontSize: 28 });\\n  await statusTex.waitForRender();\\n  statusTex.moveTo([0, -3.4, 0]);\\n  scene.add(statusTex);\\n}\\nawait updateStatus();\\n\\nlet discLabel = null;\\nasync function updateDiscLabel() {\\n  const D = disc();\\n  const rounded = Math.round(D * 100) / 100;\\n  if (discLabel) scene.remove(discLabel);\\n  discLabel = new MathTex({\\n    latex: `D = ${rounded}`,\\n    color: WHITE,\\n    fontSize: 32\\n  });\\n  await discLabel.waitForRender();\\n  discLabel.toCorner(UL);\\n  discLabel.shift(scaleVec(0.3, DOWN));\\n  scene.add(discLabel);\\n}\\nawait updateDiscLabel();\\n\\nlet eqLabel = null;\\nasync function updateEq() {\\n  const fa = Math.round(a * 100) / 100;\\n  const fb = Math.round(b * 100) / 100;\\n  const fc = Math.round(c * 100) / 100;\\n  const bs = fb >= 0 ? `+ ${fb}` : `- ${Math.abs(fb)}`;\\n  const cs = fc >= 0 ? `+ ${fc}` : `- ${Math.abs(fc)}`;\\n  if (eqLabel) scene.remove(eqLabel);\\n  eqLabel = new MathTex({\\n    latex: `y = ${fa}x^2 ${bs}x ${cs}`,\\n    color: BLUE_B,\\n    fontSize: 26\\n  });\\n  await eqLabel.waitForRender();\\n  eqLabel.toCorner(UR);\\n  eqLabel.shift(scaleVec(0.3, DOWN));\\n  scene.add(eqLabel);\\n}\\nawait updateEq();\\n\\nfunction rebuildCurve() {\\n  scene.remove(curve);\\n  curve = ax.plot(x => a * x * x + b * x + c, { color: BLUE, xRange: [-5, 5] });\\n  scene.add(curve);\\n  placeDots();\\n}\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\\ncontrols.addSlider({\\n  label: 'a',\\n  min: -2,\\n  max: 2,\\n  value: a,\\n  step: 0.1,\\n  onChange: async (val) => {\\n    a = val === 0 ? 0.1 : val;\\n    rebuildCurve();\\n    await updateStatus();\\n    await updateDiscLabel();\\n    await updateEq();\\n  }\\n});\\ncontrols.addSlider({\\n  label: 'b',\\n  min: -5,\\n  max: 5,\\n  value: b,\\n  step: 0.1,\\n  onChange: async (val) => {\\n    b = val;\\n    rebuildCurve();\\n    await updateStatus();\\n    await updateDiscLabel();\\n    await updateEq();\\n  }\\n});\\ncontrols.addSlider({\\n  label: 'c',\\n  min: -5,\\n  max: 5,\\n  value: c,\\n  step: 0.1,\\n  onChange: async (val) => {\\n    c = val;\\n    rebuildCurve();\\n    await updateStatus();\\n    await updateDiscLabel();\\n    await updateEq();\\n  }\\n});\\ncontrols.addButton({\\n  label: 'Two roots (D>0)',\\n  onClick: async () => {\\n    a = 1; b = -1; c = -2;\\n    rebuildCurve();\\n    await updateStatus();\\n    await updateDiscLabel();\\n    await updateEq();\\n  }\\n});\\ncontrols.addButton({\\n  label: 'One root (D=0)',\\n  onClick: async () => {\\n    a = 1; b = -4; c = 4;\\n    rebuildCurve();\\n    await updateStatus();\\n    await updateDiscLabel();\\n    await updateEq();\\n  }\\n});\\ncontrols.addButton({\\n  label: 'No roots (D<0)',\\n  onClick: async () => {\\n    a = 1; b = 0; c = 2;\\n    rebuildCurve();\\n    await updateStatus();\\n    await updateDiscLabel();\\n    await updateEq();\\n  }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "The discriminant D = b² − 4ac of a quadratic ax² + bx + c tells you how many times the parabola crosses the x-axis. When D > 0 there are two distinct real roots; when D = 0 the parabola just touches the axis at one repeated root; when D < 0 the parabola stays entirely above or below the axis and there are no real roots."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-5, 5, 1],\n  yRange: [-6, 6, 2],\n  xLength: 9,\n  yLength: 5.5,\n  tips: false\n});\nax.moveTo([0, 0.3, 0]);\nscene.add(ax);\n\nlet a = 1;\nlet b = -1;\nlet c = -2;\n\nfunction disc() {\n  return b * b - 4 * a * c;\n}\n\nfunction roots() {\n  const D = disc();\n  if (D < 0 || Math.abs(a) < 1e-9) return [];\n  const s = Math.sqrt(D);\n  if (D === 0) return [-b / (2 * a)];\n  return [(-b - s) / (2 * a), (-b + s) / (2 * a)];\n}\n\nlet curve = ax.plot(x => a * x * x + b * x + c, { color: BLUE, xRange: [-5, 5] });\nscene.add(curve);\n\nconst rootDots = [];\nfunction clearDots() {\n  while (rootDots.length) {\n    const d = rootDots.pop();\n    scene.remove(d);\n  }\n}\nfunction placeDots() {\n  clearDots();\n  const rs = roots();\n  for (const r of rs) {\n    if (r < -5 || r > 5) continue;\n    const d = new Dot({ point: ax.c2p(r, 0), color: YELLOW });\n    d.scale(1.2);\n    scene.add(d);\n    rootDots.push(d);\n  }\n}\nplaceDots();\n\nlet statusTex = null;\nasync function updateStatus() {\n  const D = disc();\n  let latex;\n  let col;\n  if (D > 1e-9) {\n    latex = 'D = b^2 - 4ac > 0 \\\\rightarrow 2 \\\\text{ real roots}';\n    col = GREEN;\n  } else if (D < -1e-9) {\n    latex = 'D = b^2 - 4ac < 0 \\\\rightarrow 0 \\\\text{ real roots}';\n    col = RED;\n  } else {\n    latex = 'D = b^2 - 4ac = 0 \\\\rightarrow 1 \\\\text{ real root}';\n    col = YELLOW;\n  }\n  if (statusTex) scene.remove(statusTex);\n  statusTex = new MathTex({ latex: latex, color: col, fontSize: 28 });\n  await statusTex.waitForRender();\n  statusTex.moveTo([0, -3.4, 0]);\n  scene.add(statusTex);\n}\nawait updateStatus();\n\nlet discLabel = null;\nasync function updateDiscLabel() {\n  const D = disc();\n  const rounded = Math.round(D * 100) / 100;\n  if (discLabel) scene.remove(discLabel);\n  discLabel = new MathTex({\n    latex: `D = ${rounded}`,\n    color: WHITE,\n    fontSize: 32\n  });\n  await discLabel.waitForRender();\n  discLabel.toCorner(UL);\n  discLabel.shift(scaleVec(0.3, DOWN));\n  scene.add(discLabel);\n}\nawait updateDiscLabel();\n\nlet eqLabel = null;\nasync function updateEq() {\n  const fa = Math.round(a * 100) / 100;\n  const fb = Math.round(b * 100) / 100;\n  const fc = Math.round(c * 100) / 100;\n  const bs = fb >= 0 ? `+ ${fb}` : `- ${Math.abs(fb)}`;\n  const cs = fc >= 0 ? `+ ${fc}` : `- ${Math.abs(fc)}`;\n  if (eqLabel) scene.remove(eqLabel);\n  eqLabel = new MathTex({\n    latex: `y = ${fa}x^2 ${bs}x ${cs}`,\n    color: BLUE_B,\n    fontSize: 26\n  });\n  await eqLabel.waitForRender();\n  eqLabel.toCorner(UR);\n  eqLabel.shift(scaleVec(0.3, DOWN));\n  scene.add(eqLabel);\n}\nawait updateEq();\n\nfunction rebuildCurve() {\n  scene.remove(curve);\n  curve = ax.plot(x => a * x * x + b * x + c, { color: BLUE, xRange: [-5, 5] });\n  scene.add(curve);\n  placeDots();\n}\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\ncontrols.addSlider({\n  label: 'a',\n  min: -2,\n  max: 2,\n  value: a,\n  step: 0.1,\n  onChange: async (val) => {\n    a = val === 0 ? 0.1 : val;\n    rebuildCurve();\n    await updateStatus();\n    await updateDiscLabel();\n    await updateEq();\n  }\n});\ncontrols.addSlider({\n  label: 'b',\n  min: -5,\n  max: 5,\n  value: b,\n  step: 0.1,\n  onChange: async (val) => {\n    b = val;\n    rebuildCurve();\n    await updateStatus();\n    await updateDiscLabel();\n    await updateEq();\n  }\n});\ncontrols.addSlider({\n  label: 'c',\n  min: -5,\n  max: 5,\n  value: c,\n  step: 0.1,\n  onChange: async (val) => {\n    c = val;\n    rebuildCurve();\n    await updateStatus();\n    await updateDiscLabel();\n    await updateEq();\n  }\n});\ncontrols.addButton({\n  label: 'Two roots (D>0)',\n  onClick: async () => {\n    a = 1; b = -1; c = -2;\n    rebuildCurve();\n    await updateStatus();\n    await updateDiscLabel();\n    await updateEq();\n  }\n});\ncontrols.addButton({\n  label: 'One root (D=0)',\n  onClick: async () => {\n    a = 1; b = -4; c = 4;\n    rebuildCurve();\n    await updateStatus();\n    await updateDiscLabel();\n    await updateEq();\n  }\n});\ncontrols.addButton({\n  label: 'No roots (D<0)',\n  onClick: async () => {\n    a = 1; b = 0; c = 2;\n    rebuildCurve();\n    await updateStatus();\n    await updateDiscLabel();\n    await updateEq();\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5972,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 3,
+          "buttons": 3,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/alg-discriminant.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/alg-discriminant.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:20.375Z"
+}

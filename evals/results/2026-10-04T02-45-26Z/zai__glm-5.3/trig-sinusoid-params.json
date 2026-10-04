@@ -1,0 +1,80 @@
+{
+  "itemId": "trig-sinusoid-params",
+  "model": "zai/glm-5.3",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.20% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "MathTex \"y\" overlaps MathTex \"y = 1\\sin(1(x - 0)) + 0\" (88%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=4 buttons=1 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "3.28% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 14304,
+        "inputTokens": 4474,
+        "cachedInputTokens": 4416,
+        "outputTokens": 1954,
+        "costUsd": 0.009297040000000001,
+        "rawResponse": "{ \"explanation\": \"## Sine Wave Transformations: y = A sin(B(x − C)) + D\\n\\nEach parameter shapes the wave:\\n\\n- **A — Amplitude**: stretches the wave vertically. The peaks reach **A** and troughs reach **−A** (before D shifts things). Negative A flips the wave upside down.\\n- **B — Frequency**: compresses or stretches horizontally. The **period** becomes **2π/|B|** — bigger B means more waves fit in the same space.\\n- **C — Phase shift**: slides the whole wave left/right (positive C moves it right). Note it acts on *x − C*, so B only scales the wave's shape, not the shift.\\n- **D — Vertical shift**: moves the midline up or down to **y = D**.\\n\\nBelow, you get four live sliders to manipulate all parameters simultaneously, with the wave, a moving tracer dot, and dynamic readouts of the current period, amplitude, and midline.\", \"manimCode\": \"// Axes: symmetric y-range so the wave and midline stay centered\\nconst ax = new Axes({\\n  xRange: [-2*Math.PI, 2*Math.PI, Math.PI/2],\\n  yRange: [-5, 5, 1],\\n  xLength: 10,\\n  yLength: 6,\\n  tips: true\\n});\\nconst labels = ax.getAxisLabels();\\nscene.add(ax, labels);\\n\\n// Parameters\\nlet A = 1, B = 1, C = 0, D = 0;\\n\\nconst fn = (x) => A * Math.sin(B * (x - C)) + D;\\n\\n// Curve (remove-recreate pattern for slider updates)\\nlet curve = ax.plot(fn, { color: BLUE, xRange: [-2*Math.PI, 2*Math.PI], numSamples: 400 });\\nscene.add(curve);\\n\\n// Midline at y = D\\nlet midline = ax.plot(x => D, { color: GRAY, xRange: [-2*Math.PI, 2*Math.PI], strokeWidth: 2, strokeDasharray: [8, 6] });\\nscene.add(midline);\\n\\n// Tracer dot that travels along the wave\\nconst dot = new Dot({ point: ax.c2p(0, 0), color: YELLOW });\\ndot.addUpdater(() => {\\n  dot.moveTo(ax.c2p(0, fn(0)));\\n});\\nscene.add(dot);\\n\\n// Current equation (recreated on every change)\\nlet eq = new MathTex({ latex: 'y = 1\\\\\\\\sin(1(x - 0)) + 0', color: WHITE, fontSize: 32 });\\nawait eq.waitForRender();\\neq.moveTo([0, 3.4, 0]);\\nscene.add(eq);\\n\\n// Info line: amplitude, period, midline\\nlet info = new Text({ text: 'Amplitude: 1.0    Period: 6.28    Midline: y = 0.0', color: BLUE_B, fontSize: 22 });\\ninfo.moveTo([0, -3.4, 0]);\\nscene.add(info);\\n\\nfunction rebuild() {\\n  // Rebuild curve\\n  scene.remove(curve);\\n  curve = ax.plot(fn, { color: BLUE, xRange: [-2*Math.PI, 2*Math.PI], numSamples: 400 });\\n  scene.add(curve);\\n\\n  // Rebuild midline\\n  scene.remove(midline);\\n  midline = ax.plot(x => D, { color: GRAY, xRange: [-2*Math.PI, 2*Math.PI], strokeWidth: 2, strokeDasharray: [8, 6] });\\n  scene.add(midline);\\n\\n  // Rebuild equation text\\n  const pos = eq.getCenter();\\n  scene.remove(eq);\\n  const aStr = (A >= 0 ? '' : '-') + String(Math.abs(A)).replace(/^(-?)0\\\\./, '$1.');\\n  const cStr = (C >= 0 ? '-' : '+') + String(Math.abs(C)).replace(/^(-?)0\\\\./, '$1.');\\n  const dSign = D >= 0 ? '+' : '-';\\n  const dStr = String(Math.abs(D)).replace(/^(-?)0\\\\./, '$1.');\\n  eq = new MathTex({\\n    latex: 'y = ' + aStr + '\\\\\\\\sin\\\\\\\\big(' + String(B).replace(/^(-?)0\\\\./, '$1.') + '(x ' + cStr + ')\\\\\\\\big) ' + dSign + ' ' + dStr,\\n    color: WHITE,\\n    fontSize: 32\\n  });\\n  eq.waitForRender().then(() => {\\n    eq.moveTo(pos);\\n    scene.add(eq);\\n  });\\n\\n  // Rebuild info text\\n  const ipos = info.getCenter();\\n  scene.remove(info);\\n  const period = (2 * Math.PI / Math.abs(B)).toFixed(2);\\n  info = new Text({\\n    text: 'Amplitude: ' + Math.abs(A).toFixed(1) + '    Period: ' + period + '    Midline: y = ' + D.toFixed(1),\\n    color: BLUE_B,\\n    fontSize: 22\\n  });\\n  info.moveTo(ipos);\\n  scene.add(info);\\n}\\n\\n// Controls\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\n\\ncontrols.addSlider({ label: 'A (amplitude)', min: -3, max: 3, value: 1, step: 0.1, onChange: (v) => { A = v; rebuild(); } });\\ncontrols.addSlider({ label: 'B (frequency)', min: 0.5, max: 4, value: 1, step: 0.1, onChange: (v) => { B = v; rebuild(); } });\\ncontrols.addSlider({ label: 'C (phase shift)', min: -3, max: 3, value: 0, step: 0.1, onChange: (v) => { C = v; rebuild(); } });\\ncontrols.addSlider({ label: 'D (vertical shift)', min: -3, max: 3, value: 0, step: 0.1, onChange: (v) => { D = v; rebuild(); } });\\n\\ncontrols.addButton({\\n  label: 'Reset',\\n  onClick: () => {\\n    A = 1; B = 1; C = 0; D = 0;\\n    controls.setSliderValues({ 'A (amplitude)': 1, 'B (frequency)': 1, 'C (phase shift)': 0, 'D (vertical shift)': 0 });\\n    rebuild();\\n  }\\n});\\n\\n// A draggable probe point: drag it to sample any point on the curve\\nconst probe = new Dot({ point: ax.c2p(2, fn(2)), color: RED, radius: 0.12 });\\nlet probeX = 2;\\nprobe.addUpdater(() => {\\n  probe.moveTo(ax.c2p(probeX, fn(probeX)));\\n});\\nscene.add(probe);\\nmakeDraggable(probe, scene, {\\n  constrainY: [-5, 5],\\n  onDrag: (mob) => {\\n    const wx = ax.p2c ? ax.p2c(mob.getCenter())[0] : null;\\n    // fallback: compute from world x\\n  }\\n});\\nprobe.addUpdater(() => {\\n  const c = probe.getCenter();\\n  // convert world x back to axes x: axes span 10 units for 4*pi range centered\\n  probeX = (c[0] / 10) * (4 * Math.PI) ;\\n});\\n\\n// Probe readout\\nlet probeLabel = new Text({ text: '', color: RED_B, fontSize: 20 });\\nprobeLabel.moveTo([-5.2, 2.9, 0]);\\nscene.add(probeLabel);\\nprobeLabel.addUpdater(() => {\\n  const txt = 'x = ' + probeX.toFixed(2) + ',  y = ' + fn(probeX).toFixed(2);\\n  const pos = probeLabel.getCenter();\\n  scene.remove(probeLabel);\\n  probeLabel = new Text({ text: txt, color: RED_B, fontSize: 20 });\\n  probeLabel.moveTo(pos);\\n  scene.add(probeLabel);\\n});\\n\\nawait scene.wait(999999);\" }",
+        "explanation": "## Sine Wave Transformations: y = A sin(B(x − C)) + D\n\nEach parameter shapes the wave:\n\n- **A — Amplitude**: stretches the wave vertically. The peaks reach **A** and troughs reach **−A** (before D shifts things). Negative A flips the wave upside down.\n- **B — Frequency**: compresses or stretches horizontally. The **period** becomes **2π/|B|** — bigger B means more waves fit in the same space.\n- **C — Phase shift**: slides the whole wave left/right (positive C moves it right). Note it acts on *x − C*, so B only scales the wave's shape, not the shift.\n- **D — Vertical shift**: moves the midline up or down to **y = D**.\n\nBelow, you get four live sliders to manipulate all parameters simultaneously, with the wave, a moving tracer dot, and dynamic readouts of the current period, amplitude, and midline."
+      },
+      "code": "// Axes: symmetric y-range so the wave and midline stay centered\nconst ax = new Axes({\n  xRange: [-2*Math.PI, 2*Math.PI, Math.PI/2],\n  yRange: [-5, 5, 1],\n  xLength: 10,\n  yLength: 6,\n  tips: true\n});\nconst labels = ax.getAxisLabels();\nscene.add(ax, labels);\n\n// Parameters\nlet A = 1, B = 1, C = 0, D = 0;\n\nconst fn = (x) => A * Math.sin(B * (x - C)) + D;\n\n// Curve (remove-recreate pattern for slider updates)\nlet curve = ax.plot(fn, { color: BLUE, xRange: [-2*Math.PI, 2*Math.PI], numSamples: 400 });\nscene.add(curve);\n\n// Midline at y = D\nlet midline = ax.plot(x => D, { color: GRAY, xRange: [-2*Math.PI, 2*Math.PI], strokeWidth: 2, strokeDasharray: [8, 6] });\nscene.add(midline);\n\n// Tracer dot that travels along the wave\nconst dot = new Dot({ point: ax.c2p(0, 0), color: YELLOW });\ndot.addUpdater(() => {\n  dot.moveTo(ax.c2p(0, fn(0)));\n});\nscene.add(dot);\n\n// Current equation (recreated on every change)\nlet eq = new MathTex({ latex: 'y = 1\\\\sin(1(x - 0)) + 0', color: WHITE, fontSize: 32 });\nawait eq.waitForRender();\neq.moveTo([0, 3.4, 0]);\nscene.add(eq);\n\n// Info line: amplitude, period, midline\nlet info = new Text({ text: 'Amplitude: 1.0    Period: 6.28    Midline: y = 0.0', color: BLUE_B, fontSize: 22 });\ninfo.moveTo([0, -3.4, 0]);\nscene.add(info);\n\nfunction rebuild() {\n  // Rebuild curve\n  scene.remove(curve);\n  curve = ax.plot(fn, { color: BLUE, xRange: [-2*Math.PI, 2*Math.PI], numSamples: 400 });\n  scene.add(curve);\n\n  // Rebuild midline\n  scene.remove(midline);\n  midline = ax.plot(x => D, { color: GRAY, xRange: [-2*Math.PI, 2*Math.PI], strokeWidth: 2, strokeDasharray: [8, 6] });\n  scene.add(midline);\n\n  // Rebuild equation text\n  const pos = eq.getCenter();\n  scene.remove(eq);\n  const aStr = (A >= 0 ? '' : '-') + String(Math.abs(A)).replace(/^(-?)0\\./, '$1.');\n  const cStr = (C >= 0 ? '-' : '+') + String(Math.abs(C)).replace(/^(-?)0\\./, '$1.');\n  const dSign = D >= 0 ? '+' : '-';\n  const dStr = String(Math.abs(D)).replace(/^(-?)0\\./, '$1.');\n  eq = new MathTex({\n    latex: 'y = ' + aStr + '\\\\sin\\\\big(' + String(B).replace(/^(-?)0\\./, '$1.') + '(x ' + cStr + ')\\\\big) ' + dSign + ' ' + dStr,\n    color: WHITE,\n    fontSize: 32\n  });\n  eq.waitForRender().then(() => {\n    eq.moveTo(pos);\n    scene.add(eq);\n  });\n\n  // Rebuild info text\n  const ipos = info.getCenter();\n  scene.remove(info);\n  const period = (2 * Math.PI / Math.abs(B)).toFixed(2);\n  info = new Text({\n    text: 'Amplitude: ' + Math.abs(A).toFixed(1) + '    Period: ' + period + '    Midline: y = ' + D.toFixed(1),\n    color: BLUE_B,\n    fontSize: 22\n  });\n  info.moveTo(ipos);\n  scene.add(info);\n}\n\n// Controls\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\n\ncontrols.addSlider({ label: 'A (amplitude)', min: -3, max: 3, value: 1, step: 0.1, onChange: (v) => { A = v; rebuild(); } });\ncontrols.addSlider({ label: 'B (frequency)', min: 0.5, max: 4, value: 1, step: 0.1, onChange: (v) => { B = v; rebuild(); } });\ncontrols.addSlider({ label: 'C (phase shift)', min: -3, max: 3, value: 0, step: 0.1, onChange: (v) => { C = v; rebuild(); } });\ncontrols.addSlider({ label: 'D (vertical shift)', min: -3, max: 3, value: 0, step: 0.1, onChange: (v) => { D = v; rebuild(); } });\n\ncontrols.addButton({\n  label: 'Reset',\n  onClick: () => {\n    A = 1; B = 1; C = 0; D = 0;\n    controls.setSliderValues({ 'A (amplitude)': 1, 'B (frequency)': 1, 'C (phase shift)': 0, 'D (vertical shift)': 0 });\n    rebuild();\n  }\n});\n\n// A draggable probe point: drag it to sample any point on the curve\nconst probe = new Dot({ point: ax.c2p(2, fn(2)), color: RED, radius: 0.12 });\nlet probeX = 2;\nprobe.addUpdater(() => {\n  probe.moveTo(ax.c2p(probeX, fn(probeX)));\n});\nscene.add(probe);\nmakeDraggable(probe, scene, {\n  constrainY: [-5, 5],\n  onDrag: (mob) => {\n    const wx = ax.p2c ? ax.p2c(mob.getCenter())[0] : null;\n    // fallback: compute from world x\n  }\n});\nprobe.addUpdater(() => {\n  const c = probe.getCenter();\n  // convert world x back to axes x: axes span 10 units for 4*pi range centered\n  probeX = (c[0] / 10) * (4 * Math.PI) ;\n});\n\n// Probe readout\nlet probeLabel = new Text({ text: '', color: RED_B, fontSize: 20 });\nprobeLabel.moveTo([-5.2, 2.9, 0]);\nscene.add(probeLabel);\nprobeLabel.addUpdater(() => {\n  const txt = 'x = ' + probeX.toFixed(2) + ',  y = ' + fn(probeX).toFixed(2);\n  const pos = probeLabel.getCenter();\n  scene.remove(probeLabel);\n  probeLabel = new Text({ text: txt, color: RED_B, fontSize: 20 });\n  probeLabel.moveTo(pos);\n  scene.add(probeLabel);\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 11534,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 4,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "zai__glm-5.3/trig-sinusoid-params.0.final.jpg",
+        "interacted": "zai__glm-5.3/trig-sinusoid-params.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:51:18.021Z"
+}

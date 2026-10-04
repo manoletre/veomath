@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-sinusoid-params",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.84% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=4 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.68% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 80708,
+        "inputTokens": 4716,
+        "cachedInputTokens": 4480,
+        "outputTokens": 9009,
+        "costUsd": 0.137187,
+        "rawResponse": "{\"explanation\":\"The function y = A sin(B(x − C)) + D has four knobs: A is the amplitude (height of the wave), B controls the frequency (period = 2π/B), C is the phase shift (slides the wave left/right), and D is the vertical shift (moves the midline up/down). The faint gray curve is the reference y = sin(x), the dashed gray line is the midline y = D, and the gold dot marks (C, D) — the point where each cycle begins. Use the sliders to morph the blue wave and watch the equation and stats update live.\",\"manimCode\":\"const TWO_PI = 2 * Math.PI;\\n\\n// State\\nlet A = 1, B = 1, C = 0, D = 0;\\nconst fn = x => A * Math.sin(B * (x - C)) + D;\\n\\n// Axes (symmetric y-range so y = 0 sits on the horizontal axis)\\nconst axes = new Axes({\\n  xRange: [-TWO_PI, TWO_PI, Math.PI],\\n  yRange: [-4.2, 4.2, 1],\\n  xLength: 10,\\n  yLength: 6,\\n  tips: false\\n});\\naxes.moveTo([-1.2, 0, 0]);\\nconst axisLabels = axes.getAxisLabels();\\n\\n// Reference curve y = sin(x)\\nconst refCurve = axes.plot(x => Math.sin(x), { color: GRAY, numSamples: 500 });\\nrefCurve.setOpacity(0.35);\\n\\n// Main curve\\nlet curve = axes.plot(fn, { color: BLUE, numSamples: 500 });\\n\\n// Midline y = D (2-vertex polygon line)\\nconst midline = new Polygon({\\n  vertices: [axes.c2p(-TWO_PI, D), axes.c2p(TWO_PI, D)],\\n  color: GRAY\\n});\\nmidline.setStrokeWidth(1.5);\\nmidline.setFillOpacity(0);\\nmidline.setOpacity(0.7);\\n\\n// Gold dot at (C, D): start of the cycle\\nconst goldDot = new Dot({ point: axes.c2p(C, D), color: GOLD });\\n\\n// Labels\\nfunction buildEq() {\\n  const cZero = Math.abs(C) < 0.05;\\n  const inner = cZero ? 'x' : (C > 0 ? `x - ${C.toFixed(1)}` : `x + ${(-C).toFixed(1)}`);\\n  const dStr = Math.abs(D) < 0.05 ? '' : (D > 0 ? ` + ${D.toFixed(1)}` : ` - ${(-D).toFixed(1)}`);\\n  return `y = ${A.toFixed(1)} sin(${B.toFixed(1)}(${inner}))${dStr}`;\\n}\\nfunction buildInfo() {\\n  return `Amplitude = ${Math.abs(A).toFixed(1)}     Period = ${(TWO_PI / B).toFixed(2)}     Phase shift = ${C.toFixed(1)}     Midline: y = ${D.toFixed(1)}`;\\n}\\n\\nlet eqText = new Text({ text: buildEq(), color: WHITE, fontSize: 26 });\\neqText.moveTo([-1.2, 3.45, 0]);\\nlet infoText = new Text({ text: buildInfo(), color: GRAY, fontSize: 20 });\\ninfoText.moveTo([-1.2, -3.4, 0]);\\nconst refLabel = new Text({ text: 'y = sin(x)', color: GRAY, fontSize: 18 });\\nrefLabel.moveTo(axes.c2p(-5.2, 1.7));\\n\\n// Intro\\nawait scene.play(new Create(axes));\\nscene.add(axisLabels);\\nawait scene.play(new FadeIn(refCurve));\\nawait scene.play(new Create(curve));\\nawait scene.play(new AnimationGroup([\\n  new FadeIn(midline),\\n  new FadeIn(goldDot),\\n  new Write(eqText),\\n  new FadeIn(infoText),\\n  new FadeIn(refLabel)\\n]));\\n\\n// Rebuild everything that depends on A, B, C, D\\nfunction refresh() {\\n  scene.remove(curve);\\n  curve = axes.plot(fn, { color: BLUE, numSamples: 500 });\\n  scene.add(curve);\\n\\n  midline.setVertices([axes.c2p(-TWO_PI, D), axes.c2p(TWO_PI, D)]);\\n\\n  goldDot.moveTo(axes.c2p(C, D));\\n  scene.remove(goldDot);\\n  scene.add(goldDot);\\n\\n  scene.remove(eqText);\\n  eqText = new Text({ text: buildEq(), color: WHITE, fontSize: 26 });\\n  eqText.moveTo([-1.2, 3.45, 0]);\\n  scene.add(eqText);\\n\\n  scene.remove(infoText);\\n  infoText = new Text({ text: buildInfo(), color: GRAY, fontSize: 20 });\\n  infoText.moveTo([-1.2, -3.4, 0]);\\n  scene.add(infoText);\\n}\\n\\n// Sliders\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\ncontrols.addSlider({ label: 'A  (amplitude)', min: 0, max: 2.5, value: 1, step: 0.1, onChange: v => { A = v; refresh(); } });\\ncontrols.addSlider({ label: 'B  (frequency)', min: 0.2, max: 4, value: 1, step: 0.1, onChange: v => { B = v; refresh(); } });\\ncontrols.addSlider({ label: 'C  (phase shift)', min: -3, max: 3, value: 0, step: 0.1, onChange: v => { C = v; refresh(); } });\\ncontrols.addSlider({ label: 'D  (vertical shift)', min: -1.5, max: 1.5, value: 0, step: 0.1, onChange: v => { D = v; refresh(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The function y = A sin(B(x − C)) + D has four knobs: A is the amplitude (height of the wave), B controls the frequency (period = 2π/B), C is the phase shift (slides the wave left/right), and D is the vertical shift (moves the midline up/down). The faint gray curve is the reference y = sin(x), the dashed gray line is the midline y = D, and the gold dot marks (C, D) — the point where each cycle begins. Use the sliders to morph the blue wave and watch the equation and stats update live."
+      },
+      "code": "const TWO_PI = 2 * Math.PI;\n\n// State\nlet A = 1, B = 1, C = 0, D = 0;\nconst fn = x => A * Math.sin(B * (x - C)) + D;\n\n// Axes (symmetric y-range so y = 0 sits on the horizontal axis)\nconst axes = new Axes({\n  xRange: [-TWO_PI, TWO_PI, Math.PI],\n  yRange: [-4.2, 4.2, 1],\n  xLength: 10,\n  yLength: 6,\n  tips: false\n});\naxes.moveTo([-1.2, 0, 0]);\nconst axisLabels = axes.getAxisLabels();\n\n// Reference curve y = sin(x)\nconst refCurve = axes.plot(x => Math.sin(x), { color: GRAY, numSamples: 500 });\nrefCurve.setOpacity(0.35);\n\n// Main curve\nlet curve = axes.plot(fn, { color: BLUE, numSamples: 500 });\n\n// Midline y = D (2-vertex polygon line)\nconst midline = new Polygon({\n  vertices: [axes.c2p(-TWO_PI, D), axes.c2p(TWO_PI, D)],\n  color: GRAY\n});\nmidline.setStrokeWidth(1.5);\nmidline.setFillOpacity(0);\nmidline.setOpacity(0.7);\n\n// Gold dot at (C, D): start of the cycle\nconst goldDot = new Dot({ point: axes.c2p(C, D), color: GOLD });\n\n// Labels\nfunction buildEq() {\n  const cZero = Math.abs(C) < 0.05;\n  const inner = cZero ? 'x' : (C > 0 ? `x - ${C.toFixed(1)}` : `x + ${(-C).toFixed(1)}`);\n  const dStr = Math.abs(D) < 0.05 ? '' : (D > 0 ? ` + ${D.toFixed(1)}` : ` - ${(-D).toFixed(1)}`);\n  return `y = ${A.toFixed(1)} sin(${B.toFixed(1)}(${inner}))${dStr}`;\n}\nfunction buildInfo() {\n  return `Amplitude = ${Math.abs(A).toFixed(1)}     Period = ${(TWO_PI / B).toFixed(2)}     Phase shift = ${C.toFixed(1)}     Midline: y = ${D.toFixed(1)}`;\n}\n\nlet eqText = new Text({ text: buildEq(), color: WHITE, fontSize: 26 });\neqText.moveTo([-1.2, 3.45, 0]);\nlet infoText = new Text({ text: buildInfo(), color: GRAY, fontSize: 20 });\ninfoText.moveTo([-1.2, -3.4, 0]);\nconst refLabel = new Text({ text: 'y = sin(x)', color: GRAY, fontSize: 18 });\nrefLabel.moveTo(axes.c2p(-5.2, 1.7));\n\n// Intro\nawait scene.play(new Create(axes));\nscene.add(axisLabels);\nawait scene.play(new FadeIn(refCurve));\nawait scene.play(new Create(curve));\nawait scene.play(new AnimationGroup([\n  new FadeIn(midline),\n  new FadeIn(goldDot),\n  new Write(eqText),\n  new FadeIn(infoText),\n  new FadeIn(refLabel)\n]));\n\n// Rebuild everything that depends on A, B, C, D\nfunction refresh() {\n  scene.remove(curve);\n  curve = axes.plot(fn, { color: BLUE, numSamples: 500 });\n  scene.add(curve);\n\n  midline.setVertices([axes.c2p(-TWO_PI, D), axes.c2p(TWO_PI, D)]);\n\n  goldDot.moveTo(axes.c2p(C, D));\n  scene.remove(goldDot);\n  scene.add(goldDot);\n\n  scene.remove(eqText);\n  eqText = new Text({ text: buildEq(), color: WHITE, fontSize: 26 });\n  eqText.moveTo([-1.2, 3.45, 0]);\n  scene.add(eqText);\n\n  scene.remove(infoText);\n  infoText = new Text({ text: buildInfo(), color: GRAY, fontSize: 20 });\n  infoText.moveTo([-1.2, -3.4, 0]);\n  scene.add(infoText);\n}\n\n// Sliders\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\ncontrols.addSlider({ label: 'A  (amplitude)', min: 0, max: 2.5, value: 1, step: 0.1, onChange: v => { A = v; refresh(); } });\ncontrols.addSlider({ label: 'B  (frequency)', min: 0.2, max: 4, value: 1, step: 0.1, onChange: v => { B = v; refresh(); } });\ncontrols.addSlider({ label: 'C  (phase shift)', min: -3, max: 3, value: 0, step: 0.1, onChange: v => { C = v; refresh(); } });\ncontrols.addSlider({ label: 'D  (vertical shift)', min: -1.5, max: 1.5, value: 0, step: 0.1, onChange: v => { D = v; refresh(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9727,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 4,
+        "controls": {
+          "sliders": 4,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/trig-sinusoid-params.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/trig-sinusoid-params.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:55:26.549Z"
+}

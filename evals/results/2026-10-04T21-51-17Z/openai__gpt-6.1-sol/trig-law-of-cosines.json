@@ -1,0 +1,97 @@
+{
+  "itemId": "trig-law-of-cosines",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.95% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=1 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ click Text at (-2.4, -2.8) — 2.85% changed\n✓ drag Dot at (-3.0, 1.0) — 2.16% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ click Text at (-2.4, -2.8) — 2.85% changed\n✓ drag Dot at (-3.0, 1.0) — 2.16% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 66088,
+        "inputTokens": 5312,
+        "cachedInputTokens": 5287,
+        "outputTokens": 3047,
+        "costUsd": 0.031048700000000005,
+        "rawResponse": "{\"explanation\":\"The law of cosines is the Pythagorean theorem with a correction: c² = a² + b² − 2ab cos θ, where θ is the angle between sides a and b. Dropping a perpendicular gives c² = (a − b cos θ)² + (b sin θ)², which expands to that formula. At 90° the correction vanishes; for an acute angle it subtracts from a² + b², and for an obtuse angle it adds.\",\"manimCode\":\"let theta = Math.PI / 3;\\nconst a = 3.4;\\nconst b = 2.6;\\nconst A = [-3, -1.6, 0];\\nconst B = [A[0] + a, A[1], 0];\\nconst clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));\\n\\nconst title = new Text({ text: 'Pythagoras + an angle correction', fontSize: 32, color: WHITE });\\ntitle.moveTo([0, 3.15, 0]);\\nconst divider = new Line({ start: [0.85, -2.65, 0], end: [0.85, 2.5, 0], color: GRAY });\\ndivider.setOpacity(0.35);\\n\\nconst triangle = new Polygon({ vertices: [A, B, [-1.7, 0.65, 0]], color: BLUE });\\ntriangle.setFill(BLUE, 0.12);\\nconst altitude = new DashedLine({ start: [-1.7, -1.6, 0], end: [-1.7, 0.65, 0], color: GRAY });\\nconst projection = new Line({ start: A, end: [-1.7, -1.6, 0], color: TEAL });\\nprojection.setStrokeWidth(6);\\nconst horizontal = new Line({ start: [-1.7, -1.6, 0], end: B, color: ORANGE });\\nhorizontal.setStrokeWidth(4);\\nconst corner = new Polygon({ vertices: [[0, 0, 0], [0.1, 0, 0], [0.1, 0.1, 0]], color: GRAY });\\ncorner.setFillOpacity(0);\\nconst handle = new Dot({ point: [-1.7, 0.65, 0], radius: 0.14, color: YELLOW });\\nconst originDot = new Dot({ point: A, radius: 0.05, color: WHITE });\\nconst endDot = new Dot({ point: B, radius: 0.05, color: WHITE });\\n\\nconst aLabel = new Text({ text: 'a', fontSize: 25, color: BLUE });\\naLabel.moveTo([-1.3, -2.05, 0]);\\nconst bLabel = new Text({ text: 'b', fontSize: 25, color: BLUE });\\nconst cLabel = new Text({ text: 'c', fontSize: 25, color: YELLOW });\\nconst angleLabel = new Text({ text: 'θ', fontSize: 24, color: TEAL });\\nconst projectionLabel = new Text({ text: 'b cos θ', fontSize: 20, color: TEAL });\\nconst heightLabel = new Text({ text: 'b sin θ', fontSize: 20, color: GRAY });\\n\\nconst formula = new MathTex({ latex: 'c^2 = a^2 + b^2 - 2ab\\\\\\\\cos\\\\\\\\theta' });\\nawait formula.waitForRender();\\nformula.scale(0.65);\\nformula.moveTo([3.4, 2.25, 0]);\\nconst decomposition = new MathTex({ latex: 'c^2=(a-b\\\\\\\\cos\\\\\\\\theta)^2+(b\\\\\\\\sin\\\\\\\\theta)^2' });\\nawait decomposition.waitForRender();\\ndecomposition.scale(0.48);\\ndecomposition.moveTo([3.4, 1.55, 0]);\\n\\nconst angleReadout = new Text({ text: '', fontSize: 24, color: WHITE });\\nangleReadout.moveTo([3.4, 0.8, 0]);\\nconst baselineReadout = new Text({ text: '', fontSize: 23, color: BLUE });\\nbaselineReadout.moveTo([3.4, 0.2, 0]);\\nconst correctionReadout = new Text({ text: '', fontSize: 23, color: ORANGE });\\ncorrectionReadout.moveTo([3.4, -0.4, 0]);\\nconst resultReadout = new Text({ text: '', fontSize: 25, color: YELLOW });\\nresultReadout.moveTo([3.4, -1.05, 0]);\\nconst interpretation = new Text({ text: '', fontSize: 23, color: WHITE });\\ninterpretation.moveTo([3.4, -1.85, 0]);\\nconst rightAngleButton = new Text({ text: 'Click: set angle to 90°', fontSize: 22, color: TEAL });\\nrightAngleButton.moveTo([-2.4, -2.8, 0]);\\nconst hint = new Text({ text: 'Drag the yellow vertex around the blue side’s fixed endpoint', fontSize: 21, color: GRAY });\\nhint.moveTo([0, -3.4, 0]);\\n\\nconst angleSegments = [];\\nfor (let i = 0; i < 18; i++) {\\n  const segment = new Line({ start: A, end: [A[0] + 0.45, A[1], 0], color: TEAL });\\n  angleSegments.push(segment);\\n}\\nscene.add(title, divider, triangle, altitude, projection, horizontal, corner, ...angleSegments, originDot, endDot, aLabel, bLabel, cLabel, angleLabel, projectionLabel, heightLabel, handle, formula, decomposition, angleReadout, baselineReadout, correctionReadout, resultReadout, interpretation, rightAngleButton, hint);\\n\\nfunction update() {\\n  const px = b * Math.cos(theta);\\n  const py = b * Math.sin(theta);\\n  const C = [A[0] + px, A[1] + py, 0];\\n  const D = [C[0], A[1], 0];\\n  const correction = -2 * a * b * Math.cos(theta);\\n  const baseSquared = a * a + b * b;\\n  const cSquared = baseSquared + correction;\\n  triangle.setVertices([A, B, C]);\\n  handle.moveTo(C);\\n  altitude.setStart(D);\\n  altitude.setEnd(C);\\n  projection.setStart(A);\\n  projection.setEnd(D);\\n  horizontal.setStart(D);\\n  horizontal.setEnd(B);\\n  corner.setVertices([[D[0], D[1] + 0.16, 0], [D[0] + 0.16, D[1] + 0.16, 0], [D[0] + 0.16, D[1], 0]]);\\n  bLabel.moveTo([(A[0] + C[0]) / 2 - 0.24, (A[1] + C[1]) / 2 + 0.12, 0]);\\n  cLabel.moveTo([(B[0] + C[0]) / 2 + 0.24, (B[1] + C[1]) / 2 + 0.1, 0]);\\n  projectionLabel.moveTo([(A[0] + D[0]) / 2, A[1] - 0.7, 0]);\\n  projectionLabel.setOpacity(Math.abs(px) < 0.15 ? 0 : 1);\\n  heightLabel.moveTo([D[0] - 0.65, (D[1] + C[1]) / 2, 0]);\\n  heightLabel.setOpacity(Math.abs(px) < 0.55 ? 0 : 1);\\n  angleLabel.moveTo([A[0] + 0.75 * Math.cos(theta / 2), A[1] + 0.75 * Math.sin(theta / 2), 0]);\\n  for (let i = 0; i < angleSegments.length; i++) {\\n    const t1 = theta * i / angleSegments.length;\\n    const t2 = theta * (i + 1) / angleSegments.length;\\n    angleSegments[i].setStart([A[0] + 0.45 * Math.cos(t1), A[1] + 0.45 * Math.sin(t1), 0]);\\n    angleSegments[i].setEnd([A[0] + 0.45 * Math.cos(t2), A[1] + 0.45 * Math.sin(t2), 0]);\\n  }\\n  angleReadout.setText('θ = ' + (theta * 180 / Math.PI).toFixed(1) + '°');\\n  baselineReadout.setText('Pythagoras: a² + b² = ' + baseSquared.toFixed(2));\\n  correctionReadout.setText('Correction: ' + (correction >= -0.00001 ? '+' : '−') + ' ' + Math.abs(correction).toFixed(2));\\n  resultReadout.setText('c² = ' + cSquared.toFixed(2) + '    c = ' + Math.sqrt(cSquared).toFixed(2));\\n  interpretation.setText(Math.abs(correction) < 0.001 ? '90°: exactly Pythagoras' : correction < 0 ? 'Acute angle: subtract' : 'Obtuse angle: add');\\n}\\nupdate();\\n\\nmakeDraggable(handle, scene, {\\n  onDrag: (mob, pos) => {\\n    theta = clamp(Math.atan2(pos[1] - A[1], pos[0] - A[0]), 25 * Math.PI / 180, 145 * Math.PI / 180);\\n    update();\\n  }\\n});\\nmakeClickable(rightAngleButton, scene, {\\n  onClick: () => { theta = Math.PI / 2; update(); }\\n});\\nawait scene.wait(999999);\"}",
+        "explanation": "The law of cosines is the Pythagorean theorem with a correction: c² = a² + b² − 2ab cos θ, where θ is the angle between sides a and b. Dropping a perpendicular gives c² = (a − b cos θ)² + (b sin θ)², which expands to that formula. At 90° the correction vanishes; for an acute angle it subtracts from a² + b², and for an obtuse angle it adds."
+      },
+      "code": "let theta = Math.PI / 3;\nconst a = 3.4;\nconst b = 2.6;\nconst A = [-3, -1.6, 0];\nconst B = [A[0] + a, A[1], 0];\nconst clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));\n\nconst title = new Text({ text: 'Pythagoras + an angle correction', fontSize: 32, color: WHITE });\ntitle.moveTo([0, 3.15, 0]);\nconst divider = new Line({ start: [0.85, -2.65, 0], end: [0.85, 2.5, 0], color: GRAY });\ndivider.setOpacity(0.35);\n\nconst triangle = new Polygon({ vertices: [A, B, [-1.7, 0.65, 0]], color: BLUE });\ntriangle.setFill(BLUE, 0.12);\nconst altitude = new DashedLine({ start: [-1.7, -1.6, 0], end: [-1.7, 0.65, 0], color: GRAY });\nconst projection = new Line({ start: A, end: [-1.7, -1.6, 0], color: TEAL });\nprojection.setStrokeWidth(6);\nconst horizontal = new Line({ start: [-1.7, -1.6, 0], end: B, color: ORANGE });\nhorizontal.setStrokeWidth(4);\nconst corner = new Polygon({ vertices: [[0, 0, 0], [0.1, 0, 0], [0.1, 0.1, 0]], color: GRAY });\ncorner.setFillOpacity(0);\nconst handle = new Dot({ point: [-1.7, 0.65, 0], radius: 0.14, color: YELLOW });\nconst originDot = new Dot({ point: A, radius: 0.05, color: WHITE });\nconst endDot = new Dot({ point: B, radius: 0.05, color: WHITE });\n\nconst aLabel = new Text({ text: 'a', fontSize: 25, color: BLUE });\naLabel.moveTo([-1.3, -2.05, 0]);\nconst bLabel = new Text({ text: 'b', fontSize: 25, color: BLUE });\nconst cLabel = new Text({ text: 'c', fontSize: 25, color: YELLOW });\nconst angleLabel = new Text({ text: 'θ', fontSize: 24, color: TEAL });\nconst projectionLabel = new Text({ text: 'b cos θ', fontSize: 20, color: TEAL });\nconst heightLabel = new Text({ text: 'b sin θ', fontSize: 20, color: GRAY });\n\nconst formula = new MathTex({ latex: 'c^2 = a^2 + b^2 - 2ab\\\\cos\\\\theta' });\nawait formula.waitForRender();\nformula.scale(0.65);\nformula.moveTo([3.4, 2.25, 0]);\nconst decomposition = new MathTex({ latex: 'c^2=(a-b\\\\cos\\\\theta)^2+(b\\\\sin\\\\theta)^2' });\nawait decomposition.waitForRender();\ndecomposition.scale(0.48);\ndecomposition.moveTo([3.4, 1.55, 0]);\n\nconst angleReadout = new Text({ text: '', fontSize: 24, color: WHITE });\nangleReadout.moveTo([3.4, 0.8, 0]);\nconst baselineReadout = new Text({ text: '', fontSize: 23, color: BLUE });\nbaselineReadout.moveTo([3.4, 0.2, 0]);\nconst correctionReadout = new Text({ text: '', fontSize: 23, color: ORANGE });\ncorrectionReadout.moveTo([3.4, -0.4, 0]);\nconst resultReadout = new Text({ text: '', fontSize: 25, color: YELLOW });\nresultReadout.moveTo([3.4, -1.05, 0]);\nconst interpretation = new Text({ text: '', fontSize: 23, color: WHITE });\ninterpretation.moveTo([3.4, -1.85, 0]);\nconst rightAngleButton = new Text({ text: 'Click: set angle to 90°', fontSize: 22, color: TEAL });\nrightAngleButton.moveTo([-2.4, -2.8, 0]);\nconst hint = new Text({ text: 'Drag the yellow vertex around the blue side’s fixed endpoint', fontSize: 21, color: GRAY });\nhint.moveTo([0, -3.4, 0]);\n\nconst angleSegments = [];\nfor (let i = 0; i < 18; i++) {\n  const segment = new Line({ start: A, end: [A[0] + 0.45, A[1], 0], color: TEAL });\n  angleSegments.push(segment);\n}\nscene.add(title, divider, triangle, altitude, projection, horizontal, corner, ...angleSegments, originDot, endDot, aLabel, bLabel, cLabel, angleLabel, projectionLabel, heightLabel, handle, formula, decomposition, angleReadout, baselineReadout, correctionReadout, resultReadout, interpretation, rightAngleButton, hint);\n\nfunction update() {\n  const px = b * Math.cos(theta);\n  const py = b * Math.sin(theta);\n  const C = [A[0] + px, A[1] + py, 0];\n  const D = [C[0], A[1], 0];\n  const correction = -2 * a * b * Math.cos(theta);\n  const baseSquared = a * a + b * b;\n  const cSquared = baseSquared + correction;\n  triangle.setVertices([A, B, C]);\n  handle.moveTo(C);\n  altitude.setStart(D);\n  altitude.setEnd(C);\n  projection.setStart(A);\n  projection.setEnd(D);\n  horizontal.setStart(D);\n  horizontal.setEnd(B);\n  corner.setVertices([[D[0], D[1] + 0.16, 0], [D[0] + 0.16, D[1] + 0.16, 0], [D[0] + 0.16, D[1], 0]]);\n  bLabel.moveTo([(A[0] + C[0]) / 2 - 0.24, (A[1] + C[1]) / 2 + 0.12, 0]);\n  cLabel.moveTo([(B[0] + C[0]) / 2 + 0.24, (B[1] + C[1]) / 2 + 0.1, 0]);\n  projectionLabel.moveTo([(A[0] + D[0]) / 2, A[1] - 0.7, 0]);\n  projectionLabel.setOpacity(Math.abs(px) < 0.15 ? 0 : 1);\n  heightLabel.moveTo([D[0] - 0.65, (D[1] + C[1]) / 2, 0]);\n  heightLabel.setOpacity(Math.abs(px) < 0.55 ? 0 : 1);\n  angleLabel.moveTo([A[0] + 0.75 * Math.cos(theta / 2), A[1] + 0.75 * Math.sin(theta / 2), 0]);\n  for (let i = 0; i < angleSegments.length; i++) {\n    const t1 = theta * i / angleSegments.length;\n    const t2 = theta * (i + 1) / angleSegments.length;\n    angleSegments[i].setStart([A[0] + 0.45 * Math.cos(t1), A[1] + 0.45 * Math.sin(t1), 0]);\n    angleSegments[i].setEnd([A[0] + 0.45 * Math.cos(t2), A[1] + 0.45 * Math.sin(t2), 0]);\n  }\n  angleReadout.setText('θ = ' + (theta * 180 / Math.PI).toFixed(1) + '°');\n  baselineReadout.setText('Pythagoras: a² + b² = ' + baseSquared.toFixed(2));\n  correctionReadout.setText('Correction: ' + (correction >= -0.00001 ? '+' : '−') + ' ' + Math.abs(correction).toFixed(2));\n  resultReadout.setText('c² = ' + cSquared.toFixed(2) + '    c = ' + Math.sqrt(cSquared).toFixed(2));\n  interpretation.setText(Math.abs(correction) < 0.001 ? '90°: exactly Pythagoras' : correction < 0 ? 'Acute angle: subtract' : 'Obtuse angle: add');\n}\nupdate();\n\nmakeDraggable(handle, scene, {\n  onDrag: (mob, pos) => {\n    theta = clamp(Math.atan2(pos[1] - A[1], pos[0] - A[0]), 25 * Math.PI / 180, 145 * Math.PI / 180);\n    update();\n  }\n});\nmakeClickable(rightAngleButton, scene, {\n  onClick: () => { theta = Math.PI / 2; update(); }\n});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9045,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 1,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "click",
+            "label": "Text at (-2.4, -2.8)",
+            "change": 0.028475477430555556,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (-3.0, 1.0)",
+            "change": 0.021579861111111112,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/trig-law-of-cosines.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/trig-law-of-cosines.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:53:25.575Z"
+}

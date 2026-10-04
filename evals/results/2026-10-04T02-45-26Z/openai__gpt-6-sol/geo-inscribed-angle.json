@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-inscribed-angle",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.68% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.89% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 85083,
+        "inputTokens": 12281,
+        "cachedInputTokens": 0,
+        "outputTokens": 3190,
+        "costUsd": 0.056462000000000005,
+        "rawResponse": "{\"explanation\":\"An inscribed angle is half the central angle that subtends the same chord. Here A and B stay fixed, so the central angle remains 120° and the inscribed angle at P remains 60° as you drag P along the opposite arc. The drag is limited to that arc because moving P across chord AB would produce a different angle.\",\"manimCode\":\"const center = [-1.6, 0, 0];\\nconst radius = 2.35;\\nconst aAngle = 7 * Math.PI / 6;\\nconst bAngle = -Math.PI / 6;\\nconst pointAt = angle => [center[0] + radius * Math.cos(angle), center[1] + radius * Math.sin(angle), 0];\\nconst A = pointAt(aAngle);\\nconst B = pointAt(bAngle);\\n\\nconst title = new Text({ text: 'Inscribed angle theorem', color: WHITE, fontSize: 36 });\\ntitle.moveTo([0, 3.3, 0]);\\n\\nconst circle = new Circle({ radius, color: BLUE });\\ncircle.moveTo(center);\\ncircle.setStrokeWidth(3);\\n\\nconst chord = new Line({ start: A, end: B, color: TEAL });\\nchord.setStrokeWidth(4);\\n\\nconst centralRayA = new Line({ start: center, end: A, color: GRAY });\\nconst centralRayB = new Line({ start: center, end: B, color: GRAY });\\n\\nconst centralWedgePoints = [center];\\nfor (let i = 0; i <= 20; i++) {\\n  const angle = -5 * Math.PI / 6 + i * (2 * Math.PI / 3) / 20;\\n  centralWedgePoints.push([center[0] + 0.58 * Math.cos(angle), center[1] + 0.58 * Math.sin(angle), 0]);\\n}\\nconst centralWedge = new Polygon({ vertices: centralWedgePoints, color: ORANGE });\\ncentralWedge.setFill(ORANGE, 0.25);\\ncentralWedge.setStrokeWidth(2);\\n\\nlet theta = Math.PI / 2;\\nconst P = new Dot({ point: pointAt(theta), color: YELLOW });\\nconst dotA = new Dot({ point: A, color: TEAL });\\nconst dotB = new Dot({ point: B, color: TEAL });\\nconst O = new Dot({ point: center, color: ORANGE });\\n\\nconst rayA = new Polygon({ vertices: [pointAt(theta), A], color: YELLOW });\\nconst rayB = new Polygon({ vertices: [pointAt(theta), B], color: YELLOW });\\nrayA.setFillOpacity(0).setStrokeWidth(3);\\nrayB.setFillOpacity(0).setStrokeWidth(3);\\n\\nconst angleWedge = new Polygon({ vertices: [pointAt(theta), pointAt(theta)], color: YELLOW });\\nangleWedge.setFill(YELLOW, 0.3);\\nangleWedge.setStrokeWidth(2);\\n\\nfunction updateInscribedAngle() {\\n  const p = P.getCenter();\\n  rayA.setVertices([p, A]);\\n  rayB.setVertices([p, B]);\\n  const start = Math.atan2(A[1] - p[1], A[0] - p[0]);\\n  const end = Math.atan2(B[1] - p[1], B[0] - p[0]);\\n  let sweep = end - start;\\n  while (sweep > Math.PI) sweep -= 2 * Math.PI;\\n  while (sweep < -Math.PI) sweep += 2 * Math.PI;\\n  const vertices = [p];\\n  for (let i = 0; i <= 14; i++) {\\n    const angle = start + sweep * i / 14;\\n    vertices.push([p[0] + 0.45 * Math.cos(angle), p[1] + 0.45 * Math.sin(angle), 0]);\\n  }\\n  angleWedge.setVertices(vertices);\\n}\\nupdateInscribedAngle();\\n\\nconst labelA = new Text({ text: 'A', color: TEAL, fontSize: 24 });\\nlabelA.moveTo([A[0] - 0.3, A[1] - 0.2, 0]);\\nconst labelB = new Text({ text: 'B', color: TEAL, fontSize: 24 });\\nlabelB.moveTo([B[0] + 0.3, B[1] - 0.2, 0]);\\nconst labelP = new Text({ text: 'P', color: YELLOW, fontSize: 24 });\\nlabelP.addUpdater(() => {\\n  const p = P.getCenter();\\n  const dx = (p[0] - center[0]) / radius;\\n  const dy = (p[1] - center[1]) / radius;\\n  labelP.moveTo([p[0] + 0.3 * dx, p[1] + 0.3 * dy, 0]);\\n});\\n\\nconst centralText = new Text({ text: '120°', color: ORANGE, fontSize: 25 });\\ncentralText.moveTo([-1.6, -0.77, 0]);\\nconst angleText = new Text({ text: '60°', color: YELLOW, fontSize: 31 });\\nangleText.moveTo([3.65, 0.65, 0]);\\nconst formula = new Text({ text: 'Inscribed angle = ½ × central angle', color: WHITE, fontSize: 24 });\\nformula.moveTo([3.65, 1.45, 0]);\\nconst instruction = new Text({ text: 'Drag P along the opposite arc', color: BLUE, fontSize: 22 });\\ninstruction.moveTo([3.65, -0.65, 0]);\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new AnimationGroup([new Create(circle), new Create(chord)]));\\nscene.add(centralWedge, centralRayA, centralRayB, O, dotA, dotB, labelA, labelB, centralText);\\nscene.add(angleWedge, rayA, rayB, P, labelP, formula, angleText, instruction);\\n\\nmakeDraggable(P, scene, {\\n  onDrag: (mob, pos) => {\\n    const x = pos[0] - center[0];\\n    const y = pos[1] - center[1];\\n    const raw = Math.atan2(y, x);\\n    const candidates = [raw - 2 * Math.PI, raw, raw + 2 * Math.PI];\\n    let nearest = candidates[0];\\n    for (const candidate of candidates) {\\n      if (Math.abs(candidate - theta) < Math.abs(nearest - theta)) nearest = candidate;\\n    }\\n    theta = Math.max(bAngle + 0.12, Math.min(aAngle - 0.12, nearest));\\n    mob.moveTo(pointAt(theta));\\n    updateInscribedAngle();\\n  }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "An inscribed angle is half the central angle that subtends the same chord. Here A and B stay fixed, so the central angle remains 120° and the inscribed angle at P remains 60° as you drag P along the opposite arc. The drag is limited to that arc because moving P across chord AB would produce a different angle."
+      },
+      "code": "const center = [-1.6, 0, 0];\nconst radius = 2.35;\nconst aAngle = 7 * Math.PI / 6;\nconst bAngle = -Math.PI / 6;\nconst pointAt = angle => [center[0] + radius * Math.cos(angle), center[1] + radius * Math.sin(angle), 0];\nconst A = pointAt(aAngle);\nconst B = pointAt(bAngle);\n\nconst title = new Text({ text: 'Inscribed angle theorem', color: WHITE, fontSize: 36 });\ntitle.moveTo([0, 3.3, 0]);\n\nconst circle = new Circle({ radius, color: BLUE });\ncircle.moveTo(center);\ncircle.setStrokeWidth(3);\n\nconst chord = new Line({ start: A, end: B, color: TEAL });\nchord.setStrokeWidth(4);\n\nconst centralRayA = new Line({ start: center, end: A, color: GRAY });\nconst centralRayB = new Line({ start: center, end: B, color: GRAY });\n\nconst centralWedgePoints = [center];\nfor (let i = 0; i <= 20; i++) {\n  const angle = -5 * Math.PI / 6 + i * (2 * Math.PI / 3) / 20;\n  centralWedgePoints.push([center[0] + 0.58 * Math.cos(angle), center[1] + 0.58 * Math.sin(angle), 0]);\n}\nconst centralWedge = new Polygon({ vertices: centralWedgePoints, color: ORANGE });\ncentralWedge.setFill(ORANGE, 0.25);\ncentralWedge.setStrokeWidth(2);\n\nlet theta = Math.PI / 2;\nconst P = new Dot({ point: pointAt(theta), color: YELLOW });\nconst dotA = new Dot({ point: A, color: TEAL });\nconst dotB = new Dot({ point: B, color: TEAL });\nconst O = new Dot({ point: center, color: ORANGE });\n\nconst rayA = new Polygon({ vertices: [pointAt(theta), A], color: YELLOW });\nconst rayB = new Polygon({ vertices: [pointAt(theta), B], color: YELLOW });\nrayA.setFillOpacity(0).setStrokeWidth(3);\nrayB.setFillOpacity(0).setStrokeWidth(3);\n\nconst angleWedge = new Polygon({ vertices: [pointAt(theta), pointAt(theta)], color: YELLOW });\nangleWedge.setFill(YELLOW, 0.3);\nangleWedge.setStrokeWidth(2);\n\nfunction updateInscribedAngle() {\n  const p = P.getCenter();\n  rayA.setVertices([p, A]);\n  rayB.setVertices([p, B]);\n  const start = Math.atan2(A[1] - p[1], A[0] - p[0]);\n  const end = Math.atan2(B[1] - p[1], B[0] - p[0]);\n  let sweep = end - start;\n  while (sweep > Math.PI) sweep -= 2 * Math.PI;\n  while (sweep < -Math.PI) sweep += 2 * Math.PI;\n  const vertices = [p];\n  for (let i = 0; i <= 14; i++) {\n    const angle = start + sweep * i / 14;\n    vertices.push([p[0] + 0.45 * Math.cos(angle), p[1] + 0.45 * Math.sin(angle), 0]);\n  }\n  angleWedge.setVertices(vertices);\n}\nupdateInscribedAngle();\n\nconst labelA = new Text({ text: 'A', color: TEAL, fontSize: 24 });\nlabelA.moveTo([A[0] - 0.3, A[1] - 0.2, 0]);\nconst labelB = new Text({ text: 'B', color: TEAL, fontSize: 24 });\nlabelB.moveTo([B[0] + 0.3, B[1] - 0.2, 0]);\nconst labelP = new Text({ text: 'P', color: YELLOW, fontSize: 24 });\nlabelP.addUpdater(() => {\n  const p = P.getCenter();\n  const dx = (p[0] - center[0]) / radius;\n  const dy = (p[1] - center[1]) / radius;\n  labelP.moveTo([p[0] + 0.3 * dx, p[1] + 0.3 * dy, 0]);\n});\n\nconst centralText = new Text({ text: '120°', color: ORANGE, fontSize: 25 });\ncentralText.moveTo([-1.6, -0.77, 0]);\nconst angleText = new Text({ text: '60°', color: YELLOW, fontSize: 31 });\nangleText.moveTo([3.65, 0.65, 0]);\nconst formula = new Text({ text: 'Inscribed angle = ½ × central angle', color: WHITE, fontSize: 24 });\nformula.moveTo([3.65, 1.45, 0]);\nconst instruction = new Text({ text: 'Drag P along the opposite arc', color: BLUE, fontSize: 22 });\ninstruction.moveTo([3.65, -0.65, 0]);\n\nawait scene.play(new Write(title));\nawait scene.play(new AnimationGroup([new Create(circle), new Create(chord)]));\nscene.add(centralWedge, centralRayA, centralRayB, O, dotA, dotB, labelA, labelB, centralText);\nscene.add(angleWedge, rayA, rayB, P, labelP, formula, angleText, instruction);\n\nmakeDraggable(P, scene, {\n  onDrag: (mob, pos) => {\n    const x = pos[0] - center[0];\n    const y = pos[1] - center[1];\n    const raw = Math.atan2(y, x);\n    const candidates = [raw - 2 * Math.PI, raw, raw + 2 * Math.PI];\n    let nearest = candidates[0];\n    for (const candidate of candidates) {\n      if (Math.abs(candidate - theta) < Math.abs(nearest - theta)) nearest = candidate;\n    }\n    theta = Math.max(bAngle + 0.12, Math.min(aAngle - 0.12, nearest));\n    mob.moveTo(pointAt(theta));\n    updateInscribedAngle();\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 6658,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 2,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/geo-inscribed-angle.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/geo-inscribed-angle.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:33.778Z"
+}

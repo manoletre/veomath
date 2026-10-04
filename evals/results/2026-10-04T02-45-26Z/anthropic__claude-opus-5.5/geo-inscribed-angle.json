@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-inscribed-angle",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.38% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=1 checkboxes=0 draggables=3 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.43% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 30502,
+        "inputTokens": 8063,
+        "cachedInputTokens": 7569,
+        "outputTokens": 3485,
+        "costUsd": 0.07515779999999998,
+        "rawResponse": "{\"explanation\":\"The inscribed angle theorem says an angle with its vertex P on a circle is exactly half of the central angle ∠AOB that cuts off the same arc. So as long as P stays on the same arc, ∠APB doesn't change. Drag the yellow point P around the circle and the readout on the right stays fixed. If you move P onto the short arc between A and B, the angle becomes 180° − θ (the supplement), because P now cuts off the other arc. You can also drag A and B to change the arc, and the inscribed angle is still always half the central angle.\",\"manimCode\":\"const O = [-2, -0.2, 0];\\nconst R = 2.7;\\nconst pt = (a) => [O[0] + R * Math.cos(a), O[1] + R * Math.sin(a), 0];\\nconst angOf = (p) => Math.atan2(p[1] - O[1], p[0] - O[0]);\\nconst norm = (a) => { while (a <= -Math.PI) a += 2 * Math.PI; while (a > Math.PI) a -= 2 * Math.PI; return a; };\\nconst pos = (a) => { a = a % (2 * Math.PI); return a < 0 ? a + 2 * Math.PI : a; };\\n\\nconst circle = new Circle({ radius: R, color: BLUE_C });\\ncircle.moveTo(O);\\nconst centerDot = new Dot({ point: O, color: WHITE });\\nscene.add(circle, centerDot);\\n\\nlet aA = 210 * Math.PI / 180, aB = 330 * Math.PI / 180, aP = 100 * Math.PI / 180;\\n\\nconst mkSeg = (col, w) => { const s = new Polygon({ vertices: [[0,0,0],[1,0,0]], color: col }); s.setStrokeWidth(w); s.setFillOpacity(0); return s; };\\nconst NW = 24;\\nconst mkWedge = (col) => { const w = new Polygon({ vertices: Array.from({ length: NW + 1 }, () => [0,0,0]), color: col }); w.setFill(col, 0.35); w.setStrokeWidth(2); return w; };\\n\\nconst pa = mkSeg(YELLOW, 4), pb = mkSeg(YELLOW, 4);\\nconst oa = mkSeg(GREEN, 3), ob = mkSeg(GREEN, 3);\\nconst wedgeP = mkWedge(YELLOW), wedgeO = mkWedge(GREEN);\\nscene.add(wedgeO, wedgeP, oa, ob, pa, pb);\\n\\nconst dotA = new Dot({ point: pt(aA), color: RED });\\nconst dotB = new Dot({ point: pt(aB), color: RED });\\nconst dotP = new Dot({ point: pt(aP), color: YELLOW });\\ndotA.scale(1.4); dotB.scale(1.4); dotP.scale(1.8);\\nscene.add(dotA, dotB, dotP);\\n\\nconst lab = (s, col) => { const t = new Text({ text: s, color: col, fontSize: 30 }); scene.add(t); return t; };\\nconst lA = lab('A', RED), lB = lab('B', RED), lP = lab('P', YELLOW), lO = lab('O', WHITE);\\nlO.moveTo([O[0] + 0.3, O[1] - 0.3, 0]);\\n\\nfunction wedgeVerts(v, a1, d, r) {\\n  const vs = [[v[0], v[1], 0]];\\n  for (let i = 0; i < NW; i++) { const a = a1 + d * i / (NW - 1); vs.push([v[0] + r * Math.cos(a), v[1] + r * Math.sin(a), 0]); }\\n  return vs;\\n}\\n\\nlet infoGroup = null;\\nlet lastKey = '';\\nfunction updateInfo(ins, cen) {\\n  const key = ins.toFixed(1) + '|' + cen.toFixed(1);\\n  if (key === lastKey) return;\\n  lastKey = key;\\n  if (infoGroup) infoGroup.forEach(t => scene.remove(t));\\n  const t1 = new Text({ text: 'Inscribed  ∠APB = ' + ins.toFixed(1) + '°', color: YELLOW, fontSize: 28 });\\n  const t2 = new Text({ text: 'Central  ∠AOB = ' + cen.toFixed(1) + '°', color: GREEN, fontSize: 28 });\\n  const t3 = new Text({ text: '∠AOB / ∠APB = ' + (ins > 0.01 ? (cen / ins).toFixed(2) : '—'), color: WHITE, fontSize: 28 });\\n  t1.moveTo([3.7, 1.0, 0]); t2.moveTo([3.7, 0.2, 0]); t3.moveTo([3.7, -0.6, 0]);\\n  infoGroup = [t1, t2, t3];\\n  scene.add(t1, t2, t3);\\n}\\n\\nconst title = new Text({ text: 'Inscribed Angle Theorem', color: WHITE, fontSize: 34 });\\ntitle.moveTo([3.7, 2.6, 0]);\\nconst hint = new Text({ text: 'Drag P (or A, B) along the circle', color: GRAY, fontSize: 22 });\\nhint.moveTo([3.7, -2.4, 0]);\\nscene.add(title, hint);\\n\\nfunction update() {\\n  const A = pt(aA), B = pt(aB), P = pt(aP);\\n  dotA.moveTo(A); dotB.moveTo(B); dotP.moveTo(P);\\n  pa.setVertices([P, A]); pb.setVertices([P, B]);\\n  oa.setVertices([O, A]); ob.setVertices([O, B]);\\n  const off = (a) => [O[0] + (R + 0.35) * Math.cos(a), O[1] + (R + 0.35) * Math.sin(a), 0];\\n  lA.moveTo(off(aA)); lB.moveTo(off(aB)); lP.moveTo(off(aP));\\n\\n  // inscribed angle at P\\n  const a1 = Math.atan2(A[1] - P[1], A[0] - P[0]);\\n  const a2 = Math.atan2(B[1] - P[1], B[0] - P[0]);\\n  const d = norm(a2 - a1);\\n  wedgeP.setVertices(wedgeVerts(P, a1, d, 0.6));\\n  const ins = Math.abs(d) * 180 / Math.PI;\\n\\n  // central angle on the arc NOT containing P\\n  const ccwAB = pos(aB - aA);\\n  const pIn = pos(aP - aA) < ccwAB;\\n  const dc = pIn ? -(2 * Math.PI - ccwAB) : ccwAB;\\n  wedgeO.setVertices(wedgeVerts(O, aA, dc, 0.55));\\n  const cen = Math.abs(dc) * 180 / Math.PI;\\n  updateInfo(ins, cen);\\n}\\nupdate();\\n\\nconst snap = (which) => (mob) => {\\n  const a = angOf(mob.getCenter());\\n  if (which === 'P') aP = a; else if (which === 'A') aA = a; else aB = a;\\n  update();\\n};\\nmakeDraggable(dotP, scene, { onDrag: snap('P') });\\nmakeDraggable(dotA, scene, { onDrag: snap('A') });\\nmakeDraggable(dotB, scene, { onDrag: snap('B') });\\nmakeHoverable(dotP, scene, { hoverScale: 1.3 });\\n\\nconst controls = new Controls(scene, { position: 'bottom-right' });\\ncontrols.addButton({ label: 'Reset', onClick: () => {\\n  aA = 210 * Math.PI / 180; aB = 330 * Math.PI / 180; aP = 100 * Math.PI / 180; update();\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The inscribed angle theorem says an angle with its vertex P on a circle is exactly half of the central angle ∠AOB that cuts off the same arc. So as long as P stays on the same arc, ∠APB doesn't change. Drag the yellow point P around the circle and the readout on the right stays fixed. If you move P onto the short arc between A and B, the angle becomes 180° − θ (the supplement), because P now cuts off the other arc. You can also drag A and B to change the arc, and the inscribed angle is still always half the central angle."
+      },
+      "code": "const O = [-2, -0.2, 0];\nconst R = 2.7;\nconst pt = (a) => [O[0] + R * Math.cos(a), O[1] + R * Math.sin(a), 0];\nconst angOf = (p) => Math.atan2(p[1] - O[1], p[0] - O[0]);\nconst norm = (a) => { while (a <= -Math.PI) a += 2 * Math.PI; while (a > Math.PI) a -= 2 * Math.PI; return a; };\nconst pos = (a) => { a = a % (2 * Math.PI); return a < 0 ? a + 2 * Math.PI : a; };\n\nconst circle = new Circle({ radius: R, color: BLUE_C });\ncircle.moveTo(O);\nconst centerDot = new Dot({ point: O, color: WHITE });\nscene.add(circle, centerDot);\n\nlet aA = 210 * Math.PI / 180, aB = 330 * Math.PI / 180, aP = 100 * Math.PI / 180;\n\nconst mkSeg = (col, w) => { const s = new Polygon({ vertices: [[0,0,0],[1,0,0]], color: col }); s.setStrokeWidth(w); s.setFillOpacity(0); return s; };\nconst NW = 24;\nconst mkWedge = (col) => { const w = new Polygon({ vertices: Array.from({ length: NW + 1 }, () => [0,0,0]), color: col }); w.setFill(col, 0.35); w.setStrokeWidth(2); return w; };\n\nconst pa = mkSeg(YELLOW, 4), pb = mkSeg(YELLOW, 4);\nconst oa = mkSeg(GREEN, 3), ob = mkSeg(GREEN, 3);\nconst wedgeP = mkWedge(YELLOW), wedgeO = mkWedge(GREEN);\nscene.add(wedgeO, wedgeP, oa, ob, pa, pb);\n\nconst dotA = new Dot({ point: pt(aA), color: RED });\nconst dotB = new Dot({ point: pt(aB), color: RED });\nconst dotP = new Dot({ point: pt(aP), color: YELLOW });\ndotA.scale(1.4); dotB.scale(1.4); dotP.scale(1.8);\nscene.add(dotA, dotB, dotP);\n\nconst lab = (s, col) => { const t = new Text({ text: s, color: col, fontSize: 30 }); scene.add(t); return t; };\nconst lA = lab('A', RED), lB = lab('B', RED), lP = lab('P', YELLOW), lO = lab('O', WHITE);\nlO.moveTo([O[0] + 0.3, O[1] - 0.3, 0]);\n\nfunction wedgeVerts(v, a1, d, r) {\n  const vs = [[v[0], v[1], 0]];\n  for (let i = 0; i < NW; i++) { const a = a1 + d * i / (NW - 1); vs.push([v[0] + r * Math.cos(a), v[1] + r * Math.sin(a), 0]); }\n  return vs;\n}\n\nlet infoGroup = null;\nlet lastKey = '';\nfunction updateInfo(ins, cen) {\n  const key = ins.toFixed(1) + '|' + cen.toFixed(1);\n  if (key === lastKey) return;\n  lastKey = key;\n  if (infoGroup) infoGroup.forEach(t => scene.remove(t));\n  const t1 = new Text({ text: 'Inscribed  ∠APB = ' + ins.toFixed(1) + '°', color: YELLOW, fontSize: 28 });\n  const t2 = new Text({ text: 'Central  ∠AOB = ' + cen.toFixed(1) + '°', color: GREEN, fontSize: 28 });\n  const t3 = new Text({ text: '∠AOB / ∠APB = ' + (ins > 0.01 ? (cen / ins).toFixed(2) : '—'), color: WHITE, fontSize: 28 });\n  t1.moveTo([3.7, 1.0, 0]); t2.moveTo([3.7, 0.2, 0]); t3.moveTo([3.7, -0.6, 0]);\n  infoGroup = [t1, t2, t3];\n  scene.add(t1, t2, t3);\n}\n\nconst title = new Text({ text: 'Inscribed Angle Theorem', color: WHITE, fontSize: 34 });\ntitle.moveTo([3.7, 2.6, 0]);\nconst hint = new Text({ text: 'Drag P (or A, B) along the circle', color: GRAY, fontSize: 22 });\nhint.moveTo([3.7, -2.4, 0]);\nscene.add(title, hint);\n\nfunction update() {\n  const A = pt(aA), B = pt(aB), P = pt(aP);\n  dotA.moveTo(A); dotB.moveTo(B); dotP.moveTo(P);\n  pa.setVertices([P, A]); pb.setVertices([P, B]);\n  oa.setVertices([O, A]); ob.setVertices([O, B]);\n  const off = (a) => [O[0] + (R + 0.35) * Math.cos(a), O[1] + (R + 0.35) * Math.sin(a), 0];\n  lA.moveTo(off(aA)); lB.moveTo(off(aB)); lP.moveTo(off(aP));\n\n  // inscribed angle at P\n  const a1 = Math.atan2(A[1] - P[1], A[0] - P[0]);\n  const a2 = Math.atan2(B[1] - P[1], B[0] - P[0]);\n  const d = norm(a2 - a1);\n  wedgeP.setVertices(wedgeVerts(P, a1, d, 0.6));\n  const ins = Math.abs(d) * 180 / Math.PI;\n\n  // central angle on the arc NOT containing P\n  const ccwAB = pos(aB - aA);\n  const pIn = pos(aP - aA) < ccwAB;\n  const dc = pIn ? -(2 * Math.PI - ccwAB) : ccwAB;\n  wedgeO.setVertices(wedgeVerts(O, aA, dc, 0.55));\n  const cen = Math.abs(dc) * 180 / Math.PI;\n  updateInfo(ins, cen);\n}\nupdate();\n\nconst snap = (which) => (mob) => {\n  const a = angOf(mob.getCenter());\n  if (which === 'P') aP = a; else if (which === 'A') aA = a; else aB = a;\n  update();\n};\nmakeDraggable(dotP, scene, { onDrag: snap('P') });\nmakeDraggable(dotA, scene, { onDrag: snap('A') });\nmakeDraggable(dotB, scene, { onDrag: snap('B') });\nmakeHoverable(dotP, scene, { hoverScale: 1.3 });\n\nconst controls = new Controls(scene, { position: 'bottom-right' });\ncontrols.addButton({ label: 'Reset', onClick: () => {\n  aA = 210 * Math.PI / 180; aB = 330 * Math.PI / 180; aP = 100 * Math.PI / 180; update();\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4355,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 3,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/geo-inscribed-angle.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/geo-inscribed-angle.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:24.591Z"
+}

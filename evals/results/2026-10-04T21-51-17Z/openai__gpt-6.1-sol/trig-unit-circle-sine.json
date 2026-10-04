@@ -1,0 +1,97 @@
+{
+  "itemId": "trig-unit-circle-sine",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.02% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=2 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (-4.0, 2.9) — 0.40% changed\n✓ drag Dot at (0.6, 0.6) — 0.51% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (-4.0, 2.9) — 0.40% changed\n✓ drag Dot at (0.6, 0.6) — 0.51% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 44822,
+        "inputTokens": 5302,
+        "cachedInputTokens": 5287,
+        "outputTokens": 2000,
+        "costUsd": 0.0205587,
+        "rawResponse": "{\"explanation\":\"The sine graph is wavy because sine measures the height of a point moving around a circle. As the point turns, its height smoothly rises to 1, falls through 0 to −1, and rises again. Plotting that height against the angle creates a wave that repeats every full turn (2π radians). Drag either yellow point to see the connection.\",\"manimCode\":\"let theta = Math.PI / 4;\\nconst cx = -4.5;\\nconst cy = 2.4;\\nconst radius = 0.75;\\nconst tau = 2 * Math.PI;\\n\\nconst title = new Text({ text: 'Sine is a rotating point’s height', fontSize: 28, color: WHITE });\\ntitle.moveTo([1, 3.25, 0]);\\nconst circle = new Circle({ radius: radius, color: BLUE });\\ncircle.moveTo([cx, cy, 0]);\\nconst centerDot = new Dot({ point: [cx, cy, 0], radius: 0.04, color: GRAY });\\nconst baseline = new Line({ start: [cx - radius, cy, 0], end: [cx + radius, cy, 0], color: GRAY });\\nconst spoke = new Line({ start: [cx, cy, 0], end: [cx + radius, cy, 0], color: YELLOW });\\nconst height = new Line({ start: [cx, cy, 0], end: [cx, cy + radius, 0], color: TEAL });\\nheight.setStrokeWidth(5);\\nconst projection = new DashedLine({ start: [cx, cy + radius, 0], end: [cx + radius, cy + radius, 0], color: TEAL });\\nconst circleHandle = new Dot({ point: [cx + radius, cy, 0], radius: 0.12, color: YELLOW });\\nconst circleCaption = new Text({ text: 'One turn = one wave', fontSize: 19, color: BLUE });\\ncircleCaption.moveTo([cx, 1.4, 0]);\\n\\nconst axes = new Axes({ xRange: [-tau, tau, Math.PI / 2], yRange: [-1.5, 1.5, 0.5], xLength: 11, yLength: 2.6, tips: false });\\nconst curve = axes.plot(x => Math.sin(x), { color: BLUE });\\nconst upperGuide = new DashedLine({ start: axes.c2p(-tau, 1), end: axes.c2p(tau, 1), color: GRAY });\\nconst lowerGuide = new DashedLine({ start: axes.c2p(-tau, -1), end: axes.c2p(tau, -1), color: GRAY });\\nupperGuide.setOpacity(0.35);\\nlowerGuide.setOpacity(0.35);\\nconst graphHeight = new Line({ start: axes.c2p(theta, 0), end: axes.c2p(theta, Math.sin(theta)), color: TEAL });\\ngraphHeight.setStrokeWidth(5);\\nconst graphHandle = new Dot({ point: axes.c2p(theta, Math.sin(theta)), radius: 0.13, color: YELLOW });\\n\\nconst readout = new Text({ text: '', fontSize: 25, color: TEAL });\\nreadout.moveTo([1.4, 2.45, 0]);\\nconst meaning = new Text({ text: 'Horizontal: angle     Vertical: height', fontSize: 20, color: GRAY });\\nmeaning.moveTo([1.4, 1.9, 0]);\\nconst hint = new Text({ text: 'Drag either yellow point — both show the same angle', fontSize: 22, color: YELLOW });\\nhint.moveTo([0, -2.65, 0]);\\nconst repeat = new Text({ text: 'Every full turn repeats the same rise and fall.', fontSize: 21, color: WHITE });\\nrepeat.moveTo([0, -3.15, 0]);\\n\\nscene.add(title, axes, upperGuide, lowerGuide, circle, baseline, centerDot, spoke, height, projection, circleCaption, readout, meaning, hint, repeat);\\nfor (const [value, caption] of [[-tau, '−2π'], [-Math.PI, '−π'], [0, '0'], [Math.PI, 'π'], [tau, '2π']]) {\\n  const tickLabel = new Text({ text: caption, fontSize: 18, color: GRAY });\\n  tickLabel.moveTo(axes.c2p(value, -1.85));\\n  scene.add(tickLabel);\\n}\\nfor (const value of [-1, 1]) {\\n  const heightLabel = new Text({ text: String(value), fontSize: 17, color: GRAY });\\n  heightLabel.moveTo(axes.c2p(-tau - 0.35, value));\\n  scene.add(heightLabel);\\n}\\n\\nfunction update() {\\n  const sine = Math.sin(theta);\\n  const point = [cx + radius * Math.cos(theta), cy + radius * sine, 0];\\n  circleHandle.moveTo(point);\\n  spoke.setEnd(point);\\n  height.setStart([cx, cy, 0]);\\n  height.setEnd([cx, cy + radius * sine, 0]);\\n  projection.setStart([cx, cy + radius * sine, 0]);\\n  projection.setEnd(point);\\n  graphHandle.moveTo(axes.c2p(theta, sine));\\n  graphHeight.setStart(axes.c2p(theta, 0));\\n  graphHeight.setEnd(axes.c2p(theta, sine));\\n  readout.setText('Angle = ' + theta.toFixed(2) + ' rad     sin = ' + sine.toFixed(2));\\n}\\nupdate();\\nawait scene.play(new Create(curve));\\nscene.add(graphHeight, graphHandle, circleHandle);\\n\\nmakeDraggable(circleHandle, scene, { onDrag: (mob, pos) => {\\n  const angle = Math.atan2(pos[1] - cy, pos[0] - cx);\\n  theta = angle < 0 ? angle + tau : angle;\\n  update();\\n} });\\nmakeDraggable(graphHandle, scene, { onDrag: (mob, pos) => {\\n  theta = Math.max(0, Math.min(tau, axes.pointToCoords(pos)[0]));\\n  update();\\n} });\\nawait scene.wait(999999);\"}",
+        "explanation": "The sine graph is wavy because sine measures the height of a point moving around a circle. As the point turns, its height smoothly rises to 1, falls through 0 to −1, and rises again. Plotting that height against the angle creates a wave that repeats every full turn (2π radians). Drag either yellow point to see the connection."
+      },
+      "code": "let theta = Math.PI / 4;\nconst cx = -4.5;\nconst cy = 2.4;\nconst radius = 0.75;\nconst tau = 2 * Math.PI;\n\nconst title = new Text({ text: 'Sine is a rotating point’s height', fontSize: 28, color: WHITE });\ntitle.moveTo([1, 3.25, 0]);\nconst circle = new Circle({ radius: radius, color: BLUE });\ncircle.moveTo([cx, cy, 0]);\nconst centerDot = new Dot({ point: [cx, cy, 0], radius: 0.04, color: GRAY });\nconst baseline = new Line({ start: [cx - radius, cy, 0], end: [cx + radius, cy, 0], color: GRAY });\nconst spoke = new Line({ start: [cx, cy, 0], end: [cx + radius, cy, 0], color: YELLOW });\nconst height = new Line({ start: [cx, cy, 0], end: [cx, cy + radius, 0], color: TEAL });\nheight.setStrokeWidth(5);\nconst projection = new DashedLine({ start: [cx, cy + radius, 0], end: [cx + radius, cy + radius, 0], color: TEAL });\nconst circleHandle = new Dot({ point: [cx + radius, cy, 0], radius: 0.12, color: YELLOW });\nconst circleCaption = new Text({ text: 'One turn = one wave', fontSize: 19, color: BLUE });\ncircleCaption.moveTo([cx, 1.4, 0]);\n\nconst axes = new Axes({ xRange: [-tau, tau, Math.PI / 2], yRange: [-1.5, 1.5, 0.5], xLength: 11, yLength: 2.6, tips: false });\nconst curve = axes.plot(x => Math.sin(x), { color: BLUE });\nconst upperGuide = new DashedLine({ start: axes.c2p(-tau, 1), end: axes.c2p(tau, 1), color: GRAY });\nconst lowerGuide = new DashedLine({ start: axes.c2p(-tau, -1), end: axes.c2p(tau, -1), color: GRAY });\nupperGuide.setOpacity(0.35);\nlowerGuide.setOpacity(0.35);\nconst graphHeight = new Line({ start: axes.c2p(theta, 0), end: axes.c2p(theta, Math.sin(theta)), color: TEAL });\ngraphHeight.setStrokeWidth(5);\nconst graphHandle = new Dot({ point: axes.c2p(theta, Math.sin(theta)), radius: 0.13, color: YELLOW });\n\nconst readout = new Text({ text: '', fontSize: 25, color: TEAL });\nreadout.moveTo([1.4, 2.45, 0]);\nconst meaning = new Text({ text: 'Horizontal: angle     Vertical: height', fontSize: 20, color: GRAY });\nmeaning.moveTo([1.4, 1.9, 0]);\nconst hint = new Text({ text: 'Drag either yellow point — both show the same angle', fontSize: 22, color: YELLOW });\nhint.moveTo([0, -2.65, 0]);\nconst repeat = new Text({ text: 'Every full turn repeats the same rise and fall.', fontSize: 21, color: WHITE });\nrepeat.moveTo([0, -3.15, 0]);\n\nscene.add(title, axes, upperGuide, lowerGuide, circle, baseline, centerDot, spoke, height, projection, circleCaption, readout, meaning, hint, repeat);\nfor (const [value, caption] of [[-tau, '−2π'], [-Math.PI, '−π'], [0, '0'], [Math.PI, 'π'], [tau, '2π']]) {\n  const tickLabel = new Text({ text: caption, fontSize: 18, color: GRAY });\n  tickLabel.moveTo(axes.c2p(value, -1.85));\n  scene.add(tickLabel);\n}\nfor (const value of [-1, 1]) {\n  const heightLabel = new Text({ text: String(value), fontSize: 17, color: GRAY });\n  heightLabel.moveTo(axes.c2p(-tau - 0.35, value));\n  scene.add(heightLabel);\n}\n\nfunction update() {\n  const sine = Math.sin(theta);\n  const point = [cx + radius * Math.cos(theta), cy + radius * sine, 0];\n  circleHandle.moveTo(point);\n  spoke.setEnd(point);\n  height.setStart([cx, cy, 0]);\n  height.setEnd([cx, cy + radius * sine, 0]);\n  projection.setStart([cx, cy + radius * sine, 0]);\n  projection.setEnd(point);\n  graphHandle.moveTo(axes.c2p(theta, sine));\n  graphHeight.setStart(axes.c2p(theta, 0));\n  graphHeight.setEnd(axes.c2p(theta, sine));\n  readout.setText('Angle = ' + theta.toFixed(2) + ' rad     sin = ' + sine.toFixed(2));\n}\nupdate();\nawait scene.play(new Create(curve));\nscene.add(graphHeight, graphHandle, circleHandle);\n\nmakeDraggable(circleHandle, scene, { onDrag: (mob, pos) => {\n  const angle = Math.atan2(pos[1] - cy, pos[0] - cx);\n  theta = angle < 0 ? angle + tau : angle;\n  update();\n} });\nmakeDraggable(graphHandle, scene, { onDrag: (mob, pos) => {\n  theta = Math.max(0, Math.min(tau, axes.pointToCoords(pos)[0]));\n  update();\n} });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 8534,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 2,
+        "clickables": 0,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "drag",
+            "label": "Dot at (-4.0, 2.9)",
+            "change": 0.00404296875,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (0.6, 0.6)",
+            "change": 0.005116102430555556,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/trig-unit-circle-sine.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/trig-unit-circle-sine.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:52:56.721Z"
+}

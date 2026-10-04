@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-sinusoid-params",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.83% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=4 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "3.58% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 18377,
+        "inputTokens": 8054,
+        "cachedInputTokens": 7569,
+        "outputTokens": 1793,
+        "costUsd": 0.041245800000000006,
+        "rawResponse": "{\"explanation\":\"In y = A sin(B(x − C)) + D, each parameter changes the basic sine wave (the faint gray curve) in its own way. A is the amplitude: it stretches the wave vertically, and a negative A flips it upside down. B sets how often the wave repeats, so the period is 2π/|B|. C is the phase shift, which slides the wave left or right (the yellow dot marks where a cycle starts at x = C). D is the vertical shift, which moves the dashed midline up or down. Use the sliders to change each value, and the readout updates the period, phase shift and midline as you go.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\\n  yRange: [-5, 5, 1],\\n  xLength: 9.5, yLength: 6.2, tips: false\\n});\\nax.moveTo([-1.3, -0.4, 0]);\\nscene.add(ax);\\n\\nlet A = 1, B = 1, C = 0, D = 0;\\n\\nconst ref = ax.plot(x => Math.sin(x), { color: GRAY, xRange: [-2 * Math.PI, 2 * Math.PI] });\\nref.setOpacity(0.35);\\nscene.add(ref);\\n\\nconst formula = new MathTex({ latex: 'y = A\\\\\\\\sin\\\\\\\\big(B(x - C)\\\\\\\\big) + D', color: WHITE });\\nawait formula.waitForRender();\\nformula.scale(0.8);\\nformula.moveTo([-1.3, 3.5, 0]);\\nscene.add(formula);\\n\\nlet curve = null, midline = null, startDot = null, info = null;\\n\\nfunction clampY(y) { return Math.max(-5, Math.min(5, y)); }\\n\\nfunction redraw() {\\n  if (curve) scene.remove(curve);\\n  if (midline) scene.remove(midline);\\n  if (startDot) scene.remove(startDot);\\n  if (info) scene.remove(info);\\n\\n  midline = new DashedLine({\\n    start: ax.c2p(-2 * Math.PI, clampY(D)),\\n    end: ax.c2p(2 * Math.PI, clampY(D)),\\n    color: GREEN\\n  });\\n\\n  curve = ax.plot(x => clampY(A * Math.sin(B * (x - C)) + D), {\\n    color: BLUE, xRange: [-2 * Math.PI, 2 * Math.PI], numSamples: 800\\n  });\\n\\n  startDot = new Dot({ point: ax.c2p(C, clampY(D)), color: YELLOW });\\n\\n  const period = (2 * Math.PI / Math.abs(B)).toFixed(2);\\n  info = new Text({\\n    text: 'A=' + A.toFixed(1) + '  B=' + B.toFixed(1) + '  C=' + C.toFixed(2) + '  D=' + D.toFixed(1) +\\n      '    period=' + period + '  amplitude=' + Math.abs(A).toFixed(1),\\n    color: YELLOW, fontSize: 20\\n  });\\n  info.moveTo([-1.3, -3.75, 0]);\\n\\n  scene.add(midline, curve, startDot, info);\\n}\\n\\nredraw();\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 240 });\\ncontrols.addSlider({ label: 'A (amplitude)', min: -4, max: 4, value: 1, step: 0.1, onChange: v => { A = v; redraw(); } });\\ncontrols.addSlider({ label: 'B (frequency)', min: 0.1, max: 4, value: 1, step: 0.1, onChange: v => { B = v; redraw(); } });\\ncontrols.addSlider({ label: 'C (phase shift)', min: -Math.PI, max: Math.PI, value: 0, step: 0.05, onChange: v => { C = v; redraw(); } });\\ncontrols.addSlider({ label: 'D (vertical shift)', min: -3, max: 3, value: 0, step: 0.1, onChange: v => { D = v; redraw(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "In y = A sin(B(x − C)) + D, each parameter changes the basic sine wave (the faint gray curve) in its own way. A is the amplitude: it stretches the wave vertically, and a negative A flips it upside down. B sets how often the wave repeats, so the period is 2π/|B|. C is the phase shift, which slides the wave left or right (the yellow dot marks where a cycle starts at x = C). D is the vertical shift, which moves the dashed midline up or down. Use the sliders to change each value, and the readout updates the period, phase shift and midline as you go."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\n  yRange: [-5, 5, 1],\n  xLength: 9.5, yLength: 6.2, tips: false\n});\nax.moveTo([-1.3, -0.4, 0]);\nscene.add(ax);\n\nlet A = 1, B = 1, C = 0, D = 0;\n\nconst ref = ax.plot(x => Math.sin(x), { color: GRAY, xRange: [-2 * Math.PI, 2 * Math.PI] });\nref.setOpacity(0.35);\nscene.add(ref);\n\nconst formula = new MathTex({ latex: 'y = A\\\\sin\\\\big(B(x - C)\\\\big) + D', color: WHITE });\nawait formula.waitForRender();\nformula.scale(0.8);\nformula.moveTo([-1.3, 3.5, 0]);\nscene.add(formula);\n\nlet curve = null, midline = null, startDot = null, info = null;\n\nfunction clampY(y) { return Math.max(-5, Math.min(5, y)); }\n\nfunction redraw() {\n  if (curve) scene.remove(curve);\n  if (midline) scene.remove(midline);\n  if (startDot) scene.remove(startDot);\n  if (info) scene.remove(info);\n\n  midline = new DashedLine({\n    start: ax.c2p(-2 * Math.PI, clampY(D)),\n    end: ax.c2p(2 * Math.PI, clampY(D)),\n    color: GREEN\n  });\n\n  curve = ax.plot(x => clampY(A * Math.sin(B * (x - C)) + D), {\n    color: BLUE, xRange: [-2 * Math.PI, 2 * Math.PI], numSamples: 800\n  });\n\n  startDot = new Dot({ point: ax.c2p(C, clampY(D)), color: YELLOW });\n\n  const period = (2 * Math.PI / Math.abs(B)).toFixed(2);\n  info = new Text({\n    text: 'A=' + A.toFixed(1) + '  B=' + B.toFixed(1) + '  C=' + C.toFixed(2) + '  D=' + D.toFixed(1) +\n      '    period=' + period + '  amplitude=' + Math.abs(A).toFixed(1),\n    color: YELLOW, fontSize: 20\n  });\n  info.moveTo([-1.3, -3.75, 0]);\n\n  scene.add(midline, curve, startDot, info);\n}\n\nredraw();\n\nconst controls = new Controls(scene, { position: 'top-right', width: 240 });\ncontrols.addSlider({ label: 'A (amplitude)', min: -4, max: 4, value: 1, step: 0.1, onChange: v => { A = v; redraw(); } });\ncontrols.addSlider({ label: 'B (frequency)', min: 0.1, max: 4, value: 1, step: 0.1, onChange: v => { B = v; redraw(); } });\ncontrols.addSlider({ label: 'C (phase shift)', min: -Math.PI, max: Math.PI, value: 0, step: 0.05, onChange: v => { C = v; redraw(); } });\ncontrols.addSlider({ label: 'D (vertical shift)', min: -3, max: 3, value: 0, step: 0.1, onChange: v => { D = v; redraw(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5092,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 4,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/trig-sinusoid-params.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/trig-sinusoid-params.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:26.528Z"
+}

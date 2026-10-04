@@ -1,0 +1,79 @@
+{
+  "itemId": "calc-matrix-transform",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "5.05% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.56% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 50218,
+        "inputTokens": 4617,
+        "cachedInputTokens": 4581,
+        "outputTokens": 2505,
+        "costUsd": 0.0255801,
+        "rawResponse": "{\"explanation\":\"The matrix sends each point (x, y) to (2x + y, y): it stretches horizontally and adds a shear, while leaving height unchanged. The unit square becomes a parallelogram with area 2, illustrating that det(A) = 2 is the area multiplier for every region in the plane. Move the slider to watch the transformation unfold; the positive determinant means orientation is preserved.\",\"manimCode\":\"const title = new Text({ text: 'How a matrix reshapes the plane', fontSize: 30, color: WHITE });\\ntitle.moveTo([0, 3.3, 0]);\\nconst formula = new MathTex({ latex: 'A=\\\\\\\\begin{pmatrix}2&1\\\\\\\\\\\\\\\\0&1\\\\\\\\end{pmatrix},\\\\\\\\qquad (x,y)\\\\\\\\mapsto(2x+y,y)' });\\nawait formula.waitForRender();\\nformula.scale(0.75).moveTo([0, 2.6, 0]);\\nscene.add(title, formula);\\n\\nconst ax = new Axes({ xRange: [-4, 4, 1], yRange: [-2.3, 2.3, 1], xLength: 8, yLength: 4.6, tips: false });\\nax.moveTo([-1, -0.35, 0]);\\nscene.add(ax);\\n\\nconst progress = new ValueTracker(0);\\nfunction mappedPoint(x, y) {\\n  const amount = progress.getValue();\\n  return ax.coordsToPoint((1 + amount) * x + amount * y, y);\\n}\\n\\nconst gridSegments = [];\\nfunction addGridSegment(first, second) {\\n  const segment = new Polygon({ vertices: [mappedPoint(...first), mappedPoint(...second)], color: BLUE_E });\\n  segment.setFillOpacity(0);\\n  segment.setStrokeWidth(1);\\n  gridSegments.push({ segment, first, second });\\n  scene.add(segment);\\n}\\nfor (let k = -3; k <= 3; k++) {\\n  const x = k / 2;\\n  addGridSegment([x, -1], [x, 1]);\\n}\\nfor (let k = -2; k <= 2; k++) {\\n  const y = k / 2;\\n  addGridSegment([-1.5, y], [1.5, y]);\\n}\\n\\nconst corners = [[0, 0], [1, 0], [1, 1], [0, 1]];\\nconst originalSquare = new Polygon({ vertices: corners.map(([x, y]) => ax.coordsToPoint(x, y)), color: GRAY });\\noriginalSquare.setFill(GRAY, 0.08);\\noriginalSquare.setStrokeWidth(2);\\nconst movingSquare = new Polygon({ vertices: corners.map(([x, y]) => mappedPoint(x, y)), color: GOLD });\\nmovingSquare.setFill(GOLD, 0.3);\\nmovingSquare.setStrokeWidth(3);\\n\\nconst firstVector = new Polygon({ vertices: [mappedPoint(0, 0), mappedPoint(1, 0)], color: BLUE });\\nconst secondVector = new Polygon({ vertices: [mappedPoint(0, 0), mappedPoint(0, 1)], color: ORANGE });\\nfirstVector.setFillOpacity(0);\\nsecondVector.setFillOpacity(0);\\nfirstVector.setStrokeWidth(5);\\nsecondVector.setStrokeWidth(5);\\nconst firstTip = new Dot({ point: mappedPoint(1, 0), color: BLUE });\\nconst secondTip = new Dot({ point: mappedPoint(0, 1), color: ORANGE });\\nscene.add(originalSquare, movingSquare, firstVector, secondVector, firstTip, secondTip);\\n\\nmovingSquare.addUpdater(() => {\\n  movingSquare.setVertices(corners.map(([x, y]) => mappedPoint(x, y)));\\n  for (const entry of gridSegments) {\\n    entry.segment.setVertices([mappedPoint(...entry.first), mappedPoint(...entry.second)]);\\n  }\\n  firstVector.setVertices([mappedPoint(0, 0), mappedPoint(1, 0)]);\\n  secondVector.setVertices([mappedPoint(0, 0), mappedPoint(0, 1)]);\\n  firstTip.moveTo(mappedPoint(1, 0));\\n  secondTip.moveTo(mappedPoint(0, 1));\\n});\\n\\nconst determinant = new MathTex({ latex: '\\\\\\\\det A=2\\\\\\\\cdot1-1\\\\\\\\cdot0=2' });\\nawait determinant.waitForRender();\\ndeterminant.scale(0.6).moveTo([4.5, 1.5, 0]);\\nconst originalArea = new Text({ text: 'Original area: 1', fontSize: 21, color: GRAY });\\noriginalArea.moveTo([4.5, 0.85, 0]);\\nscene.add(determinant, originalArea);\\n\\nconst firstCaption = new Text({ text: '(1, 0) becomes (2, 0)', fontSize: 21, color: BLUE });\\nfirstCaption.moveTo([-2.5, -3.05, 0]);\\nconst secondCaption = new Text({ text: '(0, 1) becomes (1, 1)', fontSize: 21, color: ORANGE });\\nsecondCaption.moveTo([2.1, -3.05, 0]);\\nscene.add(firstCaption, secondCaption);\\n\\nawait scene.wait(0.6);\\nawait scene.play(progress.animateTo(1));\\n\\nlet areaLabel;\\nfunction refreshAreaLabel() {\\n  if (areaLabel) scene.remove(areaLabel);\\n  areaLabel = new Text({ text: 'Current area: ' + (1 + progress.getValue()).toFixed(2), fontSize: 21, color: GOLD });\\n  areaLabel.moveTo([4.5, 0.25, 0]);\\n  scene.add(areaLabel);\\n}\\nrefreshAreaLabel();\\nmakeHoverable(movingSquare, scene, { hoverScale: 1, hoverOpacity: 0.55 });\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\\ncontrols.addSlider({ label: 'Transformation progress', min: 0, max: 1, value: 1, step: 0.01, onChange: (value) => {\\n  progress.setValue(value);\\n  refreshAreaLabel();\\n} });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The matrix sends each point (x, y) to (2x + y, y): it stretches horizontally and adds a shear, while leaving height unchanged. The unit square becomes a parallelogram with area 2, illustrating that det(A) = 2 is the area multiplier for every region in the plane. Move the slider to watch the transformation unfold; the positive determinant means orientation is preserved."
+      },
+      "code": "const title = new Text({ text: 'How a matrix reshapes the plane', fontSize: 30, color: WHITE });\ntitle.moveTo([0, 3.3, 0]);\nconst formula = new MathTex({ latex: 'A=\\\\begin{pmatrix}2&1\\\\\\\\0&1\\\\end{pmatrix},\\\\qquad (x,y)\\\\mapsto(2x+y,y)' });\nawait formula.waitForRender();\nformula.scale(0.75).moveTo([0, 2.6, 0]);\nscene.add(title, formula);\n\nconst ax = new Axes({ xRange: [-4, 4, 1], yRange: [-2.3, 2.3, 1], xLength: 8, yLength: 4.6, tips: false });\nax.moveTo([-1, -0.35, 0]);\nscene.add(ax);\n\nconst progress = new ValueTracker(0);\nfunction mappedPoint(x, y) {\n  const amount = progress.getValue();\n  return ax.coordsToPoint((1 + amount) * x + amount * y, y);\n}\n\nconst gridSegments = [];\nfunction addGridSegment(first, second) {\n  const segment = new Polygon({ vertices: [mappedPoint(...first), mappedPoint(...second)], color: BLUE_E });\n  segment.setFillOpacity(0);\n  segment.setStrokeWidth(1);\n  gridSegments.push({ segment, first, second });\n  scene.add(segment);\n}\nfor (let k = -3; k <= 3; k++) {\n  const x = k / 2;\n  addGridSegment([x, -1], [x, 1]);\n}\nfor (let k = -2; k <= 2; k++) {\n  const y = k / 2;\n  addGridSegment([-1.5, y], [1.5, y]);\n}\n\nconst corners = [[0, 0], [1, 0], [1, 1], [0, 1]];\nconst originalSquare = new Polygon({ vertices: corners.map(([x, y]) => ax.coordsToPoint(x, y)), color: GRAY });\noriginalSquare.setFill(GRAY, 0.08);\noriginalSquare.setStrokeWidth(2);\nconst movingSquare = new Polygon({ vertices: corners.map(([x, y]) => mappedPoint(x, y)), color: GOLD });\nmovingSquare.setFill(GOLD, 0.3);\nmovingSquare.setStrokeWidth(3);\n\nconst firstVector = new Polygon({ vertices: [mappedPoint(0, 0), mappedPoint(1, 0)], color: BLUE });\nconst secondVector = new Polygon({ vertices: [mappedPoint(0, 0), mappedPoint(0, 1)], color: ORANGE });\nfirstVector.setFillOpacity(0);\nsecondVector.setFillOpacity(0);\nfirstVector.setStrokeWidth(5);\nsecondVector.setStrokeWidth(5);\nconst firstTip = new Dot({ point: mappedPoint(1, 0), color: BLUE });\nconst secondTip = new Dot({ point: mappedPoint(0, 1), color: ORANGE });\nscene.add(originalSquare, movingSquare, firstVector, secondVector, firstTip, secondTip);\n\nmovingSquare.addUpdater(() => {\n  movingSquare.setVertices(corners.map(([x, y]) => mappedPoint(x, y)));\n  for (const entry of gridSegments) {\n    entry.segment.setVertices([mappedPoint(...entry.first), mappedPoint(...entry.second)]);\n  }\n  firstVector.setVertices([mappedPoint(0, 0), mappedPoint(1, 0)]);\n  secondVector.setVertices([mappedPoint(0, 0), mappedPoint(0, 1)]);\n  firstTip.moveTo(mappedPoint(1, 0));\n  secondTip.moveTo(mappedPoint(0, 1));\n});\n\nconst determinant = new MathTex({ latex: '\\\\det A=2\\\\cdot1-1\\\\cdot0=2' });\nawait determinant.waitForRender();\ndeterminant.scale(0.6).moveTo([4.5, 1.5, 0]);\nconst originalArea = new Text({ text: 'Original area: 1', fontSize: 21, color: GRAY });\noriginalArea.moveTo([4.5, 0.85, 0]);\nscene.add(determinant, originalArea);\n\nconst firstCaption = new Text({ text: '(1, 0) becomes (2, 0)', fontSize: 21, color: BLUE });\nfirstCaption.moveTo([-2.5, -3.05, 0]);\nconst secondCaption = new Text({ text: '(0, 1) becomes (1, 1)', fontSize: 21, color: ORANGE });\nsecondCaption.moveTo([2.1, -3.05, 0]);\nscene.add(firstCaption, secondCaption);\n\nawait scene.wait(0.6);\nawait scene.play(progress.animateTo(1));\n\nlet areaLabel;\nfunction refreshAreaLabel() {\n  if (areaLabel) scene.remove(areaLabel);\n  areaLabel = new Text({ text: 'Current area: ' + (1 + progress.getValue()).toFixed(2), fontSize: 21, color: GOLD });\n  areaLabel.moveTo([4.5, 0.25, 0]);\n  scene.add(areaLabel);\n}\nrefreshAreaLabel();\nmakeHoverable(movingSquare, scene, { hoverScale: 1, hoverOpacity: 0.55 });\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\ncontrols.addSlider({ label: 'Transformation progress', min: 0, max: 1, value: 1, step: 0.01, onChange: (value) => {\n  progress.setValue(value);\n  refreshAreaLabel();\n} });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5752,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/calc-matrix-transform.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/calc-matrix-transform.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:26.157Z"
+}

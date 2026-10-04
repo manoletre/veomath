@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-phone-plans",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.51% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.44% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 33235,
+        "inputTokens": 11763,
+        "cachedInputTokens": 0,
+        "outputTokens": 1288,
+        "costUsd": 0.038982,
+        "rawResponse": "{\"explanation\":\"Set the plans equal: \\\\(20+0.10m=35+0.05m\\\\). Solving gives \\\\(0.05m=15\\\\), so \\\\(m=300\\\\) minutes; both plans then cost \\\\($50\\\\). Use the slider to compare the plans at different minute totals.\",\"manimCode\":\"const title = new Text({ text: 'Comparing Phone Plans', color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.35, 0]);\\n\\nconst ax = new Axes({\\n  xRange: [0, 500, 100],\\n  yRange: [0, 75, 25],\\n  xLength: 9.5,\\n  yLength: 4.6,\\n  tips: true\\n});\\nax.moveTo([0, -0.35, 0]);\\n\\nconst curveA = ax.plot(x => 20 + 0.10 * x, { color: BLUE, xRange: [0, 500] });\\nconst curveB = ax.plot(x => 35 + 0.05 * x, { color: ORANGE, xRange: [0, 500] });\\n\\nconst xLabel = new Text({ text: 'minutes used', color: GRAY, fontSize: 20 });\\nxLabel.moveTo([4.3, -3.1, 0]);\\nconst yLabel = new Text({ text: 'cost ($)', color: GRAY, fontSize: 20 });\\nyLabel.moveTo([-5.45, 2.25, 0]);\\n\\nconst legendA = new Text({ text: 'Plan A: $20 + $0.10/min', color: BLUE, fontSize: 20 });\\nlegendA.moveTo([-3.8, 2.85, 0]);\\nconst legendB = new Text({ text: 'Plan B: $35 + $0.05/min', color: ORANGE, fontSize: 20 });\\nlegendB.moveTo([2.55, 2.85, 0]);\\n\\nconst crossDot = new Dot({ point: ax.c2p(300, 50), color: YELLOW });\\nconst crossLabel = new Text({ text: '300 min, $50', color: YELLOW, fontSize: 21 });\\ncrossLabel.moveTo([1.25, 0.7, 0]);\\n\\nlet minutes = 300;\\nconst guide = new Polygon({\\n  vertices: [ax.c2p(minutes, 0), ax.c2p(minutes, 75)],\\n  color: GRAY\\n});\\nguide.setStrokeWidth(2).setFillOpacity(0);\\nconst dotA = new Dot({ point: ax.c2p(minutes, 20 + 0.10 * minutes), color: BLUE });\\nconst dotB = new Dot({ point: ax.c2p(minutes, 35 + 0.05 * minutes), color: ORANGE });\\n\\nguide.addUpdater(g => g.setVertices([ax.c2p(minutes, 0), ax.c2p(minutes, 75)]));\\ndotA.addUpdater(d => d.moveTo(ax.c2p(minutes, 20 + 0.10 * minutes)));\\ndotB.addUpdater(d => d.moveTo(ax.c2p(minutes, 35 + 0.05 * minutes)));\\n\\nconst equation = new MathTex({ latex: '20+0.10m=35+0.05m\\\\\\\\quad\\\\\\\\Rightarrow\\\\\\\\quad m=300' });\\nawait equation.waitForRender();\\nequation.moveTo([0, -3.45, 0]);\\nequation.setColor(YELLOW);\\n\\nscene.add(title, ax, xLabel, yLabel, curveA, curveB, legendA, legendB, guide, dotA, dotB, crossDot, crossLabel, equation);\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 260 });\\ncontrols.addSlider({\\n  label: 'Minutes', min: 0, max: 500, value: 300, step: 10,\\n  onChange: v => { minutes = v; }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Set the plans equal: \\(20+0.10m=35+0.05m\\). Solving gives \\(0.05m=15\\), so \\(m=300\\) minutes; both plans then cost \\($50\\). Use the slider to compare the plans at different minute totals."
+      },
+      "code": "const title = new Text({ text: 'Comparing Phone Plans', color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.35, 0]);\n\nconst ax = new Axes({\n  xRange: [0, 500, 100],\n  yRange: [0, 75, 25],\n  xLength: 9.5,\n  yLength: 4.6,\n  tips: true\n});\nax.moveTo([0, -0.35, 0]);\n\nconst curveA = ax.plot(x => 20 + 0.10 * x, { color: BLUE, xRange: [0, 500] });\nconst curveB = ax.plot(x => 35 + 0.05 * x, { color: ORANGE, xRange: [0, 500] });\n\nconst xLabel = new Text({ text: 'minutes used', color: GRAY, fontSize: 20 });\nxLabel.moveTo([4.3, -3.1, 0]);\nconst yLabel = new Text({ text: 'cost ($)', color: GRAY, fontSize: 20 });\nyLabel.moveTo([-5.45, 2.25, 0]);\n\nconst legendA = new Text({ text: 'Plan A: $20 + $0.10/min', color: BLUE, fontSize: 20 });\nlegendA.moveTo([-3.8, 2.85, 0]);\nconst legendB = new Text({ text: 'Plan B: $35 + $0.05/min', color: ORANGE, fontSize: 20 });\nlegendB.moveTo([2.55, 2.85, 0]);\n\nconst crossDot = new Dot({ point: ax.c2p(300, 50), color: YELLOW });\nconst crossLabel = new Text({ text: '300 min, $50', color: YELLOW, fontSize: 21 });\ncrossLabel.moveTo([1.25, 0.7, 0]);\n\nlet minutes = 300;\nconst guide = new Polygon({\n  vertices: [ax.c2p(minutes, 0), ax.c2p(minutes, 75)],\n  color: GRAY\n});\nguide.setStrokeWidth(2).setFillOpacity(0);\nconst dotA = new Dot({ point: ax.c2p(minutes, 20 + 0.10 * minutes), color: BLUE });\nconst dotB = new Dot({ point: ax.c2p(minutes, 35 + 0.05 * minutes), color: ORANGE });\n\nguide.addUpdater(g => g.setVertices([ax.c2p(minutes, 0), ax.c2p(minutes, 75)]));\ndotA.addUpdater(d => d.moveTo(ax.c2p(minutes, 20 + 0.10 * minutes)));\ndotB.addUpdater(d => d.moveTo(ax.c2p(minutes, 35 + 0.05 * minutes)));\n\nconst equation = new MathTex({ latex: '20+0.10m=35+0.05m\\\\quad\\\\Rightarrow\\\\quad m=300' });\nawait equation.waitForRender();\nequation.moveTo([0, -3.45, 0]);\nequation.setColor(YELLOW);\n\nscene.add(title, ax, xLabel, yLabel, curveA, curveB, legendA, legendB, guide, dotA, dotB, crossDot, crossLabel, equation);\n\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 260 });\ncontrols.addSlider({\n  label: 'Minutes', min: 0, max: 500, value: 300, step: 10,\n  onChange: v => { minutes = v; }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3487,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/alg-phone-plans.0.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/alg-phone-plans.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:56:44.662Z"
+}

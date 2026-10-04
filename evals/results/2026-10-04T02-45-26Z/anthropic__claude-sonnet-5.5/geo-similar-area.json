@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-similar-area",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.27% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "8.42% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 8035,
+        "inputTokens": 7961,
+        "cachedInputTokens": 7476,
+        "outputTokens": 912,
+        "costUsd": 0.0125512,
+        "rawResponse": "{\"explanation\":\"Area is base times height divided by 2. Scaling by k multiplies the base by k and the height by k, so the area becomes (kb)(kh)/2 = k²·(bh/2). Another way to see it is to tile the scaled triangle with k² copies of the original. Drag the triangle's vertices and move the slider to see that the area ratio always equals k².\",\"manimCode\":\"const O = [-4.5, -2.5, 0];\\nlet k = 1;\\nconst base = [[0,0],[2,0],[0.7,1.5]];\\n\\nconst orig = new Polygon({ vertices: base.map(p => [O[0]+p[0], O[1]+p[1], 0]), color: BLUE });\\norig.setFill(BLUE, 0.4);\\n\\nconst scaled = new Polygon({ vertices: base.map(p => [O[0]+p[0]*k, O[1]+p[1]*k, 0]), color: YELLOW });\\nscaled.setFill(YELLOW, 0.25);\\n\\nscene.add(scaled, orig);\\n\\nconst title = new Text({ text: 'Scale by k  →  area scales by k²', color: WHITE, fontSize: 32 });\\ntitle.moveTo([0, 3.4, 0]);\\nscene.add(title);\\n\\nlet info = null;\\nfunction area(pts) {\\n  const [a,b,c] = pts;\\n  return Math.abs((b[0]-a[0])*(c[1]-a[1]-0) - (c[0]-a[0])*(b[1]-a[1])) / 2;\\n}\\nfunction refresh() {\\n  scaled.setVertices(base.map(p => [O[0]+p[0]*k, O[1]+p[1]*k, 0]));\\n  if (info) scene.remove(info);\\n  const a0 = area(base);\\n  const a1 = a0 * k * k;\\n  info = new Text({\\n    text: 'k = ' + k.toFixed(1) + '   area: ' + a0.toFixed(2) + ' → ' + a1.toFixed(2) + '   ratio = ' + (a1/a0).toFixed(2) + ' = k² = ' + (k*k).toFixed(2),\\n    color: GREEN, fontSize: 24\\n  });\\n  info.moveTo([0, -3.4, 0]);\\n  scene.add(info);\\n}\\nrefresh();\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'k', min: 0.5, max: 3, value: 1, step: 0.1, onChange: (v) => { k = v; refresh(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Area is base times height divided by 2. Scaling by k multiplies the base by k and the height by k, so the area becomes (kb)(kh)/2 = k²·(bh/2). Another way to see it is to tile the scaled triangle with k² copies of the original. Drag the triangle's vertices and move the slider to see that the area ratio always equals k²."
+      },
+      "code": "const O = [-4.5, -2.5, 0];\nlet k = 1;\nconst base = [[0,0],[2,0],[0.7,1.5]];\n\nconst orig = new Polygon({ vertices: base.map(p => [O[0]+p[0], O[1]+p[1], 0]), color: BLUE });\norig.setFill(BLUE, 0.4);\n\nconst scaled = new Polygon({ vertices: base.map(p => [O[0]+p[0]*k, O[1]+p[1]*k, 0]), color: YELLOW });\nscaled.setFill(YELLOW, 0.25);\n\nscene.add(scaled, orig);\n\nconst title = new Text({ text: 'Scale by k  →  area scales by k²', color: WHITE, fontSize: 32 });\ntitle.moveTo([0, 3.4, 0]);\nscene.add(title);\n\nlet info = null;\nfunction area(pts) {\n  const [a,b,c] = pts;\n  return Math.abs((b[0]-a[0])*(c[1]-a[1]-0) - (c[0]-a[0])*(b[1]-a[1])) / 2;\n}\nfunction refresh() {\n  scaled.setVertices(base.map(p => [O[0]+p[0]*k, O[1]+p[1]*k, 0]));\n  if (info) scene.remove(info);\n  const a0 = area(base);\n  const a1 = a0 * k * k;\n  info = new Text({\n    text: 'k = ' + k.toFixed(1) + '   area: ' + a0.toFixed(2) + ' → ' + a1.toFixed(2) + '   ratio = ' + (a1/a0).toFixed(2) + ' = k² = ' + (k*k).toFixed(2),\n    color: GREEN, fontSize: 24\n  });\n  info.moveTo([0, -3.4, 0]);\n  scene.add(info);\n}\nrefresh();\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'k', min: 0.5, max: 3, value: 1, step: 0.1, onChange: (v) => { k = v; refresh(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3208,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/geo-similar-area.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/geo-similar-area.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:34:22.752Z"
+}

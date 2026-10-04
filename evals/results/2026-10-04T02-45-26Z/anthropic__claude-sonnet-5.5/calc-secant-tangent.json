@@ -1,0 +1,80 @@
+{
+  "itemId": "calc-secant-tangent",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.39% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "FunctionGraph [x -4.00..4.00, y -1.50..4.75] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.31% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 9494,
+        "inputTokens": 7959,
+        "cachedInputTokens": 7476,
+        "outputTokens": 1279,
+        "costUsd": 0.0162132,
+        "rawResponse": "{\"explanation\":\"The secant line through (a, f(a)) and (a+h, f(a+h)) has slope [f(a+h) − f(a)]/h. As you shrink h toward 0, the second point slides along the curve toward the first, and the secant rotates into the tangent line, whose slope is the derivative f'(a). Drag the slider to change h and watch the slopes converge.\",\"manimCode\":\"const axes = new Axes({ xRange: [-1, 5, 1], yRange: [-1, 5, 1], xLength: 8, yLength: 6, tips: false });\\nconst f = x => 0.25 * x * x + 0.5;\\nconst fp = x => 0.5 * x;\\nconst a = 1.5;\\nconst curve = axes.plot(f, { color: BLUE });\\nscene.add(axes, curve);\\n\\nconst P = new Dot({ point: axes.c2p(a, f(a)), color: YELLOW });\\nscene.add(P);\\n\\nlet h = 2.5;\\nlet secant = null;\\nlet Q = null;\\nlet label = null;\\n\\nfunction lineThrough(m) {\\n  const x0 = -0.8, x1 = 5;\\n  const y0 = f(a) + m * (x0 - a);\\n  const y1 = f(a) + m * (x1 - a);\\n  const clamp = (x, y) => {\\n    return [x, y];\\n  };\\n  // clip to y range [-1,5]\\n  let xs = x0, xe = x1;\\n  if (Math.abs(m) > 1e-9) {\\n    const xa = a + (-1 - f(a)) / m;\\n    const xb = a + (5 - f(a)) / m;\\n    const lo = Math.min(xa, xb), hi = Math.max(xa, xb);\\n    xs = Math.max(x0, lo);\\n    xe = Math.min(x1, hi);\\n  }\\n  const ys = f(a) + m * (xs - a);\\n  const ye = f(a) + m * (xe - a);\\n  return [axes.c2p(xs, ys), axes.c2p(xe, ye)];\\n}\\n\\nconst tangent = new Polygon({ vertices: lineThrough(fp(a)), color: GREEN });\\ntangent.setStrokeWidth(2).setFillOpacity(0);\\nscene.add(tangent);\\n\\nfunction update() {\\n  if (secant) scene.remove(secant);\\n  if (Q) scene.remove(Q);\\n  if (label) scene.remove(label);\\n  const m = (f(a + h) - f(a)) / h;\\n  const pts = lineThrough(m);\\n  secant = new Polygon({ vertices: pts, color: RED });\\n  secant.setStrokeWidth(3).setFillOpacity(0);\\n  Q = new Dot({ point: axes.c2p(a + h, f(a + h)), color: ORANGE });\\n  label = new Text({ text: 'h = ' + h.toFixed(2) + '   secant slope = ' + m.toFixed(3) + '   f\\\\'(a) = ' + fp(a).toFixed(3), color: WHITE, fontSize: 24 });\\n  label.moveTo([0, 3.6, 0]);\\n  scene.add(secant, Q, P, label);\\n}\\nupdate();\\n\\nconst controls = new Controls(scene, { position: 'bottom-right' });\\ncontrols.addSlider({ label: 'h', min: 0.01, max: 3, value: 2.5, step: 0.01, onChange: (v) => { h = v; update(); } });\\ncontrols.addButton({ label: 'Animate h → 0', onClick: async () => {\\n  while (h > 0.02) {\\n    h = Math.max(0.01, h * 0.97);\\n    update();\\n    await scene.wait(0.03);\\n  }\\n} });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The secant line through (a, f(a)) and (a+h, f(a+h)) has slope [f(a+h) − f(a)]/h. As you shrink h toward 0, the second point slides along the curve toward the first, and the secant rotates into the tangent line, whose slope is the derivative f'(a). Drag the slider to change h and watch the slopes converge."
+      },
+      "code": "const axes = new Axes({ xRange: [-1, 5, 1], yRange: [-1, 5, 1], xLength: 8, yLength: 6, tips: false });\nconst f = x => 0.25 * x * x + 0.5;\nconst fp = x => 0.5 * x;\nconst a = 1.5;\nconst curve = axes.plot(f, { color: BLUE });\nscene.add(axes, curve);\n\nconst P = new Dot({ point: axes.c2p(a, f(a)), color: YELLOW });\nscene.add(P);\n\nlet h = 2.5;\nlet secant = null;\nlet Q = null;\nlet label = null;\n\nfunction lineThrough(m) {\n  const x0 = -0.8, x1 = 5;\n  const y0 = f(a) + m * (x0 - a);\n  const y1 = f(a) + m * (x1 - a);\n  const clamp = (x, y) => {\n    return [x, y];\n  };\n  // clip to y range [-1,5]\n  let xs = x0, xe = x1;\n  if (Math.abs(m) > 1e-9) {\n    const xa = a + (-1 - f(a)) / m;\n    const xb = a + (5 - f(a)) / m;\n    const lo = Math.min(xa, xb), hi = Math.max(xa, xb);\n    xs = Math.max(x0, lo);\n    xe = Math.min(x1, hi);\n  }\n  const ys = f(a) + m * (xs - a);\n  const ye = f(a) + m * (xe - a);\n  return [axes.c2p(xs, ys), axes.c2p(xe, ye)];\n}\n\nconst tangent = new Polygon({ vertices: lineThrough(fp(a)), color: GREEN });\ntangent.setStrokeWidth(2).setFillOpacity(0);\nscene.add(tangent);\n\nfunction update() {\n  if (secant) scene.remove(secant);\n  if (Q) scene.remove(Q);\n  if (label) scene.remove(label);\n  const m = (f(a + h) - f(a)) / h;\n  const pts = lineThrough(m);\n  secant = new Polygon({ vertices: pts, color: RED });\n  secant.setStrokeWidth(3).setFillOpacity(0);\n  Q = new Dot({ point: axes.c2p(a + h, f(a + h)), color: ORANGE });\n  label = new Text({ text: 'h = ' + h.toFixed(2) + '   secant slope = ' + m.toFixed(3) + '   f\\'(a) = ' + fp(a).toFixed(3), color: WHITE, fontSize: 24 });\n  label.moveTo([0, 3.6, 0]);\n  scene.add(secant, Q, P, label);\n}\nupdate();\n\nconst controls = new Controls(scene, { position: 'bottom-right' });\ncontrols.addSlider({ label: 'h', min: 0.01, max: 3, value: 2.5, step: 0.01, onChange: (v) => { h = v; update(); } });\ncontrols.addButton({ label: 'Animate h → 0', onClick: async () => {\n  while (h > 0.02) {\n    h = Math.max(0.01, h * 0.97);\n    update();\n    await scene.wait(0.03);\n  }\n} });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4807,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/calc-secant-tangent.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/calc-secant-tangent.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:35:18.197Z"
+}

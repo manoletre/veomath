@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-cone-cylinder",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "8.89% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.76% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 64201,
+        "inputTokens": 5052,
+        "cachedInputTokens": 4992,
+        "outputTokens": 4573,
+        "costUsd": 0.0290556,
+        "rawResponse": "{\n  \"explanation\": \"A cone and a cylinder with the same base radius R and height H have cross-sectional areas that behave very differently. The cylinder’s slice is always πR², while the cone’s radius shrinks linearly from the base, so its slice area shrinks as the square of the remaining height. Integrating those areas from base to tip gives V_cone = ∫ πR²(h/H)² dh = (1/3)πR²H — exactly one-third the cylinder’s volume.\",\n  \"manimCode\": \"const title = new MathTex({ latex: 'V_{\\\\\\\\text{cone}} = \\\\\\\\tfrac{1}{3} V_{\\\\\\\\text{cylinder}}' });\\nawait title.waitForRender();\\ntitle.moveTo([0, 3.5, 0]);\\ntitle.scale(0.85);\\nscene.add(title);\\n\\nconst H = 3.2;\\nconst R = 1.1;\\nconst baseY = -2.4;\\n\\n// --- Cylinder (left) ---\\nconst cylX = -4.2;\\nconst cyl = new Rectangle({ width: 2 * R, height: H, color: BLUE });\\ncyl.moveTo([cylX, baseY + H / 2, 0]);\\ncyl.setFill(BLUE, 0.15).setStrokeWidth(2);\\nscene.add(cyl);\\n\\nconst cylTop = new Polygon({\\n  vertices: [[cylX - R, baseY + H, 0], [cylX + R, baseY + H, 0]],\\n  color: BLUE\\n});\\ncylTop.setStrokeWidth(2).setFillOpacity(0);\\nscene.add(cylTop);\\n\\nconst cylLabel = new Text({ text: 'Cylinder', color: BLUE, fontSize: 22 });\\ncylLabel.moveTo([cylX, baseY - 0.45, 0]);\\nscene.add(cylLabel);\\n\\n// --- Cone (middle) ---\\nconst coneX = -1.2;\\nconst cone = new Polygon({\\n  vertices: [\\n    [coneX - R, baseY, 0],\\n    [coneX + R, baseY, 0],\\n    [coneX, baseY + H, 0]\\n  ],\\n  color: ORANGE\\n});\\ncone.setFill(ORANGE, 0.15).setStrokeWidth(2);\\nscene.add(cone);\\n\\nconst coneLabel = new Text({ text: 'Cone', color: ORANGE, fontSize: 22 });\\nconeLabel.moveTo([coneX, baseY - 0.45, 0]);\\nscene.add(coneLabel);\\n\\n// Shared base & height markers\\nconst baseLine = new Line({ start: [cylX - R - 0.15, baseY, 0], end: [coneX + R + 0.15, baseY, 0], color: GRAY });\\nbaseLine.setStrokeWidth(1);\\nscene.add(baseLine);\\n\\nconst hBrace = new Line({ start: [coneX + R + 0.35, baseY, 0], end: [coneX + R + 0.35, baseY + H, 0], color: GRAY });\\nhBrace.setStrokeWidth(1.5);\\nscene.add(hBrace);\\nconst hLabel = new MathTex({ latex: 'H' });\\nawait hLabel.waitForRender();\\nhLabel.scale(0.55);\\nhLabel.nextTo(hBrace, RIGHT);\\nhLabel.shift(scaleVec(0.1, LEFT));\\nscene.add(hLabel);\\n\\n// --- Cross-section area graph (right) ---\\nconst ax = new Axes({\\n  xRange: [0, 1, 0.25],\\n  yRange: [0, 1.15, 0.25],\\n  xLength: 4.2,\\n  yLength: 3.4,\\n  tips: false\\n});\\nax.moveTo([3.3, 0.1, 0]);\\nscene.add(ax);\\n\\nconst xLbl = new Text({ text: 'height fraction t', color: GRAY, fontSize: 16 });\\nxLbl.moveTo([3.3, -2.0, 0]);\\nscene.add(xLbl);\\nconst yLbl = new Text({ text: 'A / (πR²)', color: GRAY, fontSize: 16 });\\nyLbl.moveTo([0.7, 0.1, 0]);\\nscene.add(yLbl);\\n\\n// Cylinder area = 1 (flat)\\nconst cylGraph = ax.plot(() => 1, { color: BLUE, xRange: [0, 1] });\\ncylGraph.setStrokeWidth(3);\\nscene.add(cylGraph);\\n\\n// Cone area = t²  (t = 0 at apex, t = 1 at base)\\nconst coneGraph = ax.plot(t => t * t, { color: ORANGE, xRange: [0, 1], numSamples: 80 });\\nconeGraph.setStrokeWidth(3);\\nscene.add(coneGraph);\\n\\n// Shaded region under cone curve (full integral = 1/3)\\nconst shade = ax.getArea(coneGraph, [0, 1], { color: ORANGE, opacity: 0.25 });\\nscene.add(shade);\\n\\nconst thirdLabel = new MathTex({ latex: '\\\\\\\\int_0^1 t^2\\\\\\\\,dt = \\\\\\\\tfrac{1}{3}' });\\nawait thirdLabel.waitForRender();\\nthirdLabel.scale(0.5);\\nthirdLabel.moveTo([3.3, 2.55, 0]);\\nscene.add(thirdLabel);\\n\\n// --- Interactive slice ---\\nlet t = 0.65; // fraction from apex (0=apex, 1=base)\\n\\n// Horizontal slice lines on the solids\\nfunction sliceY(tt) {\\n  return baseY + H * (1 - tt); // apex at top\\n}\\nfunction coneR(tt) {\\n  return R * tt;\\n}\\n\\nlet sliceCyl = new Polygon({\\n  vertices: [[cylX - R, sliceY(t), 0], [cylX + R, sliceY(t), 0]],\\n  color: YELLOW\\n});\\nsliceCyl.setStrokeWidth(3).setFillOpacity(0);\\nscene.add(sliceCyl);\\n\\nlet sliceCone = new Polygon({\\n  vertices: [[coneX - coneR(t), sliceY(t), 0], [coneX + coneR(t), sliceY(t), 0]],\\n  color: YELLOW\\n});\\nsliceCone.setStrokeWidth(3).setFillOpacity(0);\\nscene.add(sliceCone);\\n\\n// Tiny cross-section \\\"disks\\\" (ellipses approximated as flattened circles via polygons)\\nfunction makeDisk(cx, cy, rx, color) {\\n  const n = 24;\\n  const verts = [];\\n  for (let i = 0; i < n; i++) {\\n    const a = (i / n) * Math.PI * 2;\\n    verts.push([cx + rx * Math.cos(a), cy + rx * 0.28 * Math.sin(a), 0]);\\n  }\\n  const p = new Polygon({ vertices: verts, color });\\n  p.setFill(color, 0.45).setStrokeWidth(1.5);\\n  return p;\\n}\\n\\nlet diskCyl = makeDisk(cylX, sliceY(t), R, BLUE);\\nlet diskCone = makeDisk(coneX, sliceY(t), coneR(t), ORANGE);\\nscene.add(diskCyl, diskCone);\\n\\n// Marker on the graph\\nlet graphDotCyl = new Dot({ point: ax.c2p(t, 1), color: BLUE });\\nlet graphDotCone = new Dot({ point: ax.c2p(t, t * t), color: ORANGE });\\nscene.add(graphDotCyl, graphDotCone);\\n\\nlet areaReadout = new Text({\\n  text: 'A_cone / A_cyl = ' + (t * t).toFixed(2),\\n  color: WHITE,\\n  fontSize: 20\\n});\\nareaReadout.moveTo([3.3, -2.55, 0]);\\nscene.add(areaReadout);\\n\\nfunction refresh(tt) {\\n  t = tt;\\n  const y = sliceY(t);\\n  const cr = coneR(t);\\n\\n  sliceCyl.setVertices([[cylX - R, y, 0], [cylX + R, y, 0]]);\\n  sliceCone.setVertices([[coneX - cr, y, 0], [coneX + cr, y, 0]]);\\n\\n  scene.remove(diskCyl);\\n  scene.remove(diskCone);\\n  diskCyl = makeDisk(cylX, y, R, BLUE);\\n  diskCone = makeDisk(coneX, y, cr, ORANGE);\\n  scene.add(diskCyl, diskCone);\\n\\n  graphDotCyl.moveTo(ax.c2p(t, 1));\\n  graphDotCone.moveTo(ax.c2p(t, t * t));\\n\\n  const pos = areaReadout.getCenter();\\n  scene.remove(areaReadout);\\n  areaReadout = new Text({\\n    text: 'A_cone / A_cyl = ' + (t * t).toFixed(2) + '  (= t²)',\\n    color: WHITE,\\n    fontSize: 20\\n  });\\n  areaReadout.moveTo(pos);\\n  scene.add(areaReadout);\\n}\\n\\n// Legend\\nconst legCyl = new Text({ text: '— cylinder (constant)', color: BLUE, fontSize: 16 });\\nlegCyl.moveTo([-4.2, 3.0, 0]);\\nscene.add(legCyl);\\nconst legCone = new Text({ text: '— cone (∝ t²)', color: ORANGE, fontSize: 16 });\\nlegCone.moveTo([-1.2, 3.0, 0]);\\nscene.add(legCone);\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\\ncontrols.addSlider({\\n  label: 'Slice t (0=apex → 1=base)',\\n  min: 0.02,\\n  max: 1,\\n  value: t,\\n  step: 0.01,\\n  onChange: (v) => refresh(v)\\n});\\ncontrols.addButton({\\n  label: 'Reset',\\n  onClick: () => refresh(0.65)\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "A cone and a cylinder with the same base radius R and height H have cross-sectional areas that behave very differently. The cylinder’s slice is always πR², while the cone’s radius shrinks linearly from the base, so its slice area shrinks as the square of the remaining height. Integrating those areas from base to tip gives V_cone = ∫ πR²(h/H)² dh = (1/3)πR²H — exactly one-third the cylinder’s volume."
+      },
+      "code": "const title = new MathTex({ latex: 'V_{\\\\text{cone}} = \\\\tfrac{1}{3} V_{\\\\text{cylinder}}' });\nawait title.waitForRender();\ntitle.moveTo([0, 3.5, 0]);\ntitle.scale(0.85);\nscene.add(title);\n\nconst H = 3.2;\nconst R = 1.1;\nconst baseY = -2.4;\n\n// --- Cylinder (left) ---\nconst cylX = -4.2;\nconst cyl = new Rectangle({ width: 2 * R, height: H, color: BLUE });\ncyl.moveTo([cylX, baseY + H / 2, 0]);\ncyl.setFill(BLUE, 0.15).setStrokeWidth(2);\nscene.add(cyl);\n\nconst cylTop = new Polygon({\n  vertices: [[cylX - R, baseY + H, 0], [cylX + R, baseY + H, 0]],\n  color: BLUE\n});\ncylTop.setStrokeWidth(2).setFillOpacity(0);\nscene.add(cylTop);\n\nconst cylLabel = new Text({ text: 'Cylinder', color: BLUE, fontSize: 22 });\ncylLabel.moveTo([cylX, baseY - 0.45, 0]);\nscene.add(cylLabel);\n\n// --- Cone (middle) ---\nconst coneX = -1.2;\nconst cone = new Polygon({\n  vertices: [\n    [coneX - R, baseY, 0],\n    [coneX + R, baseY, 0],\n    [coneX, baseY + H, 0]\n  ],\n  color: ORANGE\n});\ncone.setFill(ORANGE, 0.15).setStrokeWidth(2);\nscene.add(cone);\n\nconst coneLabel = new Text({ text: 'Cone', color: ORANGE, fontSize: 22 });\nconeLabel.moveTo([coneX, baseY - 0.45, 0]);\nscene.add(coneLabel);\n\n// Shared base & height markers\nconst baseLine = new Line({ start: [cylX - R - 0.15, baseY, 0], end: [coneX + R + 0.15, baseY, 0], color: GRAY });\nbaseLine.setStrokeWidth(1);\nscene.add(baseLine);\n\nconst hBrace = new Line({ start: [coneX + R + 0.35, baseY, 0], end: [coneX + R + 0.35, baseY + H, 0], color: GRAY });\nhBrace.setStrokeWidth(1.5);\nscene.add(hBrace);\nconst hLabel = new MathTex({ latex: 'H' });\nawait hLabel.waitForRender();\nhLabel.scale(0.55);\nhLabel.nextTo(hBrace, RIGHT);\nhLabel.shift(scaleVec(0.1, LEFT));\nscene.add(hLabel);\n\n// --- Cross-section area graph (right) ---\nconst ax = new Axes({\n  xRange: [0, 1, 0.25],\n  yRange: [0, 1.15, 0.25],\n  xLength: 4.2,\n  yLength: 3.4,\n  tips: false\n});\nax.moveTo([3.3, 0.1, 0]);\nscene.add(ax);\n\nconst xLbl = new Text({ text: 'height fraction t', color: GRAY, fontSize: 16 });\nxLbl.moveTo([3.3, -2.0, 0]);\nscene.add(xLbl);\nconst yLbl = new Text({ text: 'A / (πR²)', color: GRAY, fontSize: 16 });\nyLbl.moveTo([0.7, 0.1, 0]);\nscene.add(yLbl);\n\n// Cylinder area = 1 (flat)\nconst cylGraph = ax.plot(() => 1, { color: BLUE, xRange: [0, 1] });\ncylGraph.setStrokeWidth(3);\nscene.add(cylGraph);\n\n// Cone area = t²  (t = 0 at apex, t = 1 at base)\nconst coneGraph = ax.plot(t => t * t, { color: ORANGE, xRange: [0, 1], numSamples: 80 });\nconeGraph.setStrokeWidth(3);\nscene.add(coneGraph);\n\n// Shaded region under cone curve (full integral = 1/3)\nconst shade = ax.getArea(coneGraph, [0, 1], { color: ORANGE, opacity: 0.25 });\nscene.add(shade);\n\nconst thirdLabel = new MathTex({ latex: '\\\\int_0^1 t^2\\\\,dt = \\\\tfrac{1}{3}' });\nawait thirdLabel.waitForRender();\nthirdLabel.scale(0.5);\nthirdLabel.moveTo([3.3, 2.55, 0]);\nscene.add(thirdLabel);\n\n// --- Interactive slice ---\nlet t = 0.65; // fraction from apex (0=apex, 1=base)\n\n// Horizontal slice lines on the solids\nfunction sliceY(tt) {\n  return baseY + H * (1 - tt); // apex at top\n}\nfunction coneR(tt) {\n  return R * tt;\n}\n\nlet sliceCyl = new Polygon({\n  vertices: [[cylX - R, sliceY(t), 0], [cylX + R, sliceY(t), 0]],\n  color: YELLOW\n});\nsliceCyl.setStrokeWidth(3).setFillOpacity(0);\nscene.add(sliceCyl);\n\nlet sliceCone = new Polygon({\n  vertices: [[coneX - coneR(t), sliceY(t), 0], [coneX + coneR(t), sliceY(t), 0]],\n  color: YELLOW\n});\nsliceCone.setStrokeWidth(3).setFillOpacity(0);\nscene.add(sliceCone);\n\n// Tiny cross-section \"disks\" (ellipses approximated as flattened circles via polygons)\nfunction makeDisk(cx, cy, rx, color) {\n  const n = 24;\n  const verts = [];\n  for (let i = 0; i < n; i++) {\n    const a = (i / n) * Math.PI * 2;\n    verts.push([cx + rx * Math.cos(a), cy + rx * 0.28 * Math.sin(a), 0]);\n  }\n  const p = new Polygon({ vertices: verts, color });\n  p.setFill(color, 0.45).setStrokeWidth(1.5);\n  return p;\n}\n\nlet diskCyl = makeDisk(cylX, sliceY(t), R, BLUE);\nlet diskCone = makeDisk(coneX, sliceY(t), coneR(t), ORANGE);\nscene.add(diskCyl, diskCone);\n\n// Marker on the graph\nlet graphDotCyl = new Dot({ point: ax.c2p(t, 1), color: BLUE });\nlet graphDotCone = new Dot({ point: ax.c2p(t, t * t), color: ORANGE });\nscene.add(graphDotCyl, graphDotCone);\n\nlet areaReadout = new Text({\n  text: 'A_cone / A_cyl = ' + (t * t).toFixed(2),\n  color: WHITE,\n  fontSize: 20\n});\nareaReadout.moveTo([3.3, -2.55, 0]);\nscene.add(areaReadout);\n\nfunction refresh(tt) {\n  t = tt;\n  const y = sliceY(t);\n  const cr = coneR(t);\n\n  sliceCyl.setVertices([[cylX - R, y, 0], [cylX + R, y, 0]]);\n  sliceCone.setVertices([[coneX - cr, y, 0], [coneX + cr, y, 0]]);\n\n  scene.remove(diskCyl);\n  scene.remove(diskCone);\n  diskCyl = makeDisk(cylX, y, R, BLUE);\n  diskCone = makeDisk(coneX, y, cr, ORANGE);\n  scene.add(diskCyl, diskCone);\n\n  graphDotCyl.moveTo(ax.c2p(t, 1));\n  graphDotCone.moveTo(ax.c2p(t, t * t));\n\n  const pos = areaReadout.getCenter();\n  scene.remove(areaReadout);\n  areaReadout = new Text({\n    text: 'A_cone / A_cyl = ' + (t * t).toFixed(2) + '  (= t²)',\n    color: WHITE,\n    fontSize: 20\n  });\n  areaReadout.moveTo(pos);\n  scene.add(areaReadout);\n}\n\n// Legend\nconst legCyl = new Text({ text: '— cylinder (constant)', color: BLUE, fontSize: 16 });\nlegCyl.moveTo([-4.2, 3.0, 0]);\nscene.add(legCyl);\nconst legCone = new Text({ text: '— cone (∝ t²)', color: ORANGE, fontSize: 16 });\nlegCone.moveTo([-1.2, 3.0, 0]);\nscene.add(legCone);\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\ncontrols.addSlider({\n  label: 'Slice t (0=apex → 1=base)',\n  min: 0.02,\n  max: 1,\n  value: t,\n  step: 0.01,\n  onChange: (v) => refresh(v)\n});\ncontrols.addButton({\n  label: 'Reset',\n  onClick: () => refresh(0.65)\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4881,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/geo-cone-cylinder.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/geo-cone-cylinder.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:16.985Z"
+}

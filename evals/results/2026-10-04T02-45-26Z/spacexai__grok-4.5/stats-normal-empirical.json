@@ -1,0 +1,80 @@
+{
+  "itemId": "stats-normal-empirical",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "12.84% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "MathTex \"\\mu+3\\sigma\" is hidden under the controls panel (54%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=3"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "11.93% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 31137,
+        "inputTokens": 5048,
+        "cachedInputTokens": 128,
+        "outputTokens": 2731,
+        "costUsd": 0.0262644,
+        "rawResponse": "{\n  \"explanation\": \"The 68-95-99.7 rule (empirical rule) describes how data spreads in a normal distribution: roughly 68% of values lie within 1 standard deviation of the mean, 95% within 2σ, and 99.7% within 3σ. These nested bands are a quick way to reason about probability without integrating the density. Drag the mean or use the slider to explore how the shaded regions stay centered on μ.\",\n  \"manimCode\": \"const ax = new Axes({\\n  xRange: [-4, 4, 1],\\n  yRange: [0, 0.5, 0.1],\\n  xLength: 11,\\n  yLength: 4.2,\\n  tips: false\\n});\\nax.moveTo([0, -0.3, 0]);\\n\\nconst pdf = (x, mu, s) => (1 / (s * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * ((x - mu) / s) ** 2);\\n\\nlet mu = 0;\\nconst sigma = 1;\\n\\nlet curve = ax.plot(x => pdf(x, mu, sigma), { color: WHITE, xRange: [-4, 4], numSamples: 400 });\\n\\nfunction makeBand(lo, hi, color, opacity) {\\n  const area = ax.getArea(ax.plot(x => pdf(x, mu, sigma), { xRange: [lo, hi], numSamples: 200 }), [lo, hi], { color, opacity });\\n  return area;\\n}\\n\\nlet band3 = makeBand(mu - 3 * sigma, mu + 3 * sigma, BLUE_E, 0.25);\\nlet band2 = makeBand(mu - 2 * sigma, mu + 2 * sigma, BLUE_C, 0.35);\\nlet band1 = makeBand(mu - 1 * sigma, mu + 1 * sigma, BLUE_A, 0.5);\\n\\nfunction sigmaLine(k, col) {\\n  const x = mu + k * sigma;\\n  const top = pdf(x, mu, sigma);\\n  const line = new Line({\\n    start: ax.c2p(x, 0),\\n    end: ax.c2p(x, top + 0.02),\\n    color: col\\n  });\\n  line.setStrokeWidth(2);\\n  return line;\\n}\\n\\nlet lines = [];\\nfunction rebuildLines() {\\n  for (const L of lines) scene.remove(L);\\n  lines = [];\\n  const specs = [\\n    [-3, GRAY], [-2, TEAL], [-1, YELLOW],\\n    [0, WHITE],\\n    [1, YELLOW], [2, TEAL], [3, GRAY]\\n  ];\\n  for (const [k, col] of specs) {\\n    const L = sigmaLine(k, col);\\n    lines.push(L);\\n    scene.add(L);\\n  }\\n}\\n\\nconst title = new Text({ text: '68–95–99.7 Rule (Empirical Rule)', color: WHITE, fontSize: 32 });\\ntitle.moveTo([0, 3.4, 0]);\\n\\nlet pct68 = new Text({ text: '68% within 1σ', color: BLUE_A, fontSize: 22 });\\npct68.moveTo([-4.2, 2.6, 0]);\\nlet pct95 = new Text({ text: '95% within 2σ', color: BLUE_C, fontSize: 22 });\\npct95.moveTo([-4.2, 2.1, 0]);\\nlet pct997 = new Text({ text: '99.7% within 3σ', color: BLUE_E, fontSize: 22 });\\npct997.moveTo([-4.2, 1.6, 0]);\\n\\nfunction tickLabel(k, latex) {\\n  const t = new MathTex({ latex });\\n  return t;\\n}\\n\\nconst labM = new MathTex({ latex: '\\\\\\\\mu' });\\nawait labM.waitForRender();\\nlabM.scale(0.7);\\nlabM.moveTo(ax.c2p(mu, -0.06));\\n\\nconst labL1 = new MathTex({ latex: '\\\\\\\\mu-\\\\\\\\sigma' });\\nawait labL1.waitForRender();\\nlabL1.scale(0.55);\\nlabL1.moveTo(ax.c2p(mu - sigma, -0.06));\\n\\nconst labR1 = new MathTex({ latex: '\\\\\\\\mu+\\\\\\\\sigma' });\\nawait labR1.waitForRender();\\nlabR1.scale(0.55);\\nlabR1.moveTo(ax.c2p(mu + sigma, -0.06));\\n\\nconst labL2 = new MathTex({ latex: '\\\\\\\\mu-2\\\\\\\\sigma' });\\nawait labL2.waitForRender();\\nlabL2.scale(0.5);\\nlabL2.moveTo(ax.c2p(mu - 2 * sigma, -0.12));\\n\\nconst labR2 = new MathTex({ latex: '\\\\\\\\mu+2\\\\\\\\sigma' });\\nawait labR2.waitForRender();\\nlabR2.scale(0.5);\\nlabR2.moveTo(ax.c2p(mu + 2 * sigma, -0.12));\\n\\nconst labL3 = new MathTex({ latex: '\\\\\\\\mu-3\\\\\\\\sigma' });\\nawait labL3.waitForRender();\\nlabL3.scale(0.5);\\nlabL3.moveTo(ax.c2p(mu - 3 * sigma, -0.06));\\n\\nconst labR3 = new MathTex({ latex: '\\\\\\\\mu+3\\\\\\\\sigma' });\\nawait labR3.waitForRender();\\nlabR3.scale(0.5);\\nlabR3.moveTo(ax.c2p(mu + 3 * sigma, -0.06));\\n\\nconst meanDot = new Dot({ point: ax.c2p(mu, 0), color: YELLOW });\\nmeanDot.scale(1.2);\\n\\nscene.add(ax, band3, band2, band1, curve, title, pct68, pct95, pct997);\\nscene.add(labM, labL1, labR1, labL2, labR2, labL3, labR3, meanDot);\\nrebuildLines();\\n\\nfunction rebuildAll() {\\n  scene.remove(band3, band2, band1, curve);\\n  curve = ax.plot(x => pdf(x, mu, sigma), { color: WHITE, xRange: [-4, 4], numSamples: 400 });\\n  band3 = makeBand(mu - 3 * sigma, mu + 3 * sigma, BLUE_E, 0.25);\\n  band2 = makeBand(mu - 2 * sigma, mu + 2 * sigma, BLUE_C, 0.35);\\n  band1 = makeBand(mu - 1 * sigma, mu + 1 * sigma, BLUE_A, 0.5);\\n  scene.add(band3, band2, band1, curve);\\n  rebuildLines();\\n\\n  labM.moveTo(ax.c2p(mu, -0.06));\\n  labL1.moveTo(ax.c2p(mu - sigma, -0.06));\\n  labR1.moveTo(ax.c2p(mu + sigma, -0.06));\\n  labL2.moveTo(ax.c2p(mu - 2 * sigma, -0.12));\\n  labR2.moveTo(ax.c2p(mu + 2 * sigma, -0.12));\\n  labL3.moveTo(ax.c2p(mu - 3 * sigma, -0.06));\\n  labR3.moveTo(ax.c2p(mu + 3 * sigma, -0.06));\\n  meanDot.moveTo(ax.c2p(mu, 0));\\n\\n  // keep curve and labels on top\\n  scene.remove(curve, meanDot, labM, labL1, labR1, labL2, labR2, labL3, labR3);\\n  scene.add(curve, meanDot, labM, labL1, labR1, labL2, labR2, labL3, labR3);\\n  for (const L of lines) { scene.remove(L); scene.add(L); }\\n}\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\\ncontrols.addSlider({\\n  label: 'Mean (μ)',\\n  min: -1.5,\\n  max: 1.5,\\n  value: 0,\\n  step: 0.1,\\n  onChange: (v) => {\\n    mu = v;\\n    rebuildAll();\\n  }\\n});\\n\\ncontrols.addButton({\\n  label: 'Reset μ = 0',\\n  onClick: () => {\\n    mu = 0;\\n    rebuildAll();\\n  }\\n});\\n\\n// subtle legend bars\\nconst leg1 = new Rectangle({ width: 0.35, height: 0.2, color: BLUE_A });\\nleg1.setFill(BLUE_A, 0.8);\\nleg1.moveTo([-5.6, 2.6, 0]);\\nconst leg2 = new Rectangle({ width: 0.35, height: 0.2, color: BLUE_C });\\nleg2.setFill(BLUE_C, 0.8);\\nleg2.moveTo([-5.6, 2.1, 0]);\\nconst leg3 = new Rectangle({ width: 0.35, height: 0.2, color: BLUE_E });\\nleg3.setFill(BLUE_E, 0.8);\\nleg3.moveTo([-5.6, 1.6, 0]);\\nscene.add(leg1, leg2, leg3);\\n\\nmakeHoverable(band1, scene, { hoverOpacity: 0.75, cursor: 'pointer' });\\nmakeHoverable(band2, scene, { hoverOpacity: 0.55, cursor: 'pointer' });\\nmakeHoverable(band3, scene, { hoverOpacity: 0.4, cursor: 'pointer' });\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "The 68-95-99.7 rule (empirical rule) describes how data spreads in a normal distribution: roughly 68% of values lie within 1 standard deviation of the mean, 95% within 2σ, and 99.7% within 3σ. These nested bands are a quick way to reason about probability without integrating the density. Drag the mean or use the slider to explore how the shaded regions stay centered on μ."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-4, 4, 1],\n  yRange: [0, 0.5, 0.1],\n  xLength: 11,\n  yLength: 4.2,\n  tips: false\n});\nax.moveTo([0, -0.3, 0]);\n\nconst pdf = (x, mu, s) => (1 / (s * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * ((x - mu) / s) ** 2);\n\nlet mu = 0;\nconst sigma = 1;\n\nlet curve = ax.plot(x => pdf(x, mu, sigma), { color: WHITE, xRange: [-4, 4], numSamples: 400 });\n\nfunction makeBand(lo, hi, color, opacity) {\n  const area = ax.getArea(ax.plot(x => pdf(x, mu, sigma), { xRange: [lo, hi], numSamples: 200 }), [lo, hi], { color, opacity });\n  return area;\n}\n\nlet band3 = makeBand(mu - 3 * sigma, mu + 3 * sigma, BLUE_E, 0.25);\nlet band2 = makeBand(mu - 2 * sigma, mu + 2 * sigma, BLUE_C, 0.35);\nlet band1 = makeBand(mu - 1 * sigma, mu + 1 * sigma, BLUE_A, 0.5);\n\nfunction sigmaLine(k, col) {\n  const x = mu + k * sigma;\n  const top = pdf(x, mu, sigma);\n  const line = new Line({\n    start: ax.c2p(x, 0),\n    end: ax.c2p(x, top + 0.02),\n    color: col\n  });\n  line.setStrokeWidth(2);\n  return line;\n}\n\nlet lines = [];\nfunction rebuildLines() {\n  for (const L of lines) scene.remove(L);\n  lines = [];\n  const specs = [\n    [-3, GRAY], [-2, TEAL], [-1, YELLOW],\n    [0, WHITE],\n    [1, YELLOW], [2, TEAL], [3, GRAY]\n  ];\n  for (const [k, col] of specs) {\n    const L = sigmaLine(k, col);\n    lines.push(L);\n    scene.add(L);\n  }\n}\n\nconst title = new Text({ text: '68–95–99.7 Rule (Empirical Rule)', color: WHITE, fontSize: 32 });\ntitle.moveTo([0, 3.4, 0]);\n\nlet pct68 = new Text({ text: '68% within 1σ', color: BLUE_A, fontSize: 22 });\npct68.moveTo([-4.2, 2.6, 0]);\nlet pct95 = new Text({ text: '95% within 2σ', color: BLUE_C, fontSize: 22 });\npct95.moveTo([-4.2, 2.1, 0]);\nlet pct997 = new Text({ text: '99.7% within 3σ', color: BLUE_E, fontSize: 22 });\npct997.moveTo([-4.2, 1.6, 0]);\n\nfunction tickLabel(k, latex) {\n  const t = new MathTex({ latex });\n  return t;\n}\n\nconst labM = new MathTex({ latex: '\\\\mu' });\nawait labM.waitForRender();\nlabM.scale(0.7);\nlabM.moveTo(ax.c2p(mu, -0.06));\n\nconst labL1 = new MathTex({ latex: '\\\\mu-\\\\sigma' });\nawait labL1.waitForRender();\nlabL1.scale(0.55);\nlabL1.moveTo(ax.c2p(mu - sigma, -0.06));\n\nconst labR1 = new MathTex({ latex: '\\\\mu+\\\\sigma' });\nawait labR1.waitForRender();\nlabR1.scale(0.55);\nlabR1.moveTo(ax.c2p(mu + sigma, -0.06));\n\nconst labL2 = new MathTex({ latex: '\\\\mu-2\\\\sigma' });\nawait labL2.waitForRender();\nlabL2.scale(0.5);\nlabL2.moveTo(ax.c2p(mu - 2 * sigma, -0.12));\n\nconst labR2 = new MathTex({ latex: '\\\\mu+2\\\\sigma' });\nawait labR2.waitForRender();\nlabR2.scale(0.5);\nlabR2.moveTo(ax.c2p(mu + 2 * sigma, -0.12));\n\nconst labL3 = new MathTex({ latex: '\\\\mu-3\\\\sigma' });\nawait labL3.waitForRender();\nlabL3.scale(0.5);\nlabL3.moveTo(ax.c2p(mu - 3 * sigma, -0.06));\n\nconst labR3 = new MathTex({ latex: '\\\\mu+3\\\\sigma' });\nawait labR3.waitForRender();\nlabR3.scale(0.5);\nlabR3.moveTo(ax.c2p(mu + 3 * sigma, -0.06));\n\nconst meanDot = new Dot({ point: ax.c2p(mu, 0), color: YELLOW });\nmeanDot.scale(1.2);\n\nscene.add(ax, band3, band2, band1, curve, title, pct68, pct95, pct997);\nscene.add(labM, labL1, labR1, labL2, labR2, labL3, labR3, meanDot);\nrebuildLines();\n\nfunction rebuildAll() {\n  scene.remove(band3, band2, band1, curve);\n  curve = ax.plot(x => pdf(x, mu, sigma), { color: WHITE, xRange: [-4, 4], numSamples: 400 });\n  band3 = makeBand(mu - 3 * sigma, mu + 3 * sigma, BLUE_E, 0.25);\n  band2 = makeBand(mu - 2 * sigma, mu + 2 * sigma, BLUE_C, 0.35);\n  band1 = makeBand(mu - 1 * sigma, mu + 1 * sigma, BLUE_A, 0.5);\n  scene.add(band3, band2, band1, curve);\n  rebuildLines();\n\n  labM.moveTo(ax.c2p(mu, -0.06));\n  labL1.moveTo(ax.c2p(mu - sigma, -0.06));\n  labR1.moveTo(ax.c2p(mu + sigma, -0.06));\n  labL2.moveTo(ax.c2p(mu - 2 * sigma, -0.12));\n  labR2.moveTo(ax.c2p(mu + 2 * sigma, -0.12));\n  labL3.moveTo(ax.c2p(mu - 3 * sigma, -0.06));\n  labR3.moveTo(ax.c2p(mu + 3 * sigma, -0.06));\n  meanDot.moveTo(ax.c2p(mu, 0));\n\n  // keep curve and labels on top\n  scene.remove(curve, meanDot, labM, labL1, labR1, labL2, labR2, labL3, labR3);\n  scene.add(curve, meanDot, labM, labL1, labR1, labL2, labR2, labL3, labR3);\n  for (const L of lines) { scene.remove(L); scene.add(L); }\n}\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\ncontrols.addSlider({\n  label: 'Mean (μ)',\n  min: -1.5,\n  max: 1.5,\n  value: 0,\n  step: 0.1,\n  onChange: (v) => {\n    mu = v;\n    rebuildAll();\n  }\n});\n\ncontrols.addButton({\n  label: 'Reset μ = 0',\n  onClick: () => {\n    mu = 0;\n    rebuildAll();\n  }\n});\n\n// subtle legend bars\nconst leg1 = new Rectangle({ width: 0.35, height: 0.2, color: BLUE_A });\nleg1.setFill(BLUE_A, 0.8);\nleg1.moveTo([-5.6, 2.6, 0]);\nconst leg2 = new Rectangle({ width: 0.35, height: 0.2, color: BLUE_C });\nleg2.setFill(BLUE_C, 0.8);\nleg2.moveTo([-5.6, 2.1, 0]);\nconst leg3 = new Rectangle({ width: 0.35, height: 0.2, color: BLUE_E });\nleg3.setFill(BLUE_E, 0.8);\nleg3.moveTo([-5.6, 1.6, 0]);\nscene.add(leg1, leg2, leg3);\n\nmakeHoverable(band1, scene, { hoverOpacity: 0.75, cursor: 'pointer' });\nmakeHoverable(band2, scene, { hoverOpacity: 0.55, cursor: 'pointer' });\nmakeHoverable(band3, scene, { hoverOpacity: 0.4, cursor: 'pointer' });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4243,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 3
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/stats-normal-empirical.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/stats-normal-empirical.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:27.106Z"
+}

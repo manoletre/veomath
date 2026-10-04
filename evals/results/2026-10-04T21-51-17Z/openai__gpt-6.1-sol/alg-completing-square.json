@@ -1,0 +1,97 @@
+{
+  "itemId": "alg-completing-square",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "10.53% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=1 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ click Polygon at (-1.9, 0.5) — 3.66% changed\n✓ drag Dot at (-2.9, -0.5) — 7.54% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ click Polygon at (-1.9, 0.5) — 3.66% changed\n✓ drag Dot at (-2.9, -0.5) — 7.54% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 45168,
+        "inputTokens": 5311,
+        "cachedInputTokens": 5287,
+        "outputTokens": 2130,
+        "costUsd": 0.021876700000000002,
+        "rawResponse": "{\"explanation\":\"Picture x² as a square, and split 6x into two strips of area 3x, each with width 3. Placing these along two sides leaves a 3 × 3 corner missing; adding its area, 9, makes a square with side x + 3. Therefore x² + 6x + 9 = (x + 3)², so x² + 6x = (x + 3)² − 9.\",\"manimCode\":\"let x = 2.5;\\nlet cornerFilled = false;\\nconst unit = 0.65;\\nconst left = -4.5;\\nconst bottom = -2.1;\\nconst point = (u, v) => [left + unit * u, bottom + unit * v, 0];\\nconst box = (u, v, w, h) => [point(u, v), point(u + w, v), point(u + w, v + h), point(u, v + h)];\\n\\nconst title = new Text({ text: 'Completing the square', fontSize: 34, color: WHITE });\\ntitle.moveTo([0, 3.2, 0]);\\nconst squareArea = new Polygon({ vertices: box(0, 0, x, x), color: BLUE });\\nconst topStrip = new Polygon({ vertices: box(0, x, x, 3), color: TEAL });\\nconst rightStrip = new Polygon({ vertices: box(x, 0, 3, x), color: TEAL });\\nconst corner = new Polygon({ vertices: box(x, x, 3, 3), color: GOLD });\\nsquareArea.setFill(BLUE, 0.35);\\ntopStrip.setFill(TEAL, 0.35);\\nrightStrip.setFill(TEAL, 0.35);\\n\\nconst squareLabel = new Text({ text: 'x²', fontSize: 26, color: BLUE_A });\\nconst topLabel = new Text({ text: '3x', fontSize: 24, color: WHITE });\\nconst rightLabel = new Text({ text: '3x', fontSize: 24, color: WHITE });\\nconst cornerLabel = new Text({ text: '+9', fontSize: 28, color: GOLD });\\nconst xLabel = new Text({ text: 'x', fontSize: 22, color: WHITE });\\nconst threeLabel = new Text({ text: '3', fontSize: 22, color: TEAL });\\nconst handle = new Dot({ point: point(x, x), radius: 0.13, color: WHITE });\\n\\nconst valueLabel = new Text({ text: '', fontSize: 25, color: WHITE });\\nvalueLabel.moveTo([3.4, 1.85, 0]);\\nconst originalLabel = new Text({ text: '', fontSize: 23, color: BLUE_A });\\noriginalLabel.moveTo([3.4, 1.15, 0]);\\nconst addedLabel = new Text({ text: '', fontSize: 23, color: GOLD });\\naddedLabel.moveTo([3.4, 0.45, 0]);\\nconst totalLabel = new Text({ text: '', fontSize: 23, color: WHITE });\\ntotalLabel.moveTo([3.4, -0.25, 0]);\\nconst sideLabel = new Text({ text: '', fontSize: 23, color: GRAY });\\nsideLabel.moveTo([3.4, -0.95, 0]);\\nconst cornerHint = new Text({ text: 'Click the gold corner', fontSize: 20, color: GOLD });\\ncornerHint.moveTo([3.4, -1.8, 0]);\\n\\nconst identity = new MathTex({ latex: 'x^2 + 6x = (x+3)^2 - 9', color: WHITE });\\nawait identity.waitForRender();\\nidentity.moveTo([0, -2.95, 0]);\\nconst hint = new Text({ text: 'Drag the white point to resize x · Click the gold corner to add or remove 9', fontSize: 19, color: GRAY });\\nhint.moveTo([0, -3.5, 0]);\\n\\nfunction update() {\\n  squareArea.setVertices(box(0, 0, x, x));\\n  topStrip.setVertices(box(0, x, x, 3));\\n  rightStrip.setVertices(box(x, 0, 3, x));\\n  corner.setVertices(box(x, x, 3, 3));\\n  corner.setFill(GOLD, cornerFilled ? 0.5 : 0.04);\\n  squareLabel.moveTo(point(x / 2, x / 2));\\n  topLabel.moveTo(point(x / 2, x + 1.5));\\n  rightLabel.moveTo(point(x + 1.5, x / 2));\\n  cornerLabel.moveTo(point(x + 1.5, x + 1.5));\\n  cornerLabel.setText(cornerFilled ? '9' : '+9');\\n  xLabel.moveTo(point(x / 2, -0.35));\\n  threeLabel.moveTo(point(x + 1.5, -0.35));\\n  handle.moveTo(point(x, x));\\n  const original = x * x + 6 * x;\\n  valueLabel.setText('x = ' + x.toFixed(2));\\n  originalLabel.setText('x² + 6x = ' + original.toFixed(2));\\n  addedLabel.setText(cornerFilled ? 'Added corner: 3 × 3 = 9' : 'Missing corner: 3 × 3 = 9');\\n  totalLabel.setText(cornerFilled ? 'Full area = ' + (original + 9).toFixed(2) : 'L-shaped area = ' + original.toFixed(2));\\n  sideLabel.setText('Full square side: x + 3');\\n  cornerHint.setText(cornerFilled ? 'Click corner to subtract 9' : 'Click corner to add 9');\\n}\\nupdate();\\nscene.add(title);\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(squareArea), new DrawBorderThenFill(topStrip), new DrawBorderThenFill(rightStrip)]));\\nscene.add(corner, squareLabel, topLabel, rightLabel, cornerLabel, xLabel, threeLabel, handle, valueLabel, originalLabel, addedLabel, totalLabel, sideLabel, cornerHint, identity, hint);\\n\\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\\n  const horizontal = (pos[0] - left) / unit;\\n  const vertical = (pos[1] - bottom) / unit;\\n  x = Math.max(1.5, Math.min(4, (horizontal + vertical) / 2));\\n  update();\\n} });\\nmakeClickable(corner, scene, { onClick: () => {\\n  cornerFilled = !cornerFilled;\\n  update();\\n} });\\nawait scene.wait(999999);\"}",
+        "explanation": "Picture x² as a square, and split 6x into two strips of area 3x, each with width 3. Placing these along two sides leaves a 3 × 3 corner missing; adding its area, 9, makes a square with side x + 3. Therefore x² + 6x + 9 = (x + 3)², so x² + 6x = (x + 3)² − 9."
+      },
+      "code": "let x = 2.5;\nlet cornerFilled = false;\nconst unit = 0.65;\nconst left = -4.5;\nconst bottom = -2.1;\nconst point = (u, v) => [left + unit * u, bottom + unit * v, 0];\nconst box = (u, v, w, h) => [point(u, v), point(u + w, v), point(u + w, v + h), point(u, v + h)];\n\nconst title = new Text({ text: 'Completing the square', fontSize: 34, color: WHITE });\ntitle.moveTo([0, 3.2, 0]);\nconst squareArea = new Polygon({ vertices: box(0, 0, x, x), color: BLUE });\nconst topStrip = new Polygon({ vertices: box(0, x, x, 3), color: TEAL });\nconst rightStrip = new Polygon({ vertices: box(x, 0, 3, x), color: TEAL });\nconst corner = new Polygon({ vertices: box(x, x, 3, 3), color: GOLD });\nsquareArea.setFill(BLUE, 0.35);\ntopStrip.setFill(TEAL, 0.35);\nrightStrip.setFill(TEAL, 0.35);\n\nconst squareLabel = new Text({ text: 'x²', fontSize: 26, color: BLUE_A });\nconst topLabel = new Text({ text: '3x', fontSize: 24, color: WHITE });\nconst rightLabel = new Text({ text: '3x', fontSize: 24, color: WHITE });\nconst cornerLabel = new Text({ text: '+9', fontSize: 28, color: GOLD });\nconst xLabel = new Text({ text: 'x', fontSize: 22, color: WHITE });\nconst threeLabel = new Text({ text: '3', fontSize: 22, color: TEAL });\nconst handle = new Dot({ point: point(x, x), radius: 0.13, color: WHITE });\n\nconst valueLabel = new Text({ text: '', fontSize: 25, color: WHITE });\nvalueLabel.moveTo([3.4, 1.85, 0]);\nconst originalLabel = new Text({ text: '', fontSize: 23, color: BLUE_A });\noriginalLabel.moveTo([3.4, 1.15, 0]);\nconst addedLabel = new Text({ text: '', fontSize: 23, color: GOLD });\naddedLabel.moveTo([3.4, 0.45, 0]);\nconst totalLabel = new Text({ text: '', fontSize: 23, color: WHITE });\ntotalLabel.moveTo([3.4, -0.25, 0]);\nconst sideLabel = new Text({ text: '', fontSize: 23, color: GRAY });\nsideLabel.moveTo([3.4, -0.95, 0]);\nconst cornerHint = new Text({ text: 'Click the gold corner', fontSize: 20, color: GOLD });\ncornerHint.moveTo([3.4, -1.8, 0]);\n\nconst identity = new MathTex({ latex: 'x^2 + 6x = (x+3)^2 - 9', color: WHITE });\nawait identity.waitForRender();\nidentity.moveTo([0, -2.95, 0]);\nconst hint = new Text({ text: 'Drag the white point to resize x · Click the gold corner to add or remove 9', fontSize: 19, color: GRAY });\nhint.moveTo([0, -3.5, 0]);\n\nfunction update() {\n  squareArea.setVertices(box(0, 0, x, x));\n  topStrip.setVertices(box(0, x, x, 3));\n  rightStrip.setVertices(box(x, 0, 3, x));\n  corner.setVertices(box(x, x, 3, 3));\n  corner.setFill(GOLD, cornerFilled ? 0.5 : 0.04);\n  squareLabel.moveTo(point(x / 2, x / 2));\n  topLabel.moveTo(point(x / 2, x + 1.5));\n  rightLabel.moveTo(point(x + 1.5, x / 2));\n  cornerLabel.moveTo(point(x + 1.5, x + 1.5));\n  cornerLabel.setText(cornerFilled ? '9' : '+9');\n  xLabel.moveTo(point(x / 2, -0.35));\n  threeLabel.moveTo(point(x + 1.5, -0.35));\n  handle.moveTo(point(x, x));\n  const original = x * x + 6 * x;\n  valueLabel.setText('x = ' + x.toFixed(2));\n  originalLabel.setText('x² + 6x = ' + original.toFixed(2));\n  addedLabel.setText(cornerFilled ? 'Added corner: 3 × 3 = 9' : 'Missing corner: 3 × 3 = 9');\n  totalLabel.setText(cornerFilled ? 'Full area = ' + (original + 9).toFixed(2) : 'L-shaped area = ' + original.toFixed(2));\n  sideLabel.setText('Full square side: x + 3');\n  cornerHint.setText(cornerFilled ? 'Click corner to subtract 9' : 'Click corner to add 9');\n}\nupdate();\nscene.add(title);\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(squareArea), new DrawBorderThenFill(topStrip), new DrawBorderThenFill(rightStrip)]));\nscene.add(corner, squareLabel, topLabel, rightLabel, cornerLabel, xLabel, threeLabel, handle, valueLabel, originalLabel, addedLabel, totalLabel, sideLabel, cornerHint, identity, hint);\n\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\n  const horizontal = (pos[0] - left) / unit;\n  const vertical = (pos[1] - bottom) / unit;\n  x = Math.max(1.5, Math.min(4, (horizontal + vertical) / 2));\n  update();\n} });\nmakeClickable(corner, scene, { onClick: () => {\n  cornerFilled = !cornerFilled;\n  update();\n} });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9999,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 1,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "click",
+            "label": "Polygon at (-1.9, 0.5)",
+            "change": 0.03662434895833333,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (-2.9, -0.5)",
+            "change": 0.07543511284722222,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/alg-completing-square.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/alg-completing-square.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:52:13.241Z"
+}

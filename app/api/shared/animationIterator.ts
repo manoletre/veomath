@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { MANIM_SYSTEM_PROMPT } from './systemPrompt';
 import { testAnimation, SandboxResult } from './animationSandbox';
+import { PRODUCTION_MODEL } from './model';
 
 type TextPart = { type: 'text'; text: string };
 type ImagePart = { type: 'image_url'; image_url: { url: string; detail?: string } };
@@ -151,7 +152,7 @@ Generate manim-web JavaScript code for this interactive slide.`;
 
 async function generateCode(openai: OpenAI, prompt: string): Promise<string> {
   const response = await openai.chat.completions.create({
-    model: 'gpt-5.4',
+    model: PRODUCTION_MODEL,
     messages: [
       { role: 'system', content: GENERATE_SLIDE_SYSTEM },
       { role: 'user', content: prompt },
@@ -209,7 +210,7 @@ async function evaluateCandidates(
   ];
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-5.4',
+    model: PRODUCTION_MODEL,
     messages: messages as import('openai/resources/chat/completions').ChatCompletionMessageParam[],
     response_format: {
       type: 'json_schema',
@@ -258,7 +259,7 @@ async function refineCode(
   ];
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-5.4',
+    model: PRODUCTION_MODEL,
     messages: messages as import('openai/resources/chat/completions').ChatCompletionMessageParam[],
     response_format: {
       type: 'json_schema',
@@ -310,7 +311,7 @@ async function pickBestFromAll(
   ];
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-5.4',
+    model: PRODUCTION_MODEL,
     messages: messages as import('openai/resources/chat/completions').ChatCompletionMessageParam[],
     response_format: {
       type: 'json_schema',

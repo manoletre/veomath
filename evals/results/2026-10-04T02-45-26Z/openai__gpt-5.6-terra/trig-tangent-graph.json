@@ -1,0 +1,78 @@
+{
+  "itemId": "trig-tangent-graph",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.27% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=1 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 25320,
+        "inputTokens": 11747,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1216,
+        "costUsd": 0.0182716,
+        "rawResponse": "{\"explanation\":\"The tangent function repeats every \\\\(\\\\pi\\\\) and grows without bound near certain x-values. Its vertical asymptotes occur where \\\\(\\\\cos x=0\\\\): \\\\(x=\\\\frac{\\\\pi}{2}+k\\\\pi\\\\), shown here as dashed red lines. Use the checkbox to toggle those asymptotes.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\\n  yRange: [-4, 4, 1],\\n  xLength: 11.5,\\n  yLength: 5.6,\\n  tips: true\\n});\\n\\nconst heading = new MathTex({ latex: 'y=\\\\\\\\tan(x)' });\\nawait heading.waitForRender();\\nheading.moveTo([0, 3.25, 0]);\\n\\nconst note = new Text({\\n  text: 'Vertical asymptotes:  x = π/2 + kπ',\\n  color: RED_B,\\n  fontSize: 22\\n});\\nnote.moveTo([0, -3.25, 0]);\\n\\nconst gap = 0.25;\\nconst bounds = [\\n  [-2 * Math.PI, -3 * Math.PI / 2 - gap],\\n  [-3 * Math.PI / 2 + gap, -Math.PI / 2 - gap],\\n  [-Math.PI / 2 + gap, Math.PI / 2 - gap],\\n  [Math.PI / 2 + gap, 3 * Math.PI / 2 - gap],\\n  [3 * Math.PI / 2 + gap, 2 * Math.PI]\\n];\\nconst curves = bounds.map(([a, b]) => ax.plot(x => Math.tan(x), {\\n  xRange: [a, b],\\n  color: BLUE_B,\\n  strokeWidth: 3,\\n  numSamples: 350\\n}));\\n\\nconst asymptoteXs = [-3 * Math.PI / 2, -Math.PI / 2, Math.PI / 2, 3 * Math.PI / 2];\\nconst asymptotes = asymptoteXs.map(x => {\\n  const line = new Polygon({\\n    vertices: [ax.c2p(x, -4), ax.c2p(x, 4)],\\n    color: RED\\n  });\\n  line.setStrokeWidth(2).setFillOpacity(0).setOpacity(0.75);\\n  return line;\\n});\\n\\nscene.add(ax, heading, note, ...curves, ...asymptotes);\\n\\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 220 });\\ncontrols.addCheckbox({\\n  label: 'Show asymptotes',\\n  checked: true,\\n  onChange: checked => {\\n    if (checked) scene.add(...asymptotes);\\n    else scene.remove(...asymptotes);\\n  }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The tangent function repeats every \\(\\pi\\) and grows without bound near certain x-values. Its vertical asymptotes occur where \\(\\cos x=0\\): \\(x=\\frac{\\pi}{2}+k\\pi\\), shown here as dashed red lines. Use the checkbox to toggle those asymptotes."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\n  yRange: [-4, 4, 1],\n  xLength: 11.5,\n  yLength: 5.6,\n  tips: true\n});\n\nconst heading = new MathTex({ latex: 'y=\\\\tan(x)' });\nawait heading.waitForRender();\nheading.moveTo([0, 3.25, 0]);\n\nconst note = new Text({\n  text: 'Vertical asymptotes:  x = π/2 + kπ',\n  color: RED_B,\n  fontSize: 22\n});\nnote.moveTo([0, -3.25, 0]);\n\nconst gap = 0.25;\nconst bounds = [\n  [-2 * Math.PI, -3 * Math.PI / 2 - gap],\n  [-3 * Math.PI / 2 + gap, -Math.PI / 2 - gap],\n  [-Math.PI / 2 + gap, Math.PI / 2 - gap],\n  [Math.PI / 2 + gap, 3 * Math.PI / 2 - gap],\n  [3 * Math.PI / 2 + gap, 2 * Math.PI]\n];\nconst curves = bounds.map(([a, b]) => ax.plot(x => Math.tan(x), {\n  xRange: [a, b],\n  color: BLUE_B,\n  strokeWidth: 3,\n  numSamples: 350\n}));\n\nconst asymptoteXs = [-3 * Math.PI / 2, -Math.PI / 2, Math.PI / 2, 3 * Math.PI / 2];\nconst asymptotes = asymptoteXs.map(x => {\n  const line = new Polygon({\n    vertices: [ax.c2p(x, -4), ax.c2p(x, 4)],\n    color: RED\n  });\n  line.setStrokeWidth(2).setFillOpacity(0).setOpacity(0.75);\n  return line;\n});\n\nscene.add(ax, heading, note, ...curves, ...asymptotes);\n\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 220 });\ncontrols.addCheckbox({\n  label: 'Show asymptotes',\n  checked: true,\n  onChange: checked => {\n    if (checked) scene.add(...asymptotes);\n    else scene.remove(...asymptotes);\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3213,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 1
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/trig-tangent-graph.0.final.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:58:48.890Z"
+}

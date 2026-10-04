@@ -1,0 +1,80 @@
+{
+  "itemId": "alg-rational-asymptotes",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 0.8,
+  "firstAttemptScore": 0.8,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.8,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.83% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "FunctionGraph [x -5.00..-0.14, y -13.13..-0.38] exceeds frame ±7.11 × ±4.00\nFunctionGraph [x 0.14..5.00, y 0.38..13.13] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.09% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 8606,
+        "inputTokens": 7967,
+        "cachedInputTokens": 7476,
+        "outputTokens": 994,
+        "costUsd": 0.013395200000000001,
+        "rawResponse": "{\"explanation\":\"f(x) = (2x+1)/(x-3) has a vertical asymptote at x = 3, where the denominator is zero. It also has a horizontal asymptote at y = 2, because the ratio of leading coefficients is 2/1 as x goes to ±∞. Drag the slider to move a point along each branch and watch it approach the dashed asymptotes.\",\"manimCode\":\"const ax = new Axes({ xRange: [-4, 10, 1], yRange: [-6, 10, 2], xLength: 10, yLength: 6, tips: false });\\nconst f = x => (2*x + 1) / (x - 3);\\nconst left = ax.plot(f, { color: BLUE, xRange: [-4, 2.8], numSamples: 300 });\\nconst right = ax.plot(f, { color: BLUE, xRange: [3.2, 10], numSamples: 300 });\\nscene.add(ax, left, right);\\n\\n// Vertical asymptote x = 3\\nconst va = new Polygon({ vertices: [ax.c2p(3, -6), ax.c2p(3, 10)], color: RED });\\nva.setStrokeWidth(3).setFillOpacity(0);\\n// Horizontal asymptote y = 2\\nconst ha = new Polygon({ vertices: [ax.c2p(-4, 2), ax.c2p(10, 2)], color: GREEN });\\nha.setStrokeWidth(3).setFillOpacity(0);\\nscene.add(va, ha);\\n\\nconst vl = new MathTex({ latex: 'x = 3', color: RED });\\nawait vl.waitForRender();\\nvl.moveTo(ax.c2p(4.2, -5));\\nconst hl = new MathTex({ latex: 'y = 2', color: GREEN });\\nawait hl.waitForRender();\\nhl.moveTo(ax.c2p(-3, 3));\\nconst title = new MathTex({ latex: 'f(x)=\\\\\\\\frac{2x+1}{x-3}' });\\nawait title.waitForRender();\\ntitle.moveTo([-4.3, 3.3, 0]);\\nscene.add(vl, hl, title);\\n\\nlet xv = 6;\\nconst dot = new Dot({ point: ax.c2p(xv, f(xv)), color: YELLOW });\\nscene.add(dot);\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'x', min: -3.5, max: 9.5, value: 6, step: 0.05, onChange: (v) => {\\n  let x = v;\\n  if (Math.abs(x - 3) < 0.2) x = x < 3 ? 2.8 : 3.2;\\n  const y = Math.max(-6, Math.min(10, f(x)));\\n  dot.moveTo(ax.c2p(x, y));\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "f(x) = (2x+1)/(x-3) has a vertical asymptote at x = 3, where the denominator is zero. It also has a horizontal asymptote at y = 2, because the ratio of leading coefficients is 2/1 as x goes to ±∞. Drag the slider to move a point along each branch and watch it approach the dashed asymptotes."
+      },
+      "code": "const ax = new Axes({ xRange: [-4, 10, 1], yRange: [-6, 10, 2], xLength: 10, yLength: 6, tips: false });\nconst f = x => (2*x + 1) / (x - 3);\nconst left = ax.plot(f, { color: BLUE, xRange: [-4, 2.8], numSamples: 300 });\nconst right = ax.plot(f, { color: BLUE, xRange: [3.2, 10], numSamples: 300 });\nscene.add(ax, left, right);\n\n// Vertical asymptote x = 3\nconst va = new Polygon({ vertices: [ax.c2p(3, -6), ax.c2p(3, 10)], color: RED });\nva.setStrokeWidth(3).setFillOpacity(0);\n// Horizontal asymptote y = 2\nconst ha = new Polygon({ vertices: [ax.c2p(-4, 2), ax.c2p(10, 2)], color: GREEN });\nha.setStrokeWidth(3).setFillOpacity(0);\nscene.add(va, ha);\n\nconst vl = new MathTex({ latex: 'x = 3', color: RED });\nawait vl.waitForRender();\nvl.moveTo(ax.c2p(4.2, -5));\nconst hl = new MathTex({ latex: 'y = 2', color: GREEN });\nawait hl.waitForRender();\nhl.moveTo(ax.c2p(-3, 3));\nconst title = new MathTex({ latex: 'f(x)=\\\\frac{2x+1}{x-3}' });\nawait title.waitForRender();\ntitle.moveTo([-4.3, 3.3, 0]);\nscene.add(vl, hl, title);\n\nlet xv = 6;\nconst dot = new Dot({ point: ax.c2p(xv, f(xv)), color: YELLOW });\nscene.add(dot);\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'x', min: -3.5, max: 9.5, value: 6, step: 0.05, onChange: (v) => {\n  let x = v;\n  if (Math.abs(x - 3) < 0.2) x = x < 3 ? 2.8 : 3.2;\n  const y = Math.max(-6, Math.min(10, f(x)));\n  dot.moveTo(ax.c2p(x, y));\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 6402,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/alg-rational-asymptotes.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/alg-rational-asymptotes.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:34:16.849Z"
+}

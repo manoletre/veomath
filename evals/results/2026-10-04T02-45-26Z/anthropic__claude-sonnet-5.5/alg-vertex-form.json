@@ -1,0 +1,80 @@
+{
+  "itemId": "alg-vertex-form",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.38% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "FunctionGraph [x -5.00..5.00, y 0.00..27.00] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.10% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 6902,
+        "inputTokens": 7965,
+        "cachedInputTokens": 0,
+        "outputTokens": 875,
+        "costUsd": 0.040606,
+        "rawResponse": "{\"explanation\":\"In y = a(x - h)^2 + k, a stretches or flips the parabola (a larger than 1 is narrower, a between 0 and 1 is wider, a negative flips it downward). h slides it left or right, and k slides it up or down. The vertex sits at (h, k). Use the sliders to change each parameter and watch the vertex and curve respond.\",\"manimCode\":\"const axes = new Axes({ xRange: [-6, 6, 1], yRange: [-4, 4, 1], xLength: 10, yLength: 6, tips: false });\\nscene.add(axes);\\n\\nlet a = 1, h = 0, k = 0;\\nlet curve = null;\\nlet vertex = null;\\nlet label = null;\\n\\nasync function redraw() {\\n  if (curve) scene.remove(curve);\\n  if (vertex) scene.remove(vertex);\\n  if (label) scene.remove(label);\\n  curve = axes.plot(x => a * (x - h) * (x - h) + k, { color: BLUE, xRange: [-6, 6], numSamples: 200 });\\n  vertex = new Dot({ point: axes.c2p(h, k), color: YELLOW });\\n  label = new Text({ text: 'a=' + a.toFixed(1) + '  h=' + h.toFixed(1) + '  k=' + k.toFixed(1) + '   vertex (' + h.toFixed(1) + ', ' + k.toFixed(1) + ')', color: WHITE, fontSize: 24 });\\n  label.moveTo([-2.5, 3.6, 0]);\\n  scene.add(curve, vertex, label);\\n}\\nawait redraw();\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'a (stretch/flip)', min: -3, max: 3, value: 1, step: 0.1, onChange: (v) => { a = v; redraw(); } });\\ncontrols.addSlider({ label: 'h (horizontal shift)', min: -4, max: 4, value: 0, step: 0.1, onChange: (v) => { h = v; redraw(); } });\\ncontrols.addSlider({ label: 'k (vertical shift)', min: -3, max: 3, value: 0, step: 0.1, onChange: (v) => { k = v; redraw(); } });\\ncontrols.addButton({ label: 'Reset', onClick: () => { a = 1; h = 0; k = 0; redraw(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "In y = a(x - h)^2 + k, a stretches or flips the parabola (a larger than 1 is narrower, a between 0 and 1 is wider, a negative flips it downward). h slides it left or right, and k slides it up or down. The vertex sits at (h, k). Use the sliders to change each parameter and watch the vertex and curve respond."
+      },
+      "code": "const axes = new Axes({ xRange: [-6, 6, 1], yRange: [-4, 4, 1], xLength: 10, yLength: 6, tips: false });\nscene.add(axes);\n\nlet a = 1, h = 0, k = 0;\nlet curve = null;\nlet vertex = null;\nlet label = null;\n\nasync function redraw() {\n  if (curve) scene.remove(curve);\n  if (vertex) scene.remove(vertex);\n  if (label) scene.remove(label);\n  curve = axes.plot(x => a * (x - h) * (x - h) + k, { color: BLUE, xRange: [-6, 6], numSamples: 200 });\n  vertex = new Dot({ point: axes.c2p(h, k), color: YELLOW });\n  label = new Text({ text: 'a=' + a.toFixed(1) + '  h=' + h.toFixed(1) + '  k=' + k.toFixed(1) + '   vertex (' + h.toFixed(1) + ', ' + k.toFixed(1) + ')', color: WHITE, fontSize: 24 });\n  label.moveTo([-2.5, 3.6, 0]);\n  scene.add(curve, vertex, label);\n}\nawait redraw();\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'a (stretch/flip)', min: -3, max: 3, value: 1, step: 0.1, onChange: (v) => { a = v; redraw(); } });\ncontrols.addSlider({ label: 'h (horizontal shift)', min: -4, max: 4, value: 0, step: 0.1, onChange: (v) => { h = v; redraw(); } });\ncontrols.addSlider({ label: 'k (vertical shift)', min: -3, max: 3, value: 0, step: 0.1, onChange: (v) => { k = v; redraw(); } });\ncontrols.addButton({ label: 'Reset', onClick: () => { a = 1; h = 0; k = 0; redraw(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3336,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 3,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/alg-vertex-form.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/alg-vertex-form.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:33:45.156Z"
+}

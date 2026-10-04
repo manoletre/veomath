@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-inverse-exp-log",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.51% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.08% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 48460,
+        "inputTokens": 12275,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1742,
+        "costUsd": 0.0221556,
+        "rawResponse": "{\"explanation\":\"Inverse functions swap inputs and outputs: if e^t = u, then ln(u) = t. So the point (t, u) on y = e^x corresponds to (u, t) on y = ln(x). Swapping coordinates reflects a point across y = x; move the slider to see this for different points.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-3, 7, 1],\\n  yRange: [-3, 7, 1],\\n  xLength: 6.2,\\n  yLength: 6.2,\\n  tips: false\\n});\\nax.moveTo([-1.5, -0.15, 0]);\\n\\nconst expCurve = ax.plot(x => Math.exp(x), {\\n  color: BLUE,\\n  xRange: [-2.5, Math.log(6.5)],\\n  numSamples: 300\\n});\\nconst logCurve = ax.plot(x => Math.log(x), {\\n  color: ORANGE,\\n  xRange: [Math.exp(-2.5), 6.5],\\n  numSamples: 300\\n});\\nconst mirror = new Line({\\n  start: ax.c2p(-2.7, -2.7),\\n  end: ax.c2p(6.7, 6.7),\\n  color: GRAY\\n});\\nmirror.setStrokeWidth(2);\\nmirror.setOpacity(0.75);\\n\\nconst title = new Text({ text: 'Inverse functions are reflections', color: WHITE, fontSize: 32 });\\ntitle.moveTo([0, 3.45, 0]);\\nconst expLabel = new MathTex({ latex: 'y=e^x', color: BLUE });\\nconst logLabel = new MathTex({ latex: 'y=\\\\\\\\ln(x)', color: ORANGE });\\nconst mirrorLabel = new MathTex({ latex: 'y=x', color: GRAY });\\nawait Promise.all([expLabel.waitForRender(), logLabel.waitForRender(), mirrorLabel.waitForRender()]);\\nexpLabel.moveTo([4.2, 1.55, 0]);\\nlogLabel.moveTo([4.2, 0.8, 0]);\\nmirrorLabel.moveTo([4.2, 0.05, 0]);\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new Create(ax));\\nawait scene.play(new Create(mirror));\\nawait scene.play(new AnimationGroup([new Create(expCurve), new Create(logCurve)]));\\nscene.add(expLabel, logLabel, mirrorLabel);\\n\\nlet t = 0.6;\\nconst a = new Dot({ point: ax.c2p(t, Math.exp(t)), color: BLUE });\\nconst b = new Dot({ point: ax.c2p(Math.exp(t), t), color: ORANGE });\\nconst midpoint = new Dot({ point: ax.c2p((t + Math.exp(t)) / 2, (t + Math.exp(t)) / 2), color: YELLOW });\\nconst pairSegment = new Polygon({ vertices: [a.getCenter(), b.getCenter()], color: YELLOW });\\npairSegment.setStrokeWidth(2);\\npairSegment.setFillOpacity(0);\\n\\nfunction updatePair() {\\n  const u = Math.exp(t);\\n  a.moveTo(ax.c2p(t, u));\\n  b.moveTo(ax.c2p(u, t));\\n  midpoint.moveTo(ax.c2p((t + u) / 2, (t + u) / 2));\\n  pairSegment.setVertices([a.getCenter(), b.getCenter()]);\\n}\\nscene.add(pairSegment, a, b, midpoint);\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\\ncontrols.addSlider({\\n  label: 'Choose t', min: -1.5, max: 1.5, value: t, step: 0.05,\\n  onChange: v => { t = v; updatePair(); }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Inverse functions swap inputs and outputs: if e^t = u, then ln(u) = t. So the point (t, u) on y = e^x corresponds to (u, t) on y = ln(x). Swapping coordinates reflects a point across y = x; move the slider to see this for different points."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-3, 7, 1],\n  yRange: [-3, 7, 1],\n  xLength: 6.2,\n  yLength: 6.2,\n  tips: false\n});\nax.moveTo([-1.5, -0.15, 0]);\n\nconst expCurve = ax.plot(x => Math.exp(x), {\n  color: BLUE,\n  xRange: [-2.5, Math.log(6.5)],\n  numSamples: 300\n});\nconst logCurve = ax.plot(x => Math.log(x), {\n  color: ORANGE,\n  xRange: [Math.exp(-2.5), 6.5],\n  numSamples: 300\n});\nconst mirror = new Line({\n  start: ax.c2p(-2.7, -2.7),\n  end: ax.c2p(6.7, 6.7),\n  color: GRAY\n});\nmirror.setStrokeWidth(2);\nmirror.setOpacity(0.75);\n\nconst title = new Text({ text: 'Inverse functions are reflections', color: WHITE, fontSize: 32 });\ntitle.moveTo([0, 3.45, 0]);\nconst expLabel = new MathTex({ latex: 'y=e^x', color: BLUE });\nconst logLabel = new MathTex({ latex: 'y=\\\\ln(x)', color: ORANGE });\nconst mirrorLabel = new MathTex({ latex: 'y=x', color: GRAY });\nawait Promise.all([expLabel.waitForRender(), logLabel.waitForRender(), mirrorLabel.waitForRender()]);\nexpLabel.moveTo([4.2, 1.55, 0]);\nlogLabel.moveTo([4.2, 0.8, 0]);\nmirrorLabel.moveTo([4.2, 0.05, 0]);\n\nawait scene.play(new Write(title));\nawait scene.play(new Create(ax));\nawait scene.play(new Create(mirror));\nawait scene.play(new AnimationGroup([new Create(expCurve), new Create(logCurve)]));\nscene.add(expLabel, logLabel, mirrorLabel);\n\nlet t = 0.6;\nconst a = new Dot({ point: ax.c2p(t, Math.exp(t)), color: BLUE });\nconst b = new Dot({ point: ax.c2p(Math.exp(t), t), color: ORANGE });\nconst midpoint = new Dot({ point: ax.c2p((t + Math.exp(t)) / 2, (t + Math.exp(t)) / 2), color: YELLOW });\nconst pairSegment = new Polygon({ vertices: [a.getCenter(), b.getCenter()], color: YELLOW });\npairSegment.setStrokeWidth(2);\npairSegment.setFillOpacity(0);\n\nfunction updatePair() {\n  const u = Math.exp(t);\n  a.moveTo(ax.c2p(t, u));\n  b.moveTo(ax.c2p(u, t));\n  midpoint.moveTo(ax.c2p((t + u) / 2, (t + u) / 2));\n  pairSegment.setVertices([a.getCenter(), b.getCenter()]);\n}\nscene.add(pairSegment, a, b, midpoint);\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\ncontrols.addSlider({\n  label: 'Choose t', min: -1.5, max: 1.5, value: t, step: 0.05,\n  onChange: v => { t = v; updatePair(); }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 13141,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 4,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/alg-inverse-exp-log.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/alg-inverse-exp-log.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:50.798Z"
+}

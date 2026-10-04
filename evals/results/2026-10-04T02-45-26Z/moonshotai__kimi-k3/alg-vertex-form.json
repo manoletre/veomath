@@ -1,0 +1,80 @@
+{
+  "itemId": "alg-vertex-form",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.41% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Axes [x -7.08..3.17, y -4.52..2.43] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.12% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 107975,
+        "inputTokens": 4717,
+        "cachedInputTokens": 64,
+        "outputTokens": 12745,
+        "costUsd": 0.2051532,
+        "rawResponse": "{\"explanation\":\"In vertex form y = a(x − h)² + k, the vertex sits at (h, k): h slides the parabola left/right (note the sign — x − h moves it right when h is positive), and k slides it up/down. The coefficient a controls the width — |a| > 1 narrows it, |a| < 1 widens it — and a negative a flips it upside down. Use the sliders to change each value, or drag the red vertex directly and watch h and k update, with the gray parent parabola y = x² shown for comparison.\",\"manimCode\":\"let a = 1, h = 0, k = 0;\\n\\nconst AX_X = -0.8, AX_Y = -0.3;\\nconst XU = 10 / 12;\\nconst YU = 6.7 / 8;\\n\\nconst axes = new Axes({ xRange: [-6, 6, 1], yRange: [-4, 4, 1], xLength: 10, yLength: 6.7, tips: true });\\naxes.moveTo([AX_X, AX_Y, 0]);\\n\\nfunction f(x) { return a * (x - h) * (x - h) + k; }\\n\\nfunction xRangeForCurve() {\\n  if (Math.abs(a) < 0.05) return [-6, 6];\\n  const yBound = a > 0 ? 4.4 : -4.4;\\n  const span = Math.sqrt(Math.abs((yBound - k) / a));\\n  return [Math.max(-6, h - span), Math.min(6, h + span)];\\n}\\n\\nconst parent = axes.plot(x => x * x, { color: GRAY, xRange: [-2.1, 2.1], numSamples: 200 });\\nparent.setOpacity(0.35);\\n\\nlet curve = axes.plot(f, { color: YELLOW, xRange: xRangeForCurve(), numSamples: 300 });\\n\\nconst shiftSeg = new Polygon({ vertices: [[0, 0, 0], [0.001, 0, 0]], color: GREEN });\\nshiftSeg.setStrokeWidth(3).setFillOpacity(0);\\nshiftSeg.addUpdater(() => {\\n  const p0 = axes.c2p(0, 0);\\n  const p1 = axes.c2p(h, k);\\n  if (Math.abs(h) < 0.01 && Math.abs(k) < 0.01) {\\n    shiftSeg.setVertices([p0, [p0[0] + 0.001, p0[1], 0]]);\\n  } else {\\n    shiftSeg.setVertices([p0, p1]);\\n  }\\n});\\n\\nconst vertex = new Dot({ point: axes.c2p(0, 0), color: RED, radius: 0.1 });\\nvertex.addUpdater(() => vertex.moveTo(axes.c2p(h, k)));\\n\\nconst title = new MathTex({ latex: 'y = a(x-h)^2+k' });\\nawait title.waitForRender();\\ntitle.moveTo([-3.3, 3.6, 0]);\\n\\nfunction eqString() {\\n  const hs = h < 0 ? '+' : '-';\\n  const ks = k < 0 ? '-' : '+';\\n  return 'y = ' + a.toFixed(1) + '(x ' + hs + ' ' + Math.abs(h).toFixed(1) + ')\\\\u00B2 ' + ks + ' ' + Math.abs(k).toFixed(1);\\n}\\n\\nlet eqLabel = new Text({ text: eqString(), color: YELLOW, fontSize: 26 });\\nlet vLabel = new Text({ text: '(0.0, 0.0)', color: RED, fontSize: 20 });\\n\\nfunction updateEqLabel() {\\n  scene.remove(eqLabel);\\n  eqLabel = new Text({ text: eqString(), color: YELLOW, fontSize: 26 });\\n  eqLabel.moveTo([-3.3, 3.05, 0]);\\n  scene.add(eqLabel);\\n}\\n\\nfunction updateVLabel() {\\n  scene.remove(vLabel);\\n  vLabel = new Text({ text: '(' + h.toFixed(1) + ', ' + k.toFixed(1) + ')', color: RED, fontSize: 20 });\\n  const p = axes.c2p(h, k);\\n  let lx = p[0] + 1.1, ly = p[1] + 0.42;\\n  if (lx > 4.2) lx = p[0] - 1.1;\\n  if (ly > 3.2) ly = p[1] - 0.42;\\n  vLabel.moveTo([lx, ly, 0]);\\n  scene.add(vLabel);\\n}\\n\\nfunction refresh() {\\n  scene.remove(curve);\\n  curve = axes.plot(f, { color: YELLOW, xRange: xRangeForCurve(), numSamples: 300 });\\n  scene.add(curve);\\n  updateEqLabel();\\n  updateVLabel();\\n}\\n\\nconst parentLabel = new Text({ text: 'parent: y = x\\\\u00B2', color: GRAY, fontSize: 22 });\\nparentLabel.moveTo([1.9, 3.3, 0]);\\n\\nawait scene.play(new Create(axes));\\nawait scene.play(new AnimationGroup([new Create(parent), new Create(curve)]));\\nawait scene.play(new AnimationGroup([new FadeIn(vertex), new Write(title)]));\\nscene.add(shiftSeg, parentLabel);\\nupdateEqLabel();\\nupdateVLabel();\\n\\nmakeDraggable(vertex, scene, {\\n  constrainX: [-4.13, 2.53],\\n  constrainY: [-2.81, 2.21],\\n  onDrag: (mob, pos) => {\\n    h = Math.round(((pos[0] - AX_X) / XU) * 10) / 10;\\n    k = Math.round(((pos[1] - AX_Y) / YU) * 10) / 10;\\n    refresh();\\n  }\\n});\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 250 });\\ncontrols.addSlider({ label: 'a: stretch / flip', min: -3, max: 3, value: 1, step: 0.1, onChange: (v) => { a = v; refresh(); } });\\ncontrols.addSlider({ label: 'h: shift left/right', min: -4, max: 4, value: 0, step: 0.1, onChange: (v) => { h = v; refresh(); } });\\ncontrols.addSlider({ label: 'k: shift up/down', min: -3, max: 3, value: 0, step: 0.1, onChange: (v) => { k = v; refresh(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "In vertex form y = a(x − h)² + k, the vertex sits at (h, k): h slides the parabola left/right (note the sign — x − h moves it right when h is positive), and k slides it up/down. The coefficient a controls the width — |a| > 1 narrows it, |a| < 1 widens it — and a negative a flips it upside down. Use the sliders to change each value, or drag the red vertex directly and watch h and k update, with the gray parent parabola y = x² shown for comparison."
+      },
+      "code": "let a = 1, h = 0, k = 0;\n\nconst AX_X = -0.8, AX_Y = -0.3;\nconst XU = 10 / 12;\nconst YU = 6.7 / 8;\n\nconst axes = new Axes({ xRange: [-6, 6, 1], yRange: [-4, 4, 1], xLength: 10, yLength: 6.7, tips: true });\naxes.moveTo([AX_X, AX_Y, 0]);\n\nfunction f(x) { return a * (x - h) * (x - h) + k; }\n\nfunction xRangeForCurve() {\n  if (Math.abs(a) < 0.05) return [-6, 6];\n  const yBound = a > 0 ? 4.4 : -4.4;\n  const span = Math.sqrt(Math.abs((yBound - k) / a));\n  return [Math.max(-6, h - span), Math.min(6, h + span)];\n}\n\nconst parent = axes.plot(x => x * x, { color: GRAY, xRange: [-2.1, 2.1], numSamples: 200 });\nparent.setOpacity(0.35);\n\nlet curve = axes.plot(f, { color: YELLOW, xRange: xRangeForCurve(), numSamples: 300 });\n\nconst shiftSeg = new Polygon({ vertices: [[0, 0, 0], [0.001, 0, 0]], color: GREEN });\nshiftSeg.setStrokeWidth(3).setFillOpacity(0);\nshiftSeg.addUpdater(() => {\n  const p0 = axes.c2p(0, 0);\n  const p1 = axes.c2p(h, k);\n  if (Math.abs(h) < 0.01 && Math.abs(k) < 0.01) {\n    shiftSeg.setVertices([p0, [p0[0] + 0.001, p0[1], 0]]);\n  } else {\n    shiftSeg.setVertices([p0, p1]);\n  }\n});\n\nconst vertex = new Dot({ point: axes.c2p(0, 0), color: RED, radius: 0.1 });\nvertex.addUpdater(() => vertex.moveTo(axes.c2p(h, k)));\n\nconst title = new MathTex({ latex: 'y = a(x-h)^2+k' });\nawait title.waitForRender();\ntitle.moveTo([-3.3, 3.6, 0]);\n\nfunction eqString() {\n  const hs = h < 0 ? '+' : '-';\n  const ks = k < 0 ? '-' : '+';\n  return 'y = ' + a.toFixed(1) + '(x ' + hs + ' ' + Math.abs(h).toFixed(1) + ')\\u00B2 ' + ks + ' ' + Math.abs(k).toFixed(1);\n}\n\nlet eqLabel = new Text({ text: eqString(), color: YELLOW, fontSize: 26 });\nlet vLabel = new Text({ text: '(0.0, 0.0)', color: RED, fontSize: 20 });\n\nfunction updateEqLabel() {\n  scene.remove(eqLabel);\n  eqLabel = new Text({ text: eqString(), color: YELLOW, fontSize: 26 });\n  eqLabel.moveTo([-3.3, 3.05, 0]);\n  scene.add(eqLabel);\n}\n\nfunction updateVLabel() {\n  scene.remove(vLabel);\n  vLabel = new Text({ text: '(' + h.toFixed(1) + ', ' + k.toFixed(1) + ')', color: RED, fontSize: 20 });\n  const p = axes.c2p(h, k);\n  let lx = p[0] + 1.1, ly = p[1] + 0.42;\n  if (lx > 4.2) lx = p[0] - 1.1;\n  if (ly > 3.2) ly = p[1] - 0.42;\n  vLabel.moveTo([lx, ly, 0]);\n  scene.add(vLabel);\n}\n\nfunction refresh() {\n  scene.remove(curve);\n  curve = axes.plot(f, { color: YELLOW, xRange: xRangeForCurve(), numSamples: 300 });\n  scene.add(curve);\n  updateEqLabel();\n  updateVLabel();\n}\n\nconst parentLabel = new Text({ text: 'parent: y = x\\u00B2', color: GRAY, fontSize: 22 });\nparentLabel.moveTo([1.9, 3.3, 0]);\n\nawait scene.play(new Create(axes));\nawait scene.play(new AnimationGroup([new Create(parent), new Create(curve)]));\nawait scene.play(new AnimationGroup([new FadeIn(vertex), new Write(title)]));\nscene.add(shiftSeg, parentLabel);\nupdateEqLabel();\nupdateVLabel();\n\nmakeDraggable(vertex, scene, {\n  constrainX: [-4.13, 2.53],\n  constrainY: [-2.81, 2.21],\n  onDrag: (mob, pos) => {\n    h = Math.round(((pos[0] - AX_X) / XU) * 10) / 10;\n    k = Math.round(((pos[1] - AX_Y) / YU) * 10) / 10;\n    refresh();\n  }\n});\n\nconst controls = new Controls(scene, { position: 'top-right', width: 250 });\ncontrols.addSlider({ label: 'a: stretch / flip', min: -3, max: 3, value: 1, step: 0.1, onChange: (v) => { a = v; refresh(); } });\ncontrols.addSlider({ label: 'h: shift left/right', min: -4, max: 4, value: 0, step: 0.1, onChange: (v) => { h = v; refresh(); } });\ncontrols.addSlider({ label: 'k: shift up/down', min: -3, max: 3, value: 0, step: 0.1, onChange: (v) => { k = v; refresh(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 10562,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 3,
+        "controls": {
+          "sliders": 3,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/alg-vertex-form.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/alg-vertex-form.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:53:17.087Z"
+}

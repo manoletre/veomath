@@ -1,0 +1,148 @@
+{
+  "itemId": "alg-completing-square",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 0,
+  "retried": true,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": false,
+          "detail": "TypeError: Cannot read properties of null (reading '4')"
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": false,
+          "detail": "0.00% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": false,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 34376,
+        "inputTokens": 11742,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1724,
+        "costUsd": 0.0243576,
+        "rawResponse": "{\"explanation\":\"Split the middle term into two equal pieces: \\\\(6x=3x+3x\\\\). Place those \\\\(3\\\\times x\\\\) rectangles beside an \\\\(x\\\\times x\\\\) square; they almost make a square of side \\\\(x+3\\\\), but leave a \\\\(3\\\\times3=9\\\\) corner missing. Thus \\\\(x^2+6x+9=(x+3)^2\\\\), so \\\\(x^2+6x=(x+3)^2-9\\\\).\",\"manimCode\":\"const title = new MathTex({ latex: 'x^2+6x\\\\\\\\quad\\\\\\\\text{as an area model}' });\\nawait title.waitForRender();\\ntitle.moveTo([0, 3.05, 0]);\\n\\nconst s = 2.4;\\nconst h = 1.25;\\nconst left = -4.0;\\nconst bottom = -2.2;\\n\\nconst xSquare = new Rectangle({ width: s, height: s, color: BLUE });\\nxSquare.moveTo([left + s / 2, bottom + s / 2, 0]);\\nxSquare.setFill(BLUE_E, 0.75);\\n\\nconst rightStrip = new Rectangle({ width: h, height: s, color: GREEN });\\nrightStrip.moveTo([left + s + h / 2, bottom + s / 2, 0]);\\nrightStrip.setFill(GREEN_E, 0.72);\\n\\nconst topStrip = new Rectangle({ width: s, height: h, color: GREEN });\\ntopStrip.moveTo([left + s / 2, bottom + s + h / 2, 0]);\\ntopStrip.setFill(GREEN_E, 0.72);\\n\\nconst missing = new Rectangle({ width: h, height: h, color: YELLOW });\\nmissing.moveTo([left + s + h / 2, bottom + s + h / 2, 0]);\\nmissing.setFill(YELLOW, 0.38);\\n\\nconst xLabel = new MathTex({ latex: 'x^2' });\\nconst rLabel = new MathTex({ latex: '3x' });\\nconst tLabel = new MathTex({ latex: '3x' });\\nconst missingLabel = new MathTex({ latex: '9' });\\nconst splitLabel = new MathTex({ latex: '6x=3x+3x' });\\nconst result = new MathTex({ latex: 'x^2+6x+9=(x+3)^2' });\\nconst answer = new MathTex({ latex: '\\\\boxed{x^2+6x=(x+3)^2-9}' });\\nfor (const item of [xLabel, rLabel, tLabel, missingLabel, splitLabel, result, answer]) await item.waitForRender();\\n\\nxLabel.moveTo(xSquare.getCenter());\\nrLabel.moveTo(rightStrip.getCenter());\\ntLabel.moveTo(topStrip.getCenter());\\nmissingLabel.moveTo(missing.getCenter());\\nsplitLabel.moveTo([3.0, 1.6, 0]);\\nresult.moveTo([2.6, 0.35, 0]);\\nanswer.moveTo([2.6, -1.15, 0]);\\n\\nscene.add(title);\\nawait scene.play(new DrawBorderThenFill(xSquare));\\nawait scene.play(new Write(xLabel));\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(rightStrip), new DrawBorderThenFill(topStrip)]));\\nawait scene.play(new AnimationGroup([new Write(rLabel), new Write(tLabel), new Write(splitLabel)]));\\nawait scene.play(new DrawBorderThenFill(missing));\\nawait scene.play(new AnimationGroup([new Write(missingLabel), new Write(result), new Write(answer)]));\\n\\nlet filled = false;\\nmakeHoverable(missing, scene, { hoverScale: 1.08, hoverColor: YELLOW });\\nmakeClickable(missing, scene, { onClick: () => {\\n  filled = !filled;\\n  missing.setFill(YELLOW, filled ? 0.8 : 0.38);\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Split the middle term into two equal pieces: \\(6x=3x+3x\\). Place those \\(3\\times x\\) rectangles beside an \\(x\\times x\\) square; they almost make a square of side \\(x+3\\), but leave a \\(3\\times3=9\\) corner missing. Thus \\(x^2+6x+9=(x+3)^2\\), so \\(x^2+6x=(x+3)^2-9\\)."
+      },
+      "code": "const title = new MathTex({ latex: 'x^2+6x\\\\quad\\\\text{as an area model}' });\nawait title.waitForRender();\ntitle.moveTo([0, 3.05, 0]);\n\nconst s = 2.4;\nconst h = 1.25;\nconst left = -4.0;\nconst bottom = -2.2;\n\nconst xSquare = new Rectangle({ width: s, height: s, color: BLUE });\nxSquare.moveTo([left + s / 2, bottom + s / 2, 0]);\nxSquare.setFill(BLUE_E, 0.75);\n\nconst rightStrip = new Rectangle({ width: h, height: s, color: GREEN });\nrightStrip.moveTo([left + s + h / 2, bottom + s / 2, 0]);\nrightStrip.setFill(GREEN_E, 0.72);\n\nconst topStrip = new Rectangle({ width: s, height: h, color: GREEN });\ntopStrip.moveTo([left + s / 2, bottom + s + h / 2, 0]);\ntopStrip.setFill(GREEN_E, 0.72);\n\nconst missing = new Rectangle({ width: h, height: h, color: YELLOW });\nmissing.moveTo([left + s + h / 2, bottom + s + h / 2, 0]);\nmissing.setFill(YELLOW, 0.38);\n\nconst xLabel = new MathTex({ latex: 'x^2' });\nconst rLabel = new MathTex({ latex: '3x' });\nconst tLabel = new MathTex({ latex: '3x' });\nconst missingLabel = new MathTex({ latex: '9' });\nconst splitLabel = new MathTex({ latex: '6x=3x+3x' });\nconst result = new MathTex({ latex: 'x^2+6x+9=(x+3)^2' });\nconst answer = new MathTex({ latex: '\\boxed{x^2+6x=(x+3)^2-9}' });\nfor (const item of [xLabel, rLabel, tLabel, missingLabel, splitLabel, result, answer]) await item.waitForRender();\n\nxLabel.moveTo(xSquare.getCenter());\nrLabel.moveTo(rightStrip.getCenter());\ntLabel.moveTo(topStrip.getCenter());\nmissingLabel.moveTo(missing.getCenter());\nsplitLabel.moveTo([3.0, 1.6, 0]);\nresult.moveTo([2.6, 0.35, 0]);\nanswer.moveTo([2.6, -1.15, 0]);\n\nscene.add(title);\nawait scene.play(new DrawBorderThenFill(xSquare));\nawait scene.play(new Write(xLabel));\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(rightStrip), new DrawBorderThenFill(topStrip)]));\nawait scene.play(new AnimationGroup([new Write(rLabel), new Write(tLabel), new Write(splitLabel)]));\nawait scene.play(new DrawBorderThenFill(missing));\nawait scene.play(new AnimationGroup([new Write(missingLabel), new Write(result), new Write(answer)]));\n\nlet filled = false;\nmakeHoverable(missing, scene, { hoverScale: 1.08, hoverColor: YELLOW });\nmakeClickable(missing, scene, { onClick: () => {\n  filled = !filled;\n  missing.setFill(YELLOW, filled ? 0.8 : 0.38);\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3784,
+        "fatalError": "TypeError: Cannot read properties of null (reading '4')",
+        "errors": [
+          "TypeError: Cannot read properties of null (reading '4')"
+        ],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/alg-completing-square.0.final.jpg"
+      }
+    },
+    {
+      "kind": "auto-retry",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "13.06% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=0 clickables=1 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 25490,
+        "inputTokens": 12509,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1253,
+        "costUsd": 0.0202396,
+        "rawResponse": "{\"explanation\":\"Split the 6x rectangle into two 3x strips and place them along adjacent sides of the x-by-x square. This nearly forms an (x+3)-by-(x+3) square; the missing corner has area 3·3=9, so x²+6x+9=(x+3)² and x²+6x=(x+3)²−9.\",\"manimCode\":\"const title = new Text({ text: 'Completing the square:  x² + 6x', color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.2, 0]);\\n\\nconst side = 2.35;\\nconst strip = 1.15;\\nconst left = -4.8;\\nconst bottom = -2.35;\\n\\nconst xSquare = new Rectangle({ width: side, height: side, color: BLUE });\\nxSquare.moveTo([left + side / 2, bottom + side / 2, 0]);\\nxSquare.setFill(BLUE_E, 0.75);\\n\\nconst rightStrip = new Rectangle({ width: strip, height: side, color: GREEN });\\nrightStrip.moveTo([left + side + strip / 2, bottom + side / 2, 0]);\\nrightStrip.setFill(GREEN_E, 0.72);\\n\\nconst topStrip = new Rectangle({ width: side, height: strip, color: GREEN });\\ntopStrip.moveTo([left + side / 2, bottom + side + strip / 2, 0]);\\ntopStrip.setFill(GREEN_E, 0.72);\\n\\nconst missing = new Rectangle({ width: strip, height: strip, color: YELLOW });\\nmissing.moveTo([left + side + strip / 2, bottom + side + strip / 2, 0]);\\nmissing.setFill(YELLOW, 0.38);\\n\\nconst xLabel = new MathTex({ latex: 'x^2' });\\nconst rightLabel = new MathTex({ latex: '3x' });\\nconst topLabel = new MathTex({ latex: '3x' });\\nconst cornerLabel = new MathTex({ latex: '9' });\\nconst splitLabel = new MathTex({ latex: '6x = 3x + 3x' });\\nconst resultLabel = new MathTex({ latex: 'x^2 + 6x + 9 = (x+3)^2' });\\nconst answerLabel = new MathTex({ latex: '\\\\\\\\boxed{x^2 + 6x = (x+3)^2 - 9}' });\\n\\nfor (const item of [xLabel, rightLabel, topLabel, cornerLabel, splitLabel, resultLabel, answerLabel]) {\\n  await item.waitForRender();\\n}\\n\\nxLabel.moveTo(xSquare.getCenter());\\nrightLabel.moveTo(rightStrip.getCenter());\\ntopLabel.moveTo(topStrip.getCenter());\\ncornerLabel.moveTo(missing.getCenter());\\nsplitLabel.moveTo([2.65, 1.7, 0]);\\nresultLabel.moveTo([2.65, 0.35, 0]);\\nanswerLabel.moveTo([2.65, -1.15, 0]);\\n\\nscene.add(title);\\nawait scene.play(new DrawBorderThenFill(xSquare));\\nawait scene.play(new Write(xLabel));\\nawait scene.play(new AnimationGroup([\\n  new DrawBorderThenFill(rightStrip),\\n  new DrawBorderThenFill(topStrip)\\n]));\\nawait scene.play(new AnimationGroup([\\n  new Write(rightLabel),\\n  new Write(topLabel),\\n  new Write(splitLabel)\\n]));\\nawait scene.play(new DrawBorderThenFill(missing));\\nawait scene.play(new AnimationGroup([\\n  new Write(cornerLabel),\\n  new Write(resultLabel),\\n  new Write(answerLabel)\\n]));\\n\\nlet filled = false;\\nmakeHoverable(missing, scene, { hoverScale: 1.08, hoverColor: YELLOW });\\nmakeClickable(missing, scene, {\\n  onClick: () => {\\n    filled = !filled;\\n    missing.setFill(YELLOW, filled ? 0.82 : 0.38);\\n  }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Split the 6x rectangle into two 3x strips and place them along adjacent sides of the x-by-x square. This nearly forms an (x+3)-by-(x+3) square; the missing corner has area 3·3=9, so x²+6x+9=(x+3)² and x²+6x=(x+3)²−9."
+      },
+      "code": "const title = new Text({ text: 'Completing the square:  x² + 6x', color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.2, 0]);\n\nconst side = 2.35;\nconst strip = 1.15;\nconst left = -4.8;\nconst bottom = -2.35;\n\nconst xSquare = new Rectangle({ width: side, height: side, color: BLUE });\nxSquare.moveTo([left + side / 2, bottom + side / 2, 0]);\nxSquare.setFill(BLUE_E, 0.75);\n\nconst rightStrip = new Rectangle({ width: strip, height: side, color: GREEN });\nrightStrip.moveTo([left + side + strip / 2, bottom + side / 2, 0]);\nrightStrip.setFill(GREEN_E, 0.72);\n\nconst topStrip = new Rectangle({ width: side, height: strip, color: GREEN });\ntopStrip.moveTo([left + side / 2, bottom + side + strip / 2, 0]);\ntopStrip.setFill(GREEN_E, 0.72);\n\nconst missing = new Rectangle({ width: strip, height: strip, color: YELLOW });\nmissing.moveTo([left + side + strip / 2, bottom + side + strip / 2, 0]);\nmissing.setFill(YELLOW, 0.38);\n\nconst xLabel = new MathTex({ latex: 'x^2' });\nconst rightLabel = new MathTex({ latex: '3x' });\nconst topLabel = new MathTex({ latex: '3x' });\nconst cornerLabel = new MathTex({ latex: '9' });\nconst splitLabel = new MathTex({ latex: '6x = 3x + 3x' });\nconst resultLabel = new MathTex({ latex: 'x^2 + 6x + 9 = (x+3)^2' });\nconst answerLabel = new MathTex({ latex: '\\\\boxed{x^2 + 6x = (x+3)^2 - 9}' });\n\nfor (const item of [xLabel, rightLabel, topLabel, cornerLabel, splitLabel, resultLabel, answerLabel]) {\n  await item.waitForRender();\n}\n\nxLabel.moveTo(xSquare.getCenter());\nrightLabel.moveTo(rightStrip.getCenter());\ntopLabel.moveTo(topStrip.getCenter());\ncornerLabel.moveTo(missing.getCenter());\nsplitLabel.moveTo([2.65, 1.7, 0]);\nresultLabel.moveTo([2.65, 0.35, 0]);\nanswerLabel.moveTo([2.65, -1.15, 0]);\n\nscene.add(title);\nawait scene.play(new DrawBorderThenFill(xSquare));\nawait scene.play(new Write(xLabel));\nawait scene.play(new AnimationGroup([\n  new DrawBorderThenFill(rightStrip),\n  new DrawBorderThenFill(topStrip)\n]));\nawait scene.play(new AnimationGroup([\n  new Write(rightLabel),\n  new Write(topLabel),\n  new Write(splitLabel)\n]));\nawait scene.play(new DrawBorderThenFill(missing));\nawait scene.play(new AnimationGroup([\n  new Write(cornerLabel),\n  new Write(resultLabel),\n  new Write(answerLabel)\n]));\n\nlet filled = false;\nmakeHoverable(missing, scene, { hoverScale: 1.08, hoverColor: YELLOW });\nmakeClickable(missing, scene, {\n  onClick: () => {\n    filled = !filled;\n    missing.setFill(YELLOW, filled ? 0.82 : 0.38);\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 12043,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 6,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 1,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/alg-completing-square.1.final.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T03:01:35.036Z"
+}

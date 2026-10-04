@@ -1,0 +1,80 @@
+{
+  "itemId": "calc-riemann-sums",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "10.77% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "Text \"Riemann Sums for y = x² on [0, 2]\" overlaps MathTex \"y\" (55%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=1 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "5.38% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 89162,
+        "inputTokens": 4722,
+        "cachedInputTokens": 4480,
+        "outputTokens": 10885,
+        "costUsd": 0.165345,
+        "rawResponse": "{\"explanation\":\"A Riemann sum approximates the area under a curve by slicing the region into n thin rectangles and adding up their areas, each with width Δx = 2/n and height f(xᵢ) = xᵢ² at a chosen sample point. Since x² is increasing, right endpoints overestimate the area while left endpoints underestimate it — and the true value ∫₀² x² dx = 8/3 ≈ 2.667 is trapped between them. Drag the slider to increase n and watch the sum converge to 8/3 as the error shrinks toward zero. Use the checkbox to switch between right and left endpoints to see the over- vs. under-estimation.\",\"manimCode\":\"const f = (x) => x * x;\\nconst EXACT = 8 / 3;\\nlet n = 8;\\nlet useRight = true;\\n\\nconst ax = new Axes({\\n  xRange: [-0.5, 2.5, 0.5],\\n  yRange: [-0.5, 4.5, 1],\\n  xLength: 7.5,\\n  yLength: 6,\\n  tips: true\\n});\\nax.moveTo([-1.8, -0.3, 0]);\\nconst axisLabels = ax.getAxisLabels();\\nconst curve = ax.plot(f, { color: YELLOW, xRange: [0, 2], strokeWidth: 4 });\\n\\nfunction buildRects(count, right) {\\n  const rects = [];\\n  const dx = 2 / count;\\n  for (let i = 0; i < count; i++) {\\n    const xL = i * dx;\\n    const xR = (i + 1) * dx;\\n    const h = f(right ? xR : xL);\\n    const r = new Polygon({\\n      vertices: [ax.c2p(xL, 0), ax.c2p(xR, 0), ax.c2p(xR, h), ax.c2p(xL, h)],\\n      color: BLUE_B,\\n      strokeWidth: 1.5\\n    });\\n    r.setFill(BLUE, 0.35);\\n    rects.push(r);\\n  }\\n  return new VGroup(...rects);\\n}\\n\\nfunction approxArea(count, right) {\\n  const dx = 2 / count;\\n  let s = 0;\\n  for (let i = 0; i < count; i++) {\\n    const x = right ? (i + 1) * dx : i * dx;\\n    s += f(x) * dx;\\n  }\\n  return s;\\n}\\n\\nlet rectGroup = buildRects(n, useRight);\\nlet approxLabel = null;\\nlet errorLabel = null;\\n\\nfunction updateLabels() {\\n  const a = approxArea(n, useRight);\\n  const err = Math.abs(a - EXACT);\\n  if (approxLabel) scene.remove(approxLabel);\\n  if (errorLabel) scene.remove(errorLabel);\\n  approxLabel = new Text({ text: `Approx (n=${n}): ${a.toFixed(4)}`, color: BLUE_B, fontSize: 26 });\\n  errorLabel = new Text({ text: `Error: ${err.toFixed(4)}`, color: RED, fontSize: 26 });\\n  approxLabel.moveTo([4.0, 0.5, 0]);\\n  errorLabel.moveTo([4.0, -0.2, 0]);\\n  scene.add(approxLabel, errorLabel);\\n}\\n\\nfunction refresh() {\\n  scene.remove(rectGroup);\\n  rectGroup = buildRects(n, useRight);\\n  scene.add(rectGroup);\\n  updateLabels();\\n}\\n\\nconst title = new Text({ text: 'Riemann Sums for y = x² on [0, 2]', color: WHITE, fontSize: 30 });\\ntitle.moveTo([-0.9, 3.4, 0]);\\n\\nconst exactTex = new MathTex({ latex: '\\\\\\\\int_0^2 x^2\\\\\\\\,dx = \\\\\\\\frac{8}{3} \\\\\\\\approx 2.6667' });\\nawait exactTex.waitForRender();\\nexactTex.scale(0.7);\\nexactTex.moveTo([4.0, 1.4, 0]);\\n\\nconst curveLabel = new MathTex({ latex: 'y = x^2' });\\nawait curveLabel.waitForRender();\\ncurveLabel.scale(0.8);\\ncurveLabel.setColor(YELLOW);\\ncurveLabel.moveTo(ax.c2p(2.32, 4.15));\\n\\nawait scene.play(new Write(title));\\nscene.add(ax, axisLabels);\\nawait scene.play(new Create(curve));\\nscene.add(rectGroup);\\nawait scene.play(new FadeIn(rectGroup));\\nscene.add(exactTex, curveLabel);\\nupdateLabels();\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({\\n  label: 'Number of rectangles (n)',\\n  min: 1,\\n  max: 100,\\n  value: n,\\n  step: 1,\\n  onChange: (v) => { n = v; refresh(); }\\n});\\ncontrols.addCheckbox({\\n  label: 'Right endpoints (off = left)',\\n  checked: true,\\n  onChange: (c) => { useRight = c; refresh(); }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A Riemann sum approximates the area under a curve by slicing the region into n thin rectangles and adding up their areas, each with width Δx = 2/n and height f(xᵢ) = xᵢ² at a chosen sample point. Since x² is increasing, right endpoints overestimate the area while left endpoints underestimate it — and the true value ∫₀² x² dx = 8/3 ≈ 2.667 is trapped between them. Drag the slider to increase n and watch the sum converge to 8/3 as the error shrinks toward zero. Use the checkbox to switch between right and left endpoints to see the over- vs. under-estimation."
+      },
+      "code": "const f = (x) => x * x;\nconst EXACT = 8 / 3;\nlet n = 8;\nlet useRight = true;\n\nconst ax = new Axes({\n  xRange: [-0.5, 2.5, 0.5],\n  yRange: [-0.5, 4.5, 1],\n  xLength: 7.5,\n  yLength: 6,\n  tips: true\n});\nax.moveTo([-1.8, -0.3, 0]);\nconst axisLabels = ax.getAxisLabels();\nconst curve = ax.plot(f, { color: YELLOW, xRange: [0, 2], strokeWidth: 4 });\n\nfunction buildRects(count, right) {\n  const rects = [];\n  const dx = 2 / count;\n  for (let i = 0; i < count; i++) {\n    const xL = i * dx;\n    const xR = (i + 1) * dx;\n    const h = f(right ? xR : xL);\n    const r = new Polygon({\n      vertices: [ax.c2p(xL, 0), ax.c2p(xR, 0), ax.c2p(xR, h), ax.c2p(xL, h)],\n      color: BLUE_B,\n      strokeWidth: 1.5\n    });\n    r.setFill(BLUE, 0.35);\n    rects.push(r);\n  }\n  return new VGroup(...rects);\n}\n\nfunction approxArea(count, right) {\n  const dx = 2 / count;\n  let s = 0;\n  for (let i = 0; i < count; i++) {\n    const x = right ? (i + 1) * dx : i * dx;\n    s += f(x) * dx;\n  }\n  return s;\n}\n\nlet rectGroup = buildRects(n, useRight);\nlet approxLabel = null;\nlet errorLabel = null;\n\nfunction updateLabels() {\n  const a = approxArea(n, useRight);\n  const err = Math.abs(a - EXACT);\n  if (approxLabel) scene.remove(approxLabel);\n  if (errorLabel) scene.remove(errorLabel);\n  approxLabel = new Text({ text: `Approx (n=${n}): ${a.toFixed(4)}`, color: BLUE_B, fontSize: 26 });\n  errorLabel = new Text({ text: `Error: ${err.toFixed(4)}`, color: RED, fontSize: 26 });\n  approxLabel.moveTo([4.0, 0.5, 0]);\n  errorLabel.moveTo([4.0, -0.2, 0]);\n  scene.add(approxLabel, errorLabel);\n}\n\nfunction refresh() {\n  scene.remove(rectGroup);\n  rectGroup = buildRects(n, useRight);\n  scene.add(rectGroup);\n  updateLabels();\n}\n\nconst title = new Text({ text: 'Riemann Sums for y = x² on [0, 2]', color: WHITE, fontSize: 30 });\ntitle.moveTo([-0.9, 3.4, 0]);\n\nconst exactTex = new MathTex({ latex: '\\\\int_0^2 x^2\\\\,dx = \\\\frac{8}{3} \\\\approx 2.6667' });\nawait exactTex.waitForRender();\nexactTex.scale(0.7);\nexactTex.moveTo([4.0, 1.4, 0]);\n\nconst curveLabel = new MathTex({ latex: 'y = x^2' });\nawait curveLabel.waitForRender();\ncurveLabel.scale(0.8);\ncurveLabel.setColor(YELLOW);\ncurveLabel.moveTo(ax.c2p(2.32, 4.15));\n\nawait scene.play(new Write(title));\nscene.add(ax, axisLabels);\nawait scene.play(new Create(curve));\nscene.add(rectGroup);\nawait scene.play(new FadeIn(rectGroup));\nscene.add(exactTex, curveLabel);\nupdateLabels();\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({\n  label: 'Number of rectangles (n)',\n  min: 1,\n  max: 100,\n  value: n,\n  step: 1,\n  onChange: (v) => { n = v; refresh(); }\n});\ncontrols.addCheckbox({\n  label: 'Right endpoints (off = left)',\n  checked: true,\n  onChange: (c) => { useRight = c; refresh(); }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 7218,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 3,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 1
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/calc-riemann-sums.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/calc-riemann-sums.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:58:03.641Z"
+}

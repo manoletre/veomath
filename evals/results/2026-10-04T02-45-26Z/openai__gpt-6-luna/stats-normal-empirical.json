@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-normal-empirical",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "11.38% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.00% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 15321,
+        "inputTokens": 12272,
+        "cachedInputTokens": 12032,
+        "outputTokens": 630,
+        "costUsd": 0.00045931999999999993,
+        "rawResponse": "{\"explanation\":\"For a normal distribution, about 68% of values fall within 1 standard deviation of the mean, 95% within 2, and 99.7% within 3. The visualization shades these nested intervals under the bell curve; drag the mean marker to explore how the intervals shift.\",\"manimCode\":\"const ax = new Axes({ xRange: [-4, 4, 1], yRange: [0, 0.45, 0.1], xLength: 10, yLength: 4.4, tips: false });\\nconst pdf = x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);\\nconst curve = ax.plot(pdf, { color: BLUE, numSamples: 200 });\\nconst baseY = ax.c2p(0, 0)[1];\\nconst bands = [];\\nconst colors = [GREEN, YELLOW, ORANGE];\\nconst labelsText = ['68% within ±1σ', '95% within ±2σ', '99.7% within ±3σ'];\\nfor (let i = 0; i < 3; i++) {\\n  const k = i + 1;\\n  const vertices = [ax.c2p(-k, 0), ...Array.from({ length: 61 }, (_, j) => {\\n    const x = -k + (2 * k * j) / 60;\\n    return ax.c2p(x, pdf(x));\\n  }), ax.c2p(k, 0)];\\n  const region = new Polygon({ vertices, color: colors[i] });\\n  region.setFill(colors[i], 0.14 - i * 0.025).setStrokeWidth(1);\\n  bands.push(region);\\n}\\nconst title = new Text({ text: '68–95–99.7 rule', color: WHITE, fontSize: 34 }).moveTo([0, 3.25, 0]);\\nconst labels = labelsText.map((s, i) => new Text({ text: s, color: colors[i], fontSize: 22 }).moveTo([0, 2.65 - i * 0.38, 0]));\\nconst meanLine = new Line({ start: ax.c2p(0, 0), end: ax.c2p(0, pdf(0)), color: WHITE });\\nconst meanDot = new Dot({ point: ax.c2p(0, 0), color: WHITE });\\nscene.add(ax, bands[2], bands[1], bands[0], curve, meanLine, meanDot, title, ...labels);\\nmakeDraggable(meanDot, scene, { constrainX: [-4, 4], constrainY: [baseY, baseY] });\\nawait scene.wait(999999);\"}",
+        "explanation": "For a normal distribution, about 68% of values fall within 1 standard deviation of the mean, 95% within 2, and 99.7% within 3. The visualization shades these nested intervals under the bell curve; drag the mean marker to explore how the intervals shift."
+      },
+      "code": "const ax = new Axes({ xRange: [-4, 4, 1], yRange: [0, 0.45, 0.1], xLength: 10, yLength: 4.4, tips: false });\nconst pdf = x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);\nconst curve = ax.plot(pdf, { color: BLUE, numSamples: 200 });\nconst baseY = ax.c2p(0, 0)[1];\nconst bands = [];\nconst colors = [GREEN, YELLOW, ORANGE];\nconst labelsText = ['68% within ±1σ', '95% within ±2σ', '99.7% within ±3σ'];\nfor (let i = 0; i < 3; i++) {\n  const k = i + 1;\n  const vertices = [ax.c2p(-k, 0), ...Array.from({ length: 61 }, (_, j) => {\n    const x = -k + (2 * k * j) / 60;\n    return ax.c2p(x, pdf(x));\n  }), ax.c2p(k, 0)];\n  const region = new Polygon({ vertices, color: colors[i] });\n  region.setFill(colors[i], 0.14 - i * 0.025).setStrokeWidth(1);\n  bands.push(region);\n}\nconst title = new Text({ text: '68–95–99.7 rule', color: WHITE, fontSize: 34 }).moveTo([0, 3.25, 0]);\nconst labels = labelsText.map((s, i) => new Text({ text: s, color: colors[i], fontSize: 22 }).moveTo([0, 2.65 - i * 0.38, 0]));\nconst meanLine = new Line({ start: ax.c2p(0, 0), end: ax.c2p(0, pdf(0)), color: WHITE });\nconst meanDot = new Dot({ point: ax.c2p(0, 0), color: WHITE });\nscene.add(ax, bands[2], bands[1], bands[0], curve, meanLine, meanDot, title, ...labels);\nmakeDraggable(meanDot, scene, { constrainX: [-4, 4], constrainY: [baseY, baseY] });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5136,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/stats-normal-empirical.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/stats-normal-empirical.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:55:27.465Z"
+}

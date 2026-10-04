@@ -1,0 +1,79 @@
+{
+  "itemId": "calc-matrix-transform",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "6.08% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=2 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "4.81% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 11005,
+        "inputTokens": 7974,
+        "cachedInputTokens": 7476,
+        "outputTokens": 1793,
+        "costUsd": 0.0214132,
+        "rawResponse": "{\"explanation\":\"The matrix [[2, 1], [0, 1]] sends the basis vector i = (1,0) to (2,0) and j = (0,1) to (1,1). So the unit square becomes a parallelogram with base 2 and height 1, and its area is 2. That area scaling factor is the determinant: det = 2·1 − 1·0 = 2. Drag the slider to morph the plane from the identity to the matrix, and watch the area grow from 1 to 2.\",\"manimCode\":\"const a = 2, b = 1, c = 0, d = 1;\\nconst S = 1.0;\\nlet tval = 0;\\n\\n// Static grid lines (faint) for the original plane\\nconst origGrid = [];\\nfor (let k = -3; k <= 3; k++) {\\n  origGrid.push(new Line({ start: [k*S, -3, 0], end: [k*S, 3, 0], color: GRAY, strokeWidth: 1 }));\\n  origGrid.push(new Line({ start: [-5, k*S, 0], end: [5, k*S, 0], color: GRAY, strokeWidth: 1 }));\\n}\\norigGrid.forEach(l => l.setOpacity(0.25));\\nscene.add(...origGrid);\\n\\nconst xAxis = new Line({ start: [-6, 0, 0], end: [6, 0, 0], color: WHITE, strokeWidth: 2 });\\nconst yAxis = new Line({ start: [0, -3.5, 0], end: [0, 3.5, 0], color: WHITE, strokeWidth: 2 });\\nscene.add(xAxis, yAxis);\\n\\n// Interpolated matrix M(t) = (1-t) I + t A\\nfunction M(t) {\\n  return [1 + t*(a-1), t*b, t*c, 1 + t*(d-1)];\\n}\\nfunction apply(m, x, y) {\\n  return [(m[0]*x + m[1]*y)*S, (m[2]*x + m[3]*y)*S, 0];\\n}\\n\\n// Transformed grid lines (blue)\\nconst tGrid = [];\\nconst specs = [];\\nfor (let k = -3; k <= 3; k++) {\\n  specs.push([[k, -3], [k, 3]]);\\n  specs.push([[-5, k], [5, k]]);\\n}\\nspecs.forEach(sp => {\\n  const p = new Polygon({ vertices: [apply(M(0), sp[0][0], sp[0][1]), apply(M(0), sp[1][0], sp[1][1])], color: BLUE });\\n  p.setStrokeWidth(1.5).setFillOpacity(0);\\n  tGrid.push(p);\\n});\\nscene.add(...tGrid);\\n\\n// Unit square -> parallelogram\\nconst sq = new Polygon({ vertices: [[0,0,0],[S,0,0],[S,S,0],[0,S,0]], color: YELLOW });\\nsq.setFill(YELLOW, 0.5);\\nscene.add(sq);\\n\\n// Basis vectors\\nconst iVec = new Polygon({ vertices: [[0,0,0],[S,0,0]], color: GREEN });\\niVec.setStrokeWidth(5).setFillOpacity(0);\\nconst jVec = new Polygon({ vertices: [[0,0,0],[0,S,0]], color: RED });\\njVec.setStrokeWidth(5).setFillOpacity(0);\\nscene.add(iVec, jVec);\\n\\nlet label = null;\\nfunction setLabel(t) {\\n  const m = M(t);\\n  const area = m[0]*m[3] - m[1]*m[2];\\n  if (label) scene.remove(label);\\n  label = new Text({ text: 'Area = ' + area.toFixed(2) + '   (det = 2)', color: YELLOW, fontSize: 28 });\\n  label.moveTo([0, -3.7, 0]);\\n  scene.add(label);\\n}\\n\\nfunction update(t) {\\n  const m = M(t);\\n  specs.forEach((sp, i) => {\\n    tGrid[i].setVertices([apply(m, sp[0][0], sp[0][1]), apply(m, sp[1][0], sp[1][1])]);\\n  });\\n  sq.setVertices([apply(m,0,0), apply(m,1,0), apply(m,1,1), apply(m,0,1)]);\\n  iVec.setVertices([apply(m,0,0), apply(m,1,0)]);\\n  jVec.setVertices([apply(m,0,0), apply(m,0,1)]);\\n  setLabel(t);\\n}\\nupdate(0);\\n\\nconst title = new Text({ text: 'Matrix [[2,1],[0,1]]: i→(2,0), j→(1,1)', color: WHITE, fontSize: 26 });\\ntitle.moveTo([0, 3.7, 0]);\\nscene.add(title);\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'Transform t', min: 0, max: 1, value: 0, step: 0.02, onChange: (v) => { tval = v; update(v); } });\\ncontrols.addButton({ label: 'Apply fully', onClick: () => { update(1); } });\\ncontrols.addButton({ label: 'Reset', onClick: () => { update(0); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The matrix [[2, 1], [0, 1]] sends the basis vector i = (1,0) to (2,0) and j = (0,1) to (1,1). So the unit square becomes a parallelogram with base 2 and height 1, and its area is 2. That area scaling factor is the determinant: det = 2·1 − 1·0 = 2. Drag the slider to morph the plane from the identity to the matrix, and watch the area grow from 1 to 2."
+      },
+      "code": "const a = 2, b = 1, c = 0, d = 1;\nconst S = 1.0;\nlet tval = 0;\n\n// Static grid lines (faint) for the original plane\nconst origGrid = [];\nfor (let k = -3; k <= 3; k++) {\n  origGrid.push(new Line({ start: [k*S, -3, 0], end: [k*S, 3, 0], color: GRAY, strokeWidth: 1 }));\n  origGrid.push(new Line({ start: [-5, k*S, 0], end: [5, k*S, 0], color: GRAY, strokeWidth: 1 }));\n}\norigGrid.forEach(l => l.setOpacity(0.25));\nscene.add(...origGrid);\n\nconst xAxis = new Line({ start: [-6, 0, 0], end: [6, 0, 0], color: WHITE, strokeWidth: 2 });\nconst yAxis = new Line({ start: [0, -3.5, 0], end: [0, 3.5, 0], color: WHITE, strokeWidth: 2 });\nscene.add(xAxis, yAxis);\n\n// Interpolated matrix M(t) = (1-t) I + t A\nfunction M(t) {\n  return [1 + t*(a-1), t*b, t*c, 1 + t*(d-1)];\n}\nfunction apply(m, x, y) {\n  return [(m[0]*x + m[1]*y)*S, (m[2]*x + m[3]*y)*S, 0];\n}\n\n// Transformed grid lines (blue)\nconst tGrid = [];\nconst specs = [];\nfor (let k = -3; k <= 3; k++) {\n  specs.push([[k, -3], [k, 3]]);\n  specs.push([[-5, k], [5, k]]);\n}\nspecs.forEach(sp => {\n  const p = new Polygon({ vertices: [apply(M(0), sp[0][0], sp[0][1]), apply(M(0), sp[1][0], sp[1][1])], color: BLUE });\n  p.setStrokeWidth(1.5).setFillOpacity(0);\n  tGrid.push(p);\n});\nscene.add(...tGrid);\n\n// Unit square -> parallelogram\nconst sq = new Polygon({ vertices: [[0,0,0],[S,0,0],[S,S,0],[0,S,0]], color: YELLOW });\nsq.setFill(YELLOW, 0.5);\nscene.add(sq);\n\n// Basis vectors\nconst iVec = new Polygon({ vertices: [[0,0,0],[S,0,0]], color: GREEN });\niVec.setStrokeWidth(5).setFillOpacity(0);\nconst jVec = new Polygon({ vertices: [[0,0,0],[0,S,0]], color: RED });\njVec.setStrokeWidth(5).setFillOpacity(0);\nscene.add(iVec, jVec);\n\nlet label = null;\nfunction setLabel(t) {\n  const m = M(t);\n  const area = m[0]*m[3] - m[1]*m[2];\n  if (label) scene.remove(label);\n  label = new Text({ text: 'Area = ' + area.toFixed(2) + '   (det = 2)', color: YELLOW, fontSize: 28 });\n  label.moveTo([0, -3.7, 0]);\n  scene.add(label);\n}\n\nfunction update(t) {\n  const m = M(t);\n  specs.forEach((sp, i) => {\n    tGrid[i].setVertices([apply(m, sp[0][0], sp[0][1]), apply(m, sp[1][0], sp[1][1])]);\n  });\n  sq.setVertices([apply(m,0,0), apply(m,1,0), apply(m,1,1), apply(m,0,1)]);\n  iVec.setVertices([apply(m,0,0), apply(m,1,0)]);\n  jVec.setVertices([apply(m,0,0), apply(m,0,1)]);\n  setLabel(t);\n}\nupdate(0);\n\nconst title = new Text({ text: 'Matrix [[2,1],[0,1]]: i→(2,0), j→(1,1)', color: WHITE, fontSize: 26 });\ntitle.moveTo([0, 3.7, 0]);\nscene.add(title);\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'Transform t', min: 0, max: 1, value: 0, step: 0.02, onChange: (v) => { tval = v; update(v); } });\ncontrols.addButton({ label: 'Apply fully', onClick: () => { update(1); } });\ncontrols.addButton({ label: 'Reset', onClick: () => { update(0); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3581,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 2,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/calc-matrix-transform.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/calc-matrix-transform.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:35:24.367Z"
+}

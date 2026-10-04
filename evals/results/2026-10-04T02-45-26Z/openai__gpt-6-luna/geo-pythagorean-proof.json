@@ -1,0 +1,78 @@
+{
+  "itemId": "geo-pythagorean-proof",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "14.14% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 28855,
+        "inputTokens": 12277,
+        "cachedInputTokens": 12032,
+        "outputTokens": 1269,
+        "costUsd": 0.00077932,
+        "rawResponse": "{\"explanation\":\"Arrange four congruent right triangles inside a large square in two ways. The triangles have the same total area in both arrangements, so the leftover regions must also have equal area: one arrangement leaves a square of area \\\\(c^2\\\\), and the other leaves two squares with total area \\\\(a^2+b^2\\\\). Thus \\\\(c^2=a^2+b^2\\\\).\",\"manimCode\":\"const a = 2.4, b = 1.8, c = Math.sqrt(a*a + b*b);\\nconst s = a + b;\\nconst sc = 0.72;\\nconst ox = -2.0, oy = -1.55;\\nconst P = (x,y) => [ox + sc*x, oy + sc*y, 0];\\nconst title = new Text({text:'Four-triangle rearrangement', color:WHITE, fontSize:30});\\ntitle.moveTo([0,3.25,0]);\\nconst caption = new Text({text:'Same outer square • same four triangles • equal leftover area', color:GRAY, fontSize:20});\\ncaption.moveTo([0,-3.05,0]);\\n\\n// Left: four right triangles leave a central square of side c.\\nconst outer1 = new Polygon({vertices:[P(0,0),P(s,0),P(s,s),P(0,s)], color:WHITE});\\nouter1.setFill(BLACK,0).setStrokeWidth(2);\\nconst tri1 = [\\n  [[0,0],[a,0],[a,b]],\\n  [[s,0],[s,a],[s-b,a]],\\n  [[s,s],[s-a,s],[s-a,s-b]],\\n  [[0,s],[0,s-a],[b,s-a]]\\n].map(v=>{ const q=new Polygon({vertices:v.map(p=>P(p[0],p[1])),color:BLUE_C}); q.setFill(BLUE_C,0.72).setStrokeWidth(1.5); return q; });\\nconst hole1 = new Polygon({vertices:[P(a,0),P(s,a),P(b,s),P(0,b)],color:GOLD});\\nhole1.setFill(GOLD,0.25).setStrokeWidth(2);\\nconst labC = new Text({text:'c²',color:GOLD,fontSize:28}); labC.moveTo(P(s/2,s/2));\\nconst tag1 = new Text({text:'Arrangement 1',color:WHITE,fontSize:22}); tag1.moveTo([-2.0,2.15,0]);\\n\\n// Right: same square, four triangles leave a-by-a and b-by-b corner squares.\\nconst ox2 = 2.0;\\nconst Q = (x,y) => [ox2 + sc*x, oy + sc*y, 0];\\nconst outer2 = new Polygon({vertices:[Q(0,0),Q(s,0),Q(s,s),Q(0,s)],color:WHITE});\\nouter2.setFill(BLACK,0).setStrokeWidth(2);\\nconst tri2 = [\\n  [[0,0],[a,0],[0,b]],\\n  [[a,0],[s,0],[s,a]],\\n  [[s,a],[s,s],[b,s]],\\n  [[b,s],[0,s],[0,b]]\\n].map(v=>{ const q=new Polygon({vertices:v.map(p=>Q(p[0],p[1])),color:BLUE_C}); q.setFill(BLUE_C,0.72).setStrokeWidth(1.5); return q; });\\nconst sqA = new Polygon({vertices:[Q(a,0),Q(s,0),Q(s,a),Q(a,a)],color:GREEN_C});\\nsqA.setFill(GREEN_C,0.3).setStrokeWidth(2);\\nconst sqB = new Polygon({vertices:[Q(0,b),Q(b,b),Q(b,s),Q(0,s)],color:ORANGE});\\nsqB.setFill(ORANGE,0.3).setStrokeWidth(2);\\nconst labA = new Text({text:'a²',color:GREEN_C,fontSize:24}); labA.moveTo(Q((a+s)/2,a/2));\\nconst labB = new Text({text:'b²',color:ORANGE,fontSize:24}); labB.moveTo(Q(b/2,(b+s)/2));\\nconst tag2 = new Text({text:'Arrangement 2',color:WHITE,fontSize:22}); tag2.moveTo([2.0,2.15,0]);\\nconst eq = new MathTex({latex:'c^2 = a^2 + b^2'}); await eq.waitForRender(); eq.moveTo([0,-2.45,0]);\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new AnimationGroup([new Create(outer1),new Create(outer2),new Write(tag1),new Write(tag2)]));\\nawait scene.play(new AnimationGroup([...tri1.map(t=>new DrawBorderThenFill(t)),...tri2.map(t=>new DrawBorderThenFill(t))]));\\nawait scene.play(new AnimationGroup([new Create(hole1),new Write(labC),new Create(sqA),new Create(sqB),new Write(labA),new Write(labB)]));\\nawait scene.play(new Write(eq));\\nconst controls = new Controls(scene,{position:'bottom-right',width:210});\\ncontrols.addButton({label:'Highlight equal areas',onClick:()=>{hole1.setStrokeWidth(4);sqA.setStrokeWidth(4);sqB.setStrokeWidth(4);}});\\nawait scene.wait(999999);\"}",
+        "explanation": "Arrange four congruent right triangles inside a large square in two ways. The triangles have the same total area in both arrangements, so the leftover regions must also have equal area: one arrangement leaves a square of area \\(c^2\\), and the other leaves two squares with total area \\(a^2+b^2\\). Thus \\(c^2=a^2+b^2\\)."
+      },
+      "code": "const a = 2.4, b = 1.8, c = Math.sqrt(a*a + b*b);\nconst s = a + b;\nconst sc = 0.72;\nconst ox = -2.0, oy = -1.55;\nconst P = (x,y) => [ox + sc*x, oy + sc*y, 0];\nconst title = new Text({text:'Four-triangle rearrangement', color:WHITE, fontSize:30});\ntitle.moveTo([0,3.25,0]);\nconst caption = new Text({text:'Same outer square • same four triangles • equal leftover area', color:GRAY, fontSize:20});\ncaption.moveTo([0,-3.05,0]);\n\n// Left: four right triangles leave a central square of side c.\nconst outer1 = new Polygon({vertices:[P(0,0),P(s,0),P(s,s),P(0,s)], color:WHITE});\nouter1.setFill(BLACK,0).setStrokeWidth(2);\nconst tri1 = [\n  [[0,0],[a,0],[a,b]],\n  [[s,0],[s,a],[s-b,a]],\n  [[s,s],[s-a,s],[s-a,s-b]],\n  [[0,s],[0,s-a],[b,s-a]]\n].map(v=>{ const q=new Polygon({vertices:v.map(p=>P(p[0],p[1])),color:BLUE_C}); q.setFill(BLUE_C,0.72).setStrokeWidth(1.5); return q; });\nconst hole1 = new Polygon({vertices:[P(a,0),P(s,a),P(b,s),P(0,b)],color:GOLD});\nhole1.setFill(GOLD,0.25).setStrokeWidth(2);\nconst labC = new Text({text:'c²',color:GOLD,fontSize:28}); labC.moveTo(P(s/2,s/2));\nconst tag1 = new Text({text:'Arrangement 1',color:WHITE,fontSize:22}); tag1.moveTo([-2.0,2.15,0]);\n\n// Right: same square, four triangles leave a-by-a and b-by-b corner squares.\nconst ox2 = 2.0;\nconst Q = (x,y) => [ox2 + sc*x, oy + sc*y, 0];\nconst outer2 = new Polygon({vertices:[Q(0,0),Q(s,0),Q(s,s),Q(0,s)],color:WHITE});\nouter2.setFill(BLACK,0).setStrokeWidth(2);\nconst tri2 = [\n  [[0,0],[a,0],[0,b]],\n  [[a,0],[s,0],[s,a]],\n  [[s,a],[s,s],[b,s]],\n  [[b,s],[0,s],[0,b]]\n].map(v=>{ const q=new Polygon({vertices:v.map(p=>Q(p[0],p[1])),color:BLUE_C}); q.setFill(BLUE_C,0.72).setStrokeWidth(1.5); return q; });\nconst sqA = new Polygon({vertices:[Q(a,0),Q(s,0),Q(s,a),Q(a,a)],color:GREEN_C});\nsqA.setFill(GREEN_C,0.3).setStrokeWidth(2);\nconst sqB = new Polygon({vertices:[Q(0,b),Q(b,b),Q(b,s),Q(0,s)],color:ORANGE});\nsqB.setFill(ORANGE,0.3).setStrokeWidth(2);\nconst labA = new Text({text:'a²',color:GREEN_C,fontSize:24}); labA.moveTo(Q((a+s)/2,a/2));\nconst labB = new Text({text:'b²',color:ORANGE,fontSize:24}); labB.moveTo(Q(b/2,(b+s)/2));\nconst tag2 = new Text({text:'Arrangement 2',color:WHITE,fontSize:22}); tag2.moveTo([2.0,2.15,0]);\nconst eq = new MathTex({latex:'c^2 = a^2 + b^2'}); await eq.waitForRender(); eq.moveTo([0,-2.45,0]);\n\nawait scene.play(new Write(title));\nawait scene.play(new AnimationGroup([new Create(outer1),new Create(outer2),new Write(tag1),new Write(tag2)]));\nawait scene.play(new AnimationGroup([...tri1.map(t=>new DrawBorderThenFill(t)),...tri2.map(t=>new DrawBorderThenFill(t))]));\nawait scene.play(new AnimationGroup([new Create(hole1),new Write(labC),new Create(sqA),new Create(sqB),new Write(labA),new Write(labB)]));\nawait scene.play(new Write(eq));\nconst controls = new Controls(scene,{position:'bottom-right',width:210});\ncontrols.addButton({label:'Highlight equal areas',onClick:()=>{hole1.setStrokeWidth(4);sqA.setStrokeWidth(4);sqB.setStrokeWidth(4);}});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 10934,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 5,
+        "controls": {
+          "sliders": 0,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/geo-pythagorean-proof.0.final.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:54:36.163Z"
+}

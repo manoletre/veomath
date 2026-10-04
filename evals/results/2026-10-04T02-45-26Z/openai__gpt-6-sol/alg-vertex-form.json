@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-vertex-form",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.47% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.24% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 52018,
+        "inputTokens": 12280,
+        "cachedInputTokens": 0,
+        "outputTokens": 1989,
+        "costUsd": 0.04445,
+        "rawResponse": "{\"explanation\":\"The vertex of y = a(x − h)² + k is (h, k). Changing h moves the parabola left or right, while changing k moves it up or down. The value a controls its shape: larger |a| makes it narrower, and a negative value flips it downward. Move the sliders to see each effect.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-4, 4, 1],\\n  yRange: [-3.5, 4.5, 1],\\n  xLength: 8,\\n  yLength: 5.2,\\n  tips: false\\n});\\nax.moveTo([-1.2, -0.15, 0]);\\n\\nconst title = new Text({ text: 'y = a(x − h)² + k', color: WHITE, fontSize: 36 });\\ntitle.moveTo([-1.2, 3.25, 0]);\\n\\nlet a = 0.7;\\nlet h = 0;\\nlet k = 0;\\n\\nfunction makeCurve() {\\n  let left = -4;\\n  let right = 4;\\n  if (Math.abs(a) > 1e-8) {\\n    const radius = Math.sqrt((a > 0 ? 4.5 - k : k + 3.5) / Math.abs(a));\\n    left = Math.max(-4, h - radius);\\n    right = Math.min(4, h + radius);\\n  }\\n  return ax.plot(x => a * (x - h) * (x - h) + k, {\\n    color: YELLOW,\\n    xRange: [left, right],\\n    numSamples: 240\\n  });\\n}\\n\\nlet curve = makeCurve();\\nconst vertex = new Dot({ point: ax.c2p(h, k), color: ORANGE });\\nconst symmetry = new Polygon({\\n  vertices: [ax.c2p(h, -3.5), ax.c2p(h, 4.5)],\\n  color: TEAL\\n});\\nsymmetry.setStrokeWidth(2);\\nsymmetry.setFillOpacity(0);\\nsymmetry.setOpacity(0.45);\\n\\nfunction makeReadout() {\\n  const label = new Text({\\n    text: `a = ${a.toFixed(1)}    h = ${h.toFixed(1)}    k = ${k.toFixed(1)}    vertex = (${h.toFixed(1)}, ${k.toFixed(1)})`,\\n    color: WHITE,\\n    fontSize: 23\\n  });\\n  label.moveTo([-1.2, -3.35, 0]);\\n  return label;\\n}\\nlet readout = makeReadout();\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new Create(ax));\\nscene.add(symmetry);\\nawait scene.play(new Create(curve));\\nawait scene.play(new FadeIn(vertex));\\nscene.add(readout);\\n\\nfunction refresh() {\\n  scene.remove(curve);\\n  curve = makeCurve();\\n  scene.add(curve);\\n  vertex.moveTo(ax.c2p(h, k));\\n  symmetry.setVertices([ax.c2p(h, -3.5), ax.c2p(h, 4.5)]);\\n  scene.remove(readout);\\n  readout = makeReadout();\\n  scene.add(readout);\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 260 });\\ncontrols.addSlider({ label: 'a: stretch / flip', min: -1.5, max: 1.5, value: a, step: 0.1, onChange: v => { a = v; refresh(); } });\\ncontrols.addSlider({ label: 'h: left / right', min: -2, max: 2, value: h, step: 0.1, onChange: v => { h = v; refresh(); } });\\ncontrols.addSlider({ label: 'k: down / up', min: -2, max: 2, value: k, step: 0.1, onChange: v => { k = v; refresh(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The vertex of y = a(x − h)² + k is (h, k). Changing h moves the parabola left or right, while changing k moves it up or down. The value a controls its shape: larger |a| makes it narrower, and a negative value flips it downward. Move the sliders to see each effect."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-4, 4, 1],\n  yRange: [-3.5, 4.5, 1],\n  xLength: 8,\n  yLength: 5.2,\n  tips: false\n});\nax.moveTo([-1.2, -0.15, 0]);\n\nconst title = new Text({ text: 'y = a(x − h)² + k', color: WHITE, fontSize: 36 });\ntitle.moveTo([-1.2, 3.25, 0]);\n\nlet a = 0.7;\nlet h = 0;\nlet k = 0;\n\nfunction makeCurve() {\n  let left = -4;\n  let right = 4;\n  if (Math.abs(a) > 1e-8) {\n    const radius = Math.sqrt((a > 0 ? 4.5 - k : k + 3.5) / Math.abs(a));\n    left = Math.max(-4, h - radius);\n    right = Math.min(4, h + radius);\n  }\n  return ax.plot(x => a * (x - h) * (x - h) + k, {\n    color: YELLOW,\n    xRange: [left, right],\n    numSamples: 240\n  });\n}\n\nlet curve = makeCurve();\nconst vertex = new Dot({ point: ax.c2p(h, k), color: ORANGE });\nconst symmetry = new Polygon({\n  vertices: [ax.c2p(h, -3.5), ax.c2p(h, 4.5)],\n  color: TEAL\n});\nsymmetry.setStrokeWidth(2);\nsymmetry.setFillOpacity(0);\nsymmetry.setOpacity(0.45);\n\nfunction makeReadout() {\n  const label = new Text({\n    text: `a = ${a.toFixed(1)}    h = ${h.toFixed(1)}    k = ${k.toFixed(1)}    vertex = (${h.toFixed(1)}, ${k.toFixed(1)})`,\n    color: WHITE,\n    fontSize: 23\n  });\n  label.moveTo([-1.2, -3.35, 0]);\n  return label;\n}\nlet readout = makeReadout();\n\nawait scene.play(new Write(title));\nawait scene.play(new Create(ax));\nscene.add(symmetry);\nawait scene.play(new Create(curve));\nawait scene.play(new FadeIn(vertex));\nscene.add(readout);\n\nfunction refresh() {\n  scene.remove(curve);\n  curve = makeCurve();\n  scene.add(curve);\n  vertex.moveTo(ax.c2p(h, k));\n  symmetry.setVertices([ax.c2p(h, -3.5), ax.c2p(h, 4.5)]);\n  scene.remove(readout);\n  readout = makeReadout();\n  scene.add(readout);\n}\n\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 260 });\ncontrols.addSlider({ label: 'a: stretch / flip', min: -1.5, max: 1.5, value: a, step: 0.1, onChange: v => { a = v; refresh(); } });\ncontrols.addSlider({ label: 'h: left / right', min: -2, max: 2, value: h, step: 0.1, onChange: v => { h = v; refresh(); } });\ncontrols.addSlider({ label: 'k: down / up', min: -2, max: 2, value: k, step: 0.1, onChange: v => { k = v; refresh(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 11866,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 4,
+        "controls": {
+          "sliders": 3,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/alg-vertex-form.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/alg-vertex-form.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:50.511Z"
+}

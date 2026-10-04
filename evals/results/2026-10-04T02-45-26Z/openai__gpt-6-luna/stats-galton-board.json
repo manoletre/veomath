@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-galton-board",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 0,
+  "firstAttemptScore": 0,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": false,
+          "detail": "Did not reach the final scene.wait() within 45s"
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.69% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": false,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 35249,
+        "inputTokens": 12271,
+        "cachedInputTokens": 12032,
+        "outputTokens": 1774,
+        "costUsd": 0.00103122,
+        "rawResponse": "{\"explanation\":\"A Galton board turns repeated left-or-right choices into a distribution: after six rows, a ball’s final bin records how many times it went right. Since each path has probability \\\\(2^{-6}\\\\), the bin probabilities follow the binomial coefficients \\\\(1,6,15,20,15,6,1\\\\), producing the familiar bell-shaped pattern.\",\"manimCode\":\"const title = new Text({ text: 'A Galton board builds a binomial distribution', color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.45, 0]);\\nscene.add(title);\\n\\nconst rows = 6;\\nconst dx = 0.72;\\nconst dy = 0.57;\\nconst topY = 2.65;\\nconst boardLeft = -3.0;\\nconst boardRight = 3.0;\\nconst sideLeft = new Line({ start: [boardLeft, topY + 0.35, 0], end: [boardLeft, -1.45, 0], color: GRAY });\\nconst sideRight = new Line({ start: [boardRight, topY + 0.35, 0], end: [boardRight, -1.45, 0], color: GRAY });\\nscene.add(sideLeft, sideRight);\\n\\nconst pegs = [];\\nfor (let r = 0; r < rows; r++) {\\n  const y = topY - r * dy;\\n  for (let i = 0; i <= r; i++) {\\n    const x = (i - r / 2) * dx;\\n    const peg = new Dot({ point: [x, y, 0], color: BLUE_C });\\n    peg.scale(0.42);\\n    pegs.push(peg);\\n  }\\n}\\nscene.add(...pegs);\\n\\nconst binLines = [];\\nfor (let i = 0; i <= rows + 1; i++) {\\n  const x = (i - (rows + 1) / 2) * dx;\\n  const line = new Line({ start: [x, -1.45, 0], end: [x, -2.35, 0], color: GRAY });\\n  binLines.push(line);\\n}\\nscene.add(...binLines);\\n\\nconst counts = Array(rows + 1).fill(0);\\nconst bars = [];\\nfor (let j = 0; j <= rows; j++) {\\n  const x = (j - rows / 2) * dx;\\n  const bar = new Rectangle({ width: 0.55, height: 0.08, color: TEAL });\\n  bar.setFill(TEAL, 0.85);\\n  bar.moveTo([x, -3.0, 0]);\\n  bars.push(bar);\\n}\\nscene.add(...bars);\\n\\nconst note = new Text({ text: 'Each row: left or right  •  final bin = number of rights', color: YELLOW, fontSize: 19 });\\nnote.moveTo([0, -3.55, 0]);\\nscene.add(note);\\n\\n// Send balls down random left/right paths and stack them in their landing bins.\\nconst balls = 18;\\nfor (let b = 0; b < balls; b++) {\\n  const choices = [];\\n  let rights = 0;\\n  for (let r = 0; r < rows; r++) {\\n    const goRight = Math.random() < 0.5;\\n    choices.push(goRight);\\n    if (goRight) rights++;\\n  }\\n  const ball = new Dot({ point: [0, topY + 0.62, 0], color: GOLD });\\n  ball.scale(0.62);\\n  scene.add(ball);\\n  let posX = 0;\\n  for (let r = 0; r < rows; r++) {\\n    posX += choices[r] ? dx / 2 : -dx / 2;\\n    const targetY = topY - r * dy - 0.17;\\n    await scene.play(new Shift(ball, { direction: [posX - ball.getCenter()[0], targetY - ball.getCenter()[1], 0] }));\\n  }\\n  counts[rights]++;\\n  const landingX = (rights - rows / 2) * dx;\\n  const stackY = -2.43 - (counts[rights] - 1) * 0.13;\\n  await scene.play(new Shift(ball, { direction: [landingX - ball.getCenter()[0], stackY - ball.getCenter()[1], 0] }));\\n  const newHeight = 0.08 + counts[rights] * 0.13;\\n  const newBar = new Rectangle({ width: 0.55, height: newHeight, color: TEAL });\\n  newBar.setFill(TEAL, 0.85);\\n  newBar.moveTo([landingX, -3.0 + newHeight / 2, 0]);\\n  scene.remove(bars[rights]);\\n  bars[rights] = newBar;\\n  scene.add(newBar);\\n}\\n\\nconst formula = new Text({ text: 'Bin probabilities:  1 : 6 : 15 : 20 : 15 : 6 : 1   (out of 64)', color: WHITE, fontSize: 21 });\\nformula.moveTo([0, 3.02, 0]);\\nscene.add(formula);\\nfor (const bar of bars) makeHoverable(bar, scene, { hoverScale: 1.08, hoverColor: YELLOW });\\nawait scene.wait(999999);\"}",
+        "explanation": "A Galton board turns repeated left-or-right choices into a distribution: after six rows, a ball’s final bin records how many times it went right. Since each path has probability \\(2^{-6}\\), the bin probabilities follow the binomial coefficients \\(1,6,15,20,15,6,1\\), producing the familiar bell-shaped pattern."
+      },
+      "code": "const title = new Text({ text: 'A Galton board builds a binomial distribution', color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.45, 0]);\nscene.add(title);\n\nconst rows = 6;\nconst dx = 0.72;\nconst dy = 0.57;\nconst topY = 2.65;\nconst boardLeft = -3.0;\nconst boardRight = 3.0;\nconst sideLeft = new Line({ start: [boardLeft, topY + 0.35, 0], end: [boardLeft, -1.45, 0], color: GRAY });\nconst sideRight = new Line({ start: [boardRight, topY + 0.35, 0], end: [boardRight, -1.45, 0], color: GRAY });\nscene.add(sideLeft, sideRight);\n\nconst pegs = [];\nfor (let r = 0; r < rows; r++) {\n  const y = topY - r * dy;\n  for (let i = 0; i <= r; i++) {\n    const x = (i - r / 2) * dx;\n    const peg = new Dot({ point: [x, y, 0], color: BLUE_C });\n    peg.scale(0.42);\n    pegs.push(peg);\n  }\n}\nscene.add(...pegs);\n\nconst binLines = [];\nfor (let i = 0; i <= rows + 1; i++) {\n  const x = (i - (rows + 1) / 2) * dx;\n  const line = new Line({ start: [x, -1.45, 0], end: [x, -2.35, 0], color: GRAY });\n  binLines.push(line);\n}\nscene.add(...binLines);\n\nconst counts = Array(rows + 1).fill(0);\nconst bars = [];\nfor (let j = 0; j <= rows; j++) {\n  const x = (j - rows / 2) * dx;\n  const bar = new Rectangle({ width: 0.55, height: 0.08, color: TEAL });\n  bar.setFill(TEAL, 0.85);\n  bar.moveTo([x, -3.0, 0]);\n  bars.push(bar);\n}\nscene.add(...bars);\n\nconst note = new Text({ text: 'Each row: left or right  •  final bin = number of rights', color: YELLOW, fontSize: 19 });\nnote.moveTo([0, -3.55, 0]);\nscene.add(note);\n\n// Send balls down random left/right paths and stack them in their landing bins.\nconst balls = 18;\nfor (let b = 0; b < balls; b++) {\n  const choices = [];\n  let rights = 0;\n  for (let r = 0; r < rows; r++) {\n    const goRight = Math.random() < 0.5;\n    choices.push(goRight);\n    if (goRight) rights++;\n  }\n  const ball = new Dot({ point: [0, topY + 0.62, 0], color: GOLD });\n  ball.scale(0.62);\n  scene.add(ball);\n  let posX = 0;\n  for (let r = 0; r < rows; r++) {\n    posX += choices[r] ? dx / 2 : -dx / 2;\n    const targetY = topY - r * dy - 0.17;\n    await scene.play(new Shift(ball, { direction: [posX - ball.getCenter()[0], targetY - ball.getCenter()[1], 0] }));\n  }\n  counts[rights]++;\n  const landingX = (rights - rows / 2) * dx;\n  const stackY = -2.43 - (counts[rights] - 1) * 0.13;\n  await scene.play(new Shift(ball, { direction: [landingX - ball.getCenter()[0], stackY - ball.getCenter()[1], 0] }));\n  const newHeight = 0.08 + counts[rights] * 0.13;\n  const newBar = new Rectangle({ width: 0.55, height: newHeight, color: TEAL });\n  newBar.setFill(TEAL, 0.85);\n  newBar.moveTo([landingX, -3.0 + newHeight / 2, 0]);\n  scene.remove(bars[rights]);\n  bars[rights] = newBar;\n  scene.add(newBar);\n}\n\nconst formula = new Text({ text: 'Bin probabilities:  1 : 6 : 15 : 20 : 15 : 6 : 1   (out of 64)', color: WHITE, fontSize: 21 });\nformula.moveTo([0, 3.02, 0]);\nscene.add(formula);\nfor (const bar of bars) makeHoverable(bar, scene, { hoverScale: 1.08, hoverColor: YELLOW });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 48650,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 45,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/stats-galton-board.0.final.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:56:35.932Z"
+}

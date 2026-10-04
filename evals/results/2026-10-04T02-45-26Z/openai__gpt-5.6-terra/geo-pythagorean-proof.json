@@ -1,0 +1,78 @@
+{
+  "itemId": "geo-pythagorean-proof",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "21.99% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=3"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 51352,
+        "inputTokens": 11746,
+        "cachedInputTokens": 11008,
+        "outputTokens": 2533,
+        "costUsd": 0.034073599999999996,
+        "rawResponse": "{\"explanation\":\"Four congruent right triangles have total area \\\\(4\\\\cdot\\\\tfrac12ab=2ab\\\\). In the first arrangement, their leftover region is a square of area \\\\(c^2\\\\); in the second, the leftover regions are squares of total area \\\\(a^2+b^2\\\\). Since the outer square and the four triangles are unchanged, the leftover areas are equal: \\\\(a^2+b^2=c^2\\\\).\",\"manimCode\":\"const a = 2.1;\\nconst b = 1.3;\\nconst s = a + b;\\nconst leftX = -5.3;\\nconst rightX = 1.3;\\nconst y0 = -1.7;\\n\\nconst title = new Text({ text: 'The Pythagorean Theorem: a rearrangement proof', color: WHITE, fontSize: 28 });\\ntitle.moveTo([0, 3.25, 0]);\\n\\nconst leftOuter = new Square({ sideLength: s, color: WHITE });\\nleftOuter.moveTo([leftX + s / 2, 0, 0]);\\nconst rightOuter = new Square({ sideLength: s, color: WHITE });\\nrightOuter.moveTo([rightX + s / 2, 0, 0]);\\n\\nfunction tri(vertices) {\\n  const t = new Polygon({ vertices, color: BLUE });\\n  t.setFill(BLUE_E, 0.72);\\n  t.setStrokeWidth(2);\\n  return t;\\n}\\n\\nconst L = leftX;\\nconst B = y0;\\nconst leftTriangles = [\\n  tri([[L, B, 0], [L + a, B, 0], [L, B + b, 0]]),\\n  tri([[L + s, B, 0], [L + s, B + a, 0], [L + a, B, 0]]),\\n  tri([[L + s, B + s, 0], [L + b, B + s, 0], [L + s, B + a, 0]]),\\n  tri([[L, B + s, 0], [L, B + b, 0], [L + b, B + s, 0]])\\n];\\nconst hypSquare = new Polygon({\\n  vertices: [[L + a, B, 0], [L + s, B + a, 0], [L + b, B + s, 0], [L, B + b, 0]],\\n  color: YELLOW\\n});\\nhypSquare.setFill(YELLOW, 0.5);\\nhypSquare.setStrokeWidth(3);\\n\\nconst R = rightX;\\nconst aSquare = new Polygon({\\n  vertices: [[R, B, 0], [R + a, B, 0], [R + a, B + a, 0], [R, B + a, 0]], color: GREEN\\n});\\naSquare.setFill(GREEN_E, 0.65);\\naSquare.setStrokeWidth(3);\\nconst bSquare = new Polygon({\\n  vertices: [[R + a, B + a, 0], [R + s, B + a, 0], [R + s, B + s, 0], [R + a, B + s, 0]], color: ORANGE\\n});\\nbSquare.setFill(ORANGE, 0.65);\\nbSquare.setStrokeWidth(3);\\nconst rightTriangles = [\\n  tri([[R, B + a, 0], [R, B + s, 0], [R + a, B + s, 0]]),\\n  tri([[R, B + a, 0], [R + a, B + s, 0], [R + a, B + a, 0]]),\\n  tri([[R + a, B, 0], [R + s, B, 0], [R + s, B + a, 0]]),\\n  tri([[R + a, B, 0], [R + s, B + a, 0], [R + a, B + a, 0]])\\n];\\n\\nconst cLabel = new MathTex({ latex: 'c^2' });\\nawait cLabel.waitForRender();\\ncLabel.moveTo([leftX + s / 2, 0, 0]);\\nconst aLabel = new MathTex({ latex: 'a^2' });\\nawait aLabel.waitForRender();\\naLabel.moveTo([rightX + a / 2, B + a / 2, 0]);\\nconst bLabel = new MathTex({ latex: 'b^2' });\\nawait bLabel.waitForRender();\\nbLabel.moveTo([rightX + a + b / 2, B + a + b / 2, 0]);\\n\\nconst leftCaption = new Text({ text: 'same four triangles', color: BLUE_B, fontSize: 20 });\\nleftCaption.moveTo([leftX + s / 2, -2.35, 0]);\\nconst rightCaption = new Text({ text: 'rearranged', color: BLUE_B, fontSize: 20 });\\nrightCaption.moveTo([rightX + s / 2, -2.35, 0]);\\nconst conclusion = new MathTex({ latex: 'c^2=a^2+b^2' });\\nawait conclusion.waitForRender();\\nconclusion.moveTo([0, -3.1, 0]);\\n\\nscene.add(title);\\nawait scene.play(new Create(leftOuter));\\nawait scene.play(new AnimationGroup(leftTriangles.map(t => new DrawBorderThenFill(t))));\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(hypSquare), new Write(cLabel), new Write(leftCaption)]));\\nawait scene.wait(0.8);\\nawait scene.play(new Create(rightOuter));\\nawait scene.play(new AnimationGroup(rightTriangles.map(t => new DrawBorderThenFill(t))));\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(aSquare), new DrawBorderThenFill(bSquare), new Write(aLabel), new Write(bLabel), new Write(rightCaption)]));\\nawait scene.play(new Write(conclusion));\\n\\nmakeHoverable(hypSquare, scene, { hoverScale: 1.05, hoverColor: YELLOW });\\nmakeHoverable(aSquare, scene, { hoverScale: 1.05, hoverColor: GREEN });\\nmakeHoverable(bSquare, scene, { hoverScale: 1.05, hoverColor: ORANGE });\\nawait scene.wait(999999);\"}",
+        "explanation": "Four congruent right triangles have total area \\(4\\cdot\\tfrac12ab=2ab\\). In the first arrangement, their leftover region is a square of area \\(c^2\\); in the second, the leftover regions are squares of total area \\(a^2+b^2\\). Since the outer square and the four triangles are unchanged, the leftover areas are equal: \\(a^2+b^2=c^2\\)."
+      },
+      "code": "const a = 2.1;\nconst b = 1.3;\nconst s = a + b;\nconst leftX = -5.3;\nconst rightX = 1.3;\nconst y0 = -1.7;\n\nconst title = new Text({ text: 'The Pythagorean Theorem: a rearrangement proof', color: WHITE, fontSize: 28 });\ntitle.moveTo([0, 3.25, 0]);\n\nconst leftOuter = new Square({ sideLength: s, color: WHITE });\nleftOuter.moveTo([leftX + s / 2, 0, 0]);\nconst rightOuter = new Square({ sideLength: s, color: WHITE });\nrightOuter.moveTo([rightX + s / 2, 0, 0]);\n\nfunction tri(vertices) {\n  const t = new Polygon({ vertices, color: BLUE });\n  t.setFill(BLUE_E, 0.72);\n  t.setStrokeWidth(2);\n  return t;\n}\n\nconst L = leftX;\nconst B = y0;\nconst leftTriangles = [\n  tri([[L, B, 0], [L + a, B, 0], [L, B + b, 0]]),\n  tri([[L + s, B, 0], [L + s, B + a, 0], [L + a, B, 0]]),\n  tri([[L + s, B + s, 0], [L + b, B + s, 0], [L + s, B + a, 0]]),\n  tri([[L, B + s, 0], [L, B + b, 0], [L + b, B + s, 0]])\n];\nconst hypSquare = new Polygon({\n  vertices: [[L + a, B, 0], [L + s, B + a, 0], [L + b, B + s, 0], [L, B + b, 0]],\n  color: YELLOW\n});\nhypSquare.setFill(YELLOW, 0.5);\nhypSquare.setStrokeWidth(3);\n\nconst R = rightX;\nconst aSquare = new Polygon({\n  vertices: [[R, B, 0], [R + a, B, 0], [R + a, B + a, 0], [R, B + a, 0]], color: GREEN\n});\naSquare.setFill(GREEN_E, 0.65);\naSquare.setStrokeWidth(3);\nconst bSquare = new Polygon({\n  vertices: [[R + a, B + a, 0], [R + s, B + a, 0], [R + s, B + s, 0], [R + a, B + s, 0]], color: ORANGE\n});\nbSquare.setFill(ORANGE, 0.65);\nbSquare.setStrokeWidth(3);\nconst rightTriangles = [\n  tri([[R, B + a, 0], [R, B + s, 0], [R + a, B + s, 0]]),\n  tri([[R, B + a, 0], [R + a, B + s, 0], [R + a, B + a, 0]]),\n  tri([[R + a, B, 0], [R + s, B, 0], [R + s, B + a, 0]]),\n  tri([[R + a, B, 0], [R + s, B + a, 0], [R + a, B + a, 0]])\n];\n\nconst cLabel = new MathTex({ latex: 'c^2' });\nawait cLabel.waitForRender();\ncLabel.moveTo([leftX + s / 2, 0, 0]);\nconst aLabel = new MathTex({ latex: 'a^2' });\nawait aLabel.waitForRender();\naLabel.moveTo([rightX + a / 2, B + a / 2, 0]);\nconst bLabel = new MathTex({ latex: 'b^2' });\nawait bLabel.waitForRender();\nbLabel.moveTo([rightX + a + b / 2, B + a + b / 2, 0]);\n\nconst leftCaption = new Text({ text: 'same four triangles', color: BLUE_B, fontSize: 20 });\nleftCaption.moveTo([leftX + s / 2, -2.35, 0]);\nconst rightCaption = new Text({ text: 'rearranged', color: BLUE_B, fontSize: 20 });\nrightCaption.moveTo([rightX + s / 2, -2.35, 0]);\nconst conclusion = new MathTex({ latex: 'c^2=a^2+b^2' });\nawait conclusion.waitForRender();\nconclusion.moveTo([0, -3.1, 0]);\n\nscene.add(title);\nawait scene.play(new Create(leftOuter));\nawait scene.play(new AnimationGroup(leftTriangles.map(t => new DrawBorderThenFill(t))));\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(hypSquare), new Write(cLabel), new Write(leftCaption)]));\nawait scene.wait(0.8);\nawait scene.play(new Create(rightOuter));\nawait scene.play(new AnimationGroup(rightTriangles.map(t => new DrawBorderThenFill(t))));\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(aSquare), new DrawBorderThenFill(bSquare), new Write(aLabel), new Write(bLabel), new Write(rightCaption)]));\nawait scene.play(new Write(conclusion));\n\nmakeHoverable(hypSquare, scene, { hoverScale: 1.05, hoverColor: YELLOW });\nmakeHoverable(aSquare, scene, { hoverScale: 1.05, hoverColor: GREEN });\nmakeHoverable(bSquare, scene, { hoverScale: 1.05, hoverColor: ORANGE });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 16818,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 7,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 3
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/geo-pythagorean-proof.0.final.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:57:57.065Z"
+}

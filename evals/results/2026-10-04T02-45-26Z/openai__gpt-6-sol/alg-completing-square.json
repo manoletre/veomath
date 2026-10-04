@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-completing-square",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "14.95% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.07% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 61456,
+        "inputTokens": 12273,
+        "cachedInputTokens": 0,
+        "outputTokens": 2311,
+        "costUsd": 0.047656000000000004,
+        "rawResponse": "{\"explanation\":\"Think of x² as an x-by-x square. Split 6x into two 3-by-x rectangles and place them along two sides: the shape is almost a square, but its corner is missing a 3-by-3 piece. Adding that area of 9 completes a square of side x+3, so x²+6x=(x+3)²−9.\",\"manimCode\":\"const unit = 0.7;\\nconst left = -5.5;\\nconst bottom = -2.45;\\nlet x = 2.5;\\n\\nfunction rectangle(x1, y1, x2, y2) {\\n  return [[x1,y1,0],[x2,y1,0],[x2,y2,0],[x1,y2,0]];\\n}\\nfunction regions() {\\n  const edge = left + unit*x;\\n  const top = bottom + unit*x;\\n  const farRight = edge + 3*unit;\\n  const farTop = top + 3*unit;\\n  return {\\n    square: rectangle(left,bottom,edge,top),\\n    right: rectangle(edge,bottom,farRight,top),\\n    upper: rectangle(left,top,edge,farTop),\\n    corner: rectangle(edge,top,farRight,farTop),\\n    edge, top, farRight, farTop\\n  };\\n}\\nconst r = regions();\\nconst square = new Polygon({ vertices: r.square, color: BLUE });\\nsquare.setFill(BLUE, 0.48).setStrokeWidth(3);\\nconst rightRect = new Polygon({ vertices: r.right, color: TEAL });\\nrightRect.setFill(TEAL, 0.48).setStrokeWidth(3);\\nconst upperRect = new Polygon({ vertices: r.upper, color: TEAL });\\nupperRect.setFill(TEAL, 0.48).setStrokeWidth(3);\\nconst corner = new Polygon({ vertices: r.corner, color: GOLD });\\ncorner.setFill(GOLD, 0.38).setStrokeWidth(3);\\n\\nconst title = new Text({ text: 'Completing the square', color: WHITE, fontSize: 34 });\\ntitle.moveTo([0,3.2,0]);\\nconst squareLabel = new Text({ text: 'x²', color: WHITE, fontSize: 30 });\\nconst rightLabel = new Text({ text: '3x', color: WHITE, fontSize: 28 });\\nconst upperLabel = new Text({ text: '3x', color: WHITE, fontSize: 28 });\\nconst cornerLabel = new Text({ text: '+9', color: WHITE, fontSize: 29 });\\nconst xBottom = new Text({ text: 'x', color: BLUE_A, fontSize: 25 });\\nconst threeBottom = new Text({ text: '3', color: GOLD, fontSize: 25 });\\nconst xLeft = new Text({ text: 'x', color: BLUE_A, fontSize: 25 });\\nconst threeLeft = new Text({ text: '3', color: GOLD, fontSize: 25 });\\n\\nfunction placeLabels() {\\n  const q = regions();\\n  squareLabel.moveTo([(left+q.edge)/2,(bottom+q.top)/2,0]);\\n  rightLabel.moveTo([(q.edge+q.farRight)/2,(bottom+q.top)/2,0]);\\n  upperLabel.moveTo([(left+q.edge)/2,(q.top+q.farTop)/2,0]);\\n  cornerLabel.moveTo([(q.edge+q.farRight)/2,(q.top+q.farTop)/2,0]);\\n  xBottom.moveTo([(left+q.edge)/2,bottom-0.38,0]);\\n  threeBottom.moveTo([(q.edge+q.farRight)/2,bottom-0.38,0]);\\n  xLeft.moveTo([left-0.35,(bottom+q.top)/2,0]);\\n  threeLeft.moveTo([left-0.35,(q.top+q.farTop)/2,0]);\\n}\\nplaceLabels();\\n\\nconst completed = new MathTex({ latex: 'x^2+6x+9=(x+3)^2' });\\nawait completed.waitForRender();\\ncompleted.moveTo([2.7,1.55,0]);\\nconst result = new MathTex({ latex: 'x^2+6x=(x+3)^2-9' });\\nawait result.waitForRender();\\nresult.moveTo([2.7,0.45,0]);\\n\\nscene.add(title);\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(square), new DrawBorderThenFill(rightRect), new DrawBorderThenFill(upperRect)]));\\nscene.add(squareLabel,rightLabel,upperLabel,xBottom,threeBottom,xLeft,threeLeft);\\nawait scene.play(new DrawBorderThenFill(corner));\\nscene.add(cornerLabel);\\nawait scene.play(new AnimationGroup([new Write(completed), new Write(result)]));\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\\ncontrols.addSlider({ label: 'Length x', min: 1.5, max: 3.2, value: x, step: 0.1, onChange: (value) => {\\n  x = value;\\n  const q = regions();\\n  square.setVertices(q.square);\\n  rightRect.setVertices(q.right);\\n  upperRect.setVertices(q.upper);\\n  corner.setVertices(q.corner);\\n  placeLabels();\\n}});\\nawait scene.wait(999999);\"}",
+        "explanation": "Think of x² as an x-by-x square. Split 6x into two 3-by-x rectangles and place them along two sides: the shape is almost a square, but its corner is missing a 3-by-3 piece. Adding that area of 9 completes a square of side x+3, so x²+6x=(x+3)²−9."
+      },
+      "code": "const unit = 0.7;\nconst left = -5.5;\nconst bottom = -2.45;\nlet x = 2.5;\n\nfunction rectangle(x1, y1, x2, y2) {\n  return [[x1,y1,0],[x2,y1,0],[x2,y2,0],[x1,y2,0]];\n}\nfunction regions() {\n  const edge = left + unit*x;\n  const top = bottom + unit*x;\n  const farRight = edge + 3*unit;\n  const farTop = top + 3*unit;\n  return {\n    square: rectangle(left,bottom,edge,top),\n    right: rectangle(edge,bottom,farRight,top),\n    upper: rectangle(left,top,edge,farTop),\n    corner: rectangle(edge,top,farRight,farTop),\n    edge, top, farRight, farTop\n  };\n}\nconst r = regions();\nconst square = new Polygon({ vertices: r.square, color: BLUE });\nsquare.setFill(BLUE, 0.48).setStrokeWidth(3);\nconst rightRect = new Polygon({ vertices: r.right, color: TEAL });\nrightRect.setFill(TEAL, 0.48).setStrokeWidth(3);\nconst upperRect = new Polygon({ vertices: r.upper, color: TEAL });\nupperRect.setFill(TEAL, 0.48).setStrokeWidth(3);\nconst corner = new Polygon({ vertices: r.corner, color: GOLD });\ncorner.setFill(GOLD, 0.38).setStrokeWidth(3);\n\nconst title = new Text({ text: 'Completing the square', color: WHITE, fontSize: 34 });\ntitle.moveTo([0,3.2,0]);\nconst squareLabel = new Text({ text: 'x²', color: WHITE, fontSize: 30 });\nconst rightLabel = new Text({ text: '3x', color: WHITE, fontSize: 28 });\nconst upperLabel = new Text({ text: '3x', color: WHITE, fontSize: 28 });\nconst cornerLabel = new Text({ text: '+9', color: WHITE, fontSize: 29 });\nconst xBottom = new Text({ text: 'x', color: BLUE_A, fontSize: 25 });\nconst threeBottom = new Text({ text: '3', color: GOLD, fontSize: 25 });\nconst xLeft = new Text({ text: 'x', color: BLUE_A, fontSize: 25 });\nconst threeLeft = new Text({ text: '3', color: GOLD, fontSize: 25 });\n\nfunction placeLabels() {\n  const q = regions();\n  squareLabel.moveTo([(left+q.edge)/2,(bottom+q.top)/2,0]);\n  rightLabel.moveTo([(q.edge+q.farRight)/2,(bottom+q.top)/2,0]);\n  upperLabel.moveTo([(left+q.edge)/2,(q.top+q.farTop)/2,0]);\n  cornerLabel.moveTo([(q.edge+q.farRight)/2,(q.top+q.farTop)/2,0]);\n  xBottom.moveTo([(left+q.edge)/2,bottom-0.38,0]);\n  threeBottom.moveTo([(q.edge+q.farRight)/2,bottom-0.38,0]);\n  xLeft.moveTo([left-0.35,(bottom+q.top)/2,0]);\n  threeLeft.moveTo([left-0.35,(q.top+q.farTop)/2,0]);\n}\nplaceLabels();\n\nconst completed = new MathTex({ latex: 'x^2+6x+9=(x+3)^2' });\nawait completed.waitForRender();\ncompleted.moveTo([2.7,1.55,0]);\nconst result = new MathTex({ latex: 'x^2+6x=(x+3)^2-9' });\nawait result.waitForRender();\nresult.moveTo([2.7,0.45,0]);\n\nscene.add(title);\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(square), new DrawBorderThenFill(rightRect), new DrawBorderThenFill(upperRect)]));\nscene.add(squareLabel,rightLabel,upperLabel,xBottom,threeBottom,xLeft,threeLeft);\nawait scene.play(new DrawBorderThenFill(corner));\nscene.add(cornerLabel);\nawait scene.play(new AnimationGroup([new Write(completed), new Write(result)]));\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\ncontrols.addSlider({ label: 'Length x', min: 1.5, max: 3.2, value: x, step: 0.1, onChange: (value) => {\n  x = value;\n  const q = regions();\n  square.setVertices(q.square);\n  rightRect.setVertices(q.right);\n  upperRect.setVertices(q.upper);\n  corner.setVertices(q.corner);\n  placeLabels();\n}});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 8622,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 3,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/alg-completing-square.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/alg-completing-square.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:04.532Z"
+}

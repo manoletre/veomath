@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-phone-plans",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.63% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.00% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 14519,
+        "inputTokens": 12294,
+        "cachedInputTokens": 0,
+        "outputTokens": 430,
+        "costUsd": 0.0014443999999999998,
+        "rawResponse": "{\"explanation\":\"Plan A starts cheaper but increases by 10¢ per minute; Plan B starts $15 higher but increases by only 5¢ per minute. Setting $20 + $0.10m equal to $35 + $0.05m gives m = 300 minutes, where both plans cost $50.\",\"manimCode\":\"const ax = new Axes({ xRange: [0, 600, 100], yRange: [0, 80, 10], xLength: 9, yLength: 5.2, tips: true });\\nconst planA = ax.plot(m => 20 + 0.10 * m, { color: BLUE, xRange: [0, 600] });\\nconst planB = ax.plot(m => 35 + 0.05 * m, { color: ORANGE, xRange: [0, 600] });\\nscene.add(ax, ax.getAxisLabels(), planA, planB);\\n\\nconst crossing = new Dot({ point: ax.coordsToPoint(300, 50), color: YELLOW });\\nconst note = new Text({ text: 'Same cost: 300 min, $50', color: YELLOW, fontSize: 28 });\\nnote.moveTo([0, 3.1, 0]);\\nconst formula = new MathTex({ latex: '20 + 0.10m = 35 + 0.05m \\\\\\\\Rightarrow m = 300' });\\nawait formula.waitForRender();\\nformula.moveTo([0, -3.1, 0]);\\nscene.add(crossing, note, formula);\\nmakeDraggable(crossing, scene, { constrainX: [-6, 6], constrainY: [-3, 3] });\\nmakeHoverable(crossing, scene, { hoverScale: 1.3, hoverColor: WHITE });\\nawait scene.wait(999999);\"}",
+        "explanation": "Plan A starts cheaper but increases by 10¢ per minute; Plan B starts $15 higher but increases by only 5¢ per minute. Setting $20 + $0.10m equal to $35 + $0.05m gives m = 300 minutes, where both plans cost $50."
+      },
+      "code": "const ax = new Axes({ xRange: [0, 600, 100], yRange: [0, 80, 10], xLength: 9, yLength: 5.2, tips: true });\nconst planA = ax.plot(m => 20 + 0.10 * m, { color: BLUE, xRange: [0, 600] });\nconst planB = ax.plot(m => 35 + 0.05 * m, { color: ORANGE, xRange: [0, 600] });\nscene.add(ax, ax.getAxisLabels(), planA, planB);\n\nconst crossing = new Dot({ point: ax.coordsToPoint(300, 50), color: YELLOW });\nconst note = new Text({ text: 'Same cost: 300 min, $50', color: YELLOW, fontSize: 28 });\nnote.moveTo([0, 3.1, 0]);\nconst formula = new MathTex({ latex: '20 + 0.10m = 35 + 0.05m \\\\Rightarrow m = 300' });\nawait formula.waitForRender();\nformula.moveTo([0, -3.1, 0]);\nscene.add(crossing, note, formula);\nmakeDraggable(crossing, scene, { constrainX: [-6, 6], constrainY: [-3, 3] });\nmakeHoverable(crossing, scene, { hoverScale: 1.3, hoverColor: WHITE });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3541,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/alg-phone-plans.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/alg-phone-plans.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:53:42.747Z"
+}

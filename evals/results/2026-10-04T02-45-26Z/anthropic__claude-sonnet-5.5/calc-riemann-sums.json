@@ -1,0 +1,79 @@
+{
+  "itemId": "calc-riemann-sums",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "11.24% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "5.49% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 5873,
+        "inputTokens": 7977,
+        "cachedInputTokens": 7476,
+        "outputTokens": 820,
+        "costUsd": 0.0116952,
+        "rawResponse": "{\"explanation\":\"A Riemann sum approximates the area under a curve by adding up thin rectangles. Here we use right-endpoint rectangles under y = x² on [0, 2]. The exact area is 8/3 ≈ 2.6667. Drag the slider to increase the number of rectangles and watch the sum converge to that value.\",\"manimCode\":\"const axes = new Axes({ xRange: [0, 2.5, 0.5], yRange: [0, 4.5, 1], xLength: 8, yLength: 4.5, tips: false });\\naxes.moveTo([0, -0.3, 0]);\\nconst curve = axes.plot(x => x * x, { color: BLUE, xRange: [0, 2] });\\nscene.add(axes, curve);\\n\\nconst f = x => x * x;\\nlet rects = [];\\nlet info = null;\\n\\nfunction build(n) {\\n  for (const r of rects) scene.remove(r);\\n  rects = [];\\n  const dx = 2 / n;\\n  let sum = 0;\\n  for (let i = 1; i <= n; i++) {\\n    const x0 = (i - 1) * dx, x1 = i * dx;\\n    const h = f(x1);\\n    sum += h * dx;\\n    const p = new Polygon({\\n      vertices: [axes.c2p(x0, 0), axes.c2p(x1, 0), axes.c2p(x1, h), axes.c2p(x0, h)],\\n      color: YELLOW\\n    });\\n    p.setFill(YELLOW, 0.4);\\n    p.setStrokeWidth(n > 40 ? 0.5 : 2);\\n    rects.push(p);\\n    scene.add(p);\\n  }\\n  if (info) scene.remove(info);\\n  info = new Text({\\n    text: 'n = ' + n + '   Sum = ' + sum.toFixed(4) + '   Exact = 2.6667',\\n    color: WHITE, fontSize: 26\\n  });\\n  info.moveTo([0, 3.4, 0]);\\n  scene.add(info);\\n}\\n\\nbuild(4);\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({\\n  label: 'Rectangles', min: 1, max: 100, value: 4, step: 1,\\n  onChange: (v) => { build(Math.round(v)); }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A Riemann sum approximates the area under a curve by adding up thin rectangles. Here we use right-endpoint rectangles under y = x² on [0, 2]. The exact area is 8/3 ≈ 2.6667. Drag the slider to increase the number of rectangles and watch the sum converge to that value."
+      },
+      "code": "const axes = new Axes({ xRange: [0, 2.5, 0.5], yRange: [0, 4.5, 1], xLength: 8, yLength: 4.5, tips: false });\naxes.moveTo([0, -0.3, 0]);\nconst curve = axes.plot(x => x * x, { color: BLUE, xRange: [0, 2] });\nscene.add(axes, curve);\n\nconst f = x => x * x;\nlet rects = [];\nlet info = null;\n\nfunction build(n) {\n  for (const r of rects) scene.remove(r);\n  rects = [];\n  const dx = 2 / n;\n  let sum = 0;\n  for (let i = 1; i <= n; i++) {\n    const x0 = (i - 1) * dx, x1 = i * dx;\n    const h = f(x1);\n    sum += h * dx;\n    const p = new Polygon({\n      vertices: [axes.c2p(x0, 0), axes.c2p(x1, 0), axes.c2p(x1, h), axes.c2p(x0, h)],\n      color: YELLOW\n    });\n    p.setFill(YELLOW, 0.4);\n    p.setStrokeWidth(n > 40 ? 0.5 : 2);\n    rects.push(p);\n    scene.add(p);\n  }\n  if (info) scene.remove(info);\n  info = new Text({\n    text: 'n = ' + n + '   Sum = ' + sum.toFixed(4) + '   Exact = 2.6667',\n    color: WHITE, fontSize: 26\n  });\n  info.moveTo([0, 3.4, 0]);\n  scene.add(info);\n}\n\nbuild(4);\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({\n  label: 'Rectangles', min: 1, max: 100, value: 4, step: 1,\n  onChange: (v) => { build(Math.round(v)); }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4360,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/calc-riemann-sums.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/calc-riemann-sums.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:35:15.721Z"
+}

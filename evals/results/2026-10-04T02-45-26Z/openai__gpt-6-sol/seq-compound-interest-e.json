@@ -1,0 +1,80 @@
+{
+  "itemId": "seq-compound-interest-e",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.25% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Axes [x -3.52..4.60, y -6.44..8.29] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.52% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 45596,
+        "inputTokens": 12280,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1770,
+        "costUsd": 0.0224456,
+        "rawResponse": "{\"explanation\":\"At 100% yearly interest, compounding $1 once gives $2. Compounding it n times gives $(1+1/n)^n$, which rises as n increases but approaches a finite limit: $e \\\\approx 2.71828$. Even continuous compounding earns about $2.72—not an unlimited amount.\",\"manimCode\":\"const title = new Text({ text: 'How much does $1 become?', color: WHITE, fontSize: 34 });\\ntitle.moveTo([0, 3.3, 0]);\\n\\nconst ax = new Axes({\\n  xRange: [0, 50, 10], yRange: [1.9, 2.8, 0.2],\\n  xLength: 8, yLength: 4.7, tips: false\\n});\\nax.moveTo([-1.4, -0.2, 0]);\\n\\nconst balance = n => Math.pow(1 + 1 / n, n);\\nconst curve = ax.plot(x => balance(x), { color: BLUE, xRange: [1, 50], numSamples: 400 });\\nconst limitLine = new Polygon({ vertices: [ax.c2p(0, Math.E), ax.c2p(50, Math.E)], color: GOLD });\\nlimitLine.setStrokeWidth(2).setFillOpacity(0);\\n\\nlet n = 1;\\nconst dot = new Dot({ point: ax.c2p(n, balance(n)), color: YELLOW });\\n\\nconst limitLabel = new Text({ text: 'Limit: $2.71828...', color: GOLD, fontSize: 26 });\\nlimitLabel.moveTo([4.5, 1.65, 0]);\\nlet countLabel = new Text({ text: '1 time per year', color: WHITE, fontSize: 25 });\\ncountLabel.moveTo([4.5, 0.55, 0]);\\nlet valueLabel = new Text({ text: 'Balance: $2.0000', color: YELLOW, fontSize: 26 });\\nvalueLabel.moveTo([4.5, 0.05, 0]);\\n\\nconst formula = new MathTex({ latex: '\\\\\\\\left(1+\\\\\\\\frac{1}{n}\\\\\\\\right)^n \\\\\\\\longrightarrow e' });\\nawait formula.waitForRender();\\nformula.moveTo([-1.4, -3.25, 0]);\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new AnimationGroup([new Create(ax), new Create(curve), new Create(limitLine)]));\\nscene.add(dot, limitLabel, countLabel, valueLabel);\\nawait scene.play(new Write(formula));\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', theme: 'dark', width: 260 });\\ncontrols.addSlider({ label: 'Compounds per year', min: 1, max: 50, value: 1, step: 1, onChange: val => {\\n  n = Math.round(val);\\n  dot.moveTo(ax.c2p(n, balance(n)));\\n  scene.remove(countLabel, valueLabel);\\n  countLabel = new Text({ text: `${n} times per year`, color: WHITE, fontSize: 25 });\\n  countLabel.moveTo([4.5, 0.55, 0]);\\n  valueLabel = new Text({ text: `Balance: $${balance(n).toFixed(4)}`, color: YELLOW, fontSize: 26 });\\n  valueLabel.moveTo([4.5, 0.05, 0]);\\n  scene.add(countLabel, valueLabel);\\n} });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "At 100% yearly interest, compounding $1 once gives $2. Compounding it n times gives $(1+1/n)^n$, which rises as n increases but approaches a finite limit: $e \\approx 2.71828$. Even continuous compounding earns about $2.72—not an unlimited amount."
+      },
+      "code": "const title = new Text({ text: 'How much does $1 become?', color: WHITE, fontSize: 34 });\ntitle.moveTo([0, 3.3, 0]);\n\nconst ax = new Axes({\n  xRange: [0, 50, 10], yRange: [1.9, 2.8, 0.2],\n  xLength: 8, yLength: 4.7, tips: false\n});\nax.moveTo([-1.4, -0.2, 0]);\n\nconst balance = n => Math.pow(1 + 1 / n, n);\nconst curve = ax.plot(x => balance(x), { color: BLUE, xRange: [1, 50], numSamples: 400 });\nconst limitLine = new Polygon({ vertices: [ax.c2p(0, Math.E), ax.c2p(50, Math.E)], color: GOLD });\nlimitLine.setStrokeWidth(2).setFillOpacity(0);\n\nlet n = 1;\nconst dot = new Dot({ point: ax.c2p(n, balance(n)), color: YELLOW });\n\nconst limitLabel = new Text({ text: 'Limit: $2.71828...', color: GOLD, fontSize: 26 });\nlimitLabel.moveTo([4.5, 1.65, 0]);\nlet countLabel = new Text({ text: '1 time per year', color: WHITE, fontSize: 25 });\ncountLabel.moveTo([4.5, 0.55, 0]);\nlet valueLabel = new Text({ text: 'Balance: $2.0000', color: YELLOW, fontSize: 26 });\nvalueLabel.moveTo([4.5, 0.05, 0]);\n\nconst formula = new MathTex({ latex: '\\\\left(1+\\\\frac{1}{n}\\\\right)^n \\\\longrightarrow e' });\nawait formula.waitForRender();\nformula.moveTo([-1.4, -3.25, 0]);\n\nawait scene.play(new Write(title));\nawait scene.play(new AnimationGroup([new Create(ax), new Create(curve), new Create(limitLine)]));\nscene.add(dot, limitLabel, countLabel, valueLabel);\nawait scene.play(new Write(formula));\n\nconst controls = new Controls(scene, { position: 'bottom-right', theme: 'dark', width: 260 });\ncontrols.addSlider({ label: 'Compounds per year', min: 1, max: 50, value: 1, step: 1, onChange: val => {\n  n = Math.round(val);\n  dot.moveTo(ax.c2p(n, balance(n)));\n  scene.remove(countLabel, valueLabel);\n  countLabel = new Text({ text: `${n} times per year`, color: WHITE, fontSize: 25 });\n  countLabel.moveTo([4.5, 0.55, 0]);\n  valueLabel = new Text({ text: `Balance: $${balance(n).toFixed(4)}`, color: YELLOW, fontSize: 26 });\n  valueLabel.moveTo([4.5, 0.05, 0]);\n  scene.add(countLabel, valueLabel);\n} });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 7453,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 3,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/seq-compound-interest-e.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/seq-compound-interest-e.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:51:33.195Z"
+}

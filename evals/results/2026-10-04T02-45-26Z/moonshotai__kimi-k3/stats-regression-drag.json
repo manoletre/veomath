@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-regression-drag",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.86% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=1 checkboxes=1 draggables=7 clickables=0 hoverables=7"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.88% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 82514,
+        "inputTokens": 4710,
+        "cachedInputTokens": 4480,
+        "outputTokens": 9977,
+        "costUsd": 0.15168900000000002,
+        "rawResponse": "{  \"explanation\": \"A line of best fit (least-squares regression) chooses slope m and intercept b to minimize the sum of squared vertical distances from each data point to the line. The formulas are m = Σ(x−x̄)(y−ȳ) / Σ(x−x̄)² and b = ȳ − m·x̄, and R² measures how much of the variance in y the line explains. Drag any of the blue points and the regression line, its equation, and R² update in real time. Toggle 'Show residuals' to see the exact vertical errors being minimized, or hit 'Randomize points' for a fresh dataset.\",  \"manimCode\": \"// ----- Axes -----\\nconst ax = new Axes({\\n  xRange: [0, 10, 1],\\n  yRange: [0, 7, 1],\\n  xLength: 9,\\n  yLength: 5.2,\\n  tips: false,\\n});\\nconst axLabels = ax.getAxisLabels();\\nscene.add(ax, axLabels);\\n\\n// pixel <-> data conversion helpers\\nconst originPt = ax.c2p(0, 0);\\nconst xMaxPt = ax.c2p(10, 0);\\nconst yMaxPt = ax.c2p(0, 7);\\nconst pixX = (xMaxPt[0] - originPt[0]) / 10;\\nconst pixY = (yMaxPt[1] - originPt[1]) / 7;\\nfunction toData(pt) {\\n  return [(pt[0] - originPt[0]) / pixX, (pt[1] - originPt[1]) / pixY];\\n}\\n\\n// ----- residual segments (added first so they sit behind points) -----\\nconst residuals = [];\\nfor (let i = 0; i < 7; i++) {\\n  const r = new Polygon({ vertices: [[0, 0, 0], [0, 0.001, 0]], color: RED });\\n  r.setStrokeWidth(2).setFillOpacity(0);\\n  scene.add(r);\\n  residuals.push(r);\\n}\\n\\n// ----- regression line (2-vertex polygon so vertices update live) -----\\nconst fitLine = new Polygon({ vertices: [[0, 0, 0], [1, 0, 0]], color: GOLD });\\nfitLine.setStrokeWidth(4).setFillOpacity(0);\\nscene.add(fitLine);\\n\\n// ----- draggable data points -----\\nconst startData = [[1, 1.2], [2.2, 2.9], [3.5, 2.3], [5, 4.4], [6.4, 3.9], [8, 5.7], [9, 5.1]];\\nconst dots = startData.map(([x, y]) => new Dot({ point: ax.c2p(x, y), radius: 0.15, color: BLUE_B }));\\ndots.forEach(d => scene.add(d));\\n\\n// ----- state + live least-squares update -----\\nlet eqLabel = null;\\nlet showRes = true;\\n\\nfunction updateFit() {\\n  const pts = dots.map(d => toData(d.getCenter()));\\n  const n = pts.length;\\n\\n  // means\\n  let mx = 0, my = 0;\\n  pts.forEach(p => { mx += p[0]; my += p[1]; });\\n  mx /= n; my /= n;\\n\\n  // least-squares slope & intercept\\n  let sxy = 0, sxx = 0;\\n  pts.forEach(p => { sxy += (p[0] - mx) * (p[1] - my); sxx += (p[0] - mx) * (p[0] - mx); });\\n  const m = sxx < 1e-12 ? 0 : sxy / sxx;\\n  const b = my - m * mx;\\n\\n  // R^2\\n  let ssRes = 0, ssTot = 0;\\n  pts.forEach(p => {\\n    const f = m * p[0] + b;\\n    ssRes += (p[1] - f) * (p[1] - f);\\n    ssTot += (p[1] - my) * (p[1] - my);\\n  });\\n  const r2 = ssTot < 1e-12 ? 1 : Math.max(0, 1 - ssRes / ssTot);\\n\\n  // clamp line endpoints to the axes box [0,10] x [0,7]\\n  const cand = [];\\n  const tryAdd = (x, y) => {\\n    if (x >= -1e-9 && x <= 10 + 1e-9 && y >= -1e-9 && y <= 7 + 1e-9) {\\n      cand.push([Math.max(0, Math.min(10, x)), Math.max(0, Math.min(7, y))]);\\n    }\\n  };\\n  tryAdd(0, b);\\n  tryAdd(10, 10 * m + b);\\n  if (Math.abs(m) > 1e-9) {\\n    tryAdd(-b / m, 0);\\n    tryAdd((7 - b) / m, 7);\\n  }\\n  if (cand.length < 2) {\\n    cand.length = 0;\\n    cand.push([0, Math.min(7, Math.max(0, b))], [10, Math.min(7, Math.max(0, 10 * m + b))]);\\n  }\\n  fitLine.setVertices([ax.c2p(cand[0][0], cand[0][1]), ax.c2p(cand[1][0], cand[1][1])]);\\n\\n  // residual segments: point -> line (vertical distance)\\n  pts.forEach((p, i) => {\\n    residuals[i].setVertices([ax.c2p(p[0], p[1]), ax.c2p(p[0], m * p[0] + b)]);\\n    residuals[i].setOpacity(showRes ? 0.85 : 0);\\n  });\\n\\n  // equation label (Text is immutable -> remove & recreate)\\n  const sign = b >= 0 ? '+' : '-';\\n  const eq = 'y = ' + m.toFixed(2) + 'x ' + sign + ' ' + Math.abs(b).toFixed(2) + '      R² = ' + r2.toFixed(3);\\n  if (eqLabel) scene.remove(eqLabel);\\n  eqLabel = new Text({ text: eq, color: GOLD, fontSize: 28 });\\n  eqLabel.moveTo([0, 3.2, 0]);\\n  scene.add(eqLabel);\\n}\\n\\nupdateFit();\\n\\n// ----- interactivity: drag points, line follows -----\\ndots.forEach(d => {\\n  makeDraggable(d, scene, {\\n    constrainX: [originPt[0] + 0.05, xMaxPt[0] - 0.05],\\n    constrainY: [originPt[1] + 0.05, yMaxPt[1] - 0.05],\\n    onDrag: updateFit,\\n  });\\n  makeHoverable(d, scene, { hoverScale: 1.3, cursor: 'grab' });\\n});\\n\\n// ----- title & hint -----\\nconst title = new Text({ text: 'Least-Squares Line of Best Fit', color: WHITE, fontSize: 32 });\\ntitle.moveTo([0, 3.7, 0]);\\nscene.add(title);\\n\\nconst hint = new Text({ text: 'Drag any point — the best-fit line updates live', color: GRAY, fontSize: 22 });\\nhint.moveTo([0, -3.5, 0]);\\nscene.add(hint);\\n\\n// ----- controls -----\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addCheckbox({\\n  label: 'Show residuals',\\n  checked: true,\\n  onChange: (c) => { showRes = c; updateFit(); },\\n});\\ncontrols.addButton({\\n  label: 'Randomize points',\\n  onClick: () => {\\n    dots.forEach(d => {\\n      const rx = 0.5 + Math.random() * 9;\\n      const ry = 0.5 + Math.random() * 6;\\n      d.moveTo(ax.c2p(rx, ry));\\n    });\\n    updateFit();\\n  },\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A line of best fit (least-squares regression) chooses slope m and intercept b to minimize the sum of squared vertical distances from each data point to the line. The formulas are m = Σ(x−x̄)(y−ȳ) / Σ(x−x̄)² and b = ȳ − m·x̄, and R² measures how much of the variance in y the line explains. Drag any of the blue points and the regression line, its equation, and R² update in real time. Toggle 'Show residuals' to see the exact vertical errors being minimized, or hit 'Randomize points' for a fresh dataset."
+      },
+      "code": "// ----- Axes -----\nconst ax = new Axes({\n  xRange: [0, 10, 1],\n  yRange: [0, 7, 1],\n  xLength: 9,\n  yLength: 5.2,\n  tips: false,\n});\nconst axLabels = ax.getAxisLabels();\nscene.add(ax, axLabels);\n\n// pixel <-> data conversion helpers\nconst originPt = ax.c2p(0, 0);\nconst xMaxPt = ax.c2p(10, 0);\nconst yMaxPt = ax.c2p(0, 7);\nconst pixX = (xMaxPt[0] - originPt[0]) / 10;\nconst pixY = (yMaxPt[1] - originPt[1]) / 7;\nfunction toData(pt) {\n  return [(pt[0] - originPt[0]) / pixX, (pt[1] - originPt[1]) / pixY];\n}\n\n// ----- residual segments (added first so they sit behind points) -----\nconst residuals = [];\nfor (let i = 0; i < 7; i++) {\n  const r = new Polygon({ vertices: [[0, 0, 0], [0, 0.001, 0]], color: RED });\n  r.setStrokeWidth(2).setFillOpacity(0);\n  scene.add(r);\n  residuals.push(r);\n}\n\n// ----- regression line (2-vertex polygon so vertices update live) -----\nconst fitLine = new Polygon({ vertices: [[0, 0, 0], [1, 0, 0]], color: GOLD });\nfitLine.setStrokeWidth(4).setFillOpacity(0);\nscene.add(fitLine);\n\n// ----- draggable data points -----\nconst startData = [[1, 1.2], [2.2, 2.9], [3.5, 2.3], [5, 4.4], [6.4, 3.9], [8, 5.7], [9, 5.1]];\nconst dots = startData.map(([x, y]) => new Dot({ point: ax.c2p(x, y), radius: 0.15, color: BLUE_B }));\ndots.forEach(d => scene.add(d));\n\n// ----- state + live least-squares update -----\nlet eqLabel = null;\nlet showRes = true;\n\nfunction updateFit() {\n  const pts = dots.map(d => toData(d.getCenter()));\n  const n = pts.length;\n\n  // means\n  let mx = 0, my = 0;\n  pts.forEach(p => { mx += p[0]; my += p[1]; });\n  mx /= n; my /= n;\n\n  // least-squares slope & intercept\n  let sxy = 0, sxx = 0;\n  pts.forEach(p => { sxy += (p[0] - mx) * (p[1] - my); sxx += (p[0] - mx) * (p[0] - mx); });\n  const m = sxx < 1e-12 ? 0 : sxy / sxx;\n  const b = my - m * mx;\n\n  // R^2\n  let ssRes = 0, ssTot = 0;\n  pts.forEach(p => {\n    const f = m * p[0] + b;\n    ssRes += (p[1] - f) * (p[1] - f);\n    ssTot += (p[1] - my) * (p[1] - my);\n  });\n  const r2 = ssTot < 1e-12 ? 1 : Math.max(0, 1 - ssRes / ssTot);\n\n  // clamp line endpoints to the axes box [0,10] x [0,7]\n  const cand = [];\n  const tryAdd = (x, y) => {\n    if (x >= -1e-9 && x <= 10 + 1e-9 && y >= -1e-9 && y <= 7 + 1e-9) {\n      cand.push([Math.max(0, Math.min(10, x)), Math.max(0, Math.min(7, y))]);\n    }\n  };\n  tryAdd(0, b);\n  tryAdd(10, 10 * m + b);\n  if (Math.abs(m) > 1e-9) {\n    tryAdd(-b / m, 0);\n    tryAdd((7 - b) / m, 7);\n  }\n  if (cand.length < 2) {\n    cand.length = 0;\n    cand.push([0, Math.min(7, Math.max(0, b))], [10, Math.min(7, Math.max(0, 10 * m + b))]);\n  }\n  fitLine.setVertices([ax.c2p(cand[0][0], cand[0][1]), ax.c2p(cand[1][0], cand[1][1])]);\n\n  // residual segments: point -> line (vertical distance)\n  pts.forEach((p, i) => {\n    residuals[i].setVertices([ax.c2p(p[0], p[1]), ax.c2p(p[0], m * p[0] + b)]);\n    residuals[i].setOpacity(showRes ? 0.85 : 0);\n  });\n\n  // equation label (Text is immutable -> remove & recreate)\n  const sign = b >= 0 ? '+' : '-';\n  const eq = 'y = ' + m.toFixed(2) + 'x ' + sign + ' ' + Math.abs(b).toFixed(2) + '      R² = ' + r2.toFixed(3);\n  if (eqLabel) scene.remove(eqLabel);\n  eqLabel = new Text({ text: eq, color: GOLD, fontSize: 28 });\n  eqLabel.moveTo([0, 3.2, 0]);\n  scene.add(eqLabel);\n}\n\nupdateFit();\n\n// ----- interactivity: drag points, line follows -----\ndots.forEach(d => {\n  makeDraggable(d, scene, {\n    constrainX: [originPt[0] + 0.05, xMaxPt[0] - 0.05],\n    constrainY: [originPt[1] + 0.05, yMaxPt[1] - 0.05],\n    onDrag: updateFit,\n  });\n  makeHoverable(d, scene, { hoverScale: 1.3, cursor: 'grab' });\n});\n\n// ----- title & hint -----\nconst title = new Text({ text: 'Least-Squares Line of Best Fit', color: WHITE, fontSize: 32 });\ntitle.moveTo([0, 3.7, 0]);\nscene.add(title);\n\nconst hint = new Text({ text: 'Drag any point — the best-fit line updates live', color: GRAY, fontSize: 22 });\nhint.moveTo([0, -3.5, 0]);\nscene.add(hint);\n\n// ----- controls -----\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addCheckbox({\n  label: 'Show residuals',\n  checked: true,\n  onChange: (c) => { showRes = c; updateFit(); },\n});\ncontrols.addButton({\n  label: 'Randomize points',\n  onClick: () => {\n    dots.forEach(d => {\n      const rx = 0.5 + Math.random() * 9;\n      const ry = 0.5 + Math.random() * 6;\n      d.moveTo(ax.c2p(rx, ry));\n    });\n    updateFit();\n  },\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 16229,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 1,
+          "checkboxes": 1
+        },
+        "draggables": 7,
+        "clickables": 0,
+        "hoverables": 7
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/stats-regression-drag.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/stats-regression-drag.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:57:27.295Z"
+}

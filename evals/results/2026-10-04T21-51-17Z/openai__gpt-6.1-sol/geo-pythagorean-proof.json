@@ -1,0 +1,103 @@
+{
+  "itemId": "geo-pythagorean-proof",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "19.72% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=2 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ click Rectangle at (3.1, -2.3) — 14.88% changed\n✓ click Text at (3.1, -2.3) — 10.72% changed\n✓ drag Dot at (-2.6, -2.3) — 11.13% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ click Rectangle at (3.1, -2.3) — 14.88% changed\n✓ click Text at (3.1, -2.3) — 10.72% changed\n✓ drag Dot at (-2.6, -2.3) — 11.13% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 60635,
+        "inputTokens": 5315,
+        "cachedInputTokens": 5287,
+        "outputTokens": 2823,
+        "costUsd": 0.028814700000000002,
+        "rawResponse": "{\"explanation\":\"Arrange four identical right triangles, with legs a and b and hypotenuse c, inside a square of side a + b. In the first arrangement, the uncovered region is a square of area c²; in the second, it consists of squares of areas a² and b². Because the outer square and the four triangles have unchanged areas, the uncovered areas are equal: c² = a² + b².\",\"manimCode\":\"const L = 4.4;\\nconst left = -4.3;\\nconst bottom = -2.25;\\nlet a = 1.7;\\nlet mode = 0;\\nlet busy = false;\\nconst p = (x, y) => [left + x, bottom + y, 0];\\n\\nconst title = new Text({ text: 'Pythagoras by rearrangement', fontSize: 32, color: WHITE });\\ntitle.moveTo([0, 3.15, 0]);\\nconst hint = new Text({ text: 'Drag the yellow split point · Click Rearrange to move the four triangles', fontSize: 19, color: GRAY });\\nhint.moveTo([0, -3.4, 0]);\\n\\nconst border = new Polygon({ vertices: [p(0,0), p(L,0), p(L,L), p(0,L)], color: WHITE });\\nborder.setFillOpacity(0);\\nborder.setStrokeWidth(3);\\nconst middle = new Polygon({ vertices: [p(a,0),p(L,a),p(L-a,L),p(0,L-a)], color: GOLD });\\nmiddle.setFill(GOLD, 0.22);\\nconst smallSquare = new Polygon({ vertices: [p(0,0),p(a,0),p(a,a),p(0,a)], color: GOLD });\\nsmallSquare.setFill(GOLD, 0.22);\\nconst largeSquare = new Polygon({ vertices: [p(a,a),p(L,a),p(L,L),p(a,L)], color: GOLD });\\nlargeSquare.setFill(GOLD, 0.22);\\n\\nfunction triangleVertices(layout) {\\n  const b = L-a;\\n  if (layout === 0) return [\\n    [p(0,0),p(a,0),p(0,b)],\\n    [p(L,0),p(L,a),p(a,0)],\\n    [p(L,L),p(b,L),p(L,a)],\\n    [p(0,L),p(0,b),p(b,L)]\\n  ];\\n  return [\\n    [p(a,0),p(a,a),p(L,a)],\\n    [p(L,0),p(L,a),p(a,0)],\\n    [p(0,L),p(a,L),p(0,a)],\\n    [p(a,a),p(0,a),p(a,L)]\\n  ];\\n}\\nconst colors = [BLUE, TEAL, PURPLE, ORANGE];\\nconst triangles = triangleVertices(0).map((vertices, i) => {\\n  const tri = new Polygon({ vertices, color: colors[i] });\\n  tri.setFill(colors[i], 0.65);\\n  tri.setStrokeWidth(2);\\n  return tri;\\n});\\nconst handle = new Dot({ point: p(a,0), radius: 0.13, color: YELLOW });\\nconst legA = new Text({ text: 'a', fontSize: 25, color: YELLOW });\\nconst legB = new Text({ text: 'b', fontSize: 25, color: YELLOW });\\nconst centerLabel = new Text({ text: 'c²', fontSize: 34, color: GOLD });\\nconst smallLabel = new Text({ text: 'a²', fontSize: 30, color: GOLD });\\nconst largeLabel = new Text({ text: 'b²', fontSize: 30, color: GOLD });\\nconst status = new Text({ text: '', fontSize: 23, color: GOLD });\\nstatus.moveTo([3.15, 2.05, 0]);\\nconst firstEquation = new MathTex({ latex: '(a+b)^2 = 4\\\\\\\\left(\\\\\\\\frac{ab}{2}\\\\\\\\right)+c^2', color: WHITE });\\nconst secondEquation = new MathTex({ latex: '(a+b)^2 = 4\\\\\\\\left(\\\\\\\\frac{ab}{2}\\\\\\\\right)+a^2+b^2', color: WHITE });\\nconst conclusion = new MathTex({ latex: '\\\\\\\\boxed{c^2=a^2+b^2}', color: GOLD });\\nawait Promise.all([firstEquation.waitForRender(), secondEquation.waitForRender(), conclusion.waitForRender()]);\\nfirstEquation.scale(0.62).moveTo([3.1, 1.15, 0]);\\nsecondEquation.scale(0.57).moveTo([3.1, 0.15, 0]);\\nconclusion.scale(0.85).moveTo([3.1, -1.25, 0]);\\nconst reason = new Text({ text: 'Same square. Same four triangles.', fontSize: 20, color: GRAY });\\nreason.moveTo([3.1, -0.65, 0]);\\nconst buttonBox = new Rectangle({ width: 2.6, height: 0.58, color: WHITE });\\nbuttonBox.setFill(GRAY, 0.2);\\nbuttonBox.moveTo([3.1, -2.3, 0]);\\nconst buttonLabel = new Text({ text: 'Rearrange ↔', fontSize: 23, color: WHITE });\\nbuttonLabel.moveTo([3.1, -2.3, 0]);\\n\\nscene.add(title, hint, middle, smallSquare, largeSquare, ...triangles, border, centerLabel, smallLabel, largeLabel, legA, legB, handle, status, firstEquation, secondEquation, reason, conclusion, buttonBox, buttonLabel);\\n\\nfunction update() {\\n  const b = L-a;\\n  const sets = triangleVertices(mode);\\n  triangles.forEach((tri, i) => tri.setVertices(sets[i]));\\n  middle.setVertices([p(a,0),p(L,a),p(b,L),p(0,b)]);\\n  smallSquare.setVertices([p(0,0),p(a,0),p(a,a),p(0,a)]);\\n  largeSquare.setVertices([p(a,a),p(L,a),p(L,L),p(a,L)]);\\n  middle.setOpacity(mode === 0 ? 1 : 0);\\n  smallSquare.setOpacity(mode === 1 ? 1 : 0);\\n  largeSquare.setOpacity(mode === 1 ? 1 : 0);\\n  centerLabel.moveTo(p(L/2,L/2));\\n  smallLabel.moveTo(p(a/2,a/2));\\n  largeLabel.moveTo(p(a+b/2,a+b/2));\\n  centerLabel.setOpacity(mode === 0 ? 1 : 0);\\n  smallLabel.setOpacity(mode === 1 ? 1 : 0);\\n  largeLabel.setOpacity(mode === 1 ? 1 : 0);\\n  handle.moveTo(p(a,0));\\n  legA.moveTo([left+a/2, bottom-0.35, 0]);\\n  legB.moveTo([left+a+b/2, bottom-0.35, 0]);\\n  status.setText(mode === 0 ? 'Uncovered area: c²' : 'Uncovered area: a² + b²');\\n  firstEquation.setOpacity(mode === 0 ? 1 : 0.45);\\n  secondEquation.setOpacity(mode === 1 ? 1 : 0.45);\\n}\\nupdate();\\n\\nmakeDraggable(handle, scene, {\\n  onDrag: (mob, pos) => {\\n    if (!busy) a = Math.max(0.85, Math.min(L-0.85, pos[0]-left));\\n    update();\\n  }\\n});\\n\\nasync function rearrange() {\\n  if (busy) return;\\n  busy = true;\\n  try {\\n    const next = 1-mode;\\n    middle.setOpacity(0);\\n    smallSquare.setOpacity(0);\\n    largeSquare.setOpacity(0);\\n    centerLabel.setOpacity(0);\\n    smallLabel.setOpacity(0);\\n    largeLabel.setOpacity(0);\\n    const targets = triangleVertices(next).map((vertices, i) => {\\n      const tri = new Polygon({ vertices, color: colors[i] });\\n      tri.setFill(colors[i], 0.65);\\n      tri.setStrokeWidth(2);\\n      return tri;\\n    });\\n    await scene.play(new AnimationGroup(triangles.map((tri, i) => new Transform(tri, targets[i]))));\\n    mode = next;\\n    update();\\n  } finally {\\n    busy = false;\\n  }\\n}\\nmakeClickable(buttonBox, scene, { onClick: rearrange });\\nmakeClickable(buttonLabel, scene, { onClick: rearrange });\\nawait scene.wait(999999);\"}",
+        "explanation": "Arrange four identical right triangles, with legs a and b and hypotenuse c, inside a square of side a + b. In the first arrangement, the uncovered region is a square of area c²; in the second, it consists of squares of areas a² and b². Because the outer square and the four triangles have unchanged areas, the uncovered areas are equal: c² = a² + b²."
+      },
+      "code": "const L = 4.4;\nconst left = -4.3;\nconst bottom = -2.25;\nlet a = 1.7;\nlet mode = 0;\nlet busy = false;\nconst p = (x, y) => [left + x, bottom + y, 0];\n\nconst title = new Text({ text: 'Pythagoras by rearrangement', fontSize: 32, color: WHITE });\ntitle.moveTo([0, 3.15, 0]);\nconst hint = new Text({ text: 'Drag the yellow split point · Click Rearrange to move the four triangles', fontSize: 19, color: GRAY });\nhint.moveTo([0, -3.4, 0]);\n\nconst border = new Polygon({ vertices: [p(0,0), p(L,0), p(L,L), p(0,L)], color: WHITE });\nborder.setFillOpacity(0);\nborder.setStrokeWidth(3);\nconst middle = new Polygon({ vertices: [p(a,0),p(L,a),p(L-a,L),p(0,L-a)], color: GOLD });\nmiddle.setFill(GOLD, 0.22);\nconst smallSquare = new Polygon({ vertices: [p(0,0),p(a,0),p(a,a),p(0,a)], color: GOLD });\nsmallSquare.setFill(GOLD, 0.22);\nconst largeSquare = new Polygon({ vertices: [p(a,a),p(L,a),p(L,L),p(a,L)], color: GOLD });\nlargeSquare.setFill(GOLD, 0.22);\n\nfunction triangleVertices(layout) {\n  const b = L-a;\n  if (layout === 0) return [\n    [p(0,0),p(a,0),p(0,b)],\n    [p(L,0),p(L,a),p(a,0)],\n    [p(L,L),p(b,L),p(L,a)],\n    [p(0,L),p(0,b),p(b,L)]\n  ];\n  return [\n    [p(a,0),p(a,a),p(L,a)],\n    [p(L,0),p(L,a),p(a,0)],\n    [p(0,L),p(a,L),p(0,a)],\n    [p(a,a),p(0,a),p(a,L)]\n  ];\n}\nconst colors = [BLUE, TEAL, PURPLE, ORANGE];\nconst triangles = triangleVertices(0).map((vertices, i) => {\n  const tri = new Polygon({ vertices, color: colors[i] });\n  tri.setFill(colors[i], 0.65);\n  tri.setStrokeWidth(2);\n  return tri;\n});\nconst handle = new Dot({ point: p(a,0), radius: 0.13, color: YELLOW });\nconst legA = new Text({ text: 'a', fontSize: 25, color: YELLOW });\nconst legB = new Text({ text: 'b', fontSize: 25, color: YELLOW });\nconst centerLabel = new Text({ text: 'c²', fontSize: 34, color: GOLD });\nconst smallLabel = new Text({ text: 'a²', fontSize: 30, color: GOLD });\nconst largeLabel = new Text({ text: 'b²', fontSize: 30, color: GOLD });\nconst status = new Text({ text: '', fontSize: 23, color: GOLD });\nstatus.moveTo([3.15, 2.05, 0]);\nconst firstEquation = new MathTex({ latex: '(a+b)^2 = 4\\\\left(\\\\frac{ab}{2}\\\\right)+c^2', color: WHITE });\nconst secondEquation = new MathTex({ latex: '(a+b)^2 = 4\\\\left(\\\\frac{ab}{2}\\\\right)+a^2+b^2', color: WHITE });\nconst conclusion = new MathTex({ latex: '\\\\boxed{c^2=a^2+b^2}', color: GOLD });\nawait Promise.all([firstEquation.waitForRender(), secondEquation.waitForRender(), conclusion.waitForRender()]);\nfirstEquation.scale(0.62).moveTo([3.1, 1.15, 0]);\nsecondEquation.scale(0.57).moveTo([3.1, 0.15, 0]);\nconclusion.scale(0.85).moveTo([3.1, -1.25, 0]);\nconst reason = new Text({ text: 'Same square. Same four triangles.', fontSize: 20, color: GRAY });\nreason.moveTo([3.1, -0.65, 0]);\nconst buttonBox = new Rectangle({ width: 2.6, height: 0.58, color: WHITE });\nbuttonBox.setFill(GRAY, 0.2);\nbuttonBox.moveTo([3.1, -2.3, 0]);\nconst buttonLabel = new Text({ text: 'Rearrange ↔', fontSize: 23, color: WHITE });\nbuttonLabel.moveTo([3.1, -2.3, 0]);\n\nscene.add(title, hint, middle, smallSquare, largeSquare, ...triangles, border, centerLabel, smallLabel, largeLabel, legA, legB, handle, status, firstEquation, secondEquation, reason, conclusion, buttonBox, buttonLabel);\n\nfunction update() {\n  const b = L-a;\n  const sets = triangleVertices(mode);\n  triangles.forEach((tri, i) => tri.setVertices(sets[i]));\n  middle.setVertices([p(a,0),p(L,a),p(b,L),p(0,b)]);\n  smallSquare.setVertices([p(0,0),p(a,0),p(a,a),p(0,a)]);\n  largeSquare.setVertices([p(a,a),p(L,a),p(L,L),p(a,L)]);\n  middle.setOpacity(mode === 0 ? 1 : 0);\n  smallSquare.setOpacity(mode === 1 ? 1 : 0);\n  largeSquare.setOpacity(mode === 1 ? 1 : 0);\n  centerLabel.moveTo(p(L/2,L/2));\n  smallLabel.moveTo(p(a/2,a/2));\n  largeLabel.moveTo(p(a+b/2,a+b/2));\n  centerLabel.setOpacity(mode === 0 ? 1 : 0);\n  smallLabel.setOpacity(mode === 1 ? 1 : 0);\n  largeLabel.setOpacity(mode === 1 ? 1 : 0);\n  handle.moveTo(p(a,0));\n  legA.moveTo([left+a/2, bottom-0.35, 0]);\n  legB.moveTo([left+a+b/2, bottom-0.35, 0]);\n  status.setText(mode === 0 ? 'Uncovered area: c²' : 'Uncovered area: a² + b²');\n  firstEquation.setOpacity(mode === 0 ? 1 : 0.45);\n  secondEquation.setOpacity(mode === 1 ? 1 : 0.45);\n}\nupdate();\n\nmakeDraggable(handle, scene, {\n  onDrag: (mob, pos) => {\n    if (!busy) a = Math.max(0.85, Math.min(L-0.85, pos[0]-left));\n    update();\n  }\n});\n\nasync function rearrange() {\n  if (busy) return;\n  busy = true;\n  try {\n    const next = 1-mode;\n    middle.setOpacity(0);\n    smallSquare.setOpacity(0);\n    largeSquare.setOpacity(0);\n    centerLabel.setOpacity(0);\n    smallLabel.setOpacity(0);\n    largeLabel.setOpacity(0);\n    const targets = triangleVertices(next).map((vertices, i) => {\n      const tri = new Polygon({ vertices, color: colors[i] });\n      tri.setFill(colors[i], 0.65);\n      tri.setStrokeWidth(2);\n      return tri;\n    });\n    await scene.play(new AnimationGroup(triangles.map((tri, i) => new Transform(tri, targets[i]))));\n    mode = next;\n    update();\n  } finally {\n    busy = false;\n  }\n}\nmakeClickable(buttonBox, scene, { onClick: rearrange });\nmakeClickable(buttonLabel, scene, { onClick: rearrange });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 8682,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 2,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "click",
+            "label": "Rectangle at (3.1, -2.3)",
+            "change": 0.1488009982638889,
+            "responded": true
+          },
+          {
+            "kind": "click",
+            "label": "Text at (3.1, -2.3)",
+            "change": 0.10717990451388888,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (-2.6, -2.3)",
+            "change": 0.11132378472222222,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/geo-pythagorean-proof.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/geo-pythagorean-proof.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:52:30.534Z"
+}

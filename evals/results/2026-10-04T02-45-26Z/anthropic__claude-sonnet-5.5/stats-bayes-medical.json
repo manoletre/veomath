@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-bayes-medical",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "16.68% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=2 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "7.99% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 12132,
+        "inputTokens": 7989,
+        "cachedInputTokens": 7476,
+        "outputTokens": 1666,
+        "costUsd": 0.0202032,
+        "rawResponse": "{\"explanation\":\"Imagine 1000 people. 10 are sick, and the test catches 9 of them. Of the 990 healthy people, 10% (99) wrongly test positive. So among 108 positive results, only 9 are truly sick, which is 9/108 ≈ 8.3%. The disease is so rare that false positives from the healthy majority swamp the true positives. Use the sliders to change prevalence and accuracy.\",\"manimCode\":\"let prev = 0.01;\\nlet acc = 0.9;\\nlet objs = [];\\n\\nfunction build() {\\n  for (const o of objs) scene.remove(o);\\n  objs = [];\\n  const W = 10, left = -5;\\n  const sick = prev, healthy = 1 - prev;\\n  const tp = sick * acc, fp = healthy * (1 - acc);\\n  const post = tp / (tp + fp);\\n\\n  const add = (o) => { scene.add(o); objs.push(o); return o; };\\n  const bar = (x0, w, y, h, col) => {\\n    const wd = Math.max(w, 0.03);\\n    const r = new Rectangle({ width: wd, height: h, color: col });\\n    r.setFill(col, 0.6);\\n    r.moveTo([x0 + wd / 2, y, 0]);\\n    return add(r);\\n  };\\n  const label = (s, x, y, col, fs) => {\\n    const t = new Text({ text: s, color: col, fontSize: fs || 22 });\\n    t.moveTo([x, y, 0]);\\n    return add(t);\\n  };\\n\\n  label('Population: 1000 people', 0, 3.4, WHITE, 24);\\n  const sw = W * sick;\\n  bar(left, sw, 2.5, 0.8, RED);\\n  bar(left + sw, W - sw, 2.5, 0.8, BLUE);\\n  label('Sick: ' + (sick * 1000).toFixed(0), -3, 1.8, RED, 20);\\n  label('Healthy: ' + (healthy * 1000).toFixed(0), 2.5, 1.8, BLUE, 20);\\n\\n  label('Everyone who tests positive: ' + ((tp + fp) * 1000).toFixed(0), 0, 0.7, WHITE, 24);\\n  const tw = W * tp / (tp + fp);\\n  bar(left, tw, -0.1, 0.8, RED);\\n  bar(left + tw, W - tw, -0.1, 0.8, BLUE);\\n  label('True positives: ' + (tp * 1000).toFixed(0), left + Math.max(tw / 2, 1.2), -0.9, RED, 20);\\n  label('False positives: ' + (fp * 1000).toFixed(0), left + tw + (W - tw) / 2 + 0.5, -1.5, BLUE, 20);\\n\\n  label('P(sick | positive) = ' + (post * 100).toFixed(1) + '%', 0, -2.6, YELLOW, 34);\\n  label('prevalence ' + (prev * 100).toFixed(1) + '%, accuracy ' + (acc * 100).toFixed(0) + '%', 0, -3.3, GRAY, 18);\\n}\\n\\nbuild();\\n\\nconst controls = new Controls(scene, { position: 'bottom-left' });\\ncontrols.addSlider({ label: 'Prevalence %', min: 0.1, max: 50, value: 1, step: 0.1, onChange: (v) => { prev = v / 100; build(); } });\\ncontrols.addSlider({ label: 'Accuracy %', min: 50, max: 99, value: 90, step: 1, onChange: (v) => { acc = v / 100; build(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Imagine 1000 people. 10 are sick, and the test catches 9 of them. Of the 990 healthy people, 10% (99) wrongly test positive. So among 108 positive results, only 9 are truly sick, which is 9/108 ≈ 8.3%. The disease is so rare that false positives from the healthy majority swamp the true positives. Use the sliders to change prevalence and accuracy."
+      },
+      "code": "let prev = 0.01;\nlet acc = 0.9;\nlet objs = [];\n\nfunction build() {\n  for (const o of objs) scene.remove(o);\n  objs = [];\n  const W = 10, left = -5;\n  const sick = prev, healthy = 1 - prev;\n  const tp = sick * acc, fp = healthy * (1 - acc);\n  const post = tp / (tp + fp);\n\n  const add = (o) => { scene.add(o); objs.push(o); return o; };\n  const bar = (x0, w, y, h, col) => {\n    const wd = Math.max(w, 0.03);\n    const r = new Rectangle({ width: wd, height: h, color: col });\n    r.setFill(col, 0.6);\n    r.moveTo([x0 + wd / 2, y, 0]);\n    return add(r);\n  };\n  const label = (s, x, y, col, fs) => {\n    const t = new Text({ text: s, color: col, fontSize: fs || 22 });\n    t.moveTo([x, y, 0]);\n    return add(t);\n  };\n\n  label('Population: 1000 people', 0, 3.4, WHITE, 24);\n  const sw = W * sick;\n  bar(left, sw, 2.5, 0.8, RED);\n  bar(left + sw, W - sw, 2.5, 0.8, BLUE);\n  label('Sick: ' + (sick * 1000).toFixed(0), -3, 1.8, RED, 20);\n  label('Healthy: ' + (healthy * 1000).toFixed(0), 2.5, 1.8, BLUE, 20);\n\n  label('Everyone who tests positive: ' + ((tp + fp) * 1000).toFixed(0), 0, 0.7, WHITE, 24);\n  const tw = W * tp / (tp + fp);\n  bar(left, tw, -0.1, 0.8, RED);\n  bar(left + tw, W - tw, -0.1, 0.8, BLUE);\n  label('True positives: ' + (tp * 1000).toFixed(0), left + Math.max(tw / 2, 1.2), -0.9, RED, 20);\n  label('False positives: ' + (fp * 1000).toFixed(0), left + tw + (W - tw) / 2 + 0.5, -1.5, BLUE, 20);\n\n  label('P(sick | positive) = ' + (post * 100).toFixed(1) + '%', 0, -2.6, YELLOW, 34);\n  label('prevalence ' + (prev * 100).toFixed(1) + '%, accuracy ' + (acc * 100).toFixed(0) + '%', 0, -3.3, GRAY, 18);\n}\n\nbuild();\n\nconst controls = new Controls(scene, { position: 'bottom-left' });\ncontrols.addSlider({ label: 'Prevalence %', min: 0.1, max: 50, value: 1, step: 0.1, onChange: (v) => { prev = v / 100; build(); } });\ncontrols.addSlider({ label: 'Accuracy %', min: 50, max: 99, value: 90, step: 1, onChange: (v) => { acc = v / 100; build(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3457,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 2,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/stats-bayes-medical.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/stats-bayes-medical.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:35:07.353Z"
+}

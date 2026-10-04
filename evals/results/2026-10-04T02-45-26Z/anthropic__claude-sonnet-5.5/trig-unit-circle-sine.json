@@ -1,0 +1,80 @@
+{
+  "itemId": "trig-unit-circle-sine",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 0.8,
+  "firstAttemptScore": 0.8,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.8,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.54% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Axes [x 0.13..7.25, y -1.50..1.50] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.07% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 8443,
+        "inputTokens": 7948,
+        "cachedInputTokens": 7476,
+        "outputTokens": 1129,
+        "costUsd": 0.0146692,
+        "rawResponse": "{\"explanation\":\"The sine graph is wavy because sine tracks the height of a point moving around a circle at constant speed. As the point goes around, its height rises to 1, falls through 0 to -1, and comes back up. That repeating up-and-down motion, plotted against the angle, makes the wave. Drag the slider to move the point around the circle and watch its height trace the curve.\",\"manimCode\":\"const circ = new Axes({ xRange: [-1.5, 1.5, 1], yRange: [-1.5, 1.5, 1], xLength: 3, yLength: 3, tips: false });\\ncirc.moveTo([-4, 0, 0]);\\nconst circle = new Circle({ radius: 1.0, color: BLUE });\\n// axes of length 3 over range 3 => 1 unit per unit\\ncircle.moveTo(circ.c2p(0, 0));\\n\\nconst wave = new Axes({ xRange: [0, 2 * Math.PI, Math.PI / 2], yRange: [-1.5, 1.5, 0.5], xLength: 7, yLength: 3, tips: false });\\nwave.moveTo([2, 0, 0]);\\nconst curve = wave.plot(x => Math.sin(x), { color: YELLOW });\\n\\nlet alpha = 0;\\nconst dot = new Dot({ color: RED });\\nconst dotW = new Dot({ color: RED });\\nconst radius = new Polygon({ vertices: [circ.c2p(0, 0), circ.c2p(1, 0)], color: WHITE });\\nradius.setStrokeWidth(3).setFillOpacity(0);\\nconst heightLine = new Polygon({ vertices: [circ.c2p(1, 0), circ.c2p(1, 0)], color: GREEN });\\nheightLine.setStrokeWidth(3).setFillOpacity(0);\\nconst link = new Polygon({ vertices: [circ.c2p(1, 0), wave.c2p(0, 0)], color: GRAY });\\nlink.setStrokeWidth(1).setFillOpacity(0);\\n\\nfunction update() {\\n  const c = Math.cos(alpha), s = Math.sin(alpha);\\n  dot.moveTo(circ.c2p(c, s));\\n  dotW.moveTo(wave.c2p(alpha, s));\\n  radius.setVertices([circ.c2p(0, 0), circ.c2p(c, s)]);\\n  heightLine.setVertices([circ.c2p(c, 0), circ.c2p(c, s)]);\\n  link.setVertices([circ.c2p(c, s), wave.c2p(alpha, s)]);\\n}\\nupdate();\\n\\nconst title = new Text({ text: 'sin(θ) = height of a point going around a circle', color: WHITE, fontSize: 28 });\\ntitle.moveTo([0, 3.3, 0]);\\n\\nscene.add(circ, circle, wave, curve, link, radius, heightLine, dot, dotW, title);\\n\\nconst controls = new Controls(scene, { position: 'bottom-left' });\\ncontrols.addSlider({ label: 'Angle θ', min: 0, max: 2 * Math.PI, value: 0, step: 0.05, onChange: (v) => { alpha = v; update(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The sine graph is wavy because sine tracks the height of a point moving around a circle at constant speed. As the point goes around, its height rises to 1, falls through 0 to -1, and comes back up. That repeating up-and-down motion, plotted against the angle, makes the wave. Drag the slider to move the point around the circle and watch its height trace the curve."
+      },
+      "code": "const circ = new Axes({ xRange: [-1.5, 1.5, 1], yRange: [-1.5, 1.5, 1], xLength: 3, yLength: 3, tips: false });\ncirc.moveTo([-4, 0, 0]);\nconst circle = new Circle({ radius: 1.0, color: BLUE });\n// axes of length 3 over range 3 => 1 unit per unit\ncircle.moveTo(circ.c2p(0, 0));\n\nconst wave = new Axes({ xRange: [0, 2 * Math.PI, Math.PI / 2], yRange: [-1.5, 1.5, 0.5], xLength: 7, yLength: 3, tips: false });\nwave.moveTo([2, 0, 0]);\nconst curve = wave.plot(x => Math.sin(x), { color: YELLOW });\n\nlet alpha = 0;\nconst dot = new Dot({ color: RED });\nconst dotW = new Dot({ color: RED });\nconst radius = new Polygon({ vertices: [circ.c2p(0, 0), circ.c2p(1, 0)], color: WHITE });\nradius.setStrokeWidth(3).setFillOpacity(0);\nconst heightLine = new Polygon({ vertices: [circ.c2p(1, 0), circ.c2p(1, 0)], color: GREEN });\nheightLine.setStrokeWidth(3).setFillOpacity(0);\nconst link = new Polygon({ vertices: [circ.c2p(1, 0), wave.c2p(0, 0)], color: GRAY });\nlink.setStrokeWidth(1).setFillOpacity(0);\n\nfunction update() {\n  const c = Math.cos(alpha), s = Math.sin(alpha);\n  dot.moveTo(circ.c2p(c, s));\n  dotW.moveTo(wave.c2p(alpha, s));\n  radius.setVertices([circ.c2p(0, 0), circ.c2p(c, s)]);\n  heightLine.setVertices([circ.c2p(c, 0), circ.c2p(c, s)]);\n  link.setVertices([circ.c2p(c, s), wave.c2p(alpha, s)]);\n}\nupdate();\n\nconst title = new Text({ text: 'sin(θ) = height of a point going around a circle', color: WHITE, fontSize: 28 });\ntitle.moveTo([0, 3.3, 0]);\n\nscene.add(circ, circle, wave, curve, link, radius, heightLine, dot, dotW, title);\n\nconst controls = new Controls(scene, { position: 'bottom-left' });\ncontrols.addSlider({ label: 'Angle θ', min: 0, max: 2 * Math.PI, value: 0, step: 0.05, onChange: (v) => { alpha = v; update(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3602,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/trig-unit-circle-sine.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/trig-unit-circle-sine.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:34:31.588Z"
+}

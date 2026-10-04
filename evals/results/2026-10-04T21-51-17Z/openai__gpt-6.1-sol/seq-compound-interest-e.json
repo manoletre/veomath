@@ -1,0 +1,98 @@
+{
+  "itemId": "seq-compound-interest-e",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 0.9090909090909091,
+  "firstAttemptScore": 0.9090909090909091,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9090909090909091,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.59% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "Text \"$1 at 100% annual interest\" overlaps MathTex \"A_n=\\left(1+\\frac{1}{n}\\right)^n\\;\\longr\" (34%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ hover Dot at (-3.6, 1.4) — 0.18% changed\n✓ drag Dot at (-3.6, 1.4) — 0.86% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (-3.6, 1.4) — 0.86% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 50155,
+        "inputTokens": 5318,
+        "cachedInputTokens": 5287,
+        "outputTokens": 2076,
+        "costUsd": 0.0213507,
+        "rawResponse": "{\"explanation\":\"With 100% annual interest compounded n times a year, each period earns 1/n interest, so your $1 becomes (1 + 1/n)ⁿ after one year. Annual compounding gives $2, twice-yearly gives $2.25, and monthly gives about $2.61. As compounding becomes more frequent, the balance approaches e ≈ $2.71828—not infinity. Drag the yellow point to explore how the balance approaches this limit.\",\"manimCode\":\"let n = 4;\\nconst balance = k => Math.pow(1 + 1 / k, k);\\n\\nconst title = new Text({ text: '$1 at 100% annual interest', fontSize: 32, color: WHITE });\\ntitle.moveTo([0, 3.25, 0]);\\nconst formula = new MathTex({ latex: 'A_n=\\\\\\\\left(1+\\\\\\\\frac{1}{n}\\\\\\\\right)^n\\\\\\\\;\\\\\\\\longrightarrow\\\\\\\\;e\\\\\\\\approx2.71828', color: WHITE });\\nawait formula.waitForRender();\\nformula.scale(0.75);\\nformula.moveTo([0, 2.7, 0]);\\n\\nconst ax = new Axes({ xRange: [0, 32, 8], yRange: [0, 3, 1], xLength: 9.5, yLength: 4.4, tips: false });\\nconst curve = ax.plot(x => x > 0 ? Math.exp(x * Math.log1p(1 / x)) : 1, { color: BLUE, xRange: [1, 32] });\\nconst limitLine = new DashedLine({ start: ax.c2p(0, Math.E), end: ax.c2p(32, Math.E), color: GREEN });\\nconst limitLabel = new Text({ text: 'Limit: $2.71828...', fontSize: 21, color: GREEN });\\nlimitLabel.moveTo([2.8, 2.08, 0]);\\nconst guide = new DashedLine({ start: ax.c2p(n, 0), end: ax.c2p(n, balance(n)), color: YELLOW });\\nconst handle = new Dot({ point: ax.c2p(n, balance(n)), radius: 0.13, color: YELLOW });\\nconst readout = new Text({ text: '', fontSize: 26, color: YELLOW });\\nreadout.moveTo([0, -2.94, 0]);\\nconst hint = new Text({ text: 'Drag the yellow point left or right: more compounding periods per year', fontSize: 19, color: GRAY });\\nhint.moveTo([0, -3.4, 0]);\\nconst verticalLabel = new Text({ text: 'Balance\\\\nafter\\\\none year', fontSize: 20, color: WHITE });\\nverticalLabel.moveTo([-5.55, 0.35, 0]);\\nconst axisLabel = new Text({ text: 'Compounding periods per year (n)', fontSize: 19, color: WHITE });\\naxisLabel.moveTo([0, -2.58, 0]);\\n\\nscene.add(ax, limitLine, curve, guide, handle, limitLabel, readout, hint, verticalLabel, axisLabel);\\nfor (const k of [0, 8, 16, 24, 32]) {\\n  const tickLabel = new Text({ text: String(k), fontSize: 16, color: GRAY });\\n  const p = ax.c2p(k, 0);\\n  tickLabel.moveTo([p[0], p[1] - 0.17, 0]);\\n  scene.add(tickLabel);\\n}\\nfor (const k of [1, 2, 3]) {\\n  const dollarLabel = new Text({ text: '$' + k, fontSize: 17, color: GRAY });\\n  const p = ax.c2p(0, k);\\n  dollarLabel.moveTo([p[0] - 0.28, p[1], 0]);\\n  scene.add(dollarLabel);\\n}\\n\\nfunction update() {\\n  const amount = balance(n);\\n  handle.moveTo(ax.c2p(n, amount));\\n  guide.setStart(ax.c2p(n, 0));\\n  guide.setEnd(ax.c2p(n, amount));\\n  readout.setText('n = ' + n + '    |    Balance = $' + amount.toFixed(6) + '    |    Below limit by $' + (Math.E - amount).toFixed(6));\\n}\\nupdate();\\nawait scene.play(new AnimationGroup([new Write(title), new FadeIn(formula)]));\\n\\nmakeDraggable(handle, scene, {\\n  onDrag: (mob, pos) => {\\n    const coords = ax.pointToCoords(pos);\\n    n = Math.max(1, Math.min(32, Math.round(coords[0])));\\n    update();\\n  }\\n});\\nconst details = new Text({ text: '', fontSize: 20, color: WHITE });\\ndetails.moveTo([0, -0.8, 0]);\\nmakeHoverable(handle, scene, {\\n  onHoverStart: () => {\\n    details.setText('Each period earns 100% / ' + n + ' = ' + (100 / n).toFixed(2) + '%');\\n    scene.add(details);\\n  },\\n  onHoverEnd: () => scene.remove(details)\\n});\\nawait scene.wait(999999);\"}",
+        "explanation": "With 100% annual interest compounded n times a year, each period earns 1/n interest, so your $1 becomes (1 + 1/n)ⁿ after one year. Annual compounding gives $2, twice-yearly gives $2.25, and monthly gives about $2.61. As compounding becomes more frequent, the balance approaches e ≈ $2.71828—not infinity. Drag the yellow point to explore how the balance approaches this limit."
+      },
+      "code": "let n = 4;\nconst balance = k => Math.pow(1 + 1 / k, k);\n\nconst title = new Text({ text: '$1 at 100% annual interest', fontSize: 32, color: WHITE });\ntitle.moveTo([0, 3.25, 0]);\nconst formula = new MathTex({ latex: 'A_n=\\\\left(1+\\\\frac{1}{n}\\\\right)^n\\\\;\\\\longrightarrow\\\\;e\\\\approx2.71828', color: WHITE });\nawait formula.waitForRender();\nformula.scale(0.75);\nformula.moveTo([0, 2.7, 0]);\n\nconst ax = new Axes({ xRange: [0, 32, 8], yRange: [0, 3, 1], xLength: 9.5, yLength: 4.4, tips: false });\nconst curve = ax.plot(x => x > 0 ? Math.exp(x * Math.log1p(1 / x)) : 1, { color: BLUE, xRange: [1, 32] });\nconst limitLine = new DashedLine({ start: ax.c2p(0, Math.E), end: ax.c2p(32, Math.E), color: GREEN });\nconst limitLabel = new Text({ text: 'Limit: $2.71828...', fontSize: 21, color: GREEN });\nlimitLabel.moveTo([2.8, 2.08, 0]);\nconst guide = new DashedLine({ start: ax.c2p(n, 0), end: ax.c2p(n, balance(n)), color: YELLOW });\nconst handle = new Dot({ point: ax.c2p(n, balance(n)), radius: 0.13, color: YELLOW });\nconst readout = new Text({ text: '', fontSize: 26, color: YELLOW });\nreadout.moveTo([0, -2.94, 0]);\nconst hint = new Text({ text: 'Drag the yellow point left or right: more compounding periods per year', fontSize: 19, color: GRAY });\nhint.moveTo([0, -3.4, 0]);\nconst verticalLabel = new Text({ text: 'Balance\\nafter\\none year', fontSize: 20, color: WHITE });\nverticalLabel.moveTo([-5.55, 0.35, 0]);\nconst axisLabel = new Text({ text: 'Compounding periods per year (n)', fontSize: 19, color: WHITE });\naxisLabel.moveTo([0, -2.58, 0]);\n\nscene.add(ax, limitLine, curve, guide, handle, limitLabel, readout, hint, verticalLabel, axisLabel);\nfor (const k of [0, 8, 16, 24, 32]) {\n  const tickLabel = new Text({ text: String(k), fontSize: 16, color: GRAY });\n  const p = ax.c2p(k, 0);\n  tickLabel.moveTo([p[0], p[1] - 0.17, 0]);\n  scene.add(tickLabel);\n}\nfor (const k of [1, 2, 3]) {\n  const dollarLabel = new Text({ text: '$' + k, fontSize: 17, color: GRAY });\n  const p = ax.c2p(0, k);\n  dollarLabel.moveTo([p[0] - 0.28, p[1], 0]);\n  scene.add(dollarLabel);\n}\n\nfunction update() {\n  const amount = balance(n);\n  handle.moveTo(ax.c2p(n, amount));\n  guide.setStart(ax.c2p(n, 0));\n  guide.setEnd(ax.c2p(n, amount));\n  readout.setText('n = ' + n + '    |    Balance = $' + amount.toFixed(6) + '    |    Below limit by $' + (Math.E - amount).toFixed(6));\n}\nupdate();\nawait scene.play(new AnimationGroup([new Write(title), new FadeIn(formula)]));\n\nmakeDraggable(handle, scene, {\n  onDrag: (mob, pos) => {\n    const coords = ax.pointToCoords(pos);\n    n = Math.max(1, Math.min(32, Math.round(coords[0])));\n    update();\n  }\n});\nconst details = new Text({ text: '', fontSize: 20, color: WHITE });\ndetails.moveTo([0, -0.8, 0]);\nmakeHoverable(handle, scene, {\n  onHoverStart: () => {\n    details.setText('Each period earns 100% / ' + n + ' = ' + (100 / n).toFixed(2) + '%');\n    scene.add(details);\n  },\n  onHoverEnd: () => scene.remove(details)\n});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 7705,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 1,
+        "interactions": [
+          {
+            "kind": "hover",
+            "label": "Dot at (-3.6, 1.4)",
+            "change": 0.0018131510416666667,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (-3.6, 1.4)",
+            "change": 0.008569878472222223,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/seq-compound-interest-e.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/seq-compound-interest-e.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:53:39.977Z"
+}

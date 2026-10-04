@@ -1,0 +1,80 @@
+{
+  "itemId": "stats-regression-drag",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 0.8,
+  "firstAttemptScore": 0.8,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.8,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.81% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Axes [x -2.62..7.50, y -1.80..4.30] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=8 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.00% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 9629,
+        "inputTokens": 7961,
+        "cachedInputTokens": 7476,
+        "outputTokens": 1257,
+        "costUsd": 0.016001200000000004,
+        "rawResponse": "{\"explanation\":\"This shows a scatter plot with the least-squares line of best fit. Drag any yellow point and the line refits right away, using slope = Σ(x−x̄)(y−ȳ) / Σ(x−x̄)². The line always passes through the mean point (x̄, ȳ), which is drawn in red.\",\"manimCode\":\"const axes = new Axes({ xRange: [0, 10, 1], yRange: [0, 8, 1], xLength: 10, yLength: 6, tips: false });\\naxes.moveTo([0, -0.2, 0]);\\nscene.add(axes);\\n\\nconst pts = [[1,1.5],[2,2.8],[3,2.9],[4,4.5],[5,4.8],[6,6.0],[7,6.2],[8,7.0]];\\nconst dots = pts.map(p => new Dot({ point: axes.c2p(p[0], p[1]), color: YELLOW }));\\n\\nconst line = new Polygon({ vertices: [axes.c2p(0,0), axes.c2p(10,8)], color: BLUE });\\nline.setStrokeWidth(4).setFillOpacity(0);\\nconst meanDot = new Dot({ point: axes.c2p(5,4), color: RED });\\nscene.add(line, meanDot);\\ndots.forEach(d => scene.add(d));\\n\\nfunction refit() {\\n  const data = dots.map(d => {\\n    const c = d.getCenter();\\n    const w = axes.p2c ? axes.p2c(c) : null;\\n    return w;\\n  });\\n  // fallback conversion using c2p of origin and unit\\n  const o = axes.c2p(0, 0), ux = axes.c2p(1, 0), uy = axes.c2p(0, 1);\\n  const sx = ux[0] - o[0], sy = uy[1] - o[1];\\n  const xy = dots.map(d => {\\n    const c = d.getCenter();\\n    return [(c[0] - o[0]) / sx, (c[1] - o[1]) / sy];\\n  });\\n  const n = xy.length;\\n  const mx = xy.reduce((a, p) => a + p[0], 0) / n;\\n  const my = xy.reduce((a, p) => a + p[1], 0) / n;\\n  let num = 0, den = 0;\\n  xy.forEach(p => { num += (p[0]-mx)*(p[1]-my); den += (p[0]-mx)*(p[0]-mx); });\\n  const m = den < 1e-9 ? 0 : num / den;\\n  const b = my - m * mx;\\n  // clip line to y range [0,8] and x range [0,10]\\n  let x0 = 0, x1 = 10;\\n  if (Math.abs(m) > 1e-9) {\\n    const xa = (0 - b) / m, xb = (8 - b) / m;\\n    const lo = Math.min(xa, xb), hi = Math.max(xa, xb);\\n    x0 = Math.max(0, lo); x1 = Math.min(10, hi);\\n  }\\n  if (x1 <= x0) { x0 = 0; x1 = 10; }\\n  line.setVertices([axes.c2p(x0, m*x0+b), axes.c2p(x1, m*x1+b)]);\\n  meanDot.moveTo(axes.c2p(mx, my));\\n}\\n\\ndots.forEach(d => makeDraggable(d, scene, { onDrag: refit }));\\nrefit();\\n\\nconst title = new Text({ text: 'Drag the points - the best-fit line updates', color: WHITE, fontSize: 28 });\\ntitle.moveTo([0, 3.6, 0]);\\nscene.add(title);\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "This shows a scatter plot with the least-squares line of best fit. Drag any yellow point and the line refits right away, using slope = Σ(x−x̄)(y−ȳ) / Σ(x−x̄)². The line always passes through the mean point (x̄, ȳ), which is drawn in red."
+      },
+      "code": "const axes = new Axes({ xRange: [0, 10, 1], yRange: [0, 8, 1], xLength: 10, yLength: 6, tips: false });\naxes.moveTo([0, -0.2, 0]);\nscene.add(axes);\n\nconst pts = [[1,1.5],[2,2.8],[3,2.9],[4,4.5],[5,4.8],[6,6.0],[7,6.2],[8,7.0]];\nconst dots = pts.map(p => new Dot({ point: axes.c2p(p[0], p[1]), color: YELLOW }));\n\nconst line = new Polygon({ vertices: [axes.c2p(0,0), axes.c2p(10,8)], color: BLUE });\nline.setStrokeWidth(4).setFillOpacity(0);\nconst meanDot = new Dot({ point: axes.c2p(5,4), color: RED });\nscene.add(line, meanDot);\ndots.forEach(d => scene.add(d));\n\nfunction refit() {\n  const data = dots.map(d => {\n    const c = d.getCenter();\n    const w = axes.p2c ? axes.p2c(c) : null;\n    return w;\n  });\n  // fallback conversion using c2p of origin and unit\n  const o = axes.c2p(0, 0), ux = axes.c2p(1, 0), uy = axes.c2p(0, 1);\n  const sx = ux[0] - o[0], sy = uy[1] - o[1];\n  const xy = dots.map(d => {\n    const c = d.getCenter();\n    return [(c[0] - o[0]) / sx, (c[1] - o[1]) / sy];\n  });\n  const n = xy.length;\n  const mx = xy.reduce((a, p) => a + p[0], 0) / n;\n  const my = xy.reduce((a, p) => a + p[1], 0) / n;\n  let num = 0, den = 0;\n  xy.forEach(p => { num += (p[0]-mx)*(p[1]-my); den += (p[0]-mx)*(p[0]-mx); });\n  const m = den < 1e-9 ? 0 : num / den;\n  const b = my - m * mx;\n  // clip line to y range [0,8] and x range [0,10]\n  let x0 = 0, x1 = 10;\n  if (Math.abs(m) > 1e-9) {\n    const xa = (0 - b) / m, xb = (8 - b) / m;\n    const lo = Math.min(xa, xb), hi = Math.max(xa, xb);\n    x0 = Math.max(0, lo); x1 = Math.min(10, hi);\n  }\n  if (x1 <= x0) { x0 = 0; x1 = 10; }\n  line.setVertices([axes.c2p(x0, m*x0+b), axes.c2p(x1, m*x1+b)]);\n  meanDot.moveTo(axes.c2p(mx, my));\n}\n\ndots.forEach(d => makeDraggable(d, scene, { onDrag: refit }));\nrefit();\n\nconst title = new Text({ text: 'Drag the points - the best-fit line updates', color: WHITE, fontSize: 28 });\ntitle.moveTo([0, 3.6, 0]);\nscene.add(title);\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3505,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 8,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/stats-regression-drag.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/stats-regression-drag.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:35:08.975Z"
+}

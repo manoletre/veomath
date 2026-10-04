@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-phone-plans",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.09% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.58% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 25958,
+        "inputTokens": 4626,
+        "cachedInputTokens": 0,
+        "outputTokens": 1436,
+        "costUsd": 0.023612,
+        "rawResponse": "{\"explanation\":\"Plan A costs 20 + 0.10m dollars, and Plan B costs 35 + 0.05m dollars, where m is the number of minutes. Setting them equal gives 0.05m = 15, so they cost the same at **300 minutes**, when both cost **$50**. Plan A is cheaper below 300 minutes; Plan B is cheaper above it.\",\"manimCode\":\"const heading = new Text({ text: 'When do the phone plans cost the same?', fontSize: 30, color: WHITE });\\nheading.moveTo([0, 3.25, 0]);\\nconst formulaA = new MathTex({ latex: 'A(m)=20+0.10m', color: BLUE });\\nconst formulaB = new MathTex({ latex: 'B(m)=35+0.05m', color: ORANGE });\\nawait formulaA.waitForRender();\\nawait formulaB.waitForRender();\\nformulaA.scale(0.75).moveTo([-2.7, 2.55, 0]);\\nformulaB.scale(0.75).moveTo([2.1, 2.55, 0]);\\nscene.add(heading, formulaA, formulaB);\\n\\nconst ax = new Axes({ xRange: [0, 600, 100], yRange: [0, 90, 15], xLength: 9, yLength: 4.4, tips: false });\\nax.moveTo([-0.4, -0.35, 0]);\\nconst curveA = ax.plot(m => 20 + 0.10 * m, { color: BLUE, xRange: [0, 600] });\\nconst curveB = ax.plot(m => 35 + 0.05 * m, { color: ORANGE, xRange: [0, 600] });\\nconst costLabel = new Text({ text: 'Cost ($)', fontSize: 20, color: WHITE });\\ncostLabel.moveTo([-5.25, 2.02, 0]);\\nconst minuteLabel = new Text({ text: 'Minutes', fontSize: 20, color: WHITE });\\nminuteLabel.moveTo([4.9, -2.7, 0]);\\nscene.add(ax, costLabel, minuteLabel);\\nawait scene.play(new AnimationGroup([new Create(curveA), new Create(curveB)]));\\n\\nconst crossPoint = ax.coordsToPoint(300, 50);\\nconst breakDot = new Dot({ point: crossPoint, color: YELLOW });\\nconst breakLabel = new Text({ text: '300 min = $50', fontSize: 22, color: YELLOW });\\nbreakLabel.moveTo([crossPoint[0] - 0.1, crossPoint[1] + 0.65, 0]);\\nawait scene.play(new AnimationGroup([new FadeIn(breakDot), new Write(breakLabel)]));\\n\\nlet minutes = 300;\\nconst guide = new Polygon({ vertices: [ax.coordsToPoint(minutes, 0), ax.coordsToPoint(minutes, 50)], color: GRAY });\\nguide.setFillOpacity(0);\\nguide.setStrokeWidth(2);\\nconst dotA = new Dot({ point: ax.coordsToPoint(minutes, 50), color: BLUE });\\nconst dotB = new Dot({ point: ax.coordsToPoint(minutes, 50), color: ORANGE });\\nlet readout;\\nfunction updateComparison() {\\n  const priceA = 20 + 0.10 * minutes;\\n  const priceB = 35 + 0.05 * minutes;\\n  dotA.moveTo(ax.coordsToPoint(minutes, priceA));\\n  dotB.moveTo(ax.coordsToPoint(minutes, priceB));\\n  guide.setVertices([ax.coordsToPoint(minutes, 0), ax.coordsToPoint(minutes, Math.max(priceA, priceB))]);\\n  if (readout) scene.remove(readout);\\n  const verdict = Math.abs(priceA - priceB) < 0.001 ? 'Same cost' : priceA < priceB ? 'A is cheaper' : 'B is cheaper';\\n  readout = new Text({ text: minutes.toFixed(0) + ' min   |   A: $' + priceA.toFixed(2) + '   B: $' + priceB.toFixed(2) + '   |   ' + verdict, fontSize: 21, color: WHITE });\\n  readout.moveTo([0, -3.25, 0]);\\n  scene.add(readout);\\n}\\nscene.add(guide, dotA, dotB);\\nupdateComparison();\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\\ncontrols.addSlider({ label: 'Minutes used', min: 0, max: 600, value: 300, step: 10, onChange: value => { minutes = value; updateComparison(); } });\\nmakeHoverable(breakDot, scene, { hoverScale: 1.6, hoverColor: YELLOW });\\nawait scene.wait(999999);\"}",
+        "explanation": "Plan A costs 20 + 0.10m dollars, and Plan B costs 35 + 0.05m dollars, where m is the number of minutes. Setting them equal gives 0.05m = 15, so they cost the same at **300 minutes**, when both cost **$50**. Plan A is cheaper below 300 minutes; Plan B is cheaper above it."
+      },
+      "code": "const heading = new Text({ text: 'When do the phone plans cost the same?', fontSize: 30, color: WHITE });\nheading.moveTo([0, 3.25, 0]);\nconst formulaA = new MathTex({ latex: 'A(m)=20+0.10m', color: BLUE });\nconst formulaB = new MathTex({ latex: 'B(m)=35+0.05m', color: ORANGE });\nawait formulaA.waitForRender();\nawait formulaB.waitForRender();\nformulaA.scale(0.75).moveTo([-2.7, 2.55, 0]);\nformulaB.scale(0.75).moveTo([2.1, 2.55, 0]);\nscene.add(heading, formulaA, formulaB);\n\nconst ax = new Axes({ xRange: [0, 600, 100], yRange: [0, 90, 15], xLength: 9, yLength: 4.4, tips: false });\nax.moveTo([-0.4, -0.35, 0]);\nconst curveA = ax.plot(m => 20 + 0.10 * m, { color: BLUE, xRange: [0, 600] });\nconst curveB = ax.plot(m => 35 + 0.05 * m, { color: ORANGE, xRange: [0, 600] });\nconst costLabel = new Text({ text: 'Cost ($)', fontSize: 20, color: WHITE });\ncostLabel.moveTo([-5.25, 2.02, 0]);\nconst minuteLabel = new Text({ text: 'Minutes', fontSize: 20, color: WHITE });\nminuteLabel.moveTo([4.9, -2.7, 0]);\nscene.add(ax, costLabel, minuteLabel);\nawait scene.play(new AnimationGroup([new Create(curveA), new Create(curveB)]));\n\nconst crossPoint = ax.coordsToPoint(300, 50);\nconst breakDot = new Dot({ point: crossPoint, color: YELLOW });\nconst breakLabel = new Text({ text: '300 min = $50', fontSize: 22, color: YELLOW });\nbreakLabel.moveTo([crossPoint[0] - 0.1, crossPoint[1] + 0.65, 0]);\nawait scene.play(new AnimationGroup([new FadeIn(breakDot), new Write(breakLabel)]));\n\nlet minutes = 300;\nconst guide = new Polygon({ vertices: [ax.coordsToPoint(minutes, 0), ax.coordsToPoint(minutes, 50)], color: GRAY });\nguide.setFillOpacity(0);\nguide.setStrokeWidth(2);\nconst dotA = new Dot({ point: ax.coordsToPoint(minutes, 50), color: BLUE });\nconst dotB = new Dot({ point: ax.coordsToPoint(minutes, 50), color: ORANGE });\nlet readout;\nfunction updateComparison() {\n  const priceA = 20 + 0.10 * minutes;\n  const priceB = 35 + 0.05 * minutes;\n  dotA.moveTo(ax.coordsToPoint(minutes, priceA));\n  dotB.moveTo(ax.coordsToPoint(minutes, priceB));\n  guide.setVertices([ax.coordsToPoint(minutes, 0), ax.coordsToPoint(minutes, Math.max(priceA, priceB))]);\n  if (readout) scene.remove(readout);\n  const verdict = Math.abs(priceA - priceB) < 0.001 ? 'Same cost' : priceA < priceB ? 'A is cheaper' : 'B is cheaper';\n  readout = new Text({ text: minutes.toFixed(0) + ' min   |   A: $' + priceA.toFixed(2) + '   B: $' + priceB.toFixed(2) + '   |   ' + verdict, fontSize: 21, color: WHITE });\n  readout.moveTo([0, -3.25, 0]);\n  scene.add(readout);\n}\nscene.add(guide, dotA, dotB);\nupdateComparison();\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\ncontrols.addSlider({ label: 'Minutes used', min: 0, max: 600, value: 300, step: 10, onChange: value => { minutes = value; updateComparison(); } });\nmakeHoverable(breakDot, scene, { hoverScale: 1.6, hoverColor: YELLOW });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 12210,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 2,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/alg-phone-plans.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/alg-phone-plans.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:06.199Z"
+}

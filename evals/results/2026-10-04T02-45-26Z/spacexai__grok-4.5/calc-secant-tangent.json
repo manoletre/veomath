@@ -1,0 +1,80 @@
+{
+  "itemId": "calc-secant-tangent",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.32% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Line [x -4.01..4.17, y -4.31..1.94] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=2"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.43% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 68218,
+        "inputTokens": 5049,
+        "cachedInputTokens": 128,
+        "outputTokens": 4828,
+        "costUsd": 0.0388484,
+        "rawResponse": "{\n  \"explanation\": \"A secant line cuts through two points on a curve: a fixed point P at x = a and a nearby point Q at x = a + h. As h shrinks toward zero, Q slides toward P and the secant rotates into a limiting position—the tangent line. The slope of that tangent is the derivative f'(a), the instantaneous rate of change at a.\",\n  \"manimCode\": \"const ax = new Axes({\\n  xRange: [-1.5, 4, 1],\\n  yRange: [-0.5, 3.5, 1],\\n  xLength: 9,\\n  yLength: 5,\\n  tips: true\\n});\\nax.shift(scaleVec(0.3, DOWN));\\n\\nconst f = (x) => 0.25 * x * x;\\nconst df = (x) => 0.5 * x;\\nconst a = 1.0;\\nlet h = 2.0;\\n\\nconst curve = ax.plot(f, { color: BLUE, xRange: [-1.5, 3.8], numSamples: 300 });\\n\\n// Fixed tangent line (faint) so the limit is visible\\nconst mT = df(a);\\nconst tangent = new Line({\\n  start: ax.c2p(-1.2, f(a) + mT * (-1.2 - a)),\\n  end: ax.c2p(3.8, f(a) + mT * (3.8 - a)),\\n  color: RED\\n});\\ntangent.setOpacity(0.35).setStrokeWidth(3);\\n\\nfunction makeSecant(hVal) {\\n  const y1 = f(a);\\n  const y2 = f(a + hVal);\\n  const m = Math.abs(hVal) < 1e-9 ? df(a) : (y2 - y1) / hVal;\\n  const line = new Line({\\n    start: ax.c2p(-1.2, y1 + m * (-1.2 - a)),\\n    end: ax.c2p(3.8, y1 + m * (3.8 - a)),\\n    color: GREEN\\n  });\\n  line.setStrokeWidth(3);\\n  return line;\\n}\\n\\nlet secant = makeSecant(h);\\n\\nconst dotP = new Dot({ point: ax.c2p(a, f(a)), color: YELLOW });\\nlet dotQ = new Dot({ point: ax.c2p(a + h, f(a + h)), color: ORANGE });\\n\\n// Drop lines to the x-axis to emphasize h\\nconst dropP = new Line({ start: ax.c2p(a, 0), end: ax.c2p(a, f(a)), color: GRAY });\\ndropP.setOpacity(0.45).setStrokeWidth(1.5);\\nlet dropQ = new Line({ start: ax.c2p(a + h, 0), end: ax.c2p(a + h, f(a + h)), color: GRAY });\\ndropQ.setOpacity(0.45).setStrokeWidth(1.5);\\n\\nlet hSeg = new Line({ start: ax.c2p(a, 0), end: ax.c2p(a + h, 0), color: WHITE });\\nhSeg.setStrokeWidth(2);\\n\\nconst title = new MathTex({ latex: '\\\\\\\\lim_{h \\\\\\\\to 0} \\\\\\\\frac{f(a+h)-f(a)}{h} = f\\\\'(a)' });\\nawait title.waitForRender();\\ntitle.scale(0.75);\\ntitle.moveTo([0, 3.4, 0]);\\n\\nconst pLab = new Text({ text: 'P', fontSize: 22, color: YELLOW });\\npLab.nextTo(dotP, DL);\\npLab.shift(scaleVec(0.15, LEFT));\\n\\nlet qLab = new Text({ text: 'Q', fontSize: 22, color: ORANGE });\\nqLab.nextTo(dotQ, UR);\\n\\nlet hLab = new Text({ text: 'h = 2.00', fontSize: 22, color: WHITE });\\nhLab.moveTo(ax.c2p(a + h / 2, -0.35));\\n\\nlet slopeLab = new Text({\\n  text: 'secant slope ≈ ' + ((f(a + h) - f(a)) / h).toFixed(3),\\n  fontSize: 22,\\n  color: GREEN\\n});\\nslopeLab.moveTo([0, -3.3, 0]);\\n\\nconst tanLab = new Text({ text: 'tangent', fontSize: 18, color: RED });\\ntanLab.moveTo(ax.c2p(3.2, f(a) + mT * (3.2 - a)));\\ntanLab.shift(scaleVec(0.35, UP));\\n\\nscene.add(ax, curve, tangent, secant, dropP, dropQ, hSeg, dotP, dotQ, title, pLab, qLab, hLab, slopeLab, tanLab);\\n\\nfunction refresh(val) {\\n  h = val;\\n  scene.remove(secant, dotQ, dropQ, hSeg, qLab, hLab, slopeLab);\\n\\n  secant = makeSecant(h);\\n  dotQ = new Dot({ point: ax.c2p(a + h, f(a + h)), color: ORANGE });\\n  dropQ = new Line({ start: ax.c2p(a + h, 0), end: ax.c2p(a + h, f(a + h)), color: GRAY });\\n  dropQ.setOpacity(0.45).setStrokeWidth(1.5);\\n  hSeg = new Line({ start: ax.c2p(a, 0), end: ax.c2p(a + h, 0), color: WHITE });\\n  hSeg.setStrokeWidth(2);\\n\\n  qLab = new Text({ text: 'Q', fontSize: 22, color: ORANGE });\\n  qLab.nextTo(dotQ, UR);\\n\\n  hLab = new Text({ text: 'h = ' + h.toFixed(2), fontSize: 22, color: WHITE });\\n  hLab.moveTo(ax.c2p(a + h / 2, -0.35));\\n\\n  const m = (f(a + h) - f(a)) / h;\\n  slopeLab = new Text({\\n    text: 'secant slope ≈ ' + m.toFixed(3) + '   →   f\\\\'(a) = ' + df(a).toFixed(3),\\n    fontSize: 22,\\n    color: GREEN\\n  });\\n  slopeLab.moveTo([0, -3.3, 0]);\\n\\n  scene.add(secant, dropQ, hSeg, dotQ, qLab, hLab, slopeLab);\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\ncontrols.addSlider({\\n  label: 'h → 0',\\n  min: 0.02,\\n  max: 2.5,\\n  value: 2.0,\\n  step: 0.01,\\n  onChange: (val) => refresh(val)\\n});\\ncontrols.addButton({\\n  label: 'Reset h',\\n  onClick: () => refresh(2.0)\\n});\\n\\nmakeHoverable(dotP, scene, { hoverScale: 1.3, hoverColor: WHITE });\\nmakeHoverable(dotQ, scene, { hoverScale: 1.3, hoverColor: WHITE });\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "A secant line cuts through two points on a curve: a fixed point P at x = a and a nearby point Q at x = a + h. As h shrinks toward zero, Q slides toward P and the secant rotates into a limiting position—the tangent line. The slope of that tangent is the derivative f'(a), the instantaneous rate of change at a."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-1.5, 4, 1],\n  yRange: [-0.5, 3.5, 1],\n  xLength: 9,\n  yLength: 5,\n  tips: true\n});\nax.shift(scaleVec(0.3, DOWN));\n\nconst f = (x) => 0.25 * x * x;\nconst df = (x) => 0.5 * x;\nconst a = 1.0;\nlet h = 2.0;\n\nconst curve = ax.plot(f, { color: BLUE, xRange: [-1.5, 3.8], numSamples: 300 });\n\n// Fixed tangent line (faint) so the limit is visible\nconst mT = df(a);\nconst tangent = new Line({\n  start: ax.c2p(-1.2, f(a) + mT * (-1.2 - a)),\n  end: ax.c2p(3.8, f(a) + mT * (3.8 - a)),\n  color: RED\n});\ntangent.setOpacity(0.35).setStrokeWidth(3);\n\nfunction makeSecant(hVal) {\n  const y1 = f(a);\n  const y2 = f(a + hVal);\n  const m = Math.abs(hVal) < 1e-9 ? df(a) : (y2 - y1) / hVal;\n  const line = new Line({\n    start: ax.c2p(-1.2, y1 + m * (-1.2 - a)),\n    end: ax.c2p(3.8, y1 + m * (3.8 - a)),\n    color: GREEN\n  });\n  line.setStrokeWidth(3);\n  return line;\n}\n\nlet secant = makeSecant(h);\n\nconst dotP = new Dot({ point: ax.c2p(a, f(a)), color: YELLOW });\nlet dotQ = new Dot({ point: ax.c2p(a + h, f(a + h)), color: ORANGE });\n\n// Drop lines to the x-axis to emphasize h\nconst dropP = new Line({ start: ax.c2p(a, 0), end: ax.c2p(a, f(a)), color: GRAY });\ndropP.setOpacity(0.45).setStrokeWidth(1.5);\nlet dropQ = new Line({ start: ax.c2p(a + h, 0), end: ax.c2p(a + h, f(a + h)), color: GRAY });\ndropQ.setOpacity(0.45).setStrokeWidth(1.5);\n\nlet hSeg = new Line({ start: ax.c2p(a, 0), end: ax.c2p(a + h, 0), color: WHITE });\nhSeg.setStrokeWidth(2);\n\nconst title = new MathTex({ latex: '\\\\lim_{h \\\\to 0} \\\\frac{f(a+h)-f(a)}{h} = f\\'(a)' });\nawait title.waitForRender();\ntitle.scale(0.75);\ntitle.moveTo([0, 3.4, 0]);\n\nconst pLab = new Text({ text: 'P', fontSize: 22, color: YELLOW });\npLab.nextTo(dotP, DL);\npLab.shift(scaleVec(0.15, LEFT));\n\nlet qLab = new Text({ text: 'Q', fontSize: 22, color: ORANGE });\nqLab.nextTo(dotQ, UR);\n\nlet hLab = new Text({ text: 'h = 2.00', fontSize: 22, color: WHITE });\nhLab.moveTo(ax.c2p(a + h / 2, -0.35));\n\nlet slopeLab = new Text({\n  text: 'secant slope ≈ ' + ((f(a + h) - f(a)) / h).toFixed(3),\n  fontSize: 22,\n  color: GREEN\n});\nslopeLab.moveTo([0, -3.3, 0]);\n\nconst tanLab = new Text({ text: 'tangent', fontSize: 18, color: RED });\ntanLab.moveTo(ax.c2p(3.2, f(a) + mT * (3.2 - a)));\ntanLab.shift(scaleVec(0.35, UP));\n\nscene.add(ax, curve, tangent, secant, dropP, dropQ, hSeg, dotP, dotQ, title, pLab, qLab, hLab, slopeLab, tanLab);\n\nfunction refresh(val) {\n  h = val;\n  scene.remove(secant, dotQ, dropQ, hSeg, qLab, hLab, slopeLab);\n\n  secant = makeSecant(h);\n  dotQ = new Dot({ point: ax.c2p(a + h, f(a + h)), color: ORANGE });\n  dropQ = new Line({ start: ax.c2p(a + h, 0), end: ax.c2p(a + h, f(a + h)), color: GRAY });\n  dropQ.setOpacity(0.45).setStrokeWidth(1.5);\n  hSeg = new Line({ start: ax.c2p(a, 0), end: ax.c2p(a + h, 0), color: WHITE });\n  hSeg.setStrokeWidth(2);\n\n  qLab = new Text({ text: 'Q', fontSize: 22, color: ORANGE });\n  qLab.nextTo(dotQ, UR);\n\n  hLab = new Text({ text: 'h = ' + h.toFixed(2), fontSize: 22, color: WHITE });\n  hLab.moveTo(ax.c2p(a + h / 2, -0.35));\n\n  const m = (f(a + h) - f(a)) / h;\n  slopeLab = new Text({\n    text: 'secant slope ≈ ' + m.toFixed(3) + '   →   f\\'(a) = ' + df(a).toFixed(3),\n    fontSize: 22,\n    color: GREEN\n  });\n  slopeLab.moveTo([0, -3.3, 0]);\n\n  scene.add(secant, dropQ, hSeg, dotQ, qLab, hLab, slopeLab);\n}\n\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\ncontrols.addSlider({\n  label: 'h → 0',\n  min: 0.02,\n  max: 2.5,\n  value: 2.0,\n  step: 0.01,\n  onChange: (val) => refresh(val)\n});\ncontrols.addButton({\n  label: 'Reset h',\n  onClick: () => refresh(2.0)\n});\n\nmakeHoverable(dotP, scene, { hoverScale: 1.3, hoverColor: WHITE });\nmakeHoverable(dotQ, scene, { hoverScale: 1.3, hoverColor: WHITE });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3826,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 2
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/calc-secant-tangent.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/calc-secant-tangent.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:58.361Z"
+}

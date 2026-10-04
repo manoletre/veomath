@@ -1,0 +1,81 @@
+{
+  "itemId": "alg-inverse-exp-log",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 0.8,
+  "firstAttemptScore": 0.8,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.8,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.01% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Axes [x -5.96..1.29, y -4.16..3.09] exceeds frame ±7.11 × ±4.00\nGroup [x -0.15..4.22, y -0.82..4.52] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "MathTex \"y = x\" overlaps MathTex \"e^{\\ln(x)} = x\" (26%)\nMathTex \"y = \\ln(x)\" overlaps MathTex \"(a, e^a) \\longleftrightarrow (e^a, a)\" (60%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=2 clickables=0 hoverables=2"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.32% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 142172,
+        "inputTokens": 4711,
+        "cachedInputTokens": 64,
+        "outputTokens": 16351,
+        "costUsd": 0.2592252,
+        "rawResponse": "{\n  \"explanation\": \"Two functions are inverses when each one undoes the other: e^(ln x) = x and ln(e^x) = x. Since inverting a function swaps the roles of x and y, the graph of an inverse is the mirror image of the original across the line y = x — every point (a, e^a) on y = e^x has a twin (e^a, a) on y = ln(x). Watch the sample points reflect across the line, then drag either colored dot (or use the slider): the pair always stays symmetric about y = x, with the connecting segment perpendicular to and bisected by that mirror line.\",\n  \"manimCode\": \"// Axes on the left side of the frame\\nconst axes = new Axes({ xRange: [-3, 4, 1], yRange: [-3, 4, 1], xLength: 7, yLength: 7, tips: true });\\naxes.moveTo([-1.8, 0, 0]);\\n\\n// World <-> data coordinate conversion (used for dragging along the curves)\\nconst w00 = axes.c2p(0, 0);\\nconst w11 = axes.c2p(1, 1);\\nconst ux = w11[0] - w00[0];\\nconst uy = w11[1] - w00[1];\\nfunction toData(pt) { return [(pt[0] - w00[0]) / ux, (pt[1] - w00[1]) / uy]; }\\n\\nawait scene.play(new Create(axes));\\nconst axLabels = axes.getAxisLabels();\\nawait scene.play(new FadeIn(axLabels));\\n\\n// Mirror line y = x\\nconst mirror = new Line({ start: axes.c2p(-3, -3), end: axes.c2p(4, 4), color: GRAY });\\nmirror.setStrokeWidth(2);\\nconst mirrorLabel = new MathTex({ latex: 'y = x', color: GRAY });\\nawait mirrorLabel.waitForRender();\\nmirrorLabel.moveTo(axes.c2p(3.4, 2.7));\\nawait scene.play(new AnimationGroup([new Create(mirror), new Write(mirrorLabel)]));\\n\\n// y = e^x\\nconst expCurve = axes.plot(x => Math.exp(x), { color: BLUE, xRange: [-3, 1.386], numSamples: 300 });\\nconst expLabel = new MathTex({ latex: 'y = e^x', color: BLUE });\\nawait expLabel.waitForRender();\\nexpLabel.moveTo(axes.c2p(2.0, 3.3));\\nawait scene.play(new AnimationGroup([new Create(expCurve), new Write(expLabel)]));\\n\\n// Sample points on e^x reflect across y = x\\nconst samples = [-2, -1, 0, 0.7, 1.2];\\nconst sDots = samples.map(sv => new Dot({ point: axes.c2p(sv, Math.exp(sv)), color: YELLOW }));\\nawait scene.play(new AnimationGroup(sDots.map(d => new FadeIn(d))));\\nawait scene.play(new AnimationGroup(sDots.map(d => {\\n  const c = d.getCenter();\\n  const dc = toData(c);\\n  const tgt = axes.c2p(dc[1], dc[0]);\\n  return new Shift(d, { direction: [tgt[0] - c[0], tgt[1] - c[1], 0] });\\n})));\\nawait scene.wait(0.5);\\n\\n// y = ln(x) appears where the reflected points landed\\nconst logCurve = axes.plot(x => Math.log(x), { color: ORANGE, xRange: [0.0498, 4], numSamples: 300 });\\nconst logLabel = new MathTex({ latex: 'y = \\\\\\\\ln(x)', color: ORANGE });\\nawait logLabel.waitForRender();\\nlogLabel.moveTo(axes.c2p(3.2, 0.7));\\nawait scene.play(new AnimationGroup([new Create(logCurve), new Write(logLabel), ...sDots.map(d => new FadeOut(d))]));\\n\\n// Right-hand explanation column\\nconst title = new Text({ text: 'Inverses by Reflection', color: WHITE, fontSize: 28 });\\ntitle.moveTo([4.35, 2.9, 0]);\\nconst id1 = new MathTex({ latex: 'e^{\\\\\\\\ln(x)} = x' });\\nawait id1.waitForRender();\\nid1.moveTo([4.35, 1.95, 0]);\\nconst id2 = new MathTex({ latex: '\\\\\\\\ln(e^x) = x' });\\nawait id2.waitForRender();\\nid2.moveTo([4.35, 1.25, 0]);\\nconst swapTex = new MathTex({ latex: '(a, e^a) \\\\\\\\longleftrightarrow (e^a, a)' });\\nawait swapTex.waitForRender();\\nswapTex.moveTo([4.35, 0.3, 0]);\\nconst hint = new Text({ text: 'Drag the dots!', color: GOLD, fontSize: 26 });\\nhint.moveTo([4.35, -0.6, 0]);\\nawait scene.play(new Write(title));\\nawait scene.play(new AnimationGroup([new FadeIn(id1), new FadeIn(id2), new FadeIn(swapTex), new FadeIn(hint)]));\\n\\n// Interactive mirrored pair of points\\nlet a = 0.5;\\nconst clampA = v => Math.max(-2.5, Math.min(1.3, v));\\n\\nconst dotP = new Dot({ point: axes.c2p(a, Math.exp(a)), color: BLUE });\\nconst dotQ = new Dot({ point: axes.c2p(Math.exp(a), a), color: ORANGE });\\nconst seg = new Polygon({ vertices: [axes.c2p(a, Math.exp(a)), axes.c2p(Math.exp(a), a)], color: GRAY });\\nseg.setStrokeWidth(2).setFillOpacity(0);\\nconst mInit = (a + Math.exp(a)) / 2;\\nconst foot = new Dot({ point: axes.c2p(mInit, mInit), color: WHITE });\\nfoot.scale(0.55);\\n\\ndotP.addUpdater(() => dotP.moveTo(axes.c2p(a, Math.exp(a))));\\ndotQ.addUpdater(() => dotQ.moveTo(axes.c2p(Math.exp(a), a)));\\nseg.addUpdater(() => seg.setVertices([axes.c2p(a, Math.exp(a)), axes.c2p(Math.exp(a), a)]));\\nfoot.addUpdater(() => { const mm = (a + Math.exp(a)) / 2; foot.moveTo(axes.c2p(mm, mm)); });\\n\\nawait scene.play(new AnimationGroup([new FadeIn(seg), new FadeIn(foot), new FadeIn(dotP), new FadeIn(dotQ)]));\\n\\n// Dragging either point updates 'a'; updaters snap both to the curves\\nmakeDraggable(dotP, scene, { onDrag: (mob) => { a = clampA(toData(mob.getCenter())[0]); } });\\nmakeDraggable(dotQ, scene, { onDrag: (mob) => { a = clampA(toData(mob.getCenter())[1]); } });\\nmakeHoverable(dotP, scene, { hoverScale: 1.5 });\\nmakeHoverable(dotQ, scene, { hoverScale: 1.5 });\\n\\nconst controls = new Controls(scene, { position: 'bottom-right' });\\ncontrols.addSlider({ label: 'a', min: -2.5, max: 1.3, value: 0.5, step: 0.01, onChange: (v) => { a = v; } });\\ncontrols.addButton({ label: 'Reset', onClick: () => { a = 0.5; } });\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "Two functions are inverses when each one undoes the other: e^(ln x) = x and ln(e^x) = x. Since inverting a function swaps the roles of x and y, the graph of an inverse is the mirror image of the original across the line y = x — every point (a, e^a) on y = e^x has a twin (e^a, a) on y = ln(x). Watch the sample points reflect across the line, then drag either colored dot (or use the slider): the pair always stays symmetric about y = x, with the connecting segment perpendicular to and bisected by that mirror line."
+      },
+      "code": "// Axes on the left side of the frame\nconst axes = new Axes({ xRange: [-3, 4, 1], yRange: [-3, 4, 1], xLength: 7, yLength: 7, tips: true });\naxes.moveTo([-1.8, 0, 0]);\n\n// World <-> data coordinate conversion (used for dragging along the curves)\nconst w00 = axes.c2p(0, 0);\nconst w11 = axes.c2p(1, 1);\nconst ux = w11[0] - w00[0];\nconst uy = w11[1] - w00[1];\nfunction toData(pt) { return [(pt[0] - w00[0]) / ux, (pt[1] - w00[1]) / uy]; }\n\nawait scene.play(new Create(axes));\nconst axLabels = axes.getAxisLabels();\nawait scene.play(new FadeIn(axLabels));\n\n// Mirror line y = x\nconst mirror = new Line({ start: axes.c2p(-3, -3), end: axes.c2p(4, 4), color: GRAY });\nmirror.setStrokeWidth(2);\nconst mirrorLabel = new MathTex({ latex: 'y = x', color: GRAY });\nawait mirrorLabel.waitForRender();\nmirrorLabel.moveTo(axes.c2p(3.4, 2.7));\nawait scene.play(new AnimationGroup([new Create(mirror), new Write(mirrorLabel)]));\n\n// y = e^x\nconst expCurve = axes.plot(x => Math.exp(x), { color: BLUE, xRange: [-3, 1.386], numSamples: 300 });\nconst expLabel = new MathTex({ latex: 'y = e^x', color: BLUE });\nawait expLabel.waitForRender();\nexpLabel.moveTo(axes.c2p(2.0, 3.3));\nawait scene.play(new AnimationGroup([new Create(expCurve), new Write(expLabel)]));\n\n// Sample points on e^x reflect across y = x\nconst samples = [-2, -1, 0, 0.7, 1.2];\nconst sDots = samples.map(sv => new Dot({ point: axes.c2p(sv, Math.exp(sv)), color: YELLOW }));\nawait scene.play(new AnimationGroup(sDots.map(d => new FadeIn(d))));\nawait scene.play(new AnimationGroup(sDots.map(d => {\n  const c = d.getCenter();\n  const dc = toData(c);\n  const tgt = axes.c2p(dc[1], dc[0]);\n  return new Shift(d, { direction: [tgt[0] - c[0], tgt[1] - c[1], 0] });\n})));\nawait scene.wait(0.5);\n\n// y = ln(x) appears where the reflected points landed\nconst logCurve = axes.plot(x => Math.log(x), { color: ORANGE, xRange: [0.0498, 4], numSamples: 300 });\nconst logLabel = new MathTex({ latex: 'y = \\\\ln(x)', color: ORANGE });\nawait logLabel.waitForRender();\nlogLabel.moveTo(axes.c2p(3.2, 0.7));\nawait scene.play(new AnimationGroup([new Create(logCurve), new Write(logLabel), ...sDots.map(d => new FadeOut(d))]));\n\n// Right-hand explanation column\nconst title = new Text({ text: 'Inverses by Reflection', color: WHITE, fontSize: 28 });\ntitle.moveTo([4.35, 2.9, 0]);\nconst id1 = new MathTex({ latex: 'e^{\\\\ln(x)} = x' });\nawait id1.waitForRender();\nid1.moveTo([4.35, 1.95, 0]);\nconst id2 = new MathTex({ latex: '\\\\ln(e^x) = x' });\nawait id2.waitForRender();\nid2.moveTo([4.35, 1.25, 0]);\nconst swapTex = new MathTex({ latex: '(a, e^a) \\\\longleftrightarrow (e^a, a)' });\nawait swapTex.waitForRender();\nswapTex.moveTo([4.35, 0.3, 0]);\nconst hint = new Text({ text: 'Drag the dots!', color: GOLD, fontSize: 26 });\nhint.moveTo([4.35, -0.6, 0]);\nawait scene.play(new Write(title));\nawait scene.play(new AnimationGroup([new FadeIn(id1), new FadeIn(id2), new FadeIn(swapTex), new FadeIn(hint)]));\n\n// Interactive mirrored pair of points\nlet a = 0.5;\nconst clampA = v => Math.max(-2.5, Math.min(1.3, v));\n\nconst dotP = new Dot({ point: axes.c2p(a, Math.exp(a)), color: BLUE });\nconst dotQ = new Dot({ point: axes.c2p(Math.exp(a), a), color: ORANGE });\nconst seg = new Polygon({ vertices: [axes.c2p(a, Math.exp(a)), axes.c2p(Math.exp(a), a)], color: GRAY });\nseg.setStrokeWidth(2).setFillOpacity(0);\nconst mInit = (a + Math.exp(a)) / 2;\nconst foot = new Dot({ point: axes.c2p(mInit, mInit), color: WHITE });\nfoot.scale(0.55);\n\ndotP.addUpdater(() => dotP.moveTo(axes.c2p(a, Math.exp(a))));\ndotQ.addUpdater(() => dotQ.moveTo(axes.c2p(Math.exp(a), a)));\nseg.addUpdater(() => seg.setVertices([axes.c2p(a, Math.exp(a)), axes.c2p(Math.exp(a), a)]));\nfoot.addUpdater(() => { const mm = (a + Math.exp(a)) / 2; foot.moveTo(axes.c2p(mm, mm)); });\n\nawait scene.play(new AnimationGroup([new FadeIn(seg), new FadeIn(foot), new FadeIn(dotP), new FadeIn(dotQ)]));\n\n// Dragging either point updates 'a'; updaters snap both to the curves\nmakeDraggable(dotP, scene, { onDrag: (mob) => { a = clampA(toData(mob.getCenter())[0]); } });\nmakeDraggable(dotQ, scene, { onDrag: (mob) => { a = clampA(toData(mob.getCenter())[1]); } });\nmakeHoverable(dotP, scene, { hoverScale: 1.5 });\nmakeHoverable(dotQ, scene, { hoverScale: 1.5 });\n\nconst controls = new Controls(scene, { position: 'bottom-right' });\ncontrols.addSlider({ label: 'a', min: -2.5, max: 1.3, value: 0.5, step: 0.01, onChange: (v) => { a = v; } });\ncontrols.addButton({ label: 'Reset', onClick: () => { a = 0.5; } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 19577,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 10,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 2,
+        "clickables": 0,
+        "hoverables": 2
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/alg-inverse-exp-log.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/alg-inverse-exp-log.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:54:20.136Z"
+}

@@ -1,0 +1,149 @@
+{
+  "itemId": "geo-triangle-angle-sum",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0,
+  "retried": true,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": false,
+          "detail": "TypeError: Cannot read properties of null (reading '4')"
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": false,
+          "detail": "0.00% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": false,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 25701,
+        "inputTokens": 11740,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1259,
+        "costUsd": 0.0187736,
+        "rawResponse": "{\"explanation\":\"Draw a line through the top vertex parallel to the opposite side. Alternate-interior angles make the two angles on that line equal to the two base angles, and the three adjacent angles on a straight line total 180°, so the triangle’s three interior angles do too.\",\"manimCode\":\"const A = [-3, -1.7, 0];\\nconst B = [3, -1.7, 0];\\nconst C = [-0.8, 1.25, 0];\\n\\nconst title = new Text({ text: 'Why triangle angles sum to 180°', color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.25, 0]);\\n\\nconst tri = new Polygon({ vertices: [A, B, C], color: BLUE });\\ntri.setFill(BLUE_E, 0.32);\\ntri.setStrokeWidth(4);\\n\\nconst parallel = new Polygon({ vertices: [[-5.7, 1.25, 0], [5.7, 1.25, 0]], color: YELLOW });\\nparallel.setFillOpacity(0);\\nparallel.setStrokeWidth(3);\\n\\nconst topDot = new Dot({ point: C, color: YELLOW, radius: 0.09 });\\n\\nconst alpha = new MathTex({ latex: '\\\\alpha' });\\nawait alpha.waitForRender();\\nalpha.setColor(RED);\\nalpha.moveTo([-2.5, -1.28, 0]);\\n\\nconst beta = new MathTex({ latex: '\\\\beta' });\\nawait beta.waitForRender();\\nbeta.setColor(GREEN);\\nbeta.moveTo([2.42, -1.3, 0]);\\n\\nconst gamma = new MathTex({ latex: '\\\\gamma' });\\nawait gamma.waitForRender();\\ngamma.setColor(PURPLE);\\ngamma.moveTo([-0.72, 0.72, 0]);\\n\\nconst matchBeta = new MathTex({ latex: '\\\\beta' });\\nawait matchBeta.waitForRender();\\nmatchBeta.setColor(GREEN);\\nmatchBeta.moveTo([-2.05, 1.63, 0]);\\n\\nconst matchAlpha = new MathTex({ latex: '\\\\alpha' });\\nawait matchAlpha.waitForRender();\\nmatchAlpha.setColor(RED);\\nmatchAlpha.moveTo([0.85, 1.63, 0]);\\n\\nconst straight = new MathTex({ latex: '\\\\beta + \\\\gamma + \\\\alpha = 180^\\\\circ' });\\nawait straight.waitForRender();\\nstraight.setColor(YELLOW);\\nstraight.moveTo([0, 2.35, 0]);\\n\\nconst conclusion = new MathTex({ latex: '\\\\boxed{\\\\alpha+\\\\beta+\\\\gamma=180^\\\\circ}' });\\nawait conclusion.waitForRender();\\nconclusion.setColor(WHITE);\\nconclusion.moveTo([0, -3.0, 0]);\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new Create(tri));\\nawait scene.play(new Create(parallel));\\nscene.add(topDot, alpha, beta, gamma, matchAlpha, matchBeta);\\nawait scene.play(new Write(straight));\\nawait scene.play(new Write(conclusion));\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', width: 240 });\\ncontrols.addSlider({\\n  label: 'Parallel-line emphasis', min: 0.2, max: 1, value: 1, step: 0.1,\\n  onChange: (v) => {\\n    parallel.setOpacity(v);\\n    matchAlpha.setOpacity(v);\\n    matchBeta.setOpacity(v);\\n  }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Draw a line through the top vertex parallel to the opposite side. Alternate-interior angles make the two angles on that line equal to the two base angles, and the three adjacent angles on a straight line total 180°, so the triangle’s three interior angles do too."
+      },
+      "code": "const A = [-3, -1.7, 0];\nconst B = [3, -1.7, 0];\nconst C = [-0.8, 1.25, 0];\n\nconst title = new Text({ text: 'Why triangle angles sum to 180°', color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.25, 0]);\n\nconst tri = new Polygon({ vertices: [A, B, C], color: BLUE });\ntri.setFill(BLUE_E, 0.32);\ntri.setStrokeWidth(4);\n\nconst parallel = new Polygon({ vertices: [[-5.7, 1.25, 0], [5.7, 1.25, 0]], color: YELLOW });\nparallel.setFillOpacity(0);\nparallel.setStrokeWidth(3);\n\nconst topDot = new Dot({ point: C, color: YELLOW, radius: 0.09 });\n\nconst alpha = new MathTex({ latex: '\\alpha' });\nawait alpha.waitForRender();\nalpha.setColor(RED);\nalpha.moveTo([-2.5, -1.28, 0]);\n\nconst beta = new MathTex({ latex: '\\beta' });\nawait beta.waitForRender();\nbeta.setColor(GREEN);\nbeta.moveTo([2.42, -1.3, 0]);\n\nconst gamma = new MathTex({ latex: '\\gamma' });\nawait gamma.waitForRender();\ngamma.setColor(PURPLE);\ngamma.moveTo([-0.72, 0.72, 0]);\n\nconst matchBeta = new MathTex({ latex: '\\beta' });\nawait matchBeta.waitForRender();\nmatchBeta.setColor(GREEN);\nmatchBeta.moveTo([-2.05, 1.63, 0]);\n\nconst matchAlpha = new MathTex({ latex: '\\alpha' });\nawait matchAlpha.waitForRender();\nmatchAlpha.setColor(RED);\nmatchAlpha.moveTo([0.85, 1.63, 0]);\n\nconst straight = new MathTex({ latex: '\\beta + \\gamma + \\alpha = 180^\\circ' });\nawait straight.waitForRender();\nstraight.setColor(YELLOW);\nstraight.moveTo([0, 2.35, 0]);\n\nconst conclusion = new MathTex({ latex: '\\boxed{\\alpha+\\beta+\\gamma=180^\\circ}' });\nawait conclusion.waitForRender();\nconclusion.setColor(WHITE);\nconclusion.moveTo([0, -3.0, 0]);\n\nawait scene.play(new Write(title));\nawait scene.play(new Create(tri));\nawait scene.play(new Create(parallel));\nscene.add(topDot, alpha, beta, gamma, matchAlpha, matchBeta);\nawait scene.play(new Write(straight));\nawait scene.play(new Write(conclusion));\n\nconst controls = new Controls(scene, { position: 'bottom-left', width: 240 });\ncontrols.addSlider({\n  label: 'Parallel-line emphasis', min: 0.2, max: 1, value: 1, step: 0.1,\n  onChange: (v) => {\n    parallel.setOpacity(v);\n    matchAlpha.setOpacity(v);\n    matchBeta.setOpacity(v);\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5709,
+        "fatalError": "TypeError: Cannot read properties of null (reading '4')",
+        "errors": [
+          "TypeError: Cannot read properties of null (reading '4')"
+        ],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/geo-triangle-angle-sum.0.final.jpg"
+      }
+    },
+    {
+      "kind": "auto-retry",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "9.93% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.08% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 28788,
+        "inputTokens": 12445,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1404,
+        "costUsd": 0.0219236,
+        "rawResponse": "{\"explanation\":\"Draw a line through the top vertex parallel to the triangle’s base. The two angles formed beside the top vertex match the base angles by alternate interior angles, and together with the top angle they make a straight angle. A straight angle is 180°, so the three interior angles sum to 180°.\",\"manimCode\":\"const A = [-3, -1.7, 0];\\nconst B = [3, -1.7, 0];\\nconst C = [-0.8, 1.25, 0];\\n\\nconst titleObj = new Text({ text: 'Why triangle angles sum to 180°', color: WHITE, fontSize: 30 });\\ntitleObj.moveTo([0, 3.25, 0]);\\n\\nconst tri = new Polygon({ vertices: [A, B, C], color: BLUE });\\ntri.setFill(BLUE_E, 0.32);\\ntri.setStrokeWidth(4);\\n\\n// A Line, rather than a two-vertex Polygon, avoids the browser error.\\nconst parallel = new Line({ start: [-5.7, 1.25, 0], end: [5.7, 1.25, 0], color: YELLOW });\\nparallel.setStrokeWidth(3);\\n\\nconst topDot = new Dot({ point: C, color: YELLOW });\\n\\nconst alpha = new MathTex({ latex: '\\\\\\\\alpha' });\\nawait alpha.waitForRender();\\nalpha.setColor(RED);\\nalpha.moveTo([-2.45, -1.3, 0]);\\n\\nconst beta = new MathTex({ latex: '\\\\\\\\beta' });\\nawait beta.waitForRender();\\nbeta.setColor(GREEN);\\nbeta.moveTo([2.45, -1.3, 0]);\\n\\nconst gamma = new MathTex({ latex: '\\\\\\\\gamma' });\\nawait gamma.waitForRender();\\ngamma.setColor(PURPLE);\\ngamma.moveTo([-0.75, 0.65, 0]);\\n\\nconst topAlpha = new MathTex({ latex: '\\\\\\\\alpha' });\\nawait topAlpha.waitForRender();\\ntopAlpha.setColor(RED);\\ntopAlpha.moveTo([-2.0, 1.62, 0]);\\n\\nconst topBeta = new MathTex({ latex: '\\\\\\\\beta' });\\nawait topBeta.waitForRender();\\ntopBeta.setColor(GREEN);\\ntopBeta.moveTo([0.82, 1.62, 0]);\\n\\nconst straight = new MathTex({ latex: '\\\\\\\\alpha + \\\\\\\\gamma + \\\\\\\\beta = 180^\\\\\\\\circ' });\\nawait straight.waitForRender();\\nstraight.setColor(YELLOW);\\nstraight.moveTo([0, 2.35, 0]);\\n\\nconst conclusion = new MathTex({ latex: '\\\\\\\\alpha + \\\\\\\\beta + \\\\\\\\gamma = 180^\\\\\\\\circ' });\\nawait conclusion.waitForRender();\\nconclusion.setColor(WHITE);\\nconclusion.moveTo([0, -3.0, 0]);\\n\\nawait scene.play(new Write(titleObj));\\nawait scene.play(new Create(tri));\\nawait scene.play(new Create(parallel));\\nscene.add(topDot, alpha, beta, gamma, topAlpha, topBeta);\\nawait scene.play(new Write(straight));\\nawait scene.play(new Write(conclusion));\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', width: 240 });\\ncontrols.addSlider({\\n  label: 'Parallel-line emphasis',\\n  min: 0.2,\\n  max: 1,\\n  value: 1,\\n  step: 0.1,\\n  onChange: (v) => {\\n    parallel.setOpacity(v);\\n    topAlpha.setOpacity(v);\\n    topBeta.setOpacity(v);\\n    straight.setOpacity(v);\\n  }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Draw a line through the top vertex parallel to the triangle’s base. The two angles formed beside the top vertex match the base angles by alternate interior angles, and together with the top angle they make a straight angle. A straight angle is 180°, so the three interior angles sum to 180°."
+      },
+      "code": "const A = [-3, -1.7, 0];\nconst B = [3, -1.7, 0];\nconst C = [-0.8, 1.25, 0];\n\nconst titleObj = new Text({ text: 'Why triangle angles sum to 180°', color: WHITE, fontSize: 30 });\ntitleObj.moveTo([0, 3.25, 0]);\n\nconst tri = new Polygon({ vertices: [A, B, C], color: BLUE });\ntri.setFill(BLUE_E, 0.32);\ntri.setStrokeWidth(4);\n\n// A Line, rather than a two-vertex Polygon, avoids the browser error.\nconst parallel = new Line({ start: [-5.7, 1.25, 0], end: [5.7, 1.25, 0], color: YELLOW });\nparallel.setStrokeWidth(3);\n\nconst topDot = new Dot({ point: C, color: YELLOW });\n\nconst alpha = new MathTex({ latex: '\\\\alpha' });\nawait alpha.waitForRender();\nalpha.setColor(RED);\nalpha.moveTo([-2.45, -1.3, 0]);\n\nconst beta = new MathTex({ latex: '\\\\beta' });\nawait beta.waitForRender();\nbeta.setColor(GREEN);\nbeta.moveTo([2.45, -1.3, 0]);\n\nconst gamma = new MathTex({ latex: '\\\\gamma' });\nawait gamma.waitForRender();\ngamma.setColor(PURPLE);\ngamma.moveTo([-0.75, 0.65, 0]);\n\nconst topAlpha = new MathTex({ latex: '\\\\alpha' });\nawait topAlpha.waitForRender();\ntopAlpha.setColor(RED);\ntopAlpha.moveTo([-2.0, 1.62, 0]);\n\nconst topBeta = new MathTex({ latex: '\\\\beta' });\nawait topBeta.waitForRender();\ntopBeta.setColor(GREEN);\ntopBeta.moveTo([0.82, 1.62, 0]);\n\nconst straight = new MathTex({ latex: '\\\\alpha + \\\\gamma + \\\\beta = 180^\\\\circ' });\nawait straight.waitForRender();\nstraight.setColor(YELLOW);\nstraight.moveTo([0, 2.35, 0]);\n\nconst conclusion = new MathTex({ latex: '\\\\alpha + \\\\beta + \\\\gamma = 180^\\\\circ' });\nawait conclusion.waitForRender();\nconclusion.setColor(WHITE);\nconclusion.moveTo([0, -3.0, 0]);\n\nawait scene.play(new Write(titleObj));\nawait scene.play(new Create(tri));\nawait scene.play(new Create(parallel));\nscene.add(topDot, alpha, beta, gamma, topAlpha, topBeta);\nawait scene.play(new Write(straight));\nawait scene.play(new Write(conclusion));\n\nconst controls = new Controls(scene, { position: 'bottom-left', width: 240 });\ncontrols.addSlider({\n  label: 'Parallel-line emphasis',\n  min: 0.2,\n  max: 1,\n  value: 1,\n  step: 0.1,\n  onChange: (v) => {\n    parallel.setOpacity(v);\n    topAlpha.setOpacity(v);\n    topBeta.setOpacity(v);\n    straight.setOpacity(v);\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 10339,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 5,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/geo-triangle-angle-sum.1.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/geo-triangle-angle-sum.1.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T03:01:54.179Z"
+}

@@ -1,0 +1,61 @@
+{
+  "itemId": "seq-compound-interest-e",
+  "model": "zai/glm-5.3",
+  "via": "gateway",
+  "score": 0,
+  "firstAttemptScore": 0,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0,
+      "checks": {
+        "generated": {
+          "pass": false,
+          "detail": "Request failed or the response was not valid JSON with manimCode"
+        },
+        "runs": {
+          "pass": false
+        },
+        "completes": {
+          "pass": false
+        },
+        "nonBlank": {
+          "pass": false
+        },
+        "inFrame": {
+          "pass": false
+        },
+        "noTextOverlap": {
+          "pass": false
+        },
+        "noRawLatex": {
+          "pass": false
+        },
+        "interactive": {
+          "pass": false
+        },
+        "respondsToInteraction": {
+          "pass": null
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 36303,
+        "inputTokens": null,
+        "cachedInputTokens": null,
+        "outputTokens": null,
+        "costUsd": null,
+        "rawResponse": "{\"explanation\": \"This is one of the most famous ways to discover **Euler's number e**",
+        "explanation": null,
+        "error": "Error: Model returned invalid JSON: SyntaxError: Unterminated string in JSON at position 85 (line 1 column 86)"
+      },
+      "code": null,
+      "render": null,
+      "frames": {}
+    }
+  ],
+  "finishedAt": "2026-10-04T02:51:18.511Z"
+}

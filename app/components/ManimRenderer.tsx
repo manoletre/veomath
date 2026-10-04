@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { apiFetch } from '../lib/api-fetch';
+import { IDLE_WAIT_SECONDS, keepSceneLive, patchManim } from './manimRuntime';
 
 interface ManimRendererProps {
   code: string;
@@ -133,6 +134,7 @@ export default function ManimRenderer({
         // Clear previous scene
         container.innerHTML = '';
 
+        patchManim(manim);
         const { Scene } = manim;
 
         // Enforce 16:9 aspect ratio so coordinate bounds are always 14×8
@@ -151,6 +153,7 @@ export default function ManimRenderer({
           height: canvasH,
           backgroundColor: '#000000',
         });
+        keepSceneLive(scene);
 
         // Center the canvas using explicit pixel offsets (no CSS transform)
         // so that offsetLeft/offsetTop match the visual position — required for
@@ -172,25 +175,31 @@ export default function ManimRenderer({
 
         cleanupRef.current = () => {
           cancelled = true;
-          try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            if ((scene as any).renderer?.stop) (scene as any).renderer.stop();
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            if ((scene as any).destroy) (scene as any).destroy();
-          } catch {}
+          // Stops the render loop and resolves the pending idle wait; otherwise replaced scenes keep running.
+          try { scene.dispose(); } catch {}
           container.innerHTML = '';
         };
 
-        await fn(scene, manim);
-
-        if (!cancelled) {
+        // Interactive code never returns (it ends with a long wait), so report success when it reaches that wait.
+        let reported = false;
+        const reportSuccess = () => {
+          if (reported || cancelled) return;
+          reported = true;
           let frame: string | null = null;
           try {
             const canvas = container.querySelector('canvas');
             if (canvas) frame = canvas.toDataURL('image/jpeg', 0.7);
           } catch {}
           onSuccess?.(frame);
-        }
+        };
+        const originalWait = scene.wait.bind(scene);
+        scene.wait = (duration?: number) => {
+          if ((duration ?? 0) >= IDLE_WAIT_SECONDS) setTimeout(reportSuccess, 100);
+          return originalWait(duration);
+        };
+
+        await fn(scene, manim);
+        reportSuccess();
       } catch (err) {
         if (!cancelled) {
           const errStr = String(err);

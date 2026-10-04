@@ -1,0 +1,78 @@
+{
+  "itemId": "geo-pythagorean-proof",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "16.74% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=4"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 55331,
+        "inputTokens": 4609,
+        "cachedInputTokens": 4581,
+        "outputTokens": 2659,
+        "costUsd": 0.027104100000000002,
+        "rawResponse": "{\"explanation\":\"Arrange four identical right triangles, with legs a and b and hypotenuse c, inside a square of side a+b; the uncovered central square has area c². Slide the same triangles into two rectangular pairs, leaving two squares with total area a²+b². Because neither the outer square nor the total triangle area changes, the uncovered areas are equal: c² = a²+b².\",\"manimCode\":\"const a = 3;\\nconst b = 2;\\nconst side = a + b;\\nconst sc = 0.78;\\nconst origin = [-4.05, -1.95, 0];\\nconst pt = (x, y) => [origin[0] + sc * x, origin[1] + sc * y, 0];\\n\\nconst heading = new Text({ text: 'Pythagoras: a proof by rearrangement', color: WHITE, fontSize: 30 });\\nheading.moveTo([0, 3.2, 0]);\\nconst instruction = new Text({ text: 'Same outer square. Same four triangles. Same uncovered area.', color: GRAY, fontSize: 20 });\\ninstruction.moveTo([0, -3.15, 0]);\\n\\nconst boundary = new Polygon({ vertices: [pt(0, 0), pt(side, 0), pt(side, side), pt(0, side)], color: WHITE });\\nboundary.setFillOpacity(0);\\nboundary.setStrokeWidth(3);\\n\\nconst configurations = [\\n  [[0, 0], [a, 0], [0, b]],\\n  [[side, 0], [side, a], [a, 0]],\\n  [[side, side], [b, side], [side, a]],\\n  [[0, side], [0, b], [b, side]]\\n];\\nconst palette = [BLUE, TEAL, BLUE_D, PURPLE];\\nconst triangles = configurations.map((vertices, index) => {\\n  const tri = new Polygon({ vertices: vertices.map(([x, y]) => pt(x, y)), color: palette[index] });\\n  tri.setFill(palette[index], 0.8);\\n  tri.setStrokeWidth(2);\\n  return tri;\\n});\\n\\nconst centralSquare = new Polygon({ vertices: [pt(a, 0), pt(side, a), pt(b, side), pt(0, b)], color: YELLOW });\\ncentralSquare.setFill(YELLOW, 0.18);\\ncentralSquare.setStrokeWidth(3);\\nconst cLabel = new MathTex({ latex: 'c^2' });\\nawait cLabel.waitForRender();\\ncLabel.setColor(YELLOW);\\ncLabel.moveTo(pt(side / 2, side / 2));\\nconst firstGap = new VGroup(centralSquare, cLabel);\\n\\nconst aSquare = new Polygon({ vertices: [pt(0, b), pt(a, b), pt(a, side), pt(0, side)], color: YELLOW });\\naSquare.setFill(YELLOW, 0.18);\\naSquare.setStrokeWidth(3);\\nconst bSquare = new Polygon({ vertices: [pt(a, 0), pt(side, 0), pt(side, b), pt(a, b)], color: YELLOW });\\nbSquare.setFill(YELLOW, 0.18);\\nbSquare.setStrokeWidth(3);\\nconst aLabel = new MathTex({ latex: 'a^2' });\\nconst bLabel = new MathTex({ latex: 'b^2' });\\nawait aLabel.waitForRender();\\nawait bLabel.waitForRender();\\naLabel.setColor(YELLOW);\\nbLabel.setColor(YELLOW);\\naLabel.moveTo(pt(a / 2, b + a / 2));\\nbLabel.moveTo(pt(a + b / 2, b / 2));\\nconst secondGap = new VGroup(aSquare, bSquare, aLabel, bLabel);\\n\\nconst sideLabel = new MathTex({ latex: 'a+b' });\\nawait sideLabel.waitForRender();\\nsideLabel.scale(0.7);\\nsideLabel.moveTo([-2.1, -2.3, 0]);\\n\\nconst formulaOne = new MathTex({ latex: '(a+b)^2=c^2+4\\\\\\\\left(\\\\\\\\frac{ab}{2}\\\\\\\\right)' });\\nconst formulaTwo = new MathTex({ latex: '(a+b)^2=a^2+b^2+4\\\\\\\\left(\\\\\\\\frac{ab}{2}\\\\\\\\right)' });\\nconst conclusion = new MathTex({ latex: '\\\\\\\\boxed{c^2=a^2+b^2}' });\\nawait formulaOne.waitForRender();\\nawait formulaTwo.waitForRender();\\nawait conclusion.waitForRender();\\nformulaOne.scale(0.62).moveTo([2.9, 0.85, 0]);\\nformulaTwo.scale(0.62).moveTo([2.9, -0.05, 0]);\\nconclusion.scale(0.9).moveTo([2.9, -1.5, 0]);\\nconclusion.setColor(YELLOW);\\nconst cancelCaption = new Text({ text: 'Subtract the same triangle area', color: GRAY, fontSize: 19 });\\ncancelCaption.moveTo([2.9, -0.85, 0]);\\n\\nscene.add(heading, instruction);\\nawait scene.play(new Create(boundary));\\nawait scene.play(new AnimationGroup(triangles.map(tri => new DrawBorderThenFill(tri))));\\nawait scene.play(new AnimationGroup([new FadeIn(firstGap), new Write(sideLabel), new Write(formulaOne)]));\\nawait scene.wait(1.5);\\n\\nlet secondLayout = false;\\nlet busy = false;\\nconst displacement = [[0, 0, 0], [0, sc * b, 0], [-sc * b, -sc * a, 0], [sc * a, 0, 0]];\\nasync function toggleArrangement() {\\n  if (busy) return;\\n  busy = true;\\n  const oldGap = secondLayout ? secondGap : firstGap;\\n  const nextGap = secondLayout ? firstGap : secondGap;\\n  await scene.play(new FadeOut(oldGap));\\n  scene.remove(oldGap);\\n  const sign = secondLayout ? -1 : 1;\\n  await scene.play(new AnimationGroup(triangles.slice(1).map((tri, index) => new Shift(tri, { direction: displacement[index + 1].map(v => sign * v) }))));\\n  await scene.play(new FadeIn(nextGap));\\n  secondLayout = !secondLayout;\\n  busy = false;\\n}\\n\\nawait toggleArrangement();\\nawait scene.play(new Write(formulaTwo));\\nawait scene.play(new AnimationGroup([new FadeIn(cancelCaption), new Write(conclusion)]));\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 210 });\\ncontrols.addButton({ label: 'Rearrange the triangles', onClick: () => { toggleArrangement(); } });\\ntriangles.forEach(tri => makeHoverable(tri, scene, { hoverScale: 1, hoverOpacity: 1 }));\\nawait scene.wait(999999);\"}",
+        "explanation": "Arrange four identical right triangles, with legs a and b and hypotenuse c, inside a square of side a+b; the uncovered central square has area c². Slide the same triangles into two rectangular pairs, leaving two squares with total area a²+b². Because neither the outer square nor the total triangle area changes, the uncovered areas are equal: c² = a²+b²."
+      },
+      "code": "const a = 3;\nconst b = 2;\nconst side = a + b;\nconst sc = 0.78;\nconst origin = [-4.05, -1.95, 0];\nconst pt = (x, y) => [origin[0] + sc * x, origin[1] + sc * y, 0];\n\nconst heading = new Text({ text: 'Pythagoras: a proof by rearrangement', color: WHITE, fontSize: 30 });\nheading.moveTo([0, 3.2, 0]);\nconst instruction = new Text({ text: 'Same outer square. Same four triangles. Same uncovered area.', color: GRAY, fontSize: 20 });\ninstruction.moveTo([0, -3.15, 0]);\n\nconst boundary = new Polygon({ vertices: [pt(0, 0), pt(side, 0), pt(side, side), pt(0, side)], color: WHITE });\nboundary.setFillOpacity(0);\nboundary.setStrokeWidth(3);\n\nconst configurations = [\n  [[0, 0], [a, 0], [0, b]],\n  [[side, 0], [side, a], [a, 0]],\n  [[side, side], [b, side], [side, a]],\n  [[0, side], [0, b], [b, side]]\n];\nconst palette = [BLUE, TEAL, BLUE_D, PURPLE];\nconst triangles = configurations.map((vertices, index) => {\n  const tri = new Polygon({ vertices: vertices.map(([x, y]) => pt(x, y)), color: palette[index] });\n  tri.setFill(palette[index], 0.8);\n  tri.setStrokeWidth(2);\n  return tri;\n});\n\nconst centralSquare = new Polygon({ vertices: [pt(a, 0), pt(side, a), pt(b, side), pt(0, b)], color: YELLOW });\ncentralSquare.setFill(YELLOW, 0.18);\ncentralSquare.setStrokeWidth(3);\nconst cLabel = new MathTex({ latex: 'c^2' });\nawait cLabel.waitForRender();\ncLabel.setColor(YELLOW);\ncLabel.moveTo(pt(side / 2, side / 2));\nconst firstGap = new VGroup(centralSquare, cLabel);\n\nconst aSquare = new Polygon({ vertices: [pt(0, b), pt(a, b), pt(a, side), pt(0, side)], color: YELLOW });\naSquare.setFill(YELLOW, 0.18);\naSquare.setStrokeWidth(3);\nconst bSquare = new Polygon({ vertices: [pt(a, 0), pt(side, 0), pt(side, b), pt(a, b)], color: YELLOW });\nbSquare.setFill(YELLOW, 0.18);\nbSquare.setStrokeWidth(3);\nconst aLabel = new MathTex({ latex: 'a^2' });\nconst bLabel = new MathTex({ latex: 'b^2' });\nawait aLabel.waitForRender();\nawait bLabel.waitForRender();\naLabel.setColor(YELLOW);\nbLabel.setColor(YELLOW);\naLabel.moveTo(pt(a / 2, b + a / 2));\nbLabel.moveTo(pt(a + b / 2, b / 2));\nconst secondGap = new VGroup(aSquare, bSquare, aLabel, bLabel);\n\nconst sideLabel = new MathTex({ latex: 'a+b' });\nawait sideLabel.waitForRender();\nsideLabel.scale(0.7);\nsideLabel.moveTo([-2.1, -2.3, 0]);\n\nconst formulaOne = new MathTex({ latex: '(a+b)^2=c^2+4\\\\left(\\\\frac{ab}{2}\\\\right)' });\nconst formulaTwo = new MathTex({ latex: '(a+b)^2=a^2+b^2+4\\\\left(\\\\frac{ab}{2}\\\\right)' });\nconst conclusion = new MathTex({ latex: '\\\\boxed{c^2=a^2+b^2}' });\nawait formulaOne.waitForRender();\nawait formulaTwo.waitForRender();\nawait conclusion.waitForRender();\nformulaOne.scale(0.62).moveTo([2.9, 0.85, 0]);\nformulaTwo.scale(0.62).moveTo([2.9, -0.05, 0]);\nconclusion.scale(0.9).moveTo([2.9, -1.5, 0]);\nconclusion.setColor(YELLOW);\nconst cancelCaption = new Text({ text: 'Subtract the same triangle area', color: GRAY, fontSize: 19 });\ncancelCaption.moveTo([2.9, -0.85, 0]);\n\nscene.add(heading, instruction);\nawait scene.play(new Create(boundary));\nawait scene.play(new AnimationGroup(triangles.map(tri => new DrawBorderThenFill(tri))));\nawait scene.play(new AnimationGroup([new FadeIn(firstGap), new Write(sideLabel), new Write(formulaOne)]));\nawait scene.wait(1.5);\n\nlet secondLayout = false;\nlet busy = false;\nconst displacement = [[0, 0, 0], [0, sc * b, 0], [-sc * b, -sc * a, 0], [sc * a, 0, 0]];\nasync function toggleArrangement() {\n  if (busy) return;\n  busy = true;\n  const oldGap = secondLayout ? secondGap : firstGap;\n  const nextGap = secondLayout ? firstGap : secondGap;\n  await scene.play(new FadeOut(oldGap));\n  scene.remove(oldGap);\n  const sign = secondLayout ? -1 : 1;\n  await scene.play(new AnimationGroup(triangles.slice(1).map((tri, index) => new Shift(tri, { direction: displacement[index + 1].map(v => sign * v) }))));\n  await scene.play(new FadeIn(nextGap));\n  secondLayout = !secondLayout;\n  busy = false;\n}\n\nawait toggleArrangement();\nawait scene.play(new Write(formulaTwo));\nawait scene.play(new AnimationGroup([new FadeIn(cancelCaption), new Write(conclusion)]));\n\nconst controls = new Controls(scene, { position: 'top-right', width: 210 });\ncontrols.addButton({ label: 'Rearrange the triangles', onClick: () => { toggleArrangement(); } });\ntriangles.forEach(tri => makeHoverable(tri, scene, { hoverScale: 1, hoverOpacity: 1 }));\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 15792,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 8,
+        "controls": {
+          "sliders": 0,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 4
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/geo-pythagorean-proof.0.final.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:04.853Z"
+}

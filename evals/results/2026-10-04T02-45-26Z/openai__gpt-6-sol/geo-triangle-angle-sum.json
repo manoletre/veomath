@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-triangle-angle-sum",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.95% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.00% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 42342,
+        "inputTokens": 12271,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1625,
+        "costUsd": 0.0209776,
+        "rawResponse": "{\"explanation\":\"Draw a line through the triangle’s top vertex parallel to its base. The two base angles reappear beside the top angle as alternate interior angles. Together, those three angles form a straight angle, which is 180°.\",\"manimCode\":\"const A = [-3, -2, 0];\\nconst B = [3, -2, 0];\\nconst apex = new Dot({ point: [0, 1, 0], color: YELLOW });\\nconst dotA = new Dot({ point: A, color: BLUE });\\nconst dotB = new Dot({ point: B, color: ORANGE });\\n\\nconst triangle = new Polygon({ vertices: [A, B, apex.getCenter()], color: WHITE });\\ntriangle.setFill(BLUE_E, 0.18);\\ntriangle.setStrokeWidth(3);\\n\\nconst parallel = new Polygon({ vertices: [[-5.3, 1, 0], [5.3, 1, 0]], color: TEAL });\\nparallel.setFillOpacity(0);\\nparallel.setStrokeWidth(3);\\n\\nconst title = new Text({ text: 'Why 180°?', color: WHITE, fontSize: 36 });\\ntitle.moveTo([0, 3.25, 0]);\\n\\nconst alphaA = new Text({ text: 'α', color: BLUE, fontSize: 30 });\\nalphaA.moveTo([-2.48, -1.64, 0]);\\nconst betaB = new Text({ text: 'β', color: ORANGE, fontSize: 30 });\\nbetaB.moveTo([2.48, -1.64, 0]);\\nconst alphaTop = new Text({ text: 'α', color: BLUE, fontSize: 30 });\\nconst gammaTop = new Text({ text: 'γ', color: GREEN, fontSize: 30 });\\nconst betaTop = new Text({ text: 'β', color: ORANGE, fontSize: 30 });\\n\\nconst equation = new MathTex({ latex: '\\\\\\\\alpha+\\\\\\\\gamma+\\\\\\\\beta=180^\\\\\\\\circ' });\\nawait equation.waitForRender();\\nequation.moveTo([0, -3.1, 0]);\\n\\nfunction redraw() {\\n  const C = apex.getCenter();\\n  triangle.setVertices([A, B, C]);\\n  parallel.setVertices([[-5.3, C[1], 0], [5.3, C[1], 0]]);\\n  alphaTop.moveTo([C[0] - 0.68, C[1] - 0.28, 0]);\\n  gammaTop.moveTo([C[0], C[1] - 0.58, 0]);\\n  betaTop.moveTo([C[0] + 0.68, C[1] - 0.28, 0]);\\n}\\nredraw();\\n\\nscene.add(title, triangle, parallel, dotA, dotB, apex, alphaA, betaB, alphaTop, gammaTop, betaTop, equation);\\nmakeDraggable(apex, scene, { constrainX: [-1.8, 1.8], constrainY: [-0.2, 2.1], onDrag: redraw });\\nawait scene.wait(999999);\"}",
+        "explanation": "Draw a line through the triangle’s top vertex parallel to its base. The two base angles reappear beside the top angle as alternate interior angles. Together, those three angles form a straight angle, which is 180°."
+      },
+      "code": "const A = [-3, -2, 0];\nconst B = [3, -2, 0];\nconst apex = new Dot({ point: [0, 1, 0], color: YELLOW });\nconst dotA = new Dot({ point: A, color: BLUE });\nconst dotB = new Dot({ point: B, color: ORANGE });\n\nconst triangle = new Polygon({ vertices: [A, B, apex.getCenter()], color: WHITE });\ntriangle.setFill(BLUE_E, 0.18);\ntriangle.setStrokeWidth(3);\n\nconst parallel = new Polygon({ vertices: [[-5.3, 1, 0], [5.3, 1, 0]], color: TEAL });\nparallel.setFillOpacity(0);\nparallel.setStrokeWidth(3);\n\nconst title = new Text({ text: 'Why 180°?', color: WHITE, fontSize: 36 });\ntitle.moveTo([0, 3.25, 0]);\n\nconst alphaA = new Text({ text: 'α', color: BLUE, fontSize: 30 });\nalphaA.moveTo([-2.48, -1.64, 0]);\nconst betaB = new Text({ text: 'β', color: ORANGE, fontSize: 30 });\nbetaB.moveTo([2.48, -1.64, 0]);\nconst alphaTop = new Text({ text: 'α', color: BLUE, fontSize: 30 });\nconst gammaTop = new Text({ text: 'γ', color: GREEN, fontSize: 30 });\nconst betaTop = new Text({ text: 'β', color: ORANGE, fontSize: 30 });\n\nconst equation = new MathTex({ latex: '\\\\alpha+\\\\gamma+\\\\beta=180^\\\\circ' });\nawait equation.waitForRender();\nequation.moveTo([0, -3.1, 0]);\n\nfunction redraw() {\n  const C = apex.getCenter();\n  triangle.setVertices([A, B, C]);\n  parallel.setVertices([[-5.3, C[1], 0], [5.3, C[1], 0]]);\n  alphaTop.moveTo([C[0] - 0.68, C[1] - 0.28, 0]);\n  gammaTop.moveTo([C[0], C[1] - 0.58, 0]);\n  betaTop.moveTo([C[0] + 0.68, C[1] - 0.28, 0]);\n}\nredraw();\n\nscene.add(title, triangle, parallel, dotA, dotB, apex, alphaA, betaB, alphaTop, gammaTop, betaTop, equation);\nmakeDraggable(apex, scene, { constrainX: [-1.8, 1.8], constrainY: [-0.2, 2.1], onDrag: redraw });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 6251,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/geo-triangle-angle-sum.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/geo-triangle-angle-sum.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:38.508Z"
+}

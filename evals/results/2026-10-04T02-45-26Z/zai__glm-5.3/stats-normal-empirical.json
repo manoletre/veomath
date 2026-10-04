@@ -1,0 +1,131 @@
+{
+  "itemId": "stats-normal-empirical",
+  "model": "zai/glm-5.3",
+  "via": "gateway",
+  "score": 0,
+  "firstAttemptScore": 0,
+  "retried": true,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": false,
+          "detail": "SyntaxError: Invalid or unexpected token"
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": false,
+          "detail": "0.00% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": false,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 32340,
+        "inputTokens": 4466,
+        "cachedInputTokens": 4416,
+        "outputTokens": 3335,
+        "costUsd": 0.015362240000000001,
+        "rawResponse": "{ \"explanation\": \"The **68-95-99.7 rule** (empirical rule) describes how data is distributed in a normal distribution:\\n\\n- **≈ 68.27%** of values lie within **μ ± 1σ** (one standard deviation of the mean)\\n- **≈ 95.45%** lie within **μ ± 2σ**\\n- **≈ 99.73%** lie within **μ ± 3σ**\\n\\nThe visualization below draws the standard normal bell curve with three nested shaded bands. A slider lets you highlight each σ-level to see exactly how much of the distribution it captures.\", \"manimCode\": \"…\" }",
+        "explanation": "The **68-95-99.7 rule** (empirical rule) describes how data is distributed in a normal distribution:\n\n- **≈ 68.27%** of values lie within **μ ± 1σ** (one standard deviation of the mean)\n- **≈ 95.45%** lie within **μ ± 2σ**\n- **≈ 99.73%** lie within **μ ± 3σ**\n\nThe visualization below draws the standard normal bell curve with three nested shaded bands. A slider lets you highlight each σ-level to see exactly how much of the distribution it captures."
+      },
+      "code": "…",
+      "render": {
+        "durationMs": 3254,
+        "fatalError": "SyntaxError: Invalid or unexpected token",
+        "errors": [
+          "SyntaxError: Invalid or unexpected token"
+        ],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "zai__glm-5.3/stats-normal-empirical.0.final.jpg"
+      }
+    },
+    {
+      "kind": "auto-retry",
+      "score": 0,
+      "checks": {
+        "generated": {
+          "pass": false,
+          "detail": "Request failed or the response was not valid JSON with manimCode"
+        },
+        "runs": {
+          "pass": false
+        },
+        "completes": {
+          "pass": false
+        },
+        "nonBlank": {
+          "pass": false
+        },
+        "inFrame": {
+          "pass": false
+        },
+        "noTextOverlap": {
+          "pass": false
+        },
+        "noRawLatex": {
+          "pass": false
+        },
+        "interactive": {
+          "pass": false
+        },
+        "respondsToInteraction": {
+          "pass": null
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 46563,
+        "inputTokens": null,
+        "cachedInputTokens": null,
+        "outputTokens": null,
+        "costUsd": null,
+        "rawResponse": "",
+        "explanation": null,
+        "error": "Error: Model returned invalid JSON: SyntaxError: Unexpected end of JSON input"
+      },
+      "code": null,
+      "render": null,
+      "frames": {}
+    }
+  ],
+  "finishedAt": "2026-10-04T02:57:53.893Z"
+}

@@ -1,0 +1,149 @@
+{
+  "itemId": "calc-riemann-sums",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 0,
+  "retried": true,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": false,
+          "detail": "TypeError: Assignment to constant variable."
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "10.81% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": false,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 15784,
+        "inputTokens": 12287,
+        "cachedInputTokens": 12032,
+        "outputTokens": 710,
+        "costUsd": 0.00050082,
+        "rawResponse": "{\"explanation\":\"A Riemann sum approximates area by dividing an interval into rectangles and adding their areas. This visualization uses right-endpoint heights for y = x² on [0, 2], and the slider changes how many rectangles are used.\",\"manimCode\":\"const ax = new Axes({ xRange: [0, 2, 0.5], yRange: [0, 4.5, 1], xLength: 6, yLength: 4.5, tips: true });\\nconst curve = ax.plot(x => x * x, { color: BLUE, xRange: [0, 2], numSamples: 250 });\\nscene.add(ax, curve);\\n\\nconst title = new Text({ text: 'Right-endpoint Riemann sum for y = x²', color: WHITE, fontSize: 26 });\\ntitle.moveTo([0, 3.35, 0]);\\nscene.add(title);\\n\\nconst sumLabel = new Text({ text: 'n = 4   |   area ≈ 2.750', color: YELLOW, fontSize: 23 });\\nsumLabel.moveTo([0, -3.15, 0]);\\nscene.add(sumLabel);\\n\\nlet rectangles = [];\\nlet n = 4;\\nfunction rebuildRectangles(count) {\\n  for (const r of rectangles) scene.remove(r);\\n  rectangles = [];\\n  n = count;\\n  const dx = 2 / n;\\n  let total = 0;\\n  for (let i = 1; i <= n; i++) {\\n    const xRight = i * dx;\\n    const y = xRight * xRight;\\n    total += y * dx;\\n    const p1 = ax.c2p((i - 1) * dx, 0);\\n    const p2 = ax.c2p(i * dx, y);\\n    const rect = new Polygon({\\n      vertices: [p1, ax.c2p(i * dx, 0), p2, ax.c2p((i - 1) * dx, y)],\\n      color: TEAL\\n    });\\n    rect.setFill(TEAL, 0.28).setStrokeWidth(1.5);\\n    rectangles.push(rect);\\n    scene.add(rect);\\n  }\\n  scene.remove(sumLabel);\\n  const freshLabel = new Text({ text: `n = ${n}   |   area ≈ ${total.toFixed(3)}`, color: YELLOW, fontSize: 23 });\\n  freshLabel.moveTo([0, -3.15, 0]);\\n  sumLabel = freshLabel;\\n  scene.add(sumLabel);\\n}\\n\\n// Rebuild once in the initial state, then let the slider adjust the partition.\\nrebuildRectangles(4);\\nconst controls = new Controls(scene, { position: 'top-right', width: 250 });\\ncontrols.addSlider({ label: 'Rectangles (n)', min: 1, max: 20, value: 4, step: 1, onChange: value => rebuildRectangles(Math.round(value)) });\\nawait scene.wait(999999);\"}",
+        "explanation": "A Riemann sum approximates area by dividing an interval into rectangles and adding their areas. This visualization uses right-endpoint heights for y = x² on [0, 2], and the slider changes how many rectangles are used."
+      },
+      "code": "const ax = new Axes({ xRange: [0, 2, 0.5], yRange: [0, 4.5, 1], xLength: 6, yLength: 4.5, tips: true });\nconst curve = ax.plot(x => x * x, { color: BLUE, xRange: [0, 2], numSamples: 250 });\nscene.add(ax, curve);\n\nconst title = new Text({ text: 'Right-endpoint Riemann sum for y = x²', color: WHITE, fontSize: 26 });\ntitle.moveTo([0, 3.35, 0]);\nscene.add(title);\n\nconst sumLabel = new Text({ text: 'n = 4   |   area ≈ 2.750', color: YELLOW, fontSize: 23 });\nsumLabel.moveTo([0, -3.15, 0]);\nscene.add(sumLabel);\n\nlet rectangles = [];\nlet n = 4;\nfunction rebuildRectangles(count) {\n  for (const r of rectangles) scene.remove(r);\n  rectangles = [];\n  n = count;\n  const dx = 2 / n;\n  let total = 0;\n  for (let i = 1; i <= n; i++) {\n    const xRight = i * dx;\n    const y = xRight * xRight;\n    total += y * dx;\n    const p1 = ax.c2p((i - 1) * dx, 0);\n    const p2 = ax.c2p(i * dx, y);\n    const rect = new Polygon({\n      vertices: [p1, ax.c2p(i * dx, 0), p2, ax.c2p((i - 1) * dx, y)],\n      color: TEAL\n    });\n    rect.setFill(TEAL, 0.28).setStrokeWidth(1.5);\n    rectangles.push(rect);\n    scene.add(rect);\n  }\n  scene.remove(sumLabel);\n  const freshLabel = new Text({ text: `n = ${n}   |   area ≈ ${total.toFixed(3)}`, color: YELLOW, fontSize: 23 });\n  freshLabel.moveTo([0, -3.15, 0]);\n  sumLabel = freshLabel;\n  scene.add(sumLabel);\n}\n\n// Rebuild once in the initial state, then let the slider adjust the partition.\nrebuildRectangles(4);\nconst controls = new Controls(scene, { position: 'top-right', width: 250 });\ncontrols.addSlider({ label: 'Rectangles (n)', min: 1, max: 20, value: 4, step: 1, onChange: value => rebuildRectangles(Math.round(value)) });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4530,
+        "fatalError": "TypeError: Assignment to constant variable.",
+        "errors": [
+          "TypeError: Assignment to constant variable."
+        ],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/calc-riemann-sums.0.final.jpg"
+      }
+    },
+    {
+      "kind": "auto-retry",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "11.15% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "3.36% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 18692,
+        "inputTokens": 12902,
+        "cachedInputTokens": 12032,
+        "outputTokens": 807,
+        "costUsd": 0.00061082,
+        "rawResponse": "{\"explanation\":\"A right-endpoint Riemann sum estimates the area by adding each rectangle’s width times its height, where the height is the curve value at the rectangle’s right edge. Increasing the slider’s rectangle count generally improves the approximation; the exact area is 8/3.\",\"manimCode\":\"const ax = new Axes({ xRange: [0, 2, 0.5], yRange: [0, 4.5, 1], xLength: 6, yLength: 4.5, tips: true });\\nconst curve = ax.plot(x => x * x, { color: BLUE, xRange: [0, 2], numSamples: 250 });\\nscene.add(ax, curve);\\n\\nconst title = new Text({ text: 'Right-endpoint Riemann sum for y = x²', color: WHITE, fontSize: 26 });\\ntitle.moveTo([0, 3.35, 0]);\\nscene.add(title);\\n\\nlet sumLabel = new Text({ text: 'n = 4   |   area ≈ 2.750', color: YELLOW, fontSize: 23 });\\nsumLabel.moveTo([0, -3.15, 0]);\\nscene.add(sumLabel);\\n\\nlet rectangles = [];\\nlet n = 4;\\nfunction rebuildRectangles(count) {\\n  for (const r of rectangles) scene.remove(r);\\n  rectangles = [];\\n  n = count;\\n  const dx = 2 / n;\\n  let total = 0;\\n  for (let i = 1; i <= n; i++) {\\n    const xRight = i * dx;\\n    const y = xRight * xRight;\\n    total += y * dx;\\n    const rect = new Polygon({\\n      vertices: [\\n        ax.c2p((i - 1) * dx, 0),\\n        ax.c2p(i * dx, 0),\\n        ax.c2p(i * dx, y),\\n        ax.c2p((i - 1) * dx, y)\\n      ],\\n      color: TEAL\\n    });\\n    rect.setFill(TEAL, 0.28).setStrokeWidth(1.5);\\n    rectangles.push(rect);\\n    scene.add(rect);\\n  }\\n\\n  scene.remove(sumLabel);\\n  sumLabel = new Text({ text: `n = ${n}   |   area ≈ ${total.toFixed(3)}`, color: YELLOW, fontSize: 23 });\\n  sumLabel.moveTo([0, -3.15, 0]);\\n  scene.add(sumLabel);\\n}\\n\\nrebuildRectangles(4);\\nconst controls = new Controls(scene, { position: 'top-right', width: 250 });\\ncontrols.addSlider({ label: 'Rectangles (n)', min: 1, max: 20, value: 4, step: 1, onChange: value => rebuildRectangles(Math.round(value)) });\\nawait scene.wait(999999);\"}",
+        "explanation": "A right-endpoint Riemann sum estimates the area by adding each rectangle’s width times its height, where the height is the curve value at the rectangle’s right edge. Increasing the slider’s rectangle count generally improves the approximation; the exact area is 8/3."
+      },
+      "code": "const ax = new Axes({ xRange: [0, 2, 0.5], yRange: [0, 4.5, 1], xLength: 6, yLength: 4.5, tips: true });\nconst curve = ax.plot(x => x * x, { color: BLUE, xRange: [0, 2], numSamples: 250 });\nscene.add(ax, curve);\n\nconst title = new Text({ text: 'Right-endpoint Riemann sum for y = x²', color: WHITE, fontSize: 26 });\ntitle.moveTo([0, 3.35, 0]);\nscene.add(title);\n\nlet sumLabel = new Text({ text: 'n = 4   |   area ≈ 2.750', color: YELLOW, fontSize: 23 });\nsumLabel.moveTo([0, -3.15, 0]);\nscene.add(sumLabel);\n\nlet rectangles = [];\nlet n = 4;\nfunction rebuildRectangles(count) {\n  for (const r of rectangles) scene.remove(r);\n  rectangles = [];\n  n = count;\n  const dx = 2 / n;\n  let total = 0;\n  for (let i = 1; i <= n; i++) {\n    const xRight = i * dx;\n    const y = xRight * xRight;\n    total += y * dx;\n    const rect = new Polygon({\n      vertices: [\n        ax.c2p((i - 1) * dx, 0),\n        ax.c2p(i * dx, 0),\n        ax.c2p(i * dx, y),\n        ax.c2p((i - 1) * dx, y)\n      ],\n      color: TEAL\n    });\n    rect.setFill(TEAL, 0.28).setStrokeWidth(1.5);\n    rectangles.push(rect);\n    scene.add(rect);\n  }\n\n  scene.remove(sumLabel);\n  sumLabel = new Text({ text: `n = ${n}   |   area ≈ ${total.toFixed(3)}`, color: YELLOW, fontSize: 23 });\n  sumLabel.moveTo([0, -3.15, 0]);\n  scene.add(sumLabel);\n}\n\nrebuildRectangles(4);\nconst controls = new Controls(scene, { position: 'top-right', width: 250 });\ncontrols.addSlider({ label: 'Rectangles (n)', min: 1, max: 20, value: 4, step: 1, onChange: value => rebuildRectangles(Math.round(value)) });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 2996,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/calc-riemann-sums.1.final.jpg",
+        "interacted": "openai__gpt-6-luna/calc-riemann-sums.1.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T03:01:18.052Z"
+}

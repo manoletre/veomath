@@ -1,0 +1,79 @@
+{
+  "itemId": "seq-geometric-series",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "14.50% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "6.69% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 10594,
+        "inputTokens": 7970,
+        "cachedInputTokens": 7476,
+        "outputTokens": 1300,
+        "costUsd": 0.0164672,
+        "rawResponse": "{\"explanation\":\"Start with a unit square (area 1). Fill half of it (1/2), then half of what's left (1/4), then half of the remainder (1/8), and so on. Each step covers half of the remaining empty space, so the uncovered area shrinks toward zero and the filled pieces add up to the whole square: 1/2 + 1/4 + 1/8 + ... = 1. Use the slider to add more pieces and watch the gap shrink.\",\"manimCode\":\"const S = 4;\\nconst x0 = -2, y0 = -2.2; // bottom-left of square\\nconst outline = new Square({ sideLength: S, color: WHITE });\\noutline.moveTo([0, y0 + S/2, 0]);\\nscene.add(outline);\\n\\nconst title = new MathTex({ latex: '\\\\\\\\tfrac12+\\\\\\\\tfrac14+\\\\\\\\tfrac18+\\\\\\\\cdots=1' });\\nawait title.waitForRender();\\ntitle.moveTo([0, 3.5, 0]);\\nscene.add(title);\\n\\nconst colors = [BLUE, TEAL, GREEN, YELLOW, ORANGE, RED, PURPLE, MAROON];\\n// Build pieces: alternate vertical/horizontal splits\\nlet rx = x0, ry = y0, rw = S, rh = S; // remaining region\\nconst pieces = [];\\nfor (let i = 0; i < 8; i++) {\\n  let px, py, pw, ph;\\n  if (i % 2 === 0) { // take left half of the remaining width\\n    pw = rw / 2; ph = rh; px = rx; py = ry;\\n    rx += pw; rw -= pw;\\n  } else { // take bottom half of remaining height\\n    pw = rw; ph = rh / 2; px = rx; py = ry;\\n    ry += ph; rh -= ph;\\n  }\\n  const r = new Rectangle({ width: pw, height: ph, color: colors[i] });\\n  r.setFill(colors[i], 0.7);\\n  r.setStrokeWidth(1);\\n  r.moveTo([px + pw/2, py + ph/2, 0]);\\n  pieces.push(r);\\n}\\n\\nconst fracs = ['1/2','1/4','1/8','1/16','1/32','1/64','1/128','1/256'];\\nlet label = null;\\nlet shown = 0;\\nfunction setLabel(n) {\\n  if (label) scene.remove(label);\\n  const total = 1 - Math.pow(0.5, n);\\n  label = new Text({ text: n === 0 ? 'Sum so far: 0' : 'Sum so far: ' + (Math.pow(2,n)-1) + '/' + Math.pow(2,n) + ' ≈ ' + total.toFixed(4), color: WHITE, fontSize: 28 });\\n  label.moveTo([0, -3.3, 0]);\\n  scene.add(label);\\n}\\nsetLabel(0);\\n\\nfor (let i = 0; i < 4; i++) {\\n  await scene.play(new FadeIn(pieces[i]));\\n  const t = new Text({ text: fracs[i], color: WHITE, fontSize: 22 });\\n  const c = pieces[i].getCenter();\\n  t.moveTo(c);\\n  if (i < 3) scene.add(t);\\n  shown = i + 1;\\n  setLabel(shown);\\n  await scene.wait(0.5);\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'Pieces', min: 0, max: 8, value: 4, step: 1, onChange: (v) => {\\n  for (let i = 0; i < 8; i++) {\\n    if (i < v) scene.add(pieces[i]); else scene.remove(pieces[i]);\\n  }\\n  setLabel(v);\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Start with a unit square (area 1). Fill half of it (1/2), then half of what's left (1/4), then half of the remainder (1/8), and so on. Each step covers half of the remaining empty space, so the uncovered area shrinks toward zero and the filled pieces add up to the whole square: 1/2 + 1/4 + 1/8 + ... = 1. Use the slider to add more pieces and watch the gap shrink."
+      },
+      "code": "const S = 4;\nconst x0 = -2, y0 = -2.2; // bottom-left of square\nconst outline = new Square({ sideLength: S, color: WHITE });\noutline.moveTo([0, y0 + S/2, 0]);\nscene.add(outline);\n\nconst title = new MathTex({ latex: '\\\\tfrac12+\\\\tfrac14+\\\\tfrac18+\\\\cdots=1' });\nawait title.waitForRender();\ntitle.moveTo([0, 3.5, 0]);\nscene.add(title);\n\nconst colors = [BLUE, TEAL, GREEN, YELLOW, ORANGE, RED, PURPLE, MAROON];\n// Build pieces: alternate vertical/horizontal splits\nlet rx = x0, ry = y0, rw = S, rh = S; // remaining region\nconst pieces = [];\nfor (let i = 0; i < 8; i++) {\n  let px, py, pw, ph;\n  if (i % 2 === 0) { // take left half of the remaining width\n    pw = rw / 2; ph = rh; px = rx; py = ry;\n    rx += pw; rw -= pw;\n  } else { // take bottom half of remaining height\n    pw = rw; ph = rh / 2; px = rx; py = ry;\n    ry += ph; rh -= ph;\n  }\n  const r = new Rectangle({ width: pw, height: ph, color: colors[i] });\n  r.setFill(colors[i], 0.7);\n  r.setStrokeWidth(1);\n  r.moveTo([px + pw/2, py + ph/2, 0]);\n  pieces.push(r);\n}\n\nconst fracs = ['1/2','1/4','1/8','1/16','1/32','1/64','1/128','1/256'];\nlet label = null;\nlet shown = 0;\nfunction setLabel(n) {\n  if (label) scene.remove(label);\n  const total = 1 - Math.pow(0.5, n);\n  label = new Text({ text: n === 0 ? 'Sum so far: 0' : 'Sum so far: ' + (Math.pow(2,n)-1) + '/' + Math.pow(2,n) + ' ≈ ' + total.toFixed(4), color: WHITE, fontSize: 28 });\n  label.moveTo([0, -3.3, 0]);\n  scene.add(label);\n}\nsetLabel(0);\n\nfor (let i = 0; i < 4; i++) {\n  await scene.play(new FadeIn(pieces[i]));\n  const t = new Text({ text: fracs[i], color: WHITE, fontSize: 22 });\n  const c = pieces[i].getCenter();\n  t.moveTo(c);\n  if (i < 3) scene.add(t);\n  shown = i + 1;\n  setLabel(shown);\n  await scene.wait(0.5);\n}\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'Pieces', min: 0, max: 8, value: 4, step: 1, onChange: (v) => {\n  for (let i = 0; i < 8; i++) {\n    if (i < v) scene.add(pieces[i]); else scene.remove(pieces[i]);\n  }\n  setLabel(v);\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9695,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 4,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/seq-geometric-series.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/seq-geometric-series.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:34:56.712Z"
+}

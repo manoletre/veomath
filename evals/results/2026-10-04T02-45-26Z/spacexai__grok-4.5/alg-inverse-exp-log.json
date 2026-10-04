@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-inverse-exp-log",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.93% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.49% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 15045,
+        "inputTokens": 5052,
+        "cachedInputTokens": 128,
+        "outputTokens": 1399,
+        "costUsd": 0.0182804,
+        "rawResponse": "{\n  \"explanation\": \"The functions eˣ and ln(x) are inverses of each other, which means reflecting the graph of one across the line y = x produces the other. Geometrically, every point (a, b) on y = eˣ maps to (b, a) on y = ln(x), and vice versa. Drag the yellow point along either curve to see its reflection land on the other curve.\",\n  \"manimCode\": \"const ax = new Axes({\\n  xRange: [-3, 5, 1],\\n  yRange: [-3, 5, 1],\\n  xLength: 7,\\n  yLength: 7,\\n  tips: true\\n});\\nax.moveTo([0, 0, 0]);\\n\\nconst expCurve = ax.plot(x => Math.exp(x), { color: BLUE, xRange: [-3, 1.6] });\\nconst lnCurve = ax.plot(x => Math.log(x), { color: GREEN, xRange: [0.05, 5] });\\nconst yEqualsX = ax.plot(x => x, { color: GRAY, xRange: [-3, 5] });\\nyEqualsX.setStrokeWidth(1.5);\\n\\nconst expLabel = new MathTex({ latex: 'e^x', color: BLUE });\\nawait expLabel.waitForRender();\\nexpLabel.moveTo(ax.c2p(1.2, 3.2));\\nexpLabel.scale(0.7);\\n\\nconst lnLabel = new MathTex({ latex: '\\\\\\\\ln(x)', color: GREEN });\\nawait lnLabel.waitForRender();\\nlnLabel.moveTo(ax.c2p(3.5, 1.5));\\nlnLabel.scale(0.7);\\n\\nconst yxLabel = new MathTex({ latex: 'y = x', color: GRAY });\\nawait yxLabel.waitForRender();\\nyxLabel.moveTo(ax.c2p(3.8, 3.2));\\nyxLabel.scale(0.55);\\n\\n// Point on e^x and its reflection on ln(x)\\nlet t = 0.5; // x-value on e^x\\nconst pointExp = new Dot({ point: ax.c2p(t, Math.exp(t)), color: YELLOW });\\nconst pointLn = new Dot({ point: ax.c2p(Math.exp(t), t), color: ORANGE });\\n\\n// Dashed connector (reflection line segment across y=x)\\nconst connector = new Polygon({\\n  vertices: [ax.c2p(t, Math.exp(t)), ax.c2p(Math.exp(t), t)],\\n  color: YELLOW_A\\n});\\nconnector.setStrokeWidth(1.5).setFillOpacity(0);\\n\\n// Labels for the points\\nlet coordExp = new Text({ text: '(' + t.toFixed(1) + ', ' + Math.exp(t).toFixed(1) + ')', color: YELLOW, fontSize: 18 });\\ncoordExp.moveTo(ax.c2p(t, Math.exp(t)));\\ncoordExp.shift(scaleVec(0.45, UL));\\n\\nlet coordLn = new Text({ text: '(' + Math.exp(t).toFixed(1) + ', ' + t.toFixed(1) + ')', color: ORANGE, fontSize: 18 });\\ncoordLn.moveTo(ax.c2p(Math.exp(t), t));\\ncoordLn.shift(scaleVec(0.45, DR));\\n\\nscene.add(ax, expCurve, lnCurve, yEqualsX, expLabel, lnLabel, yxLabel);\\nscene.add(connector, pointExp, pointLn, coordExp, coordLn);\\n\\nfunction refresh() {\\n  const px = t;\\n  const py = Math.exp(t);\\n  pointExp.moveTo(ax.c2p(px, py));\\n  pointLn.moveTo(ax.c2p(py, px));\\n  connector.setVertices([ax.c2p(px, py), ax.c2p(py, px)]);\\n\\n  const posE = coordExp.getCenter();\\n  scene.remove(coordExp);\\n  coordExp = new Text({ text: '(' + px.toFixed(2) + ', ' + py.toFixed(2) + ')', color: YELLOW, fontSize: 18 });\\n  coordExp.moveTo(ax.c2p(px, py));\\n  coordExp.shift(scaleVec(0.45, UL));\\n  scene.add(coordExp);\\n\\n  scene.remove(coordLn);\\n  coordLn = new Text({ text: '(' + py.toFixed(2) + ', ' + px.toFixed(2) + ')', color: ORANGE, fontSize: 18 });\\n  coordLn.moveTo(ax.c2p(py, px));\\n  coordLn.shift(scaleVec(0.45, DR));\\n  scene.add(coordLn);\\n}\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', width: 260 });\\ncontrols.addSlider({\\n  label: 'x on eˣ',\\n  min: -1.5,\\n  max: 1.5,\\n  value: 0.5,\\n  step: 0.05,\\n  onChange: (val) => {\\n    t = val;\\n    refresh();\\n  }\\n});\\n\\ncontrols.addButton({\\n  label: 'Reset',\\n  onClick: () => {\\n    t = 0.5;\\n    refresh();\\n  }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "The functions eˣ and ln(x) are inverses of each other, which means reflecting the graph of one across the line y = x produces the other. Geometrically, every point (a, b) on y = eˣ maps to (b, a) on y = ln(x), and vice versa. Drag the yellow point along either curve to see its reflection land on the other curve."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-3, 5, 1],\n  yRange: [-3, 5, 1],\n  xLength: 7,\n  yLength: 7,\n  tips: true\n});\nax.moveTo([0, 0, 0]);\n\nconst expCurve = ax.plot(x => Math.exp(x), { color: BLUE, xRange: [-3, 1.6] });\nconst lnCurve = ax.plot(x => Math.log(x), { color: GREEN, xRange: [0.05, 5] });\nconst yEqualsX = ax.plot(x => x, { color: GRAY, xRange: [-3, 5] });\nyEqualsX.setStrokeWidth(1.5);\n\nconst expLabel = new MathTex({ latex: 'e^x', color: BLUE });\nawait expLabel.waitForRender();\nexpLabel.moveTo(ax.c2p(1.2, 3.2));\nexpLabel.scale(0.7);\n\nconst lnLabel = new MathTex({ latex: '\\\\ln(x)', color: GREEN });\nawait lnLabel.waitForRender();\nlnLabel.moveTo(ax.c2p(3.5, 1.5));\nlnLabel.scale(0.7);\n\nconst yxLabel = new MathTex({ latex: 'y = x', color: GRAY });\nawait yxLabel.waitForRender();\nyxLabel.moveTo(ax.c2p(3.8, 3.2));\nyxLabel.scale(0.55);\n\n// Point on e^x and its reflection on ln(x)\nlet t = 0.5; // x-value on e^x\nconst pointExp = new Dot({ point: ax.c2p(t, Math.exp(t)), color: YELLOW });\nconst pointLn = new Dot({ point: ax.c2p(Math.exp(t), t), color: ORANGE });\n\n// Dashed connector (reflection line segment across y=x)\nconst connector = new Polygon({\n  vertices: [ax.c2p(t, Math.exp(t)), ax.c2p(Math.exp(t), t)],\n  color: YELLOW_A\n});\nconnector.setStrokeWidth(1.5).setFillOpacity(0);\n\n// Labels for the points\nlet coordExp = new Text({ text: '(' + t.toFixed(1) + ', ' + Math.exp(t).toFixed(1) + ')', color: YELLOW, fontSize: 18 });\ncoordExp.moveTo(ax.c2p(t, Math.exp(t)));\ncoordExp.shift(scaleVec(0.45, UL));\n\nlet coordLn = new Text({ text: '(' + Math.exp(t).toFixed(1) + ', ' + t.toFixed(1) + ')', color: ORANGE, fontSize: 18 });\ncoordLn.moveTo(ax.c2p(Math.exp(t), t));\ncoordLn.shift(scaleVec(0.45, DR));\n\nscene.add(ax, expCurve, lnCurve, yEqualsX, expLabel, lnLabel, yxLabel);\nscene.add(connector, pointExp, pointLn, coordExp, coordLn);\n\nfunction refresh() {\n  const px = t;\n  const py = Math.exp(t);\n  pointExp.moveTo(ax.c2p(px, py));\n  pointLn.moveTo(ax.c2p(py, px));\n  connector.setVertices([ax.c2p(px, py), ax.c2p(py, px)]);\n\n  const posE = coordExp.getCenter();\n  scene.remove(coordExp);\n  coordExp = new Text({ text: '(' + px.toFixed(2) + ', ' + py.toFixed(2) + ')', color: YELLOW, fontSize: 18 });\n  coordExp.moveTo(ax.c2p(px, py));\n  coordExp.shift(scaleVec(0.45, UL));\n  scene.add(coordExp);\n\n  scene.remove(coordLn);\n  coordLn = new Text({ text: '(' + py.toFixed(2) + ', ' + px.toFixed(2) + ')', color: ORANGE, fontSize: 18 });\n  coordLn.moveTo(ax.c2p(py, px));\n  coordLn.shift(scaleVec(0.45, DR));\n  scene.add(coordLn);\n}\n\nconst controls = new Controls(scene, { position: 'bottom-left', width: 260 });\ncontrols.addSlider({\n  label: 'x on eˣ',\n  min: -1.5,\n  max: 1.5,\n  value: 0.5,\n  step: 0.05,\n  onChange: (val) => {\n    t = val;\n    refresh();\n  }\n});\n\ncontrols.addButton({\n  label: 'Reset',\n  onClick: () => {\n    t = 0.5;\n    refresh();\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4080,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/alg-inverse-exp-log.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/alg-inverse-exp-log.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:14.400Z"
+}

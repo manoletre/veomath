@@ -1,0 +1,80 @@
+{
+  "itemId": "calc-riemann-sums",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "10.74% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "MathTex \"\\int_0^2 x^2\\,dx = \\tfrac{8}{3} \\approx \" is hidden under the controls panel (30%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=3 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "4.90% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 15954,
+        "inputTokens": 8066,
+        "cachedInputTokens": 7569,
+        "outputTokens": 1832,
+        "costUsd": 0.0421218,
+        "rawResponse": "{\"explanation\":\"A Riemann sum estimates the area under y = x² by splitting [0, 2] into n strips of width Δx = 2/n and adding up the areas of the rectangles, Σ f(xᵢ)·Δx. With left endpoints the rectangles sit under the rising curve, so the sum comes out too small. With right endpoints it comes out too big, and midpoints land very close. As n grows, all three approach the exact area, ∫₀² x² dx = 8/3 ≈ 2.6667. Use the slider to change n and the buttons to pick the sampling rule.\",\"manimCode\":\"const ax = new Axes({ xRange: [0, 2.2, 0.5], yRange: [0, 4.5, 1], xLength: 7, yLength: 5.5, tips: false });\\nax.moveTo([-2, -0.2, 0]);\\nconst curve = ax.plot(x => x * x, { color: YELLOW, xRange: [0, 2.1] });\\nscene.add(ax, curve);\\n\\nconst fLabel = new MathTex({ latex: 'y = x^2', color: YELLOW });\\nawait fLabel.waitForRender();\\nfLabel.moveTo(ax.c2p(1.45, 4.2));\\nscene.add(fLabel);\\n\\nconst title = new MathTex({ latex: '\\\\\\\\int_0^2 x^2\\\\\\\\,dx = \\\\\\\\tfrac{8}{3} \\\\\\\\approx 2.6667' });\\nawait title.waitForRender();\\ntitle.scale(0.75);\\ntitle.moveTo([3.9, 1.6, 0]);\\nscene.add(title);\\n\\nlet n = 4;\\nlet mode = 'left';\\nlet rects = new VGroup();\\nlet sumLabel = null;\\nlet modeLabel = null;\\n\\nfunction sampleX(i, dx) {\\n  if (mode === 'left') return i * dx;\\n  if (mode === 'right') return (i + 1) * dx;\\n  return (i + 0.5) * dx;\\n}\\n\\nfunction rebuild() {\\n  scene.remove(rects);\\n  rects = new VGroup();\\n  const dx = 2 / n;\\n  let total = 0;\\n  for (let i = 0; i < n; i++) {\\n    const x0 = i * dx, x1 = (i + 1) * dx;\\n    const h = Math.pow(sampleX(i, dx), 2);\\n    total += h * dx;\\n    const p = new Polygon({\\n      vertices: [ax.c2p(x0, 0), ax.c2p(x1, 0), ax.c2p(x1, h), ax.c2p(x0, h)],\\n      color: BLUE_B\\n    });\\n    p.setFill(BLUE_D, 0.55);\\n    p.setStrokeWidth(n > 40 ? 0.5 : 1.5);\\n    rects.add(p);\\n  }\\n  scene.add(rects);\\n  scene.remove(curve);\\n  scene.add(curve);\\n\\n  if (sumLabel) scene.remove(sumLabel);\\n  sumLabel = new Text({ text: 'n = ' + n + '\\\\nSum ≈ ' + total.toFixed(4) + '\\\\nError = ' + (total - 8 / 3).toFixed(4), color: WHITE, fontSize: 26 });\\n  sumLabel.moveTo([3.9, 0, 0]);\\n  scene.add(sumLabel);\\n\\n  if (modeLabel) scene.remove(modeLabel);\\n  const names = { left: 'Left endpoints', right: 'Right endpoints', mid: 'Midpoints' };\\n  modeLabel = new Text({ text: names[mode], color: BLUE_B, fontSize: 26 });\\n  modeLabel.moveTo([3.9, -1.5, 0]);\\n  scene.add(modeLabel);\\n}\\n\\nrebuild();\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'Rectangles (n)', min: 1, max: 100, value: 4, step: 1, onChange: (v) => { n = Math.round(v); rebuild(); } });\\ncontrols.addButton({ label: 'Left', onClick: () => { mode = 'left'; rebuild(); } });\\ncontrols.addButton({ label: 'Midpoint', onClick: () => { mode = 'mid'; rebuild(); } });\\ncontrols.addButton({ label: 'Right', onClick: () => { mode = 'right'; rebuild(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A Riemann sum estimates the area under y = x² by splitting [0, 2] into n strips of width Δx = 2/n and adding up the areas of the rectangles, Σ f(xᵢ)·Δx. With left endpoints the rectangles sit under the rising curve, so the sum comes out too small. With right endpoints it comes out too big, and midpoints land very close. As n grows, all three approach the exact area, ∫₀² x² dx = 8/3 ≈ 2.6667. Use the slider to change n and the buttons to pick the sampling rule."
+      },
+      "code": "const ax = new Axes({ xRange: [0, 2.2, 0.5], yRange: [0, 4.5, 1], xLength: 7, yLength: 5.5, tips: false });\nax.moveTo([-2, -0.2, 0]);\nconst curve = ax.plot(x => x * x, { color: YELLOW, xRange: [0, 2.1] });\nscene.add(ax, curve);\n\nconst fLabel = new MathTex({ latex: 'y = x^2', color: YELLOW });\nawait fLabel.waitForRender();\nfLabel.moveTo(ax.c2p(1.45, 4.2));\nscene.add(fLabel);\n\nconst title = new MathTex({ latex: '\\\\int_0^2 x^2\\\\,dx = \\\\tfrac{8}{3} \\\\approx 2.6667' });\nawait title.waitForRender();\ntitle.scale(0.75);\ntitle.moveTo([3.9, 1.6, 0]);\nscene.add(title);\n\nlet n = 4;\nlet mode = 'left';\nlet rects = new VGroup();\nlet sumLabel = null;\nlet modeLabel = null;\n\nfunction sampleX(i, dx) {\n  if (mode === 'left') return i * dx;\n  if (mode === 'right') return (i + 1) * dx;\n  return (i + 0.5) * dx;\n}\n\nfunction rebuild() {\n  scene.remove(rects);\n  rects = new VGroup();\n  const dx = 2 / n;\n  let total = 0;\n  for (let i = 0; i < n; i++) {\n    const x0 = i * dx, x1 = (i + 1) * dx;\n    const h = Math.pow(sampleX(i, dx), 2);\n    total += h * dx;\n    const p = new Polygon({\n      vertices: [ax.c2p(x0, 0), ax.c2p(x1, 0), ax.c2p(x1, h), ax.c2p(x0, h)],\n      color: BLUE_B\n    });\n    p.setFill(BLUE_D, 0.55);\n    p.setStrokeWidth(n > 40 ? 0.5 : 1.5);\n    rects.add(p);\n  }\n  scene.add(rects);\n  scene.remove(curve);\n  scene.add(curve);\n\n  if (sumLabel) scene.remove(sumLabel);\n  sumLabel = new Text({ text: 'n = ' + n + '\\nSum ≈ ' + total.toFixed(4) + '\\nError = ' + (total - 8 / 3).toFixed(4), color: WHITE, fontSize: 26 });\n  sumLabel.moveTo([3.9, 0, 0]);\n  scene.add(sumLabel);\n\n  if (modeLabel) scene.remove(modeLabel);\n  const names = { left: 'Left endpoints', right: 'Right endpoints', mid: 'Midpoints' };\n  modeLabel = new Text({ text: names[mode], color: BLUE_B, fontSize: 26 });\n  modeLabel.moveTo([3.9, -1.5, 0]);\n  scene.add(modeLabel);\n}\n\nrebuild();\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'Rectangles (n)', min: 1, max: 100, value: 4, step: 1, onChange: (v) => { n = Math.round(v); rebuild(); } });\ncontrols.addButton({ label: 'Left', onClick: () => { mode = 'left'; rebuild(); } });\ncontrols.addButton({ label: 'Midpoint', onClick: () => { mode = 'mid'; rebuild(); } });\ncontrols.addButton({ label: 'Right', onClick: () => { mode = 'right'; rebuild(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3984,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 3,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/calc-riemann-sums.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/calc-riemann-sums.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:33:40.940Z"
+}

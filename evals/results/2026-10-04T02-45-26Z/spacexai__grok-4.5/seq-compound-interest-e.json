@@ -1,0 +1,80 @@
+{
+  "itemId": "seq-compound-interest-e",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.77% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Axes [x -2.49..6.87, y -3.70..4.40] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.36% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 17822,
+        "inputTokens": 5056,
+        "cachedInputTokens": 128,
+        "outputTokens": 1536,
+        "costUsd": 0.0191104,
+        "rawResponse": "{\n  \"explanation\": \"If you invest $1 at 100% annual interest, compounding once a year gives you $2. Compounding n times a year gives (1 + 1/n)^n dollars. As n grows — monthly, daily, every second — this value climbs toward a limit of about $2.71828…, which is the number e. Continuous compounding is the mathematical ideal of interest growing at every instant.\",\n  \"manimCode\": \"const title = new Text({ text: 'Compounding $1 at 100% interest', color: WHITE, fontSize: 32 });\\ntitle.moveTo([0, 3.3, 0]);\\nscene.add(title);\\n\\nconst formula = new MathTex({ latex: '(1 + \\\\\\\\frac{1}{n})^{n} \\\\\\\\to e', color: WHITE });\\nawait formula.waitForRender();\\nformula.moveTo([0, 2.5, 0]);\\nscene.add(formula);\\n\\nconst ax = new Axes({\\n  xRange: [1, 40, 5],\\n  yRange: [1.5, 3, 0.5],\\n  xLength: 9,\\n  yLength: 4,\\n  tips: false\\n});\\nax.moveTo([0, -0.6, 0]);\\n\\nconst curve = ax.plot(n => Math.pow(1 + 1 / n, n), {\\n  color: BLUE,\\n  xRange: [1, 40],\\n  numSamples: 400\\n});\\n\\nconst eLine = new Polygon({\\n  vertices: [ax.c2p(1, Math.E), ax.c2p(40, Math.E)],\\n  color: YELLOW\\n});\\neLine.setStrokeWidth(2).setFillOpacity(0);\\n\\nconst eLabel = new Text({ text: 'e ≈ 2.71828', color: YELLOW, fontSize: 22 });\\neLabel.moveTo(ax.c2p(32, Math.E + 0.18));\\n\\nscene.add(ax, curve, eLine, eLabel);\\n\\nlet nVal = 1;\\nconst dot = new Dot({ point: ax.c2p(nVal, Math.pow(1 + 1 / nVal, nVal)), color: RED });\\nscene.add(dot);\\n\\nlet valueLabel = new Text({\\n  text: 'n = 1   →   $2.00000',\\n  color: WHITE,\\n  fontSize: 26\\n});\\nvalueLabel.moveTo([0, -3.4, 0]);\\nscene.add(valueLabel);\\n\\nfunction updateLabel(n) {\\n  const val = Math.pow(1 + 1 / n, n);\\n  const pos = valueLabel.getCenter();\\n  scene.remove(valueLabel);\\n  const nStr = Number.isInteger(n) ? String(n) : n.toFixed(1);\\n  valueLabel = new Text({\\n    text: 'n = ' + nStr + '   →   $' + val.toFixed(5),\\n    color: WHITE,\\n    fontSize: 26\\n  });\\n  valueLabel.moveTo(pos);\\n  scene.add(valueLabel);\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\ncontrols.addSlider({\\n  label: 'Compounds per year (n)',\\n  min: 1,\\n  max: 40,\\n  value: 1,\\n  step: 0.5,\\n  onChange: (v) => {\\n    nVal = v;\\n    const y = Math.pow(1 + 1 / nVal, nVal);\\n    dot.moveTo(ax.c2p(nVal, y));\\n    updateLabel(nVal);\\n  }\\n});\\n\\ncontrols.addButton({\\n  label: 'Jump to continuous (e)',\\n  onClick: () => {\\n    nVal = 40;\\n    const y = Math.pow(1 + 1 / nVal, nVal);\\n    dot.moveTo(ax.c2p(nVal, y));\\n    updateLabel(nVal);\\n  }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "If you invest $1 at 100% annual interest, compounding once a year gives you $2. Compounding n times a year gives (1 + 1/n)^n dollars. As n grows — monthly, daily, every second — this value climbs toward a limit of about $2.71828…, which is the number e. Continuous compounding is the mathematical ideal of interest growing at every instant."
+      },
+      "code": "const title = new Text({ text: 'Compounding $1 at 100% interest', color: WHITE, fontSize: 32 });\ntitle.moveTo([0, 3.3, 0]);\nscene.add(title);\n\nconst formula = new MathTex({ latex: '(1 + \\\\frac{1}{n})^{n} \\\\to e', color: WHITE });\nawait formula.waitForRender();\nformula.moveTo([0, 2.5, 0]);\nscene.add(formula);\n\nconst ax = new Axes({\n  xRange: [1, 40, 5],\n  yRange: [1.5, 3, 0.5],\n  xLength: 9,\n  yLength: 4,\n  tips: false\n});\nax.moveTo([0, -0.6, 0]);\n\nconst curve = ax.plot(n => Math.pow(1 + 1 / n, n), {\n  color: BLUE,\n  xRange: [1, 40],\n  numSamples: 400\n});\n\nconst eLine = new Polygon({\n  vertices: [ax.c2p(1, Math.E), ax.c2p(40, Math.E)],\n  color: YELLOW\n});\neLine.setStrokeWidth(2).setFillOpacity(0);\n\nconst eLabel = new Text({ text: 'e ≈ 2.71828', color: YELLOW, fontSize: 22 });\neLabel.moveTo(ax.c2p(32, Math.E + 0.18));\n\nscene.add(ax, curve, eLine, eLabel);\n\nlet nVal = 1;\nconst dot = new Dot({ point: ax.c2p(nVal, Math.pow(1 + 1 / nVal, nVal)), color: RED });\nscene.add(dot);\n\nlet valueLabel = new Text({\n  text: 'n = 1   →   $2.00000',\n  color: WHITE,\n  fontSize: 26\n});\nvalueLabel.moveTo([0, -3.4, 0]);\nscene.add(valueLabel);\n\nfunction updateLabel(n) {\n  const val = Math.pow(1 + 1 / n, n);\n  const pos = valueLabel.getCenter();\n  scene.remove(valueLabel);\n  const nStr = Number.isInteger(n) ? String(n) : n.toFixed(1);\n  valueLabel = new Text({\n    text: 'n = ' + nStr + '   →   $' + val.toFixed(5),\n    color: WHITE,\n    fontSize: 26\n  });\n  valueLabel.moveTo(pos);\n  scene.add(valueLabel);\n}\n\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\ncontrols.addSlider({\n  label: 'Compounds per year (n)',\n  min: 1,\n  max: 40,\n  value: 1,\n  step: 0.5,\n  onChange: (v) => {\n    nVal = v;\n    const y = Math.pow(1 + 1 / nVal, nVal);\n    dot.moveTo(ax.c2p(nVal, y));\n    updateLabel(nVal);\n  }\n});\n\ncontrols.addButton({\n  label: 'Jump to continuous (e)',\n  onClick: () => {\n    nVal = 40;\n    const y = Math.pow(1 + 1 / nVal, nVal);\n    dot.moveTo(ax.c2p(nVal, y));\n    updateLabel(nVal);\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3723,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/seq-compound-interest-e.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/seq-compound-interest-e.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:11.756Z"
+}

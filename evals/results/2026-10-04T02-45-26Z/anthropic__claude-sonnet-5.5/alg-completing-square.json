@@ -1,0 +1,80 @@
+{
+  "itemId": "alg-completing-square",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "13.38% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "MathTex \"x^2+6x=(x+3)^2-9\" [x 1.67..7.32, y -0.30..0.36] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "8.81% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 12170,
+        "inputTokens": 7957,
+        "cachedInputTokens": 7476,
+        "outputTokens": 1510,
+        "costUsd": 0.018515200000000002,
+        "rawResponse": "{\"explanation\":\"Think of x² + 6x as the area of a square with side x plus two rectangles of size x by 3 (the 6x split in half). Put them together and you get an L-shape with a missing corner. That corner is a 3 by 3 square with area 9. Adding it completes the big square of side (x+3), so x² + 6x + 9 = (x+3)², and therefore x² + 6x = (x+3)² − 9. Drag the slider to change x and see the pieces resize.\",\"manimCode\":\"const u = 0.6; // units per 1 of math length\\nlet x = 3;\\nlet group = null;\\nlet info = null;\\n\\nconst title = new Text({ text: 'Completing the square: x² + 6x', color: WHITE, fontSize: 32 });\\ntitle.moveTo([0, 3.5, 0]);\\nscene.add(title);\\n\\nconst eq = new MathTex({ latex: 'x^2+6x+9=(x+3)^2', color: YELLOW });\\nawait eq.waitForRender();\\neq.moveTo([0, -3.4, 0]);\\nscene.add(eq);\\n\\nconst eq2 = new MathTex({ latex: 'x^2+6x=(x+3)^2-9', color: GREEN });\\nawait eq2.waitForRender();\\neq2.moveTo([4.5, 0, 0]);\\nscene.add(eq2);\\n\\nfunction rect(x0, y0, w, h, color, op) {\\n  // x0,y0 = top-left in world coordinates\\n  const r = new Polygon({\\n    vertices: [[x0, y0, 0], [x0 + w, y0, 0], [x0 + w, y0 - h, 0], [x0, y0 - h, 0]],\\n    color: color\\n  });\\n  r.setFill(color, op);\\n  return r;\\n}\\n\\nfunction build() {\\n  if (group) scene.remove(group);\\n  if (info) scene.remove(info);\\n  const s = x * u;\\n  const t = 3 * u;\\n  const total = s + 2 * t;\\n  const left = -2.5 - total / 2 + 0.0;\\n  const top = 0.3 + total / 2;\\n  const sq = rect(left, top, s, s, BLUE, 0.5);\\n  const r1 = rect(left + s, top, t, s, ORANGE, 0.5);\\n  const r2 = rect(left, top - s, s, t, ORANGE, 0.5);\\n  const corner = rect(left + s, top - s, t, t, RED, 0.25);\\n  // corner is the \\\"missing\\\" piece: only partial 3x3 → use 3 wide\\n  group = new VGroup(sq, r1, r2, corner);\\n  scene.add(group);\\n  info = new Text({ text: 'x = ' + x.toFixed(1) + '   blue: x²   orange: 3x + 3x   red: 9', color: WHITE, fontSize: 22 });\\n  info.moveTo([-2.5, -3.0, 0]);\\n  scene.add(info);\\n}\\n// Adjust: side of full square = x + 3 (rectangles are 3 wide each, but only one corner of 3x3)\\nfunction build2() {\\n  if (group) scene.remove(group);\\n  if (info) scene.remove(info);\\n  const s = x * u;\\n  const t = 3 * u;\\n  const total = s + t;\\n  const left = -2.5 - total / 2;\\n  const top = 0.1 + total / 2;\\n  const sq = rect(left, top, s, s, BLUE, 0.5);\\n  const r1 = rect(left + s, top, t, s, ORANGE, 0.5);\\n  const r2 = rect(left, top - s, s, t, ORANGE, 0.5);\\n  const corner = rect(left + s, top - s, t, t, RED, 0.35);\\n  group = new VGroup(sq, r1, r2, corner);\\n  scene.add(group);\\n  info = new Text({ text: 'x = ' + x.toFixed(1) + '  |  blue: x²  orange: 3x + 3x  red: 3² = 9', color: WHITE, fontSize: 20 });\\n  info.moveTo([-2.5, -3.0, 0]);\\n  scene.add(info);\\n}\\nbuild2();\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'x', min: 0.5, max: 5, value: 3, step: 0.1, onChange: (v) => { x = v; build2(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Think of x² + 6x as the area of a square with side x plus two rectangles of size x by 3 (the 6x split in half). Put them together and you get an L-shape with a missing corner. That corner is a 3 by 3 square with area 9. Adding it completes the big square of side (x+3), so x² + 6x + 9 = (x+3)², and therefore x² + 6x = (x+3)² − 9. Drag the slider to change x and see the pieces resize."
+      },
+      "code": "const u = 0.6; // units per 1 of math length\nlet x = 3;\nlet group = null;\nlet info = null;\n\nconst title = new Text({ text: 'Completing the square: x² + 6x', color: WHITE, fontSize: 32 });\ntitle.moveTo([0, 3.5, 0]);\nscene.add(title);\n\nconst eq = new MathTex({ latex: 'x^2+6x+9=(x+3)^2', color: YELLOW });\nawait eq.waitForRender();\neq.moveTo([0, -3.4, 0]);\nscene.add(eq);\n\nconst eq2 = new MathTex({ latex: 'x^2+6x=(x+3)^2-9', color: GREEN });\nawait eq2.waitForRender();\neq2.moveTo([4.5, 0, 0]);\nscene.add(eq2);\n\nfunction rect(x0, y0, w, h, color, op) {\n  // x0,y0 = top-left in world coordinates\n  const r = new Polygon({\n    vertices: [[x0, y0, 0], [x0 + w, y0, 0], [x0 + w, y0 - h, 0], [x0, y0 - h, 0]],\n    color: color\n  });\n  r.setFill(color, op);\n  return r;\n}\n\nfunction build() {\n  if (group) scene.remove(group);\n  if (info) scene.remove(info);\n  const s = x * u;\n  const t = 3 * u;\n  const total = s + 2 * t;\n  const left = -2.5 - total / 2 + 0.0;\n  const top = 0.3 + total / 2;\n  const sq = rect(left, top, s, s, BLUE, 0.5);\n  const r1 = rect(left + s, top, t, s, ORANGE, 0.5);\n  const r2 = rect(left, top - s, s, t, ORANGE, 0.5);\n  const corner = rect(left + s, top - s, t, t, RED, 0.25);\n  // corner is the \"missing\" piece: only partial 3x3 → use 3 wide\n  group = new VGroup(sq, r1, r2, corner);\n  scene.add(group);\n  info = new Text({ text: 'x = ' + x.toFixed(1) + '   blue: x²   orange: 3x + 3x   red: 9', color: WHITE, fontSize: 22 });\n  info.moveTo([-2.5, -3.0, 0]);\n  scene.add(info);\n}\n// Adjust: side of full square = x + 3 (rectangles are 3 wide each, but only one corner of 3x3)\nfunction build2() {\n  if (group) scene.remove(group);\n  if (info) scene.remove(info);\n  const s = x * u;\n  const t = 3 * u;\n  const total = s + t;\n  const left = -2.5 - total / 2;\n  const top = 0.1 + total / 2;\n  const sq = rect(left, top, s, s, BLUE, 0.5);\n  const r1 = rect(left + s, top, t, s, ORANGE, 0.5);\n  const r2 = rect(left, top - s, s, t, ORANGE, 0.5);\n  const corner = rect(left + s, top - s, t, t, RED, 0.35);\n  group = new VGroup(sq, r1, r2, corner);\n  scene.add(group);\n  info = new Text({ text: 'x = ' + x.toFixed(1) + '  |  blue: x²  orange: 3x + 3x  red: 3² = 9', color: WHITE, fontSize: 20 });\n  info.moveTo([-2.5, -3.0, 0]);\n  scene.add(info);\n}\nbuild2();\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'x', min: 0.5, max: 5, value: 3, step: 0.1, onChange: (v) => { x = v; build2(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4748,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/alg-completing-square.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/alg-completing-square.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:33:53.913Z"
+}

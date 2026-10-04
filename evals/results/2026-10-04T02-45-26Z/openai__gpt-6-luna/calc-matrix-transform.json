@@ -1,0 +1,79 @@
+{
+  "itemId": "calc-matrix-transform",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.80% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.00% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 13096,
+        "inputTokens": 12285,
+        "cachedInputTokens": 12032,
+        "outputTokens": 528,
+        "costUsd": 0.00040961999999999997,
+        "rawResponse": "{\"explanation\":\"The matrix sends a point \\u001b[0mx,y\\u001b[0m to \\u001b[0m(2x+y,\\u0010y)\\u001b[0m: it stretches horizontally and shears, keeping the x-axis fixed. Its determinant is \\u001b[0m2\\u001b[0m, so every region's area doubles; the unit square becomes a parallelogram of area 2.\",\"manimCode\":\"const ax = new Axes({ xRange: [-3, 3, 1], yRange: [-2, 2, 1], xLength: 8, yLength: 5.4, tips: true });\\nconst before = new Polygon({ vertices: [ax.c2p(0,0), ax.c2p(1,0), ax.c2p(1,1), ax.c2p(0,1)], color: BLUE });\\nbefore.setFill(BLUE, 0.24).setStrokeWidth(3);\\nconst after = new Polygon({ vertices: [ax.c2p(0,0), ax.c2p(2,0), ax.c2p(3,1), ax.c2p(1,1)], color: YELLOW });\\nafter.setFill(YELLOW, 0.42).setStrokeWidth(3);\\nconst e1 = new Arrow({ start: ax.c2p(0,0), end: ax.c2p(2,0), color: TEAL });\\nconst e2 = new Arrow({ start: ax.c2p(0,0), end: ax.c2p(1,1), color: ORANGE });\\nconst title = new Text({ text: 'A = [[2, 1], [0, 1]]', color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.1, 0]);\\nconst det = new Text({ text: 'det(A) = 2   |   unit square area: 1 → 2', color: GOLD, fontSize: 25 });\\ndet.moveTo([0, -3.15, 0]);\\nscene.add(ax, before, after, e1, e2, title, det);\\nmakeDraggable(after, scene, { onDrag: () => {} });\\nawait scene.wait(999999);\"}",
+        "explanation": "The matrix sends a point \u001b[0mx,y\u001b[0m to \u001b[0m(2x+y,\u0010y)\u001b[0m: it stretches horizontally and shears, keeping the x-axis fixed. Its determinant is \u001b[0m2\u001b[0m, so every region's area doubles; the unit square becomes a parallelogram of area 2."
+      },
+      "code": "const ax = new Axes({ xRange: [-3, 3, 1], yRange: [-2, 2, 1], xLength: 8, yLength: 5.4, tips: true });\nconst before = new Polygon({ vertices: [ax.c2p(0,0), ax.c2p(1,0), ax.c2p(1,1), ax.c2p(0,1)], color: BLUE });\nbefore.setFill(BLUE, 0.24).setStrokeWidth(3);\nconst after = new Polygon({ vertices: [ax.c2p(0,0), ax.c2p(2,0), ax.c2p(3,1), ax.c2p(1,1)], color: YELLOW });\nafter.setFill(YELLOW, 0.42).setStrokeWidth(3);\nconst e1 = new Arrow({ start: ax.c2p(0,0), end: ax.c2p(2,0), color: TEAL });\nconst e2 = new Arrow({ start: ax.c2p(0,0), end: ax.c2p(1,1), color: ORANGE });\nconst title = new Text({ text: 'A = [[2, 1], [0, 1]]', color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.1, 0]);\nconst det = new Text({ text: 'det(A) = 2   |   unit square area: 1 → 2', color: GOLD, fontSize: 25 });\ndet.moveTo([0, -3.15, 0]);\nscene.add(ax, before, after, e1, e2, title, det);\nmakeDraggable(after, scene, { onDrag: () => {} });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3208,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/calc-matrix-transform.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/calc-matrix-transform.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:56:15.198Z"
+}

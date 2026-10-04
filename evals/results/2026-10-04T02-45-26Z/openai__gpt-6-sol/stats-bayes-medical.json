@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-bayes-medical",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "6.20% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.53% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 69993,
+        "inputTokens": 12295,
+        "cachedInputTokens": 11008,
+        "outputTokens": 2747,
+        "costUsd": 0.0322456,
+        "rawResponse": "{\"explanation\":\"The chance is about 8.3%. Imagine 1,000 people: 10 are sick, and 9 of them test positive. Of the 990 healthy people, 99 also test positive, so only 9 of the 108 positive results come from sick people. Drag the dot to see how the answer changes when the disease is more or less common.\",\"manimCode\":\"const title = new Text({ text: 'What does a positive test mean?', color: WHITE, fontSize: 34 });\\ntitle.moveTo([0, 3.3, 0]);\\nconst population = new Text({ text: 'Out of 1,000 people', color: WHITE, fontSize: 26 });\\npopulation.moveTo([0, 2.45, 0]);\\nconst sickHeader = new Text({ text: 'SICK', color: RED, fontSize: 25 });\\nsickHeader.moveTo([-3.2, 1.8, 0]);\\nconst healthyHeader = new Text({ text: 'HEALTHY', color: BLUE, fontSize: 25 });\\nhealthyHeader.moveTo([3.2, 1.8, 0]);\\nconst barTitle = new Text({ text: 'Among all positive tests', color: WHITE, fontSize: 24 });\\nbarTitle.moveTo([0, 0.1, 0]);\\nconst formatCount = v => Math.abs(v - Math.round(v)) < 0.001 ? String(Math.round(v)) : v.toFixed(1);\\nlet prevalence = 0.01;\\nlet sickCount, healthyCount, trueCount, falseCount, answer;\\nfunction replaceLabel(oldLabel, message, color, size, position) {\\n  if (oldLabel) scene.remove(oldLabel);\\n  const fresh = new Text({ text: message, color, fontSize: size });\\n  fresh.moveTo(position);\\n  scene.add(fresh);\\n  return fresh;\\n}\\nconst leftX = -5.2;\\nconst totalWidth = 10.4;\\nconst barBottom = -0.85;\\nconst barTop = -0.45;\\nconst trueBar = new Polygon({ vertices: [[leftX, barBottom, 0], [leftX + 0.8, barBottom, 0], [leftX + 0.8, barTop, 0], [leftX, barTop, 0]], color: RED });\\ntrueBar.setFill(RED, 0.9);\\nconst falseBar = new Polygon({ vertices: [[leftX + 0.8, barBottom, 0], [leftX + totalWidth, barBottom, 0], [leftX + totalWidth, barTop, 0], [leftX + 0.8, barTop, 0]], color: BLUE });\\nfalseBar.setFill(BLUE, 0.75);\\nconst sliderLine = new Line({ start: [-4.3, -2.8, 0], end: [4.3, -2.8, 0], color: GRAY });\\nconst handle = new Dot({ point: [-3.52, -2.8, 0], color: YELLOW });\\nconst dragHint = new Text({ text: 'Drag to change disease prevalence: 0.1% to 10%', color: GRAY, fontSize: 20 });\\ndragHint.moveTo([0, -3.4, 0]);\\nscene.add(title, population, sickHeader, healthyHeader, barTitle, trueBar, falseBar, sliderLine, handle, dragHint);\\nfunction refresh() {\\n  const sick = 1000 * prevalence;\\n  const healthy = 1000 - sick;\\n  const truePos = 0.9 * sick;\\n  const falsePos = 0.1 * healthy;\\n  const posterior = truePos / (truePos + falsePos);\\n  const split = leftX + totalWidth * posterior;\\n  trueBar.setVertices([[leftX, barBottom, 0], [split, barBottom, 0], [split, barTop, 0], [leftX, barTop, 0]]);\\n  falseBar.setVertices([[split, barBottom, 0], [leftX + totalWidth, barBottom, 0], [leftX + totalWidth, barTop, 0], [split, barTop, 0]]);\\n  sickCount = replaceLabel(sickCount, formatCount(sick) + ' people', RED, 25, [-3.2, 1.25, 0]);\\n  healthyCount = replaceLabel(healthyCount, formatCount(healthy) + ' people', BLUE, 25, [3.2, 1.25, 0]);\\n  trueCount = replaceLabel(trueCount, formatCount(truePos) + ' test positive', RED, 23, [-3.2, 0.7, 0]);\\n  falseCount = replaceLabel(falseCount, formatCount(falsePos) + ' test positive', BLUE, 23, [3.2, 0.7, 0]);\\n  answer = replaceLabel(answer, formatCount(truePos) + ' / (' + formatCount(truePos) + ' + ' + formatCount(falsePos) + ') = ' + (100 * posterior).toFixed(1) + '% chance of being sick', YELLOW, 27, [0, -1.65, 0]);\\n}\\nrefresh();\\nmakeDraggable(handle, scene, { constrainX: [-4.3, 4.3], constrainY: [-2.8, -2.8], onDrag: (mob, pos) => {\\n  const x = Math.max(-4.3, Math.min(4.3, pos[0]));\\n  mob.moveTo([x, -2.8, 0]);\\n  prevalence = 0.001 + (x + 4.3) / 8.6 * 0.099;\\n  refresh();\\n}});\\nawait scene.wait(999999);\"}",
+        "explanation": "The chance is about 8.3%. Imagine 1,000 people: 10 are sick, and 9 of them test positive. Of the 990 healthy people, 99 also test positive, so only 9 of the 108 positive results come from sick people. Drag the dot to see how the answer changes when the disease is more or less common."
+      },
+      "code": "const title = new Text({ text: 'What does a positive test mean?', color: WHITE, fontSize: 34 });\ntitle.moveTo([0, 3.3, 0]);\nconst population = new Text({ text: 'Out of 1,000 people', color: WHITE, fontSize: 26 });\npopulation.moveTo([0, 2.45, 0]);\nconst sickHeader = new Text({ text: 'SICK', color: RED, fontSize: 25 });\nsickHeader.moveTo([-3.2, 1.8, 0]);\nconst healthyHeader = new Text({ text: 'HEALTHY', color: BLUE, fontSize: 25 });\nhealthyHeader.moveTo([3.2, 1.8, 0]);\nconst barTitle = new Text({ text: 'Among all positive tests', color: WHITE, fontSize: 24 });\nbarTitle.moveTo([0, 0.1, 0]);\nconst formatCount = v => Math.abs(v - Math.round(v)) < 0.001 ? String(Math.round(v)) : v.toFixed(1);\nlet prevalence = 0.01;\nlet sickCount, healthyCount, trueCount, falseCount, answer;\nfunction replaceLabel(oldLabel, message, color, size, position) {\n  if (oldLabel) scene.remove(oldLabel);\n  const fresh = new Text({ text: message, color, fontSize: size });\n  fresh.moveTo(position);\n  scene.add(fresh);\n  return fresh;\n}\nconst leftX = -5.2;\nconst totalWidth = 10.4;\nconst barBottom = -0.85;\nconst barTop = -0.45;\nconst trueBar = new Polygon({ vertices: [[leftX, barBottom, 0], [leftX + 0.8, barBottom, 0], [leftX + 0.8, barTop, 0], [leftX, barTop, 0]], color: RED });\ntrueBar.setFill(RED, 0.9);\nconst falseBar = new Polygon({ vertices: [[leftX + 0.8, barBottom, 0], [leftX + totalWidth, barBottom, 0], [leftX + totalWidth, barTop, 0], [leftX + 0.8, barTop, 0]], color: BLUE });\nfalseBar.setFill(BLUE, 0.75);\nconst sliderLine = new Line({ start: [-4.3, -2.8, 0], end: [4.3, -2.8, 0], color: GRAY });\nconst handle = new Dot({ point: [-3.52, -2.8, 0], color: YELLOW });\nconst dragHint = new Text({ text: 'Drag to change disease prevalence: 0.1% to 10%', color: GRAY, fontSize: 20 });\ndragHint.moveTo([0, -3.4, 0]);\nscene.add(title, population, sickHeader, healthyHeader, barTitle, trueBar, falseBar, sliderLine, handle, dragHint);\nfunction refresh() {\n  const sick = 1000 * prevalence;\n  const healthy = 1000 - sick;\n  const truePos = 0.9 * sick;\n  const falsePos = 0.1 * healthy;\n  const posterior = truePos / (truePos + falsePos);\n  const split = leftX + totalWidth * posterior;\n  trueBar.setVertices([[leftX, barBottom, 0], [split, barBottom, 0], [split, barTop, 0], [leftX, barTop, 0]]);\n  falseBar.setVertices([[split, barBottom, 0], [leftX + totalWidth, barBottom, 0], [leftX + totalWidth, barTop, 0], [split, barTop, 0]]);\n  sickCount = replaceLabel(sickCount, formatCount(sick) + ' people', RED, 25, [-3.2, 1.25, 0]);\n  healthyCount = replaceLabel(healthyCount, formatCount(healthy) + ' people', BLUE, 25, [3.2, 1.25, 0]);\n  trueCount = replaceLabel(trueCount, formatCount(truePos) + ' test positive', RED, 23, [-3.2, 0.7, 0]);\n  falseCount = replaceLabel(falseCount, formatCount(falsePos) + ' test positive', BLUE, 23, [3.2, 0.7, 0]);\n  answer = replaceLabel(answer, formatCount(truePos) + ' / (' + formatCount(truePos) + ' + ' + formatCount(falsePos) + ') = ' + (100 * posterior).toFixed(1) + '% chance of being sick', YELLOW, 27, [0, -1.65, 0]);\n}\nrefresh();\nmakeDraggable(handle, scene, { constrainX: [-4.3, 4.3], constrainY: [-2.8, -2.8], onDrag: (mob, pos) => {\n  const x = Math.max(-4.3, Math.min(4.3, pos[0]));\n  mob.moveTo([x, -2.8, 0]);\n  prevalence = 0.001 + (x + 4.3) / 8.6 * 0.099;\n  refresh();\n}});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3198,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/stats-bayes-medical.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/stats-bayes-medical.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:52:27.489Z"
+}

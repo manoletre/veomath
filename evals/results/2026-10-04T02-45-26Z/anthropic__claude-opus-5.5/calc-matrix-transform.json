@@ -1,0 +1,80 @@
+{
+  "itemId": "calc-matrix-transform",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "11.10% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Polygon [x -28.00..-12.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -26.00..-10.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -24.00..-8.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -22.00..-6.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -20.00..-4.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -18.00..-2.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -16.00..0.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -14.00..2.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -12.00..4.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -10.00..6.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -8.00..8.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -6.00..10.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -4.00..12.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -2.00..14.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x 0.00..16.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x 2.00..18.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x 4.00..20.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x 6.00..22.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x 8.00..24.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x 10.00..26.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x 12.00..28.00, y -8.00..8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -36.00..20.00, y -8.00..-8.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -35.00..21.00, y -7.00..-7.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -34.00..22.00, y -6.00..-6.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -33.00..23.00, y -5.00..-5.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -32.00..24.00, y -4.00..-4.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -31.00..25.00, y -3.00..-3.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -30.00..26.00, y -2.00..-2.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -29.00..27.00, y -1.00..-1.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -28.00..28.00, y 0.00..0.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -27.00..29.00, y 1.00..1.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -26.00..30.00, y 2.00..2.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -25.00..31.00, y 3.00..3.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -24.00..32.00, y 4.00..4.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -23.00..33.00, y 5.00..5.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -22.00..34.00, y 6.00..6.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -21.00..35.00, y 7.00..7.00] exceeds frame ±7.11 × ±4.00\nPolygon [x -20.00..36.00, y 8.00..8.00] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=5 buttons=2 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "14.82% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 32800,
+        "inputTokens": 8063,
+        "cachedInputTokens": 7569,
+        "outputTokens": 3738,
+        "costUsd": 0.08021779999999998,
+        "rawResponse": "{\"explanation\":\"The matrix [[2, 1], [0, 1]] sends the basis vector î = (1, 0) to its first column, (2, 0), and sends ĵ = (0, 1) to its second column, (1, 1). That stretches the plane horizontally by 2 and shears it to the right. Grid lines stay parallel and evenly spaced. The yellow unit square becomes a parallelogram with corners (0,0), (2,0), (3,1) and (1,1). Its area is 2, and that equals the determinant: ad − bc = 2·1 − 1·0 = 2. The determinant is the factor by which the matrix scales every area. The shear (the 1 in the top right) slants the square without changing its area. The 2 doubles the width, and that is what doubles the area. Use the \\\"Morph t\\\" slider or the Animate button to watch the plane change gradually. You can also change a, b, c and d to try other matrices. When the determinant is 0, the plane flattens onto a line or a point. When it is negative, the square turns red because the plane has been flipped.\",\"manimCode\":\"let a = 2, b = 1, c = 0, d = 1;\\nlet t = 0;\\n\\nfunction mat() {\\n  return [(1 - t) + t * a, t * b, t * c, (1 - t) + t * d];\\n}\\nfunction ap(m, x, y) {\\n  return [m[0] * x + m[1] * y, m[2] * x + m[3] * y, 0];\\n}\\nfunction seg(p, q, color, w) {\\n  const s = new Polygon({ vertices: [p, q], color: color });\\n  s.setStrokeWidth(w);\\n  s.setFillOpacity(0);\\n  return s;\\n}\\n\\n// Ghost original grid\\nfor (let k = -7; k <= 7; k++) scene.add(seg([k, -4, 0], [k, 4, 0], GRAY, 1));\\nfor (let k = -4; k <= 4; k++) scene.add(seg([-7, k, 0], [7, k, 0], GRAY, 1));\\n\\n// Transformed grid\\nconst gridLines = [];\\nfor (let k = -10; k <= 10; k++) {\\n  const s = seg([k, -8, 0], [k, 8, 0], BLUE_D, 1.5);\\n  gridLines.push({ s: s, p: [k, -8], q: [k, 8] });\\n  scene.add(s);\\n}\\nfor (let k = -8; k <= 8; k++) {\\n  const s = seg([-14, k, 0], [14, k, 0], BLUE_D, 1.5);\\n  gridLines.push({ s: s, p: [-14, k], q: [14, k] });\\n  scene.add(s);\\n}\\n\\n// Unit square -> parallelogram\\nconst sq = new Polygon({ vertices: [[0,0,0],[1,0,0],[1,1,0],[0,1,0]], color: YELLOW });\\nsq.setFill(YELLOW, 0.4);\\nsq.setStrokeWidth(3);\\nscene.add(sq);\\n\\n// Basis vectors\\nconst iVec = seg([0,0,0], [1,0,0], GREEN, 6);\\nconst jVec = seg([0,0,0], [0,1,0], RED, 6);\\nconst iTip = new Dot({ point: [1,0,0], color: GREEN });\\nconst jTip = new Dot({ point: [0,1,0], color: RED });\\nscene.add(iVec, jVec, iTip, jTip);\\n\\n// Static formula panel\\nconst panel = new Rectangle({ width: 4.6, height: 2.1, color: GRAY });\\npanel.setFill(BLACK, 0.85);\\npanel.moveTo([-4.5, 2.7, 0]);\\nscene.add(panel);\\nconst formula = new MathTex({ latex: '\\\\\\\\det\\\\\\\\begin{pmatrix} a & b \\\\\\\\\\\\\\\\ c & d \\\\\\\\end{pmatrix} = ad - bc' });\\nawait formula.waitForRender();\\nformula.scale(0.6);\\nformula.moveTo([-4.5, 3.3, 0]);\\nscene.add(formula);\\n\\nlet info = null;\\nlet info2 = null;\\nfunction fmt(v) { return (Math.round(v * 100) / 100).toString(); }\\n\\nfunction update() {\\n  const m = mat();\\n  for (const g of gridLines) g.s.setVertices([ap(m, g.p[0], g.p[1]), ap(m, g.q[0], g.q[1])]);\\n  sq.setVertices([ap(m,0,0), ap(m,1,0), ap(m,1,1), ap(m,0,1)]);\\n  const det = m[0] * m[3] - m[1] * m[2];\\n  const col = det < 0 ? RED : YELLOW;\\n  sq.setColor(col);\\n  sq.setFill(col, 0.4);\\n  const pi = ap(m, 1, 0), pj = ap(m, 0, 1);\\n  iVec.setVertices([[0,0,0], pi]);\\n  jVec.setVertices([[0,0,0], pj]);\\n  iTip.moveTo(pi);\\n  jTip.moveTo(pj);\\n\\n  if (info) scene.remove(info);\\n  if (info2) scene.remove(info2);\\n  info = new Text({ text: 'M = [[' + fmt(m[0]) + ', ' + fmt(m[1]) + '], [' + fmt(m[2]) + ', ' + fmt(m[3]) + ']]', color: WHITE, fontSize: 22 });\\n  info.moveTo([-4.5, 2.6, 0]);\\n  info2 = new Text({ text: 'det = ' + fmt(det) + '   Area = ' + fmt(Math.abs(det)) + (det < 0 ? ' (flipped)' : ''), color: col, fontSize: 22 });\\n  info2.moveTo([-4.5, 2.0, 0]);\\n  scene.add(info, info2);\\n}\\nupdate();\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\nlet animating = false;\\ncontrols.addSlider({ label: 'Morph t', min: 0, max: 1, value: 0, step: 0.01, onChange: (v) => { t = v; update(); } });\\ncontrols.addSlider({ label: 'a', min: -3, max: 3, value: 2, step: 0.1, onChange: (v) => { a = v; update(); } });\\ncontrols.addSlider({ label: 'b', min: -3, max: 3, value: 1, step: 0.1, onChange: (v) => { b = v; update(); } });\\ncontrols.addSlider({ label: 'c', min: -3, max: 3, value: 0, step: 0.1, onChange: (v) => { c = v; update(); } });\\ncontrols.addSlider({ label: 'd', min: -3, max: 3, value: 1, step: 0.1, onChange: (v) => { d = v; update(); } });\\n\\nasync function animateMorph() {\\n  if (animating) return;\\n  animating = true;\\n  const steps = 90;\\n  for (let i = 0; i <= steps; i++) {\\n    const s = i / steps;\\n    t = s * s * (3 - 2 * s);\\n    update();\\n    await scene.wait(1 / 60);\\n  }\\n  animating = false;\\n}\\ncontrols.addButton({ label: 'Animate (t: 0 → 1)', onClick: () => { animateMorph(); } });\\ncontrols.addButton({ label: 'Reset t', onClick: () => { t = 0; update(); } });\\n\\nawait scene.wait(0.8);\\nawait animateMorph();\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The matrix [[2, 1], [0, 1]] sends the basis vector î = (1, 0) to its first column, (2, 0), and sends ĵ = (0, 1) to its second column, (1, 1). That stretches the plane horizontally by 2 and shears it to the right. Grid lines stay parallel and evenly spaced. The yellow unit square becomes a parallelogram with corners (0,0), (2,0), (3,1) and (1,1). Its area is 2, and that equals the determinant: ad − bc = 2·1 − 1·0 = 2. The determinant is the factor by which the matrix scales every area. The shear (the 1 in the top right) slants the square without changing its area. The 2 doubles the width, and that is what doubles the area. Use the \"Morph t\" slider or the Animate button to watch the plane change gradually. You can also change a, b, c and d to try other matrices. When the determinant is 0, the plane flattens onto a line or a point. When it is negative, the square turns red because the plane has been flipped."
+      },
+      "code": "let a = 2, b = 1, c = 0, d = 1;\nlet t = 0;\n\nfunction mat() {\n  return [(1 - t) + t * a, t * b, t * c, (1 - t) + t * d];\n}\nfunction ap(m, x, y) {\n  return [m[0] * x + m[1] * y, m[2] * x + m[3] * y, 0];\n}\nfunction seg(p, q, color, w) {\n  const s = new Polygon({ vertices: [p, q], color: color });\n  s.setStrokeWidth(w);\n  s.setFillOpacity(0);\n  return s;\n}\n\n// Ghost original grid\nfor (let k = -7; k <= 7; k++) scene.add(seg([k, -4, 0], [k, 4, 0], GRAY, 1));\nfor (let k = -4; k <= 4; k++) scene.add(seg([-7, k, 0], [7, k, 0], GRAY, 1));\n\n// Transformed grid\nconst gridLines = [];\nfor (let k = -10; k <= 10; k++) {\n  const s = seg([k, -8, 0], [k, 8, 0], BLUE_D, 1.5);\n  gridLines.push({ s: s, p: [k, -8], q: [k, 8] });\n  scene.add(s);\n}\nfor (let k = -8; k <= 8; k++) {\n  const s = seg([-14, k, 0], [14, k, 0], BLUE_D, 1.5);\n  gridLines.push({ s: s, p: [-14, k], q: [14, k] });\n  scene.add(s);\n}\n\n// Unit square -> parallelogram\nconst sq = new Polygon({ vertices: [[0,0,0],[1,0,0],[1,1,0],[0,1,0]], color: YELLOW });\nsq.setFill(YELLOW, 0.4);\nsq.setStrokeWidth(3);\nscene.add(sq);\n\n// Basis vectors\nconst iVec = seg([0,0,0], [1,0,0], GREEN, 6);\nconst jVec = seg([0,0,0], [0,1,0], RED, 6);\nconst iTip = new Dot({ point: [1,0,0], color: GREEN });\nconst jTip = new Dot({ point: [0,1,0], color: RED });\nscene.add(iVec, jVec, iTip, jTip);\n\n// Static formula panel\nconst panel = new Rectangle({ width: 4.6, height: 2.1, color: GRAY });\npanel.setFill(BLACK, 0.85);\npanel.moveTo([-4.5, 2.7, 0]);\nscene.add(panel);\nconst formula = new MathTex({ latex: '\\\\det\\\\begin{pmatrix} a & b \\\\\\\\ c & d \\\\end{pmatrix} = ad - bc' });\nawait formula.waitForRender();\nformula.scale(0.6);\nformula.moveTo([-4.5, 3.3, 0]);\nscene.add(formula);\n\nlet info = null;\nlet info2 = null;\nfunction fmt(v) { return (Math.round(v * 100) / 100).toString(); }\n\nfunction update() {\n  const m = mat();\n  for (const g of gridLines) g.s.setVertices([ap(m, g.p[0], g.p[1]), ap(m, g.q[0], g.q[1])]);\n  sq.setVertices([ap(m,0,0), ap(m,1,0), ap(m,1,1), ap(m,0,1)]);\n  const det = m[0] * m[3] - m[1] * m[2];\n  const col = det < 0 ? RED : YELLOW;\n  sq.setColor(col);\n  sq.setFill(col, 0.4);\n  const pi = ap(m, 1, 0), pj = ap(m, 0, 1);\n  iVec.setVertices([[0,0,0], pi]);\n  jVec.setVertices([[0,0,0], pj]);\n  iTip.moveTo(pi);\n  jTip.moveTo(pj);\n\n  if (info) scene.remove(info);\n  if (info2) scene.remove(info2);\n  info = new Text({ text: 'M = [[' + fmt(m[0]) + ', ' + fmt(m[1]) + '], [' + fmt(m[2]) + ', ' + fmt(m[3]) + ']]', color: WHITE, fontSize: 22 });\n  info.moveTo([-4.5, 2.6, 0]);\n  info2 = new Text({ text: 'det = ' + fmt(det) + '   Area = ' + fmt(Math.abs(det)) + (det < 0 ? ' (flipped)' : ''), color: col, fontSize: 22 });\n  info2.moveTo([-4.5, 2.0, 0]);\n  scene.add(info, info2);\n}\nupdate();\n\nconst controls = new Controls(scene, { position: 'top-right' });\nlet animating = false;\ncontrols.addSlider({ label: 'Morph t', min: 0, max: 1, value: 0, step: 0.01, onChange: (v) => { t = v; update(); } });\ncontrols.addSlider({ label: 'a', min: -3, max: 3, value: 2, step: 0.1, onChange: (v) => { a = v; update(); } });\ncontrols.addSlider({ label: 'b', min: -3, max: 3, value: 1, step: 0.1, onChange: (v) => { b = v; update(); } });\ncontrols.addSlider({ label: 'c', min: -3, max: 3, value: 0, step: 0.1, onChange: (v) => { c = v; update(); } });\ncontrols.addSlider({ label: 'd', min: -3, max: 3, value: 1, step: 0.1, onChange: (v) => { d = v; update(); } });\n\nasync function animateMorph() {\n  if (animating) return;\n  animating = true;\n  const steps = 90;\n  for (let i = 0; i <= steps; i++) {\n    const s = i / steps;\n    t = s * s * (3 - 2 * s);\n    update();\n    await scene.wait(1 / 60);\n  }\n  animating = false;\n}\ncontrols.addButton({ label: 'Animate (t: 0 → 1)', onClick: () => { animateMorph(); } });\ncontrols.addButton({ label: 'Reset t', onClick: () => { t = 0; update(); } });\n\nawait scene.wait(0.8);\nawait animateMorph();\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 7608,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 5,
+          "buttons": 2,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/calc-matrix-transform.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/calc-matrix-transform.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:34:10.442Z"
+}

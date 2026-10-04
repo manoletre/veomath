@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-sinusoid-params",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.59% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=4 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.69% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 31829,
+        "inputTokens": 12280,
+        "cachedInputTokens": 12032,
+        "outputTokens": 1186,
+        "costUsd": 0.0147624,
+        "rawResponse": "{\"explanation\":\"In y = A sin(B(x − C)) + D, A controls the wave’s amplitude, B controls how often it repeats, C shifts it horizontally, and D moves its midline up or down. Move the sliders to see each parameter change the graph; the yellow line marks y = D.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\\n  yRange: [-4, 4, 1],\\n  xLength: 8.5,\\n  yLength: 4.5,\\n  tips: false\\n});\\nax.moveTo([-1.25, -0.25, 0]);\\n\\nconst title = new MathTex({ latex: 'y=A\\\\\\\\sin(B(x-C))+D' });\\nawait title.waitForRender();\\ntitle.moveTo([-1.25, 3.15, 0]);\\n\\nconst hint = new Text({\\n  text: 'A: amplitude   B: frequency   C: horizontal shift   D: midline',\\n  color: GRAY,\\n  fontSize: 22\\n});\\nhint.moveTo([-1.15, -3.3, 0]);\\n\\nlet A = 1;\\nlet B = 1;\\nlet C = 0;\\nlet D = 0;\\nlet curve = ax.plot(x => A * Math.sin(B * (x - C)) + D, { color: BLUE });\\nlet midline = ax.plot(x => D, { color: YELLOW });\\n\\nscene.add(ax, midline, curve, title, hint);\\n\\nfunction redraw() {\\n  scene.remove(curve, midline);\\n  midline = ax.plot(x => D, { color: YELLOW });\\n  curve = ax.plot(x => A * Math.sin(B * (x - C)) + D, { color: BLUE });\\n  scene.add(midline, curve);\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\ncontrols.addSlider({ label: 'A · amplitude', min: -2.5, max: 2.5, value: 1, step: 0.1, onChange: v => { A = v; redraw(); } });\\ncontrols.addSlider({ label: 'B · frequency', min: 0.5, max: 3, value: 1, step: 0.1, onChange: v => { B = v; redraw(); } });\\ncontrols.addSlider({ label: 'C · shift', min: -3.1, max: 3.1, value: 0, step: 0.1, onChange: v => { C = v; redraw(); } });\\ncontrols.addSlider({ label: 'D · midline', min: -1.5, max: 1.5, value: 0, step: 0.1, onChange: v => { D = v; redraw(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "In y = A sin(B(x − C)) + D, A controls the wave’s amplitude, B controls how often it repeats, C shifts it horizontally, and D moves its midline up or down. Move the sliders to see each parameter change the graph; the yellow line marks y = D."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\n  yRange: [-4, 4, 1],\n  xLength: 8.5,\n  yLength: 4.5,\n  tips: false\n});\nax.moveTo([-1.25, -0.25, 0]);\n\nconst title = new MathTex({ latex: 'y=A\\\\sin(B(x-C))+D' });\nawait title.waitForRender();\ntitle.moveTo([-1.25, 3.15, 0]);\n\nconst hint = new Text({\n  text: 'A: amplitude   B: frequency   C: horizontal shift   D: midline',\n  color: GRAY,\n  fontSize: 22\n});\nhint.moveTo([-1.15, -3.3, 0]);\n\nlet A = 1;\nlet B = 1;\nlet C = 0;\nlet D = 0;\nlet curve = ax.plot(x => A * Math.sin(B * (x - C)) + D, { color: BLUE });\nlet midline = ax.plot(x => D, { color: YELLOW });\n\nscene.add(ax, midline, curve, title, hint);\n\nfunction redraw() {\n  scene.remove(curve, midline);\n  midline = ax.plot(x => D, { color: YELLOW });\n  curve = ax.plot(x => A * Math.sin(B * (x - C)) + D, { color: BLUE });\n  scene.add(midline, curve);\n}\n\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\ncontrols.addSlider({ label: 'A · amplitude', min: -2.5, max: 2.5, value: 1, step: 0.1, onChange: v => { A = v; redraw(); } });\ncontrols.addSlider({ label: 'B · frequency', min: 0.5, max: 3, value: 1, step: 0.1, onChange: v => { B = v; redraw(); } });\ncontrols.addSlider({ label: 'C · shift', min: -3.1, max: 3.1, value: 0, step: 0.1, onChange: v => { C = v; redraw(); } });\ncontrols.addSlider({ label: 'D · midline', min: -1.5, max: 1.5, value: 0, step: 0.1, onChange: v => { D = v; redraw(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 2975,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 4,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/trig-sinusoid-params.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/trig-sinusoid-params.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:50:00.480Z"
+}

@@ -1,0 +1,79 @@
+{
+  "itemId": "calc-matrix-transform",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.59% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.98% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 62378,
+        "inputTokens": 12285,
+        "cachedInputTokens": 11008,
+        "outputTokens": 2408,
+        "costUsd": 0.0288356,
+        "rawResponse": "{\"explanation\":\"The matrix sends each point \\\\((x,y)\\\\) to \\\\((2x+y,y)\\\\): it stretches horizontally and shears the plane while leaving vertical coordinates unchanged. The unit square becomes a parallelogram spanned by \\\\((2,0)\\\\) and \\\\((1,1)\\\\). Its area is 2, matching the determinant \\\\(2\\\\); use the slider to watch the area factor grow from 1 to 2.\",\"manimCode\":\"const title = new Text({ text: 'Stretch + shear', color: WHITE, fontSize: 34 });\\ntitle.moveTo([-3.6, 3.25, 0]);\\nconst subtitle = new Text({ text: 'A = [[2, 1], [0, 1]]', color: BLUE, fontSize: 26 });\\nsubtitle.moveTo([-3.55, 2.72, 0]);\\nscene.add(title, subtitle);\\n\\nconst origin = [-0.7, -0.3, 0];\\nconst unit = 0.78;\\nlet t = 1;\\nfunction point(x, y, amount = t) {\\n  return [origin[0] + unit * ((1 + amount) * x + amount * y), origin[1] + unit * y, 0];\\n}\\nfunction segment(a, b, color, width) {\\n  const p = new Polygon({ vertices: [a, b], color });\\n  p.setFillOpacity(0);\\n  p.setStrokeWidth(width);\\n  return p;\\n}\\n\\nconst grid = [];\\nfor (let x = -2; x <= 2; x += 0.5) {\\n  const line = segment(point(x, -2), point(x, 2), x === 0 ? GRAY : BLUE_E, x === 0 ? 2 : 1);\\n  grid.push({ line, a: [x, -2], b: [x, 2] });\\n  scene.add(line);\\n}\\nfor (let y = -2; y <= 2; y += 0.5) {\\n  const line = segment(point(-2, y), point(2, y), y === 0 ? GRAY : BLUE_E, y === 0 ? 2 : 1);\\n  grid.push({ line, a: [-2, y], b: [2, y] });\\n  scene.add(line);\\n}\\n\\nconst original = new Polygon({ vertices: [point(0, 0, 0), point(1, 0, 0), point(1, 1, 0), point(0, 1, 0)], color: WHITE });\\noriginal.setFill(GRAY, 0.08);\\noriginal.setStrokeWidth(2);\\nconst mapped = new Polygon({ vertices: [point(0, 0), point(1, 0), point(1, 1), point(0, 1)], color: BLUE });\\nmapped.setFill(BLUE, 0.28);\\nmapped.setStrokeWidth(3);\\nconst basisX = segment(point(0, 0), point(1, 0), YELLOW, 5);\\nconst basisY = segment(point(0, 0), point(0, 1), ORANGE, 5);\\nscene.add(original, mapped, basisX, basisY);\\n\\nlet readout = new Text({ text: 'det = area factor = 2.00', color: YELLOW, fontSize: 28 });\\nreadout.moveTo([-2.8, -3.22, 0]);\\nscene.add(readout);\\n\\nfunction update(amount) {\\n  t = amount;\\n  for (const item of grid) item.line.setVertices([point(item.a[0], item.a[1]), point(item.b[0], item.b[1])]);\\n  mapped.setVertices([point(0, 0), point(1, 0), point(1, 1), point(0, 1)]);\\n  basisX.setVertices([point(0, 0), point(1, 0)]);\\n  basisY.setVertices([point(0, 0), point(0, 1)]);\\n  scene.remove(readout);\\n  readout = new Text({ text: 'det = area factor = ' + (1 + t).toFixed(2), color: YELLOW, fontSize: 28 });\\n  readout.moveTo([-2.8, -3.22, 0]);\\n  scene.add(readout);\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'Transformation', min: 0, max: 1, value: 1, step: 0.01, onChange: update });\\nawait scene.wait(999999);\"}",
+        "explanation": "The matrix sends each point \\((x,y)\\) to \\((2x+y,y)\\): it stretches horizontally and shears the plane while leaving vertical coordinates unchanged. The unit square becomes a parallelogram spanned by \\((2,0)\\) and \\((1,1)\\). Its area is 2, matching the determinant \\(2\\); use the slider to watch the area factor grow from 1 to 2."
+      },
+      "code": "const title = new Text({ text: 'Stretch + shear', color: WHITE, fontSize: 34 });\ntitle.moveTo([-3.6, 3.25, 0]);\nconst subtitle = new Text({ text: 'A = [[2, 1], [0, 1]]', color: BLUE, fontSize: 26 });\nsubtitle.moveTo([-3.55, 2.72, 0]);\nscene.add(title, subtitle);\n\nconst origin = [-0.7, -0.3, 0];\nconst unit = 0.78;\nlet t = 1;\nfunction point(x, y, amount = t) {\n  return [origin[0] + unit * ((1 + amount) * x + amount * y), origin[1] + unit * y, 0];\n}\nfunction segment(a, b, color, width) {\n  const p = new Polygon({ vertices: [a, b], color });\n  p.setFillOpacity(0);\n  p.setStrokeWidth(width);\n  return p;\n}\n\nconst grid = [];\nfor (let x = -2; x <= 2; x += 0.5) {\n  const line = segment(point(x, -2), point(x, 2), x === 0 ? GRAY : BLUE_E, x === 0 ? 2 : 1);\n  grid.push({ line, a: [x, -2], b: [x, 2] });\n  scene.add(line);\n}\nfor (let y = -2; y <= 2; y += 0.5) {\n  const line = segment(point(-2, y), point(2, y), y === 0 ? GRAY : BLUE_E, y === 0 ? 2 : 1);\n  grid.push({ line, a: [-2, y], b: [2, y] });\n  scene.add(line);\n}\n\nconst original = new Polygon({ vertices: [point(0, 0, 0), point(1, 0, 0), point(1, 1, 0), point(0, 1, 0)], color: WHITE });\noriginal.setFill(GRAY, 0.08);\noriginal.setStrokeWidth(2);\nconst mapped = new Polygon({ vertices: [point(0, 0), point(1, 0), point(1, 1), point(0, 1)], color: BLUE });\nmapped.setFill(BLUE, 0.28);\nmapped.setStrokeWidth(3);\nconst basisX = segment(point(0, 0), point(1, 0), YELLOW, 5);\nconst basisY = segment(point(0, 0), point(0, 1), ORANGE, 5);\nscene.add(original, mapped, basisX, basisY);\n\nlet readout = new Text({ text: 'det = area factor = 2.00', color: YELLOW, fontSize: 28 });\nreadout.moveTo([-2.8, -3.22, 0]);\nscene.add(readout);\n\nfunction update(amount) {\n  t = amount;\n  for (const item of grid) item.line.setVertices([point(item.a[0], item.a[1]), point(item.b[0], item.b[1])]);\n  mapped.setVertices([point(0, 0), point(1, 0), point(1, 1), point(0, 1)]);\n  basisX.setVertices([point(0, 0), point(1, 0)]);\n  basisY.setVertices([point(0, 0), point(0, 1)]);\n  scene.remove(readout);\n  readout = new Text({ text: 'det = area factor = ' + (1 + t).toFixed(2), color: YELLOW, fontSize: 28 });\n  readout.moveTo([-2.8, -3.22, 0]);\n  scene.add(readout);\n}\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'Transformation', min: 0, max: 1, value: 1, step: 0.01, onChange: update });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3290,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/calc-matrix-transform.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/calc-matrix-transform.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:53:45.173Z"
+}

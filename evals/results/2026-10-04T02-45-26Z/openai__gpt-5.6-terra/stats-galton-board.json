@@ -1,0 +1,78 @@
+{
+  "itemId": "stats-galton-board",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "8.79% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=2 checkboxes=0 draggables=0 clickables=0 hoverables=7"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 35563,
+        "inputTokens": 11740,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1798,
+        "costUsd": 0.025241600000000003,
+        "rawResponse": "{\"explanation\":\"A Galton board sends each ball left or right at every peg. After six independent choices, the number of right moves follows a binomial distribution: most paths end near the center, while extreme paths are rare.\",\"manimCode\":\"const title = new Text({ text: 'Galton Board → Binomial Distribution', color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.45, 0]);\\nscene.add(title);\\n\\nconst startX = -3.35;\\nconst topY = 2.3;\\nconst dx = 0.42;\\nconst dy = 0.55;\\nconst pegs = [];\\nfor (let row = 0; row < 6; row++) {\\n  for (let j = 0; j <= row; j++) {\\n    const peg = new Circle({ radius: 0.075, color: GRAY });\\n    peg.setFill(GRAY, 1);\\n    peg.moveTo([startX + (2 * j - row) * dx, topY - row * dy, 0]);\\n    pegs.push(peg);\\n  }\\n}\\nscene.add(...pegs);\\n\\nconst boardLabel = new Text({ text: '6 left/right choices', color: BLUE_B, fontSize: 20 });\\nboardLabel.moveTo([-3.35, -1.45, 0]);\\nscene.add(boardLabel);\\n\\nconst railL = new Polygon({ vertices: [[-6.0, -1.25, 0], [-6.0, 2.65, 0]], color: BLUE_D });\\nconst railR = new Polygon({ vertices: [[-0.7, -1.25, 0], [-0.7, 2.65, 0]], color: BLUE_D });\\nrailL.setStrokeWidth(2);\\nrailR.setStrokeWidth(2);\\nscene.add(railL, railR);\\n\\nconst histBase = new Polygon({ vertices: [[0.7, -2.55, 0], [6.25, -2.55, 0]], color: WHITE });\\nhistBase.setStrokeWidth(2);\\nscene.add(histBase);\\n\\nconst chartTitle = new Text({ text: 'Where balls land', color: WHITE, fontSize: 22 });\\nchartTitle.moveTo([3.45, 2.35, 0]);\\nscene.add(chartTitle);\\n\\nconst counts = [1, 4, 7, 8, 7, 4, 1];\\nconst bars = [];\\nfor (let k = 0; k <= 6; k++) {\\n  const h = counts[k] * 0.32;\\n  const bar = new Rectangle({ width: 0.48, height: h, color: BLUE_C });\\n  bar.setFill(BLUE_C, 0.7);\\n  bar.moveTo([1.15 + k * 0.78, -2.55 + h / 2, 0]);\\n  bars.push(bar);\\n  const tick = new Text({ text: String(k), color: GRAY, fontSize: 16 });\\n  tick.moveTo([1.15 + k * 0.78, -2.9, 0]);\\n  scene.add(tick);\\n  makeHoverable(bar, scene, { hoverScale: 1.08, hoverColor: YELLOW });\\n}\\n\\nconst xLabel = new Text({ text: 'number of right turns', color: GRAY, fontSize: 16 });\\nxLabel.moveTo([3.45, -3.35, 0]);\\nscene.add(xLabel);\\n\\nconst formula = new MathTex({ latex: 'P(X=k)=\\\\\\\\binom{6}{k}(\\\\\\\\tfrac12)^6' });\\nawait formula.waitForRender();\\nformula.moveTo([3.45, 1.75, 0]);\\nformula.scale(0.7);\\nscene.add(formula);\\n\\nconst paths = [\\n  [1, 1, 1, 1, 1, 1],\\n  [-1, 1, 1, -1, 1, 1],\\n  [1, -1, 1, -1, 1, -1],\\n  [-1, -1, 1, -1, -1, 1],\\n  [-1, -1, -1, -1, -1, -1]\\n];\\n\\nfor (const choices of paths) {\\n  const ball = new Dot({ point: [startX, 2.9, 0], color: YELLOW });\\n  scene.add(ball);\\n  await scene.play(new Shift(ball, { direction: [0, -0.6, 0] }));\\n  for (const choice of choices) {\\n    await scene.play(new Shift(ball, { direction: [choice * dx, -dy, 0] }));\\n  }\\n  await scene.play(new FadeOut(ball));\\n}\\n\\nawait scene.play(new AnimationGroup(bars.map(bar => new DrawBorderThenFill(bar))));\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 220 });\\ncontrols.addButton({ label: 'Highlight center', onClick: () => {\\n  bars.forEach((bar, i) => bar.setColor(i === 3 ? YELLOW : BLUE_C));\\n}});\\ncontrols.addButton({ label: 'Reset colors', onClick: () => {\\n  bars.forEach(bar => bar.setColor(BLUE_C));\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A Galton board sends each ball left or right at every peg. After six independent choices, the number of right moves follows a binomial distribution: most paths end near the center, while extreme paths are rare."
+      },
+      "code": "const title = new Text({ text: 'Galton Board → Binomial Distribution', color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.45, 0]);\nscene.add(title);\n\nconst startX = -3.35;\nconst topY = 2.3;\nconst dx = 0.42;\nconst dy = 0.55;\nconst pegs = [];\nfor (let row = 0; row < 6; row++) {\n  for (let j = 0; j <= row; j++) {\n    const peg = new Circle({ radius: 0.075, color: GRAY });\n    peg.setFill(GRAY, 1);\n    peg.moveTo([startX + (2 * j - row) * dx, topY - row * dy, 0]);\n    pegs.push(peg);\n  }\n}\nscene.add(...pegs);\n\nconst boardLabel = new Text({ text: '6 left/right choices', color: BLUE_B, fontSize: 20 });\nboardLabel.moveTo([-3.35, -1.45, 0]);\nscene.add(boardLabel);\n\nconst railL = new Polygon({ vertices: [[-6.0, -1.25, 0], [-6.0, 2.65, 0]], color: BLUE_D });\nconst railR = new Polygon({ vertices: [[-0.7, -1.25, 0], [-0.7, 2.65, 0]], color: BLUE_D });\nrailL.setStrokeWidth(2);\nrailR.setStrokeWidth(2);\nscene.add(railL, railR);\n\nconst histBase = new Polygon({ vertices: [[0.7, -2.55, 0], [6.25, -2.55, 0]], color: WHITE });\nhistBase.setStrokeWidth(2);\nscene.add(histBase);\n\nconst chartTitle = new Text({ text: 'Where balls land', color: WHITE, fontSize: 22 });\nchartTitle.moveTo([3.45, 2.35, 0]);\nscene.add(chartTitle);\n\nconst counts = [1, 4, 7, 8, 7, 4, 1];\nconst bars = [];\nfor (let k = 0; k <= 6; k++) {\n  const h = counts[k] * 0.32;\n  const bar = new Rectangle({ width: 0.48, height: h, color: BLUE_C });\n  bar.setFill(BLUE_C, 0.7);\n  bar.moveTo([1.15 + k * 0.78, -2.55 + h / 2, 0]);\n  bars.push(bar);\n  const tick = new Text({ text: String(k), color: GRAY, fontSize: 16 });\n  tick.moveTo([1.15 + k * 0.78, -2.9, 0]);\n  scene.add(tick);\n  makeHoverable(bar, scene, { hoverScale: 1.08, hoverColor: YELLOW });\n}\n\nconst xLabel = new Text({ text: 'number of right turns', color: GRAY, fontSize: 16 });\nxLabel.moveTo([3.45, -3.35, 0]);\nscene.add(xLabel);\n\nconst formula = new MathTex({ latex: 'P(X=k)=\\\\binom{6}{k}(\\\\tfrac12)^6' });\nawait formula.waitForRender();\nformula.moveTo([3.45, 1.75, 0]);\nformula.scale(0.7);\nscene.add(formula);\n\nconst paths = [\n  [1, 1, 1, 1, 1, 1],\n  [-1, 1, 1, -1, 1, 1],\n  [1, -1, 1, -1, 1, -1],\n  [-1, -1, 1, -1, -1, 1],\n  [-1, -1, -1, -1, -1, -1]\n];\n\nfor (const choices of paths) {\n  const ball = new Dot({ point: [startX, 2.9, 0], color: YELLOW });\n  scene.add(ball);\n  await scene.play(new Shift(ball, { direction: [0, -0.6, 0] }));\n  for (const choice of choices) {\n    await scene.play(new Shift(ball, { direction: [choice * dx, -dy, 0] }));\n  }\n  await scene.play(new FadeOut(ball));\n}\n\nawait scene.play(new AnimationGroup(bars.map(bar => new DrawBorderThenFill(bar))));\n\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 220 });\ncontrols.addButton({ label: 'Highlight center', onClick: () => {\n  bars.forEach((bar, i) => bar.setColor(i === 3 ? YELLOW : BLUE_C));\n}});\ncontrols.addButton({ label: 'Reset colors', onClick: () => {\n  bars.forEach(bar => bar.setColor(BLUE_C));\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 46247,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 41,
+        "controls": {
+          "sliders": 0,
+          "buttons": 2,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 7
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/stats-galton-board.0.final.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T03:00:33.057Z"
+}

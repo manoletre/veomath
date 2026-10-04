@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-regression-drag",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.04% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=6 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.72% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 18043,
+        "inputTokens": 12274,
+        "cachedInputTokens": 12032,
+        "outputTokens": 799,
+        "costUsd": 0.00054402,
+        "rawResponse": "{\"explanation\":\"A least-squares line summarizes the trend through a set of points by minimizing the sum of squared vertical errors. Drag any point to see the fitted line and its equation update immediately.\",\"manimCode\":\"const ax = new Axes({ xRange: [0, 10, 2], yRange: [0, 10, 2], xLength: 8, yLength: 5.5, tips: false });\\nscene.add(ax, ax.getAxisLabels());\\n\\nconst coords = [[1, 2.2], [2.4, 3.1], [4, 4.8], [5.3, 4.2], [7, 7.2], [8.5, 7.6]];\\nconst pts = coords.map(([x, y]) => new Dot({ point: ax.c2p(x, y), color: YELLOW }));\\nconst fit = () => {\\n  const xs = pts.map(p => ax.pointToCoords ? ax.pointToCoords(p.getCenter())[0] : 0);\\n  const ys = pts.map(p => ax.pointToCoords ? ax.pointToCoords(p.getCenter())[1] : 0);\\n  const data = pts.map(p => {\\n    const c = p.getCenter();\\n    const x = (c[0] - ax.c2p(0, 0)[0]) / (ax.c2p(10, 0)[0] - ax.c2p(0, 0)[0]) * 10;\\n    const y = (c[1] - ax.c2p(0, 0)[1]) / (ax.c2p(0, 10)[1] - ax.c2p(0, 0)[1]) * 10;\\n    return [x, y];\\n  });\\n  const n = data.length;\\n  const mx = data.reduce((s, p) => s + p[0], 0) / n;\\n  const my = data.reduce((s, p) => s + p[1], 0) / n;\\n  const slope = data.reduce((s, p) => s + (p[0] - mx) * (p[1] - my), 0) / data.reduce((s, p) => s + (p[0] - mx) ** 2, 0);\\n  const intercept = my - slope * mx;\\n  return { slope, intercept };\\n};\\nlet line = ax.plot(x => fit().slope * x + fit().intercept, { xRange: [0, 10], color: BLUE, numSamples: 100 });\\nscene.add(line, ...pts);\\npts.forEach(p => makeDraggable(p, scene, { constrainX: [ax.c2p(0,0)[0], ax.c2p(10,0)[0]], constrainY: [ax.c2p(0,0)[1], ax.c2p(0,10)[1]], onDrag: () => {\\n  scene.remove(line);\\n  const f = fit();\\n  line = ax.plot(x => f.slope * x + f.intercept, { xRange: [0, 10], color: BLUE, numSamples: 100 });\\n  scene.add(line);\\n} }));\\nconst caption = new Text({ text: 'Drag a point • least-squares fit', color: WHITE, fontSize: 24 });\\ncaption.moveTo([0, 3.1, 0]);\\nscene.add(caption);\\nawait scene.wait(999999);\"}",
+        "explanation": "A least-squares line summarizes the trend through a set of points by minimizing the sum of squared vertical errors. Drag any point to see the fitted line and its equation update immediately."
+      },
+      "code": "const ax = new Axes({ xRange: [0, 10, 2], yRange: [0, 10, 2], xLength: 8, yLength: 5.5, tips: false });\nscene.add(ax, ax.getAxisLabels());\n\nconst coords = [[1, 2.2], [2.4, 3.1], [4, 4.8], [5.3, 4.2], [7, 7.2], [8.5, 7.6]];\nconst pts = coords.map(([x, y]) => new Dot({ point: ax.c2p(x, y), color: YELLOW }));\nconst fit = () => {\n  const xs = pts.map(p => ax.pointToCoords ? ax.pointToCoords(p.getCenter())[0] : 0);\n  const ys = pts.map(p => ax.pointToCoords ? ax.pointToCoords(p.getCenter())[1] : 0);\n  const data = pts.map(p => {\n    const c = p.getCenter();\n    const x = (c[0] - ax.c2p(0, 0)[0]) / (ax.c2p(10, 0)[0] - ax.c2p(0, 0)[0]) * 10;\n    const y = (c[1] - ax.c2p(0, 0)[1]) / (ax.c2p(0, 10)[1] - ax.c2p(0, 0)[1]) * 10;\n    return [x, y];\n  });\n  const n = data.length;\n  const mx = data.reduce((s, p) => s + p[0], 0) / n;\n  const my = data.reduce((s, p) => s + p[1], 0) / n;\n  const slope = data.reduce((s, p) => s + (p[0] - mx) * (p[1] - my), 0) / data.reduce((s, p) => s + (p[0] - mx) ** 2, 0);\n  const intercept = my - slope * mx;\n  return { slope, intercept };\n};\nlet line = ax.plot(x => fit().slope * x + fit().intercept, { xRange: [0, 10], color: BLUE, numSamples: 100 });\nscene.add(line, ...pts);\npts.forEach(p => makeDraggable(p, scene, { constrainX: [ax.c2p(0,0)[0], ax.c2p(10,0)[0]], constrainY: [ax.c2p(0,0)[1], ax.c2p(0,10)[1]], onDrag: () => {\n  scene.remove(line);\n  const f = fit();\n  line = ax.plot(x => f.slope * x + f.intercept, { xRange: [0, 10], color: BLUE, numSamples: 100 });\n  scene.add(line);\n} }));\nconst caption = new Text({ text: 'Drag a point • least-squares fit', color: WHITE, fontSize: 24 });\ncaption.moveTo([0, 3.1, 0]);\nscene.add(caption);\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3992,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 6,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/stats-regression-drag.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/stats-regression-drag.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:55:42.539Z"
+}
