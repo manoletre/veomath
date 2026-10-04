@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-triangle-angle-sum",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.59% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.86% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 56264,
+        "inputTokens": 4603,
+        "cachedInputTokens": 4581,
+        "outputTokens": 2150,
+        "costUsd": 0.0220021,
+        "rawResponse": "{\"explanation\":\"In flat (Euclidean) geometry, draw a line through the triangle’s top vertex parallel to its base. The two base angles reappear beside the top angle because parallel lines have equal alternate interior angles. Together, those three angles form a straight angle—180°. Drag the top vertex to see that the individual angles change, but their sum does not.\",\"manimCode\":\"const heading = new Text({ text: 'Why triangle angles add to 180°', fontSize: 32, color: WHITE });\\nheading.moveTo([0, 3.15, 0]);\\nconst hint = new Text({ text: 'Drag the yellow vertex • The upper line stays parallel to the base', fontSize: 19, color: GRAY });\\nhint.moveTo([0, 2.5, 0]);\\n\\nconst baseA = [-3, -1.5, 0];\\nconst baseB = [3, -1.5, 0];\\nconst apex = new Dot({ point: [-0.5, 1.25, 0], color: YELLOW });\\nconst dotA = new Dot({ point: baseA, color: BLUE });\\nconst dotB = new Dot({ point: baseB, color: ORANGE });\\nconst triangleShape = new Polygon({ vertices: [baseA, baseB, apex.getCenter()], color: WHITE });\\ntriangleShape.setStrokeWidth(2).setFill(BLUE, 0.07);\\nconst parallelLine = new Polygon({ vertices: [[-4.4, 1.25, 0], [4.4, 1.25, 0]], color: GRAY });\\nparallelLine.setStrokeWidth(2).setFillOpacity(0);\\n\\nfunction sectorPoints(center, startAngle, endAngle, radius) {\\n  const pts = [[...center]];\\n  for (let i = 0; i <= 30; i++) {\\n    const theta = startAngle + (endAngle - startAngle) * i / 30;\\n    pts.push([center[0] + radius * Math.cos(theta), center[1] + radius * Math.sin(theta), 0]);\\n  }\\n  pts.push([...center]);\\n  return pts;\\n}\\nfunction newSector(col) {\\n  const wedge = new Polygon({ vertices: sectorPoints([0, 0, 0], 0, 0.5, 0.5), color: col });\\n  wedge.setFill(col, 0.35).setStrokeWidth(1.5);\\n  return wedge;\\n}\\nconst baseAlpha = newSector(BLUE);\\nconst baseBeta = newSector(ORANGE);\\nconst topAlpha = newSector(BLUE);\\nconst topGamma = newSector(GREEN);\\nconst topBeta = newSector(ORANGE);\\n\\nfunction angleLabel(symbol, col) {\\n  return new Text({ text: symbol, fontSize: 24, color: col });\\n}\\nconst labelA = angleLabel('α', BLUE);\\nconst labelB = angleLabel('β', ORANGE);\\nconst topLabelA = angleLabel('α', BLUE);\\nconst topLabelG = angleLabel('γ', GREEN);\\nconst topLabelB = angleLabel('β', ORANGE);\\nfunction placeLabel(label, center, angle, radius) {\\n  label.moveTo([center[0] + radius * Math.cos(angle), center[1] + radius * Math.sin(angle), 0]);\\n}\\nlet angleReadout;\\nfunction rebuild() {\\n  const tip = apex.getCenter();\\n  const alpha = Math.atan2(tip[1] - baseA[1], tip[0] - baseA[0]);\\n  const beta = Math.atan2(tip[1] - baseB[1], baseB[0] - tip[0]);\\n  const gamma = Math.PI - alpha - beta;\\n  triangleShape.setVertices([baseA, baseB, tip]);\\n  parallelLine.setVertices([[-4.4, tip[1], 0], [4.4, tip[1], 0]]);\\n  baseAlpha.setVertices(sectorPoints(baseA, 0, alpha, 0.55));\\n  baseBeta.setVertices(sectorPoints(baseB, Math.PI - beta, Math.PI, 0.55));\\n  topAlpha.setVertices(sectorPoints(tip, Math.PI, Math.PI + alpha, 0.6));\\n  topGamma.setVertices(sectorPoints(tip, Math.PI + alpha, 2 * Math.PI - beta, 0.6));\\n  topBeta.setVertices(sectorPoints(tip, 2 * Math.PI - beta, 2 * Math.PI, 0.6));\\n  placeLabel(labelA, baseA, alpha / 2, 0.85);\\n  placeLabel(labelB, baseB, Math.PI - beta / 2, 0.85);\\n  placeLabel(topLabelA, tip, Math.PI + alpha / 2, 0.87);\\n  placeLabel(topLabelG, tip, Math.PI + alpha + gamma / 2, 0.87);\\n  placeLabel(topLabelB, tip, 2 * Math.PI - beta / 2, 0.87);\\n  if (angleReadout) scene.remove(angleReadout);\\n  const deg = v => (v * 180 / Math.PI).toFixed(1);\\n  angleReadout = new Text({ text: `α = ${deg(alpha)}°      β = ${deg(beta)}°      γ = ${deg(gamma)}°`, fontSize: 23, color: WHITE });\\n  angleReadout.moveTo([0, -2.55, 0]);\\n  scene.add(angleReadout);\\n}\\n\\nscene.add(parallelLine, triangleShape, baseAlpha, baseBeta, topAlpha, topGamma, topBeta, labelA, labelB, topLabelA, topLabelG, topLabelB, dotA, dotB, apex);\\nrebuild();\\nmakeDraggable(apex, scene, { constrainX: [-1.6, 1.6], constrainY: [0.25, 1.65], onDrag: () => rebuild() });\\n\\nconst sumFormula = new MathTex({ latex: '\\\\\\\\alpha + \\\\\\\\gamma + \\\\\\\\beta = 180^\\\\\\\\circ' });\\nawait sumFormula.waitForRender();\\nsumFormula.moveTo([0, -3.15, 0]);\\nawait scene.play(new AnimationGroup([new Write(heading), new FadeIn(hint), new Write(sumFormula)]));\\nawait scene.wait(999999);\"}",
+        "explanation": "In flat (Euclidean) geometry, draw a line through the triangle’s top vertex parallel to its base. The two base angles reappear beside the top angle because parallel lines have equal alternate interior angles. Together, those three angles form a straight angle—180°. Drag the top vertex to see that the individual angles change, but their sum does not."
+      },
+      "code": "const heading = new Text({ text: 'Why triangle angles add to 180°', fontSize: 32, color: WHITE });\nheading.moveTo([0, 3.15, 0]);\nconst hint = new Text({ text: 'Drag the yellow vertex • The upper line stays parallel to the base', fontSize: 19, color: GRAY });\nhint.moveTo([0, 2.5, 0]);\n\nconst baseA = [-3, -1.5, 0];\nconst baseB = [3, -1.5, 0];\nconst apex = new Dot({ point: [-0.5, 1.25, 0], color: YELLOW });\nconst dotA = new Dot({ point: baseA, color: BLUE });\nconst dotB = new Dot({ point: baseB, color: ORANGE });\nconst triangleShape = new Polygon({ vertices: [baseA, baseB, apex.getCenter()], color: WHITE });\ntriangleShape.setStrokeWidth(2).setFill(BLUE, 0.07);\nconst parallelLine = new Polygon({ vertices: [[-4.4, 1.25, 0], [4.4, 1.25, 0]], color: GRAY });\nparallelLine.setStrokeWidth(2).setFillOpacity(0);\n\nfunction sectorPoints(center, startAngle, endAngle, radius) {\n  const pts = [[...center]];\n  for (let i = 0; i <= 30; i++) {\n    const theta = startAngle + (endAngle - startAngle) * i / 30;\n    pts.push([center[0] + radius * Math.cos(theta), center[1] + radius * Math.sin(theta), 0]);\n  }\n  pts.push([...center]);\n  return pts;\n}\nfunction newSector(col) {\n  const wedge = new Polygon({ vertices: sectorPoints([0, 0, 0], 0, 0.5, 0.5), color: col });\n  wedge.setFill(col, 0.35).setStrokeWidth(1.5);\n  return wedge;\n}\nconst baseAlpha = newSector(BLUE);\nconst baseBeta = newSector(ORANGE);\nconst topAlpha = newSector(BLUE);\nconst topGamma = newSector(GREEN);\nconst topBeta = newSector(ORANGE);\n\nfunction angleLabel(symbol, col) {\n  return new Text({ text: symbol, fontSize: 24, color: col });\n}\nconst labelA = angleLabel('α', BLUE);\nconst labelB = angleLabel('β', ORANGE);\nconst topLabelA = angleLabel('α', BLUE);\nconst topLabelG = angleLabel('γ', GREEN);\nconst topLabelB = angleLabel('β', ORANGE);\nfunction placeLabel(label, center, angle, radius) {\n  label.moveTo([center[0] + radius * Math.cos(angle), center[1] + radius * Math.sin(angle), 0]);\n}\nlet angleReadout;\nfunction rebuild() {\n  const tip = apex.getCenter();\n  const alpha = Math.atan2(tip[1] - baseA[1], tip[0] - baseA[0]);\n  const beta = Math.atan2(tip[1] - baseB[1], baseB[0] - tip[0]);\n  const gamma = Math.PI - alpha - beta;\n  triangleShape.setVertices([baseA, baseB, tip]);\n  parallelLine.setVertices([[-4.4, tip[1], 0], [4.4, tip[1], 0]]);\n  baseAlpha.setVertices(sectorPoints(baseA, 0, alpha, 0.55));\n  baseBeta.setVertices(sectorPoints(baseB, Math.PI - beta, Math.PI, 0.55));\n  topAlpha.setVertices(sectorPoints(tip, Math.PI, Math.PI + alpha, 0.6));\n  topGamma.setVertices(sectorPoints(tip, Math.PI + alpha, 2 * Math.PI - beta, 0.6));\n  topBeta.setVertices(sectorPoints(tip, 2 * Math.PI - beta, 2 * Math.PI, 0.6));\n  placeLabel(labelA, baseA, alpha / 2, 0.85);\n  placeLabel(labelB, baseB, Math.PI - beta / 2, 0.85);\n  placeLabel(topLabelA, tip, Math.PI + alpha / 2, 0.87);\n  placeLabel(topLabelG, tip, Math.PI + alpha + gamma / 2, 0.87);\n  placeLabel(topLabelB, tip, 2 * Math.PI - beta / 2, 0.87);\n  if (angleReadout) scene.remove(angleReadout);\n  const deg = v => (v * 180 / Math.PI).toFixed(1);\n  angleReadout = new Text({ text: `α = ${deg(alpha)}°      β = ${deg(beta)}°      γ = ${deg(gamma)}°`, fontSize: 23, color: WHITE });\n  angleReadout.moveTo([0, -2.55, 0]);\n  scene.add(angleReadout);\n}\n\nscene.add(parallelLine, triangleShape, baseAlpha, baseBeta, topAlpha, topGamma, topBeta, labelA, labelB, topLabelA, topLabelG, topLabelB, dotA, dotB, apex);\nrebuild();\nmakeDraggable(apex, scene, { constrainX: [-1.6, 1.6], constrainY: [0.25, 1.65], onDrag: () => rebuild() });\n\nconst sumFormula = new MathTex({ latex: '\\\\alpha + \\\\gamma + \\\\beta = 180^\\\\circ' });\nawait sumFormula.waitForRender();\nsumFormula.moveTo([0, -3.15, 0]);\nawait scene.play(new AnimationGroup([new Write(heading), new FadeIn(hint), new Write(sumFormula)]));\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4128,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/geo-triangle-angle-sum.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/geo-triangle-angle-sum.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T17:07:04.791Z"
+}

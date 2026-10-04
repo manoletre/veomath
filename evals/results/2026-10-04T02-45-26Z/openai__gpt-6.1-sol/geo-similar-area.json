@@ -1,0 +1,80 @@
+{
+  "itemId": "geo-similar-area",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "8.39% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "MathTex \"b\" overlaps MathTex \"A=\\frac12 bh\" (51%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=2"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "5.01% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 29485,
+        "inputTokens": 4608,
+        "cachedInputTokens": 4581,
+        "outputTokens": 1586,
+        "costUsd": 0.016372100000000004,
+        "rawResponse": "{\"explanation\":\"Scaling a triangle by k multiplies every length—including its base and perpendicular height—by k. Since its area is A = ½bh, the new area is ½(kb)(kh) = k²A. For example, doubling the triangle makes its area four times as large; use the slider to explore other scale factors.\",\"manimCode\":\"const title = new Text({ text: 'Two lengths scale — so area scales twice', fontSize: 30, color: WHITE });\\ntitle.moveTo([0, 3.25, 0]);\\nconst formula = new MathTex({ latex: 'A_{\\\\\\\\mathrm{new}}=\\\\\\\\frac12(kb)(kh)=k^2\\\\\\\\,A', color: YELLOW });\\nawait formula.waitForRender();\\nformula.moveTo([0, 2.45, 0]);\\n\\nconst baseY = -1.3;\\nconst b = 1.8;\\nconst h = 1.5;\\nconst originalVertices = [[-4.8, baseY, 0], [-3, baseY, 0], [-4.2, baseY + h, 0]];\\nconst original = new Polygon({ vertices: originalVertices, color: BLUE });\\noriginal.setFill(BLUE, 0.35);\\noriginal.setStrokeWidth(3);\\nconst originalHeight = new Line({ start: [-4.2, baseY, 0], end: [-4.2, baseY + h, 0], color: TEAL });\\nconst originalCaption = new Text({ text: 'Original', fontSize: 24, color: BLUE });\\noriginalCaption.moveTo([-3.9, 0.75, 0]);\\nconst originalBaseLabel = new MathTex({ latex: 'b', color: BLUE });\\nconst originalHeightLabel = new MathTex({ latex: 'h', color: TEAL });\\nawait originalBaseLabel.waitForRender();\\nawait originalHeightLabel.waitForRender();\\noriginalBaseLabel.moveTo([-3.9, -1.7, 0]);\\noriginalHeightLabel.moveTo([-4.55, -0.55, 0]);\\n\\nlet k = 2;\\nfunction scaledVertices() {\\n  return [[0.2, baseY, 0], [0.2 + b * k, baseY, 0], [0.2 + 0.6 * k, baseY + h * k, 0]];\\n}\\nconst enlarged = new Polygon({ vertices: scaledVertices(), color: YELLOW });\\nenlarged.setFill(YELLOW, 0.3);\\nenlarged.setStrokeWidth(3);\\nconst enlargedHeight = new Polygon({ vertices: [[1.4, baseY, 0], [1.4, baseY + h * k, 0]], color: TEAL });\\nenlargedHeight.setFillOpacity(0);\\nenlargedHeight.setStrokeWidth(3);\\nconst scaledBaseLabel = new MathTex({ latex: 'kb', color: YELLOW });\\nconst scaledHeightLabel = new MathTex({ latex: 'kh', color: TEAL });\\nawait scaledBaseLabel.waitForRender();\\nawait scaledHeightLabel.waitForRender();\\nconst originalAreaLabel = new MathTex({ latex: 'A=\\\\\\\\frac12 bh', color: BLUE });\\nawait originalAreaLabel.waitForRender();\\noriginalAreaLabel.moveTo([-3.9, -2.25, 0]);\\nlet readout;\\nfunction refresh() {\\n  enlarged.setVertices(scaledVertices());\\n  const footX = 0.2 + 0.6 * k;\\n  enlargedHeight.setVertices([[footX, baseY, 0], [footX, baseY + h * k, 0]]);\\n  scaledBaseLabel.moveTo([0.2 + b * k / 2, -1.7, 0]);\\n  scaledHeightLabel.moveTo([footX - 0.35, baseY + h * k / 2, 0]);\\n  if (readout) scene.remove(readout);\\n  readout = new Text({ text: 'Lengths: ×' + k.toFixed(2) + '     Area: ×' + (k * k).toFixed(2), fontSize: 25, color: YELLOW });\\n  readout.moveTo([-1.2, -3.05, 0]);\\n  scene.add(readout);\\n}\\nscene.add(title, original, originalHeight, originalCaption, originalBaseLabel, originalHeightLabel, enlarged, enlargedHeight, scaledBaseLabel, scaledHeightLabel, originalAreaLabel);\\nrefresh();\\nawait scene.play(new Write(formula));\\nmakeHoverable(original, scene, { hoverScale: 1, hoverOpacity: 0.65 });\\nmakeHoverable(enlarged, scene, { hoverScale: 1, hoverOpacity: 0.65 });\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 230 });\\ncontrols.addSlider({ label: 'Scale factor k', min: 0.5, max: 2, value: k, step: 0.05, onChange: (value) => { k = value; refresh(); } });\\nawait scene.wait(999999);\"}",
+        "explanation": "Scaling a triangle by k multiplies every length—including its base and perpendicular height—by k. Since its area is A = ½bh, the new area is ½(kb)(kh) = k²A. For example, doubling the triangle makes its area four times as large; use the slider to explore other scale factors."
+      },
+      "code": "const title = new Text({ text: 'Two lengths scale — so area scales twice', fontSize: 30, color: WHITE });\ntitle.moveTo([0, 3.25, 0]);\nconst formula = new MathTex({ latex: 'A_{\\\\mathrm{new}}=\\\\frac12(kb)(kh)=k^2\\\\,A', color: YELLOW });\nawait formula.waitForRender();\nformula.moveTo([0, 2.45, 0]);\n\nconst baseY = -1.3;\nconst b = 1.8;\nconst h = 1.5;\nconst originalVertices = [[-4.8, baseY, 0], [-3, baseY, 0], [-4.2, baseY + h, 0]];\nconst original = new Polygon({ vertices: originalVertices, color: BLUE });\noriginal.setFill(BLUE, 0.35);\noriginal.setStrokeWidth(3);\nconst originalHeight = new Line({ start: [-4.2, baseY, 0], end: [-4.2, baseY + h, 0], color: TEAL });\nconst originalCaption = new Text({ text: 'Original', fontSize: 24, color: BLUE });\noriginalCaption.moveTo([-3.9, 0.75, 0]);\nconst originalBaseLabel = new MathTex({ latex: 'b', color: BLUE });\nconst originalHeightLabel = new MathTex({ latex: 'h', color: TEAL });\nawait originalBaseLabel.waitForRender();\nawait originalHeightLabel.waitForRender();\noriginalBaseLabel.moveTo([-3.9, -1.7, 0]);\noriginalHeightLabel.moveTo([-4.55, -0.55, 0]);\n\nlet k = 2;\nfunction scaledVertices() {\n  return [[0.2, baseY, 0], [0.2 + b * k, baseY, 0], [0.2 + 0.6 * k, baseY + h * k, 0]];\n}\nconst enlarged = new Polygon({ vertices: scaledVertices(), color: YELLOW });\nenlarged.setFill(YELLOW, 0.3);\nenlarged.setStrokeWidth(3);\nconst enlargedHeight = new Polygon({ vertices: [[1.4, baseY, 0], [1.4, baseY + h * k, 0]], color: TEAL });\nenlargedHeight.setFillOpacity(0);\nenlargedHeight.setStrokeWidth(3);\nconst scaledBaseLabel = new MathTex({ latex: 'kb', color: YELLOW });\nconst scaledHeightLabel = new MathTex({ latex: 'kh', color: TEAL });\nawait scaledBaseLabel.waitForRender();\nawait scaledHeightLabel.waitForRender();\nconst originalAreaLabel = new MathTex({ latex: 'A=\\\\frac12 bh', color: BLUE });\nawait originalAreaLabel.waitForRender();\noriginalAreaLabel.moveTo([-3.9, -2.25, 0]);\nlet readout;\nfunction refresh() {\n  enlarged.setVertices(scaledVertices());\n  const footX = 0.2 + 0.6 * k;\n  enlargedHeight.setVertices([[footX, baseY, 0], [footX, baseY + h * k, 0]]);\n  scaledBaseLabel.moveTo([0.2 + b * k / 2, -1.7, 0]);\n  scaledHeightLabel.moveTo([footX - 0.35, baseY + h * k / 2, 0]);\n  if (readout) scene.remove(readout);\n  readout = new Text({ text: 'Lengths: ×' + k.toFixed(2) + '     Area: ×' + (k * k).toFixed(2), fontSize: 25, color: YELLOW });\n  readout.moveTo([-1.2, -3.05, 0]);\n  scene.add(readout);\n}\nscene.add(title, original, originalHeight, originalCaption, originalBaseLabel, originalHeightLabel, enlarged, enlargedHeight, scaledBaseLabel, scaledHeightLabel, originalAreaLabel);\nrefresh();\nawait scene.play(new Write(formula));\nmakeHoverable(original, scene, { hoverScale: 1, hoverOpacity: 0.65 });\nmakeHoverable(enlarged, scene, { hoverScale: 1, hoverOpacity: 0.65 });\nconst controls = new Controls(scene, { position: 'bottom-right', width: 230 });\ncontrols.addSlider({ label: 'Scale factor k', min: 0.5, max: 2, value: k, step: 0.05, onChange: (value) => { k = value; refresh(); } });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5992,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 2
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/geo-similar-area.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/geo-similar-area.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:12.229Z"
+}

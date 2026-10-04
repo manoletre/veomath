@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-normal-empirical",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "15.89% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.13% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 28432,
+        "inputTokens": 11741,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1402,
+        "costUsd": 0.020491600000000002,
+        "rawResponse": "{\"explanation\":\"For a normal distribution, distance from the mean is measured in standard deviations (σ). About 68% of values lie within 1σ, 95% within 2σ, and 99.7% within 3σ of the mean. Use the slider to move a z-score marker along the bell curve.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-4, 4, 1],\\n  yRange: [0, 0.45, 0.1],\\n  xLength: 11,\\n  yLength: 5,\\n  tips: true\\n});\\n\\nconst bell = ax.plot(\\n  x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI),\\n  { color: WHITE, xRange: [-4, 4], numSamples: 500 }\\n);\\n\\nconst centerArea = ax.getArea(bell, [-1, 1], { color: BLUE, opacity: 0.55 });\\nconst middleLeft = ax.getArea(bell, [-2, -1], { color: TEAL, opacity: 0.5 });\\nconst middleRight = ax.getArea(bell, [1, 2], { color: TEAL, opacity: 0.5 });\\nconst outerLeft = ax.getArea(bell, [-3, -2], { color: GOLD, opacity: 0.5 });\\nconst outerRight = ax.getArea(bell, [2, 3], { color: GOLD, opacity: 0.5 });\\n\\nconst title = new Text({ text: 'The 68–95–99.7 Rule', color: WHITE, fontSize: 34 });\\ntitle.moveTo([0, 3.35, 0]);\\n\\nconst info = new MathTex({ latex: 'P(|Z|<1)\\\\approx68\\\\%\\\\qquad P(|Z|<2)\\\\approx95\\\\%\\\\qquad P(|Z|<3)\\\\approx99.7\\\\%' });\\nawait info.waitForRender();\\ninfo.scale(0.72);\\ninfo.moveTo([0, -3.2, 0]);\\n\\nconst centerLabel = new Text({ text: '68%', color: WHITE, fontSize: 25 });\\ncenterLabel.moveTo(ax.c2p(0, 0.18));\\nconst midLabel = new Text({ text: '95%', color: TEAL, fontSize: 20 });\\nmidLabel.moveTo(ax.c2p(1.5, 0.085));\\nconst outerLabel = new Text({ text: '99.7%', color: GOLD, fontSize: 18 });\\nouterLabel.moveTo(ax.c2p(2.55, 0.035));\\n\\nlet z = 0;\\nconst marker = new Dot({ point: ax.c2p(0, 0), color: YELLOW });\\nconst guide = new Polygon({ vertices: [ax.c2p(0, 0), ax.c2p(0, 0.4)], color: YELLOW });\\nguide.setStrokeWidth(2).setFillOpacity(0);\\nmarker.addUpdater(() => marker.moveTo(ax.c2p(z, Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI))));\\nguide.addUpdater(() => guide.setVertices([\\n  ax.c2p(z, 0),\\n  ax.c2p(z, Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI))\\n]));\\n\\nscene.add(ax, centerArea, middleLeft, middleRight, outerLeft, outerRight);\\nawait scene.play(new Create(bell));\\nscene.add(title, info, centerLabel, midLabel, outerLabel, guide, marker);\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 250 });\\ncontrols.addSlider({\\n  label: 'z-score marker', min: -3.5, max: 3.5, value: 0, step: 0.1,\\n  onChange: value => { z = value; }\\n});\\ncontrols.addButton({ label: 'Reset marker', onClick: () => { z = 0; } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "For a normal distribution, distance from the mean is measured in standard deviations (σ). About 68% of values lie within 1σ, 95% within 2σ, and 99.7% within 3σ of the mean. Use the slider to move a z-score marker along the bell curve."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-4, 4, 1],\n  yRange: [0, 0.45, 0.1],\n  xLength: 11,\n  yLength: 5,\n  tips: true\n});\n\nconst bell = ax.plot(\n  x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI),\n  { color: WHITE, xRange: [-4, 4], numSamples: 500 }\n);\n\nconst centerArea = ax.getArea(bell, [-1, 1], { color: BLUE, opacity: 0.55 });\nconst middleLeft = ax.getArea(bell, [-2, -1], { color: TEAL, opacity: 0.5 });\nconst middleRight = ax.getArea(bell, [1, 2], { color: TEAL, opacity: 0.5 });\nconst outerLeft = ax.getArea(bell, [-3, -2], { color: GOLD, opacity: 0.5 });\nconst outerRight = ax.getArea(bell, [2, 3], { color: GOLD, opacity: 0.5 });\n\nconst title = new Text({ text: 'The 68–95–99.7 Rule', color: WHITE, fontSize: 34 });\ntitle.moveTo([0, 3.35, 0]);\n\nconst info = new MathTex({ latex: 'P(|Z|<1)\\approx68\\%\\qquad P(|Z|<2)\\approx95\\%\\qquad P(|Z|<3)\\approx99.7\\%' });\nawait info.waitForRender();\ninfo.scale(0.72);\ninfo.moveTo([0, -3.2, 0]);\n\nconst centerLabel = new Text({ text: '68%', color: WHITE, fontSize: 25 });\ncenterLabel.moveTo(ax.c2p(0, 0.18));\nconst midLabel = new Text({ text: '95%', color: TEAL, fontSize: 20 });\nmidLabel.moveTo(ax.c2p(1.5, 0.085));\nconst outerLabel = new Text({ text: '99.7%', color: GOLD, fontSize: 18 });\nouterLabel.moveTo(ax.c2p(2.55, 0.035));\n\nlet z = 0;\nconst marker = new Dot({ point: ax.c2p(0, 0), color: YELLOW });\nconst guide = new Polygon({ vertices: [ax.c2p(0, 0), ax.c2p(0, 0.4)], color: YELLOW });\nguide.setStrokeWidth(2).setFillOpacity(0);\nmarker.addUpdater(() => marker.moveTo(ax.c2p(z, Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI))));\nguide.addUpdater(() => guide.setVertices([\n  ax.c2p(z, 0),\n  ax.c2p(z, Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI))\n]));\n\nscene.add(ax, centerArea, middleLeft, middleRight, outerLeft, outerRight);\nawait scene.play(new Create(bell));\nscene.add(title, info, centerLabel, midLabel, outerLabel, guide, marker);\n\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 250 });\ncontrols.addSlider({\n  label: 'z-score marker', min: -3.5, max: 3.5, value: 0, step: 0.1,\n  onChange: value => { z = value; }\n});\ncontrols.addButton({ label: 'Reset marker', onClick: () => { z = 0; } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5468,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/stats-normal-empirical.0.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/stats-normal-empirical.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:59:24.351Z"
+}

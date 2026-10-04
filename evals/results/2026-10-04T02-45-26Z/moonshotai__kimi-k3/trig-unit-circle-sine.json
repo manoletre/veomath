@@ -1,0 +1,80 @@
+{
+  "itemId": "trig-unit-circle-sine",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.95% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Axes [x -0.12..8.00, y -2.25..2.25] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.72% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 85416,
+        "inputTokens": 4700,
+        "cachedInputTokens": 64,
+        "outputTokens": 10417,
+        "costUsd": 0.1701822,
+        "rawResponse": "{  \"explanation\": \"The sine graph is wavy because it is really circular motion viewed from the side. sin(θ) is just the vertical height of a point traveling around the unit circle: as the angle θ grows, that height climbs smoothly to 1, slides back through 0, dips to −1, and returns to 0. Every full turn repeats this same rise-and-fall, so the graph becomes an endless, smooth wave with period 2π. In the visualization, watch the yellow dot ride around the circle while its height is 'unwrapped' onto the graph — the wave is born from spinning.\",  \"manimCode\": \"// Title\\nconst title = new Text({ text: 'Sine = height of a point on a spinning circle', color: WHITE, fontSize: 26 });\\ntitle.moveTo([0, 3.5, 0]);\\nawait scene.play(new Write(title));\\n\\n// Unit circle on the left (radius 1.5 world units)\\nconst C = [-4.5, 0, 0];\\nconst R = 1.5;\\nconst circle = new Circle({ radius: R, color: BLUE_C });\\ncircle.moveTo(C);\\n\\n// Axes on the right. yLength 4.5 over yRange [-1.5, 1.5] gives 1.5 world units\\n// per data unit vertically, so graph heights exactly match the circle's heights.\\nconst ax = new Axes({\\n  xRange: [0, 2 * Math.PI, Math.PI / 2],\\n  yRange: [-1.5, 1.5, 0.5],\\n  xLength: 8,\\n  yLength: 4.5,\\n  tips: false\\n});\\nax.moveTo([2, 0, 0]);\\n\\nawait scene.play(new AnimationGroup([new Create(circle), new Create(ax)]));\\n\\n// Faint guide showing the full target wave\\nconst guide = ax.plot(x => Math.sin(x), { color: BLUE_E });\\nguide.setOpacity(0.3);\\nscene.add(guide);\\n\\nconst eq = new MathTex({ latex: 'y = \\\\\\\\sin(\\\\\\\\theta)' });\\nawait eq.waitForRender();\\neq.moveTo([4.8, 2.9, 0]);\\nscene.add(eq);\\n\\n// Shared state\\nlet angle = 0;\\nlet traced = null;\\nlet readout = null;\\nlet animating = false;\\n\\nfunction circlePoint(a) {\\n  return [C[0] + R * Math.cos(a), R * Math.sin(a), 0];\\n}\\n\\n// Dynamic elements: dot on circle, dot on graph, radius, height, connector\\nconst circleDot = new Dot({ point: circlePoint(0), color: YELLOW });\\nconst traceDot = new Dot({ point: ax.c2p(0, 0), color: YELLOW });\\n\\nconst radiusLine = new Polygon({ vertices: [C, circlePoint(0)], color: WHITE });\\nradiusLine.setStrokeWidth(2).setFillOpacity(0);\\n\\nconst heightLine = new Polygon({ vertices: [[C[0] + R, 0, 0], circlePoint(0)], color: ORANGE });\\nheightLine.setStrokeWidth(4).setFillOpacity(0);\\n\\nconst connector = new Polygon({ vertices: [circlePoint(0), ax.c2p(0, 0)], color: GRAY });\\nconnector.setStrokeWidth(1.5).setFillOpacity(0);\\n\\ncircleDot.addUpdater(() => circleDot.moveTo(circlePoint(angle)));\\ntraceDot.addUpdater(() => traceDot.moveTo(ax.c2p(angle, Math.sin(angle))));\\nradiusLine.addUpdater(() => radiusLine.setVertices([C, circlePoint(angle)]));\\nheightLine.addUpdater(() => {\\n  const p = circlePoint(angle);\\n  heightLine.setVertices([[p[0], 0, 0], p]);\\n});\\nconnector.addUpdater(() => {\\n  connector.setVertices([circlePoint(angle), ax.c2p(angle, Math.sin(angle))]);\\n});\\n\\nscene.add(radiusLine, heightLine, connector, circleDot, traceDot);\\n\\n// Traced portion of the wave (remove + re-plot pattern)\\nfunction updateTrace() {\\n  if (traced) { scene.remove(traced); traced = null; }\\n  if (angle > 0.02) {\\n    traced = ax.plot(x => Math.sin(x), { color: YELLOW, xRange: [0, angle] });\\n    scene.add(traced);\\n  }\\n}\\n\\n// Numeric readout (Text is immutable: remove + recreate)\\nfunction updateReadout() {\\n  const s = 'theta = ' + angle.toFixed(2) + ',  sin = ' + Math.sin(angle).toFixed(2);\\n  if (readout) scene.remove(readout);\\n  readout = new Text({ text: s, color: WHITE, fontSize: 22 });\\n  readout.moveTo([-4.5, 2.6, 0]);\\n  scene.add(readout);\\n}\\nupdateReadout();\\n\\n// Intro: watch the wave being unwrapped from the circle\\nasync function runTrace() {\\n  if (animating) return;\\n  animating = true;\\n  angle = 0;\\n  updateTrace();\\n  const steps = 90;\\n  for (let i = 1; i <= steps; i++) {\\n    angle = (i / steps) * 2 * Math.PI;\\n    updateTrace();\\n    if (i % 6 === 0) updateReadout();\\n    await scene.wait(0.045);\\n  }\\n  updateReadout();\\n  animating = false;\\n}\\nawait runTrace();\\n\\n// Interactivity: drag the dot around the circle\\nmakeDraggable(circleDot, scene, { onDrag: (mob, pos) => {\\n  let a = Math.atan2(pos[1] - C[1], pos[0] - C[0]);\\n  if (a < 0) a += 2 * Math.PI;\\n  angle = a;\\n  updateTrace();\\n  updateReadout();\\n}});\\n\\nconst hint = new Text({ text: 'Drag the yellow dot around the circle', color: GRAY, fontSize: 20 });\\nhint.moveTo([-1.5, -3.4, 0]);\\nscene.add(hint);\\n\\nconst controls = new Controls(scene, { position: 'bottom-right' });\\ncontrols.addSlider({ label: 'theta', min: 0, max: 2 * Math.PI, value: 2 * Math.PI, step: 0.01, onChange: (v) => {\\n  angle = v;\\n  updateTrace();\\n  updateReadout();\\n}});\\ncontrols.addButton({ label: 'Replay trace', onClick: () => { runTrace(); }});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The sine graph is wavy because it is really circular motion viewed from the side. sin(θ) is just the vertical height of a point traveling around the unit circle: as the angle θ grows, that height climbs smoothly to 1, slides back through 0, dips to −1, and returns to 0. Every full turn repeats this same rise-and-fall, so the graph becomes an endless, smooth wave with period 2π. In the visualization, watch the yellow dot ride around the circle while its height is 'unwrapped' onto the graph — the wave is born from spinning."
+      },
+      "code": "// Title\nconst title = new Text({ text: 'Sine = height of a point on a spinning circle', color: WHITE, fontSize: 26 });\ntitle.moveTo([0, 3.5, 0]);\nawait scene.play(new Write(title));\n\n// Unit circle on the left (radius 1.5 world units)\nconst C = [-4.5, 0, 0];\nconst R = 1.5;\nconst circle = new Circle({ radius: R, color: BLUE_C });\ncircle.moveTo(C);\n\n// Axes on the right. yLength 4.5 over yRange [-1.5, 1.5] gives 1.5 world units\n// per data unit vertically, so graph heights exactly match the circle's heights.\nconst ax = new Axes({\n  xRange: [0, 2 * Math.PI, Math.PI / 2],\n  yRange: [-1.5, 1.5, 0.5],\n  xLength: 8,\n  yLength: 4.5,\n  tips: false\n});\nax.moveTo([2, 0, 0]);\n\nawait scene.play(new AnimationGroup([new Create(circle), new Create(ax)]));\n\n// Faint guide showing the full target wave\nconst guide = ax.plot(x => Math.sin(x), { color: BLUE_E });\nguide.setOpacity(0.3);\nscene.add(guide);\n\nconst eq = new MathTex({ latex: 'y = \\\\sin(\\\\theta)' });\nawait eq.waitForRender();\neq.moveTo([4.8, 2.9, 0]);\nscene.add(eq);\n\n// Shared state\nlet angle = 0;\nlet traced = null;\nlet readout = null;\nlet animating = false;\n\nfunction circlePoint(a) {\n  return [C[0] + R * Math.cos(a), R * Math.sin(a), 0];\n}\n\n// Dynamic elements: dot on circle, dot on graph, radius, height, connector\nconst circleDot = new Dot({ point: circlePoint(0), color: YELLOW });\nconst traceDot = new Dot({ point: ax.c2p(0, 0), color: YELLOW });\n\nconst radiusLine = new Polygon({ vertices: [C, circlePoint(0)], color: WHITE });\nradiusLine.setStrokeWidth(2).setFillOpacity(0);\n\nconst heightLine = new Polygon({ vertices: [[C[0] + R, 0, 0], circlePoint(0)], color: ORANGE });\nheightLine.setStrokeWidth(4).setFillOpacity(0);\n\nconst connector = new Polygon({ vertices: [circlePoint(0), ax.c2p(0, 0)], color: GRAY });\nconnector.setStrokeWidth(1.5).setFillOpacity(0);\n\ncircleDot.addUpdater(() => circleDot.moveTo(circlePoint(angle)));\ntraceDot.addUpdater(() => traceDot.moveTo(ax.c2p(angle, Math.sin(angle))));\nradiusLine.addUpdater(() => radiusLine.setVertices([C, circlePoint(angle)]));\nheightLine.addUpdater(() => {\n  const p = circlePoint(angle);\n  heightLine.setVertices([[p[0], 0, 0], p]);\n});\nconnector.addUpdater(() => {\n  connector.setVertices([circlePoint(angle), ax.c2p(angle, Math.sin(angle))]);\n});\n\nscene.add(radiusLine, heightLine, connector, circleDot, traceDot);\n\n// Traced portion of the wave (remove + re-plot pattern)\nfunction updateTrace() {\n  if (traced) { scene.remove(traced); traced = null; }\n  if (angle > 0.02) {\n    traced = ax.plot(x => Math.sin(x), { color: YELLOW, xRange: [0, angle] });\n    scene.add(traced);\n  }\n}\n\n// Numeric readout (Text is immutable: remove + recreate)\nfunction updateReadout() {\n  const s = 'theta = ' + angle.toFixed(2) + ',  sin = ' + Math.sin(angle).toFixed(2);\n  if (readout) scene.remove(readout);\n  readout = new Text({ text: s, color: WHITE, fontSize: 22 });\n  readout.moveTo([-4.5, 2.6, 0]);\n  scene.add(readout);\n}\nupdateReadout();\n\n// Intro: watch the wave being unwrapped from the circle\nasync function runTrace() {\n  if (animating) return;\n  animating = true;\n  angle = 0;\n  updateTrace();\n  const steps = 90;\n  for (let i = 1; i <= steps; i++) {\n    angle = (i / steps) * 2 * Math.PI;\n    updateTrace();\n    if (i % 6 === 0) updateReadout();\n    await scene.wait(0.045);\n  }\n  updateReadout();\n  animating = false;\n}\nawait runTrace();\n\n// Interactivity: drag the dot around the circle\nmakeDraggable(circleDot, scene, { onDrag: (mob, pos) => {\n  let a = Math.atan2(pos[1] - C[1], pos[0] - C[0]);\n  if (a < 0) a += 2 * Math.PI;\n  angle = a;\n  updateTrace();\n  updateReadout();\n}});\n\nconst hint = new Text({ text: 'Drag the yellow dot around the circle', color: GRAY, fontSize: 20 });\nhint.moveTo([-1.5, -3.4, 0]);\nscene.add(hint);\n\nconst controls = new Controls(scene, { position: 'bottom-right' });\ncontrols.addSlider({ label: 'theta', min: 0, max: 2 * Math.PI, value: 2 * Math.PI, step: 0.01, onChange: (v) => {\n  angle = v;\n  updateTrace();\n  updateReadout();\n}});\ncontrols.addButton({ label: 'Replay trace', onClick: () => { runTrace(); }});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 15110,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 2,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/trig-unit-circle-sine.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/trig-unit-circle-sine.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:55:13.789Z"
+}

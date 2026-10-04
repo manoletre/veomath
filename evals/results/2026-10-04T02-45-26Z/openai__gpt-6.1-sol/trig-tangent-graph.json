@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-tangent-graph",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.69% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.08% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 33577,
+        "inputTokens": 4610,
+        "cachedInputTokens": 4581,
+        "outputTokens": 1574,
+        "costUsd": 0.0162561,
+        "rawResponse": "{\"explanation\":\"The tangent function, tan(x) = sin(x)/cos(x), repeats every π. Vertical asymptotes occur where cos(x) = 0: x = π/2 + kπ, so the interval [−2π, 2π] contains four asymptotes at −3π/2, −π/2, π/2, and 3π/2. At each asymptote, tan(x) approaches +∞ from the left and −∞ from the right; the function is undefined on the asymptote itself. Use the slider to explore the central branch.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\\n  yRange: [-3.5, 3.5, 1],\\n  xLength: 10.8,\\n  yLength: 4.6,\\n  tips: false\\n});\\nax.moveTo([0, -0.15, 0]);\\n\\nconst heading = new MathTex({ latex: 'y=\\\\\\\\tan(x)=\\\\\\\\frac{\\\\\\\\sin(x)}{\\\\\\\\cos(x)}', color: BLUE });\\nawait heading.waitForRender();\\nheading.scale(0.85);\\nheading.moveTo([-2.3, 3.05, 0]);\\nscene.add(heading);\\nawait scene.play(new Create(ax));\\n\\nconst polePositions = [-3 * Math.PI / 2, -Math.PI / 2, Math.PI / 2, 3 * Math.PI / 2];\\nconst dashedLines = new VGroup();\\nfor (const pole of polePositions) {\\n  for (let yy = -3.5; yy < 3.5; yy += 0.36) {\\n    const dash = new Line({\\n      start: ax.coordsToPoint(pole, yy),\\n      end: ax.coordsToPoint(pole, Math.min(yy + 0.19, 3.5)),\\n      color: RED\\n    });\\n    dash.setStrokeWidth(2);\\n    dash.setOpacity(0.75);\\n    dashedLines.add(dash);\\n  }\\n}\\nawait scene.play(new FadeIn(dashedLines));\\n\\nconst branches = new VGroup();\\nconst limit = Math.atan(3.5);\\nfor (let k = -2; k <= 2; k++) {\\n  const leftEdge = Math.max(-2 * Math.PI, k * Math.PI - limit);\\n  const rightEdge = Math.min(2 * Math.PI, k * Math.PI + limit);\\n  const branch = ax.plot(x => Math.tan(x), {\\n    xRange: [leftEdge, rightEdge],\\n    color: BLUE,\\n    numSamples: 180\\n  });\\n  branch.setStrokeWidth(3);\\n  branches.add(branch);\\n}\\nawait scene.play(new Create(branches));\\n\\nconst tickSpecs = [\\n  [-2 * Math.PI, '-2\\\\\\\\pi'],\\n  [-Math.PI, '-\\\\\\\\pi'],\\n  [0, '0'],\\n  [Math.PI, '\\\\\\\\pi'],\\n  [2 * Math.PI, '2\\\\\\\\pi']\\n];\\nfor (const [xx, latex] of tickSpecs) {\\n  const tickLabel = new MathTex({ latex, color: GRAY });\\n  await tickLabel.waitForRender();\\n  tickLabel.scale(0.55);\\n  tickLabel.moveTo(ax.coordsToPoint(xx, 0));\\n  tickLabel.shift([0, -0.3, 0]);\\n  scene.add(tickLabel);\\n}\\n\\nconst asymptoteFormula = new MathTex({\\n  latex: '\\\\\\\\text{Vertical asymptotes: }x=\\\\\\\\frac{\\\\\\\\pi}{2}+k\\\\\\\\pi,\\\\\\\\quad k\\\\\\\\in\\\\\\\\mathbb{Z}',\\n  color: RED\\n});\\nawait asymptoteFormula.waitForRender();\\nasymptoteFormula.scale(0.7);\\nasymptoteFormula.moveTo([0, -2.95, 0]);\\nawait scene.play(new Write(asymptoteFormula));\\n\\nconst note = new Text({\\n  text: 'Dashed red lines: undefined values, not part of the graph',\\n  fontSize: 20,\\n  color: GRAY\\n});\\nnote.moveTo([0, -3.45, 0]);\\nscene.add(note);\\n\\nconst marker = new Dot({ point: ax.coordsToPoint(0, 0), color: YELLOW });\\nscene.add(marker);\\nmakeHoverable(marker, scene, { hoverScale: 1.4 });\\nconst controls = new Controls(scene, { position: 'top-right', width: 240 });\\ncontrols.addSlider({\\n  label: 'x (central branch)',\\n  min: -1.28,\\n  max: 1.28,\\n  value: 0,\\n  step: 0.01,\\n  onChange: val => {\\n    marker.moveTo(ax.coordsToPoint(val, Math.tan(val)));\\n  }\\n});\\nawait scene.wait(999999);\"}",
+        "explanation": "The tangent function, tan(x) = sin(x)/cos(x), repeats every π. Vertical asymptotes occur where cos(x) = 0: x = π/2 + kπ, so the interval [−2π, 2π] contains four asymptotes at −3π/2, −π/2, π/2, and 3π/2. At each asymptote, tan(x) approaches +∞ from the left and −∞ from the right; the function is undefined on the asymptote itself. Use the slider to explore the central branch."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\n  yRange: [-3.5, 3.5, 1],\n  xLength: 10.8,\n  yLength: 4.6,\n  tips: false\n});\nax.moveTo([0, -0.15, 0]);\n\nconst heading = new MathTex({ latex: 'y=\\\\tan(x)=\\\\frac{\\\\sin(x)}{\\\\cos(x)}', color: BLUE });\nawait heading.waitForRender();\nheading.scale(0.85);\nheading.moveTo([-2.3, 3.05, 0]);\nscene.add(heading);\nawait scene.play(new Create(ax));\n\nconst polePositions = [-3 * Math.PI / 2, -Math.PI / 2, Math.PI / 2, 3 * Math.PI / 2];\nconst dashedLines = new VGroup();\nfor (const pole of polePositions) {\n  for (let yy = -3.5; yy < 3.5; yy += 0.36) {\n    const dash = new Line({\n      start: ax.coordsToPoint(pole, yy),\n      end: ax.coordsToPoint(pole, Math.min(yy + 0.19, 3.5)),\n      color: RED\n    });\n    dash.setStrokeWidth(2);\n    dash.setOpacity(0.75);\n    dashedLines.add(dash);\n  }\n}\nawait scene.play(new FadeIn(dashedLines));\n\nconst branches = new VGroup();\nconst limit = Math.atan(3.5);\nfor (let k = -2; k <= 2; k++) {\n  const leftEdge = Math.max(-2 * Math.PI, k * Math.PI - limit);\n  const rightEdge = Math.min(2 * Math.PI, k * Math.PI + limit);\n  const branch = ax.plot(x => Math.tan(x), {\n    xRange: [leftEdge, rightEdge],\n    color: BLUE,\n    numSamples: 180\n  });\n  branch.setStrokeWidth(3);\n  branches.add(branch);\n}\nawait scene.play(new Create(branches));\n\nconst tickSpecs = [\n  [-2 * Math.PI, '-2\\\\pi'],\n  [-Math.PI, '-\\\\pi'],\n  [0, '0'],\n  [Math.PI, '\\\\pi'],\n  [2 * Math.PI, '2\\\\pi']\n];\nfor (const [xx, latex] of tickSpecs) {\n  const tickLabel = new MathTex({ latex, color: GRAY });\n  await tickLabel.waitForRender();\n  tickLabel.scale(0.55);\n  tickLabel.moveTo(ax.coordsToPoint(xx, 0));\n  tickLabel.shift([0, -0.3, 0]);\n  scene.add(tickLabel);\n}\n\nconst asymptoteFormula = new MathTex({\n  latex: '\\\\text{Vertical asymptotes: }x=\\\\frac{\\\\pi}{2}+k\\\\pi,\\\\quad k\\\\in\\\\mathbb{Z}',\n  color: RED\n});\nawait asymptoteFormula.waitForRender();\nasymptoteFormula.scale(0.7);\nasymptoteFormula.moveTo([0, -2.95, 0]);\nawait scene.play(new Write(asymptoteFormula));\n\nconst note = new Text({\n  text: 'Dashed red lines: undefined values, not part of the graph',\n  fontSize: 20,\n  color: GRAY\n});\nnote.moveTo([0, -3.45, 0]);\nscene.add(note);\n\nconst marker = new Dot({ point: ax.coordsToPoint(0, 0), color: YELLOW });\nscene.add(marker);\nmakeHoverable(marker, scene, { hoverScale: 1.4 });\nconst controls = new Controls(scene, { position: 'top-right', width: 240 });\ncontrols.addSlider({\n  label: 'x (central branch)',\n  min: -1.28,\n  max: 1.28,\n  value: 0,\n  step: 0.01,\n  onChange: val => {\n    marker.moveTo(ax.coordsToPoint(val, Math.tan(val)));\n  }\n});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 11966,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 4,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/trig-tangent-graph.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/trig-tangent-graph.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:16.867Z"
+}

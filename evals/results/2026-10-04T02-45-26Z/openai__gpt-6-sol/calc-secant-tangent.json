@@ -1,0 +1,79 @@
+{
+  "itemId": "calc-secant-tangent",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.16% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.09% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 60394,
+        "inputTokens": 12273,
+        "cachedInputTokens": 12032,
+        "outputTokens": 2341,
+        "costUsd": 0.0262984,
+        "rawResponse": "{\"explanation\":\"A secant line passes through two points on a curve: at x = a and x = a + h. As h approaches 0, the second point moves toward the first, and the secant’s slope approaches the derivative f′(a)—the slope of the tangent line. Drag the h slider to watch this happen.\",\"manimCode\":\"const f = x => 0.3 * x * x;\\nconst a = 0.7;\\nlet h = 1.8;\\n\\nconst title = new Text({ text: 'Secant → Tangent', color: WHITE, fontSize: 34 });\\ntitle.moveTo([0, 3.35, 0]);\\n\\nconst ax = new Axes({\\n  xRange: [-3.2, 3.2, 1],\\n  yRange: [-2, 3.5, 1],\\n  xLength: 9,\\n  yLength: 5.3,\\n  tips: false\\n});\\nax.moveTo([-1.1, -0.05, 0]);\\nconst curve = ax.plot(f, { color: BLUE, xRange: [-3.2, 3.2] });\\n\\nconst makeSegment = (color, width) => {\\n  const p = new Polygon({ vertices: [ax.c2p(0, 0), ax.c2p(1, 0)], color });\\n  p.setStrokeWidth(width);\\n  p.setFillOpacity(0);\\n  return p;\\n};\\n\\nconst tangent = makeSegment(TEAL, 3);\\nconst secant = makeSegment(YELLOW, 5);\\nconst run = makeSegment(ORANGE, 2);\\nconst rise = makeSegment(ORANGE, 2);\\nconst pointA = new Dot({ point: ax.c2p(a, f(a)), color: TEAL });\\nconst pointB = new Dot({ point: ax.c2p(a + h, f(a + h)), color: ORANGE });\\n\\nfunction updateGeometry() {\\n  const slope = (f(a + h) - f(a)) / h;\\n  const tangentSlope = 0.6 * a;\\n  const left = -1.1;\\n  const right = 2.9;\\n  tangent.setVertices([\\n    ax.c2p(left, f(a) + tangentSlope * (left - a)),\\n    ax.c2p(right, f(a) + tangentSlope * (right - a))\\n  ]);\\n  secant.setVertices([\\n    ax.c2p(left, f(a) + slope * (left - a)),\\n    ax.c2p(right, f(a) + slope * (right - a))\\n  ]);\\n  run.setVertices([ax.c2p(a, f(a)), ax.c2p(a + h, f(a))]);\\n  rise.setVertices([ax.c2p(a + h, f(a)), ax.c2p(a + h, f(a + h))]);\\n  pointB.moveTo(ax.c2p(a + h, f(a + h)));\\n}\\nupdateGeometry();\\n\\nconst formula = new MathTex({ latex: '\\\\\\\\lim_{h\\\\\\\\to 0}\\\\\\\\frac{f(a+h)-f(a)}{h}=f\\\\'(a)' });\\nawait formula.waitForRender();\\nformula.moveTo([-0.7, -3.35, 0]);\\n\\nscene.add(ax);\\nawait scene.play(new Write(title));\\nawait scene.play(new Create(curve));\\nawait scene.play(new AnimationGroup([\\n  new Create(tangent),\\n  new Create(secant),\\n  new FadeIn(pointA),\\n  new FadeIn(pointB)\\n]));\\nscene.add(run, rise);\\nawait scene.play(new Write(formula));\\n\\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 240 });\\ncontrols.addSlider({\\n  label: 'h (point separation)',\\n  min: 0.02,\\n  max: 1.8,\\n  value: 1.8,\\n  step: 0.02,\\n  onChange: value => {\\n    h = value;\\n    updateGeometry();\\n  }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A secant line passes through two points on a curve: at x = a and x = a + h. As h approaches 0, the second point moves toward the first, and the secant’s slope approaches the derivative f′(a)—the slope of the tangent line. Drag the h slider to watch this happen."
+      },
+      "code": "const f = x => 0.3 * x * x;\nconst a = 0.7;\nlet h = 1.8;\n\nconst title = new Text({ text: 'Secant → Tangent', color: WHITE, fontSize: 34 });\ntitle.moveTo([0, 3.35, 0]);\n\nconst ax = new Axes({\n  xRange: [-3.2, 3.2, 1],\n  yRange: [-2, 3.5, 1],\n  xLength: 9,\n  yLength: 5.3,\n  tips: false\n});\nax.moveTo([-1.1, -0.05, 0]);\nconst curve = ax.plot(f, { color: BLUE, xRange: [-3.2, 3.2] });\n\nconst makeSegment = (color, width) => {\n  const p = new Polygon({ vertices: [ax.c2p(0, 0), ax.c2p(1, 0)], color });\n  p.setStrokeWidth(width);\n  p.setFillOpacity(0);\n  return p;\n};\n\nconst tangent = makeSegment(TEAL, 3);\nconst secant = makeSegment(YELLOW, 5);\nconst run = makeSegment(ORANGE, 2);\nconst rise = makeSegment(ORANGE, 2);\nconst pointA = new Dot({ point: ax.c2p(a, f(a)), color: TEAL });\nconst pointB = new Dot({ point: ax.c2p(a + h, f(a + h)), color: ORANGE });\n\nfunction updateGeometry() {\n  const slope = (f(a + h) - f(a)) / h;\n  const tangentSlope = 0.6 * a;\n  const left = -1.1;\n  const right = 2.9;\n  tangent.setVertices([\n    ax.c2p(left, f(a) + tangentSlope * (left - a)),\n    ax.c2p(right, f(a) + tangentSlope * (right - a))\n  ]);\n  secant.setVertices([\n    ax.c2p(left, f(a) + slope * (left - a)),\n    ax.c2p(right, f(a) + slope * (right - a))\n  ]);\n  run.setVertices([ax.c2p(a, f(a)), ax.c2p(a + h, f(a))]);\n  rise.setVertices([ax.c2p(a + h, f(a)), ax.c2p(a + h, f(a + h))]);\n  pointB.moveTo(ax.c2p(a + h, f(a + h)));\n}\nupdateGeometry();\n\nconst formula = new MathTex({ latex: '\\\\lim_{h\\\\to 0}\\\\frac{f(a+h)-f(a)}{h}=f\\'(a)' });\nawait formula.waitForRender();\nformula.moveTo([-0.7, -3.35, 0]);\n\nscene.add(ax);\nawait scene.play(new Write(title));\nawait scene.play(new Create(curve));\nawait scene.play(new AnimationGroup([\n  new Create(tangent),\n  new Create(secant),\n  new FadeIn(pointA),\n  new FadeIn(pointB)\n]));\nscene.add(run, rise);\nawait scene.play(new Write(formula));\n\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 240 });\ncontrols.addSlider({\n  label: 'h (point separation)',\n  min: 0.02,\n  max: 1.8,\n  value: 1.8,\n  step: 0.02,\n  onChange: value => {\n    h = value;\n    updateGeometry();\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9664,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 4,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/calc-secant-tangent.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/calc-secant-tangent.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:53:34.388Z"
+}

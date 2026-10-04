@@ -1,0 +1,80 @@
+{
+  "itemId": "calc-riemann-sums",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "8.61% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "MathTex \"\\Delta x=\\frac{2}{n},\\qquad S_n=\\sum_{i=\" overlaps Text \"n = 8     Midpoint sum = 2.65625     Exa\" (37%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.93% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 29661,
+        "inputTokens": 4619,
+        "cachedInputTokens": 4581,
+        "outputTokens": 1403,
+        "costUsd": 0.0145641,
+        "rawResponse": "{\"explanation\":\"A Riemann sum approximates area by adding the areas of rectangles. Here, each rectangle has width 2/n and a height taken from y = x² at its midpoint. Move the slider to increase the number of rectangles: the sum approaches the exact area, ∫₀² x² dx = 8/3 ≈ 2.66667.\",\"manimCode\":\"const heading = new Text({ text: 'Riemann sums: area under y = x²', fontSize: 30, color: WHITE });\\nheading.moveTo([0, 3.15, 0]);\\nconst axes = new Axes({\\n  xRange: [-0.15, 2.3, 0.5],\\n  yRange: [-0.3, 4.7, 1],\\n  xLength: 8,\\n  yLength: 4.2,\\n  tips: false\\n});\\naxes.moveTo([-1.1, -0.15, 0]);\\nconst curve = axes.plot(x => x * x, { xRange: [0, 2], color: YELLOW, numSamples: 160 });\\nconst axisNumbers = new VGroup();\\nfor (const val of [0, 1, 2]) {\\n  const tickLabel = new Text({ text: String(val), fontSize: 19, color: GRAY });\\n  tickLabel.moveTo(axes.c2p(val, 0));\\n  tickLabel.shift([0, -0.25, 0]);\\n  axisNumbers.add(tickLabel);\\n}\\nfor (const val of [2, 4]) {\\n  const tickLabel = new Text({ text: String(val), fontSize: 19, color: GRAY });\\n  tickLabel.moveTo(axes.c2p(0, val));\\n  tickLabel.shift([-0.28, 0, 0]);\\n  axisNumbers.add(tickLabel);\\n}\\nconst formula = new MathTex({ latex: '\\\\\\\\Delta x=\\\\\\\\frac{2}{n},\\\\\\\\qquad S_n=\\\\\\\\sum_{i=0}^{n-1}\\\\\\\\left((i+\\\\\\\\tfrac12)\\\\\\\\Delta x\\\\\\\\right)^2\\\\\\\\Delta x' });\\nawait formula.waitForRender();\\nformula.scale(0.7);\\nformula.moveTo([0, -3.15, 0]);\\nawait scene.play(new AnimationGroup([new Write(heading), new Create(axes)]));\\nscene.add(axisNumbers, formula);\\nlet bars = null;\\nlet readout = null;\\nfunction updateRectangles(count) {\\n  const n = Math.max(1, Math.round(count));\\n  const dx = 2 / n;\\n  if (bars) scene.remove(bars);\\n  if (readout) scene.remove(readout);\\n  bars = new VGroup();\\n  let total = 0;\\n  for (let i = 0; i < n; i++) {\\n    const left = i * dx;\\n    const right = (i + 1) * dx;\\n    const mid = (left + right) / 2;\\n    const height = mid * mid;\\n    total += height * dx;\\n    const rect = new Polygon({\\n      vertices: [axes.c2p(left, 0), axes.c2p(right, 0), axes.c2p(right, height), axes.c2p(left, height)],\\n      color: BLUE\\n    });\\n    rect.setFill(BLUE, 0.4);\\n    rect.setStrokeWidth(n > 40 ? 0.7 : 1.3);\\n    bars.add(rect);\\n  }\\n  scene.add(bars);\\n  scene.remove(curve);\\n  scene.add(curve);\\n  readout = new Text({\\n    text: 'n = ' + n + '     Midpoint sum = ' + total.toFixed(5) + '     Exact area = 2.66667',\\n    fontSize: 23,\\n    color: WHITE\\n  });\\n  readout.moveTo([0, -2.55, 0]);\\n  scene.add(readout);\\n}\\nupdateRectangles(8);\\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 250 });\\ncontrols.addSlider({ label: 'Number of rectangles', min: 1, max: 80, step: 1, value: 8, onChange: updateRectangles });\\nawait scene.wait(999999);\"}",
+        "explanation": "A Riemann sum approximates area by adding the areas of rectangles. Here, each rectangle has width 2/n and a height taken from y = x² at its midpoint. Move the slider to increase the number of rectangles: the sum approaches the exact area, ∫₀² x² dx = 8/3 ≈ 2.66667."
+      },
+      "code": "const heading = new Text({ text: 'Riemann sums: area under y = x²', fontSize: 30, color: WHITE });\nheading.moveTo([0, 3.15, 0]);\nconst axes = new Axes({\n  xRange: [-0.15, 2.3, 0.5],\n  yRange: [-0.3, 4.7, 1],\n  xLength: 8,\n  yLength: 4.2,\n  tips: false\n});\naxes.moveTo([-1.1, -0.15, 0]);\nconst curve = axes.plot(x => x * x, { xRange: [0, 2], color: YELLOW, numSamples: 160 });\nconst axisNumbers = new VGroup();\nfor (const val of [0, 1, 2]) {\n  const tickLabel = new Text({ text: String(val), fontSize: 19, color: GRAY });\n  tickLabel.moveTo(axes.c2p(val, 0));\n  tickLabel.shift([0, -0.25, 0]);\n  axisNumbers.add(tickLabel);\n}\nfor (const val of [2, 4]) {\n  const tickLabel = new Text({ text: String(val), fontSize: 19, color: GRAY });\n  tickLabel.moveTo(axes.c2p(0, val));\n  tickLabel.shift([-0.28, 0, 0]);\n  axisNumbers.add(tickLabel);\n}\nconst formula = new MathTex({ latex: '\\\\Delta x=\\\\frac{2}{n},\\\\qquad S_n=\\\\sum_{i=0}^{n-1}\\\\left((i+\\\\tfrac12)\\\\Delta x\\\\right)^2\\\\Delta x' });\nawait formula.waitForRender();\nformula.scale(0.7);\nformula.moveTo([0, -3.15, 0]);\nawait scene.play(new AnimationGroup([new Write(heading), new Create(axes)]));\nscene.add(axisNumbers, formula);\nlet bars = null;\nlet readout = null;\nfunction updateRectangles(count) {\n  const n = Math.max(1, Math.round(count));\n  const dx = 2 / n;\n  if (bars) scene.remove(bars);\n  if (readout) scene.remove(readout);\n  bars = new VGroup();\n  let total = 0;\n  for (let i = 0; i < n; i++) {\n    const left = i * dx;\n    const right = (i + 1) * dx;\n    const mid = (left + right) / 2;\n    const height = mid * mid;\n    total += height * dx;\n    const rect = new Polygon({\n      vertices: [axes.c2p(left, 0), axes.c2p(right, 0), axes.c2p(right, height), axes.c2p(left, height)],\n      color: BLUE\n    });\n    rect.setFill(BLUE, 0.4);\n    rect.setStrokeWidth(n > 40 ? 0.7 : 1.3);\n    bars.add(rect);\n  }\n  scene.add(bars);\n  scene.remove(curve);\n  scene.add(curve);\n  readout = new Text({\n    text: 'n = ' + n + '     Midpoint sum = ' + total.toFixed(5) + '     Exact area = 2.66667',\n    fontSize: 23,\n    color: WHITE\n  });\n  readout.moveTo([0, -2.55, 0]);\n  scene.add(readout);\n}\nupdateRectangles(8);\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 250 });\ncontrols.addSlider({ label: 'Number of rectangles', min: 1, max: 80, step: 1, value: 8, onChange: updateRectangles });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 6303,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/calc-riemann-sums.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/calc-riemann-sums.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:02.751Z"
+}

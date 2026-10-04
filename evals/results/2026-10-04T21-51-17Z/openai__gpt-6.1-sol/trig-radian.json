@@ -1,0 +1,103 @@
+{
+  "itemId": "trig-radian",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 0.9090909090909091,
+  "firstAttemptScore": 0.9090909090909091,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9090909090909091,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.84% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=2 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "✗ click Rectangle at (3.1, -2.0) — 0.01% changed\n✗ click Text at (3.1, -2.0) — 0.00% changed\n✓ drag Dot at (-1.4, 1.7) — 0.72% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✗ click Rectangle at (3.1, -2.0) — 0.01% changed\n✗ click Text at (3.1, -2.0) — 0.00% changed\n✓ drag Dot at (-1.4, 1.7) — 0.72% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 41290,
+        "inputTokens": 5303,
+        "cachedInputTokens": 5287,
+        "outputTokens": 1848,
+        "costUsd": 0.0190407,
+        "rawResponse": "{\"explanation\":\"A radian measures an angle by comparing the length of its circular arc to the circle’s radius: θ = arc length ÷ radius. One radian is the angle that cuts off an arc exactly as long as the radius—about 57.3°. Drag the yellow point to see the arc length and angle grow together; a full turn is 2π radians.\",\"manimCode\":\"const center = [-2.5, 0, 0];\\nconst radius = 2;\\nlet theta = 1;\\nconst pointAt = a => [center[0] + radius * Math.cos(a), center[1] + radius * Math.sin(a), 0];\\n\\nconst title = new Text({ text: 'A radian: an angle measured by an arc', fontSize: 30, color: WHITE });\\ntitle.moveTo([0, 3.15, 0]);\\nconst circle = new Circle({ radius, color: GRAY });\\ncircle.moveTo(center);\\ncircle.setStrokeWidth(2);\\nconst baseRadius = new Line({ start: center, end: pointAt(0), color: BLUE });\\nbaseRadius.setStrokeWidth(4);\\nconst movingRadius = new Line({ start: center, end: pointAt(theta), color: BLUE });\\nmovingRadius.setStrokeWidth(4);\\nconst originDot = new Dot({ point: center, radius: 0.05, color: WHITE });\\nconst handle = new Dot({ point: pointAt(theta), radius: 0.14, color: YELLOW });\\n\\nconst arcSegments = [];\\nconst segmentCount = 80;\\nfor (let i = 0; i < segmentCount; i++) {\\n  const segment = new Line({ start: pointAt(theta * i / segmentCount), end: pointAt(theta * (i + 1) / segmentCount), color: YELLOW });\\n  segment.setStrokeWidth(6);\\n  arcSegments.push(segment);\\n}\\nconst arcGroup = new VGroup(...arcSegments);\\nconst radiusLabel = new Text({ text: 'radius r = 2', fontSize: 22, color: BLUE });\\nradiusLabel.moveTo([-1.5, -0.35, 0]);\\nconst arcLabel = new Text({ text: 'arc length s', fontSize: 22, color: YELLOW });\\narcLabel.moveTo([-2.5, 2.4, 0]);\\n\\nconst formula = new MathTex({ latex: '\\\\\\\\theta = \\\\\\\\frac{s}{r}', color: WHITE });\\nawait formula.waitForRender();\\nformula.moveTo([3.1, 1.95, 0]);\\nconst arcReadout = new Text({ text: '', fontSize: 26, color: YELLOW });\\narcReadout.moveTo([3.1, 0.95, 0]);\\nconst angleReadout = new Text({ text: '', fontSize: 28, color: WHITE });\\nangleReadout.moveTo([3.1, 0.25, 0]);\\nconst degreesReadout = new Text({ text: '', fontSize: 22, color: GRAY });\\ndegreesReadout.moveTo([3.1, -0.35, 0]);\\nconst insight = new Text({ text: '', fontSize: 22, color: GREEN });\\ninsight.moveTo([3.1, -1.05, 0]);\\nconst resetButton = new Rectangle({ width: 2.8, height: 0.55, color: GREEN });\\nresetButton.setFill(GREEN, 0.15);\\nresetButton.moveTo([3.1, -2.05, 0]);\\nconst resetLabel = new Text({ text: 'Show 1 radian', fontSize: 22, color: GREEN });\\nresetLabel.moveTo([3.1, -2.05, 0]);\\nconst hint = new Text({ text: 'Drag the yellow point around the circle', fontSize: 23, color: GRAY });\\nhint.moveTo([0, -3.15, 0]);\\n\\nfunction update() {\\n  handle.moveTo(pointAt(theta));\\n  movingRadius.setEnd(pointAt(theta));\\n  for (let i = 0; i < segmentCount; i++) {\\n    arcSegments[i].setStart(pointAt(theta * i / segmentCount));\\n    arcSegments[i].setEnd(pointAt(theta * (i + 1) / segmentCount));\\n  }\\n  arcReadout.setText('s = ' + (radius * theta).toFixed(2));\\n  angleReadout.setText('Angle = ' + theta.toFixed(2) + ' rad');\\n  degreesReadout.setText('About ' + (theta * 180 / Math.PI).toFixed(1) + ' degrees');\\n  insight.setText(Math.abs(theta - 1) < 0.025 ? 'Arc = radius: one radian!' : 'Arc = ' + theta.toFixed(2) + ' radii');\\n}\\nupdate();\\nscene.add(title, formula, radiusLabel, arcLabel, arcReadout, angleReadout, degreesReadout, insight, resetButton, resetLabel, hint);\\nawait scene.play(new Create(circle));\\nawait scene.play(new AnimationGroup([new Create(baseRadius), new Create(movingRadius), new FadeIn(arcGroup), new FadeIn(originDot), new FadeIn(handle)]));\\n\\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\\n  const dx = pos[0] - center[0];\\n  const dy = pos[1] - center[1];\\n  if (Math.hypot(dx, dy) < 0.15) { update(); return; }\\n  let angle = Math.atan2(dy, dx);\\n  if (angle < 0) angle += 2 * Math.PI;\\n  theta = Math.max(0.01, Math.min(2 * Math.PI - 0.01, angle));\\n  update();\\n} });\\nconst resetToOne = () => { theta = 1; update(); };\\nmakeClickable(resetButton, scene, { onClick: resetToOne });\\nmakeClickable(resetLabel, scene, { onClick: resetToOne });\\nawait scene.wait(999999);\"}",
+        "explanation": "A radian measures an angle by comparing the length of its circular arc to the circle’s radius: θ = arc length ÷ radius. One radian is the angle that cuts off an arc exactly as long as the radius—about 57.3°. Drag the yellow point to see the arc length and angle grow together; a full turn is 2π radians."
+      },
+      "code": "const center = [-2.5, 0, 0];\nconst radius = 2;\nlet theta = 1;\nconst pointAt = a => [center[0] + radius * Math.cos(a), center[1] + radius * Math.sin(a), 0];\n\nconst title = new Text({ text: 'A radian: an angle measured by an arc', fontSize: 30, color: WHITE });\ntitle.moveTo([0, 3.15, 0]);\nconst circle = new Circle({ radius, color: GRAY });\ncircle.moveTo(center);\ncircle.setStrokeWidth(2);\nconst baseRadius = new Line({ start: center, end: pointAt(0), color: BLUE });\nbaseRadius.setStrokeWidth(4);\nconst movingRadius = new Line({ start: center, end: pointAt(theta), color: BLUE });\nmovingRadius.setStrokeWidth(4);\nconst originDot = new Dot({ point: center, radius: 0.05, color: WHITE });\nconst handle = new Dot({ point: pointAt(theta), radius: 0.14, color: YELLOW });\n\nconst arcSegments = [];\nconst segmentCount = 80;\nfor (let i = 0; i < segmentCount; i++) {\n  const segment = new Line({ start: pointAt(theta * i / segmentCount), end: pointAt(theta * (i + 1) / segmentCount), color: YELLOW });\n  segment.setStrokeWidth(6);\n  arcSegments.push(segment);\n}\nconst arcGroup = new VGroup(...arcSegments);\nconst radiusLabel = new Text({ text: 'radius r = 2', fontSize: 22, color: BLUE });\nradiusLabel.moveTo([-1.5, -0.35, 0]);\nconst arcLabel = new Text({ text: 'arc length s', fontSize: 22, color: YELLOW });\narcLabel.moveTo([-2.5, 2.4, 0]);\n\nconst formula = new MathTex({ latex: '\\\\theta = \\\\frac{s}{r}', color: WHITE });\nawait formula.waitForRender();\nformula.moveTo([3.1, 1.95, 0]);\nconst arcReadout = new Text({ text: '', fontSize: 26, color: YELLOW });\narcReadout.moveTo([3.1, 0.95, 0]);\nconst angleReadout = new Text({ text: '', fontSize: 28, color: WHITE });\nangleReadout.moveTo([3.1, 0.25, 0]);\nconst degreesReadout = new Text({ text: '', fontSize: 22, color: GRAY });\ndegreesReadout.moveTo([3.1, -0.35, 0]);\nconst insight = new Text({ text: '', fontSize: 22, color: GREEN });\ninsight.moveTo([3.1, -1.05, 0]);\nconst resetButton = new Rectangle({ width: 2.8, height: 0.55, color: GREEN });\nresetButton.setFill(GREEN, 0.15);\nresetButton.moveTo([3.1, -2.05, 0]);\nconst resetLabel = new Text({ text: 'Show 1 radian', fontSize: 22, color: GREEN });\nresetLabel.moveTo([3.1, -2.05, 0]);\nconst hint = new Text({ text: 'Drag the yellow point around the circle', fontSize: 23, color: GRAY });\nhint.moveTo([0, -3.15, 0]);\n\nfunction update() {\n  handle.moveTo(pointAt(theta));\n  movingRadius.setEnd(pointAt(theta));\n  for (let i = 0; i < segmentCount; i++) {\n    arcSegments[i].setStart(pointAt(theta * i / segmentCount));\n    arcSegments[i].setEnd(pointAt(theta * (i + 1) / segmentCount));\n  }\n  arcReadout.setText('s = ' + (radius * theta).toFixed(2));\n  angleReadout.setText('Angle = ' + theta.toFixed(2) + ' rad');\n  degreesReadout.setText('About ' + (theta * 180 / Math.PI).toFixed(1) + ' degrees');\n  insight.setText(Math.abs(theta - 1) < 0.025 ? 'Arc = radius: one radian!' : 'Arc = ' + theta.toFixed(2) + ' radii');\n}\nupdate();\nscene.add(title, formula, radiusLabel, arcLabel, arcReadout, angleReadout, degreesReadout, insight, resetButton, resetLabel, hint);\nawait scene.play(new Create(circle));\nawait scene.play(new AnimationGroup([new Create(baseRadius), new Create(movingRadius), new FadeIn(arcGroup), new FadeIn(originDot), new FadeIn(handle)]));\n\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\n  const dx = pos[0] - center[0];\n  const dy = pos[1] - center[1];\n  if (Math.hypot(dx, dy) < 0.15) { update(); return; }\n  let angle = Math.atan2(dy, dx);\n  if (angle < 0) angle += 2 * Math.PI;\n  theta = Math.max(0.01, Math.min(2 * Math.PI - 0.01, angle));\n  update();\n} });\nconst resetToOne = () => { theta = 1; update(); };\nmakeClickable(resetButton, scene, { onClick: resetToOne });\nmakeClickable(resetLabel, scene, { onClick: resetToOne });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 11588,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 2,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 2,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "click",
+            "label": "Rectangle at (3.1, -2.0)",
+            "change": 0.00012261284722222223,
+            "responded": false
+          },
+          {
+            "kind": "click",
+            "label": "Text at (3.1, -2.0)",
+            "change": 0,
+            "responded": false
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (-1.4, 1.7)",
+            "change": 0.007183159722222222,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/trig-radian.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/trig-radian.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:52:59.079Z"
+}

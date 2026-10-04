@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-sinusoid-params",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.75% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=4 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.60% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 8435,
+        "inputTokens": 7965,
+        "cachedInputTokens": 7476,
+        "outputTokens": 991,
+        "costUsd": 0.0133572,
+        "rawResponse": "{\"explanation\":\"In y = A sin(B(x − C)) + D, A is the amplitude (vertical stretch), B sets the frequency (the period is 2π/B), C is the phase shift (horizontal slide), and D is the vertical shift (the midline). Move the sliders to see each one change the wave. The dashed reference sine, y = sin(x), stays in place so you can compare.\",\"manimCode\":\"const axes = new Axes({ xRange: [-2*Math.PI, 2*Math.PI, Math.PI/2], yRange: [-4, 4, 1], xLength: 11, yLength: 6, tips: false });\\nscene.add(axes);\\n\\nlet A = 1, B = 1, C = 0, D = 0;\\nconst f = (x) => A * Math.sin(B * (x - C)) + D;\\n\\nconst ref = axes.plot(x => Math.sin(x), { color: GRAY });\\nref.setOpacity(0.5);\\nscene.add(ref);\\n\\nlet curve = axes.plot(f, { color: YELLOW, numSamples: 300 });\\nlet mid = axes.plot(x => D, { color: TEAL });\\nscene.add(curve, mid);\\n\\nfunction redraw() {\\n  scene.remove(curve);\\n  scene.remove(mid);\\n  curve = axes.plot(f, { color: YELLOW, numSamples: 300 });\\n  mid = axes.plot(x => D, { color: TEAL });\\n  mid.setOpacity(0.6);\\n  scene.add(curve, mid);\\n}\\n\\nconst title = new MathTex({ latex: 'y = A\\\\\\\\sin(B(x - C)) + D' });\\nawait title.waitForRender();\\ntitle.moveTo([0, 3.6, 0]);\\ntitle.scale(0.7);\\nscene.add(title);\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\ncontrols.addSlider({ label: 'A (amplitude)', min: -3, max: 3, value: 1, step: 0.1, onChange: (v) => { A = v; redraw(); } });\\ncontrols.addSlider({ label: 'B (frequency)', min: 0.2, max: 4, value: 1, step: 0.1, onChange: (v) => { B = v; redraw(); } });\\ncontrols.addSlider({ label: 'C (phase shift)', min: -3.14, max: 3.14, value: 0, step: 0.1, onChange: (v) => { C = v; redraw(); } });\\ncontrols.addSlider({ label: 'D (vertical shift)', min: -2, max: 2, value: 0, step: 0.1, onChange: (v) => { D = v; redraw(); } });\\ncontrols.addButton({ label: 'Reset', onClick: () => { A = 1; B = 1; C = 0; D = 0; redraw(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "In y = A sin(B(x − C)) + D, A is the amplitude (vertical stretch), B sets the frequency (the period is 2π/B), C is the phase shift (horizontal slide), and D is the vertical shift (the midline). Move the sliders to see each one change the wave. The dashed reference sine, y = sin(x), stays in place so you can compare."
+      },
+      "code": "const axes = new Axes({ xRange: [-2*Math.PI, 2*Math.PI, Math.PI/2], yRange: [-4, 4, 1], xLength: 11, yLength: 6, tips: false });\nscene.add(axes);\n\nlet A = 1, B = 1, C = 0, D = 0;\nconst f = (x) => A * Math.sin(B * (x - C)) + D;\n\nconst ref = axes.plot(x => Math.sin(x), { color: GRAY });\nref.setOpacity(0.5);\nscene.add(ref);\n\nlet curve = axes.plot(f, { color: YELLOW, numSamples: 300 });\nlet mid = axes.plot(x => D, { color: TEAL });\nscene.add(curve, mid);\n\nfunction redraw() {\n  scene.remove(curve);\n  scene.remove(mid);\n  curve = axes.plot(f, { color: YELLOW, numSamples: 300 });\n  mid = axes.plot(x => D, { color: TEAL });\n  mid.setOpacity(0.6);\n  scene.add(curve, mid);\n}\n\nconst title = new MathTex({ latex: 'y = A\\\\sin(B(x - C)) + D' });\nawait title.waitForRender();\ntitle.moveTo([0, 3.6, 0]);\ntitle.scale(0.7);\nscene.add(title);\n\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\ncontrols.addSlider({ label: 'A (amplitude)', min: -3, max: 3, value: 1, step: 0.1, onChange: (v) => { A = v; redraw(); } });\ncontrols.addSlider({ label: 'B (frequency)', min: 0.2, max: 4, value: 1, step: 0.1, onChange: (v) => { B = v; redraw(); } });\ncontrols.addSlider({ label: 'C (phase shift)', min: -3.14, max: 3.14, value: 0, step: 0.1, onChange: (v) => { C = v; redraw(); } });\ncontrols.addSlider({ label: 'D (vertical shift)', min: -2, max: 2, value: 0, step: 0.1, onChange: (v) => { D = v; redraw(); } });\ncontrols.addButton({ label: 'Reset', onClick: () => { A = 1; B = 1; C = 0; D = 0; redraw(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3794,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 4,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/trig-sinusoid-params.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/trig-sinusoid-params.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:34:40.217Z"
+}

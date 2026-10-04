@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-pythagorean-proof",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "9.10% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "3.00% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 38041,
+        "inputTokens": 5050,
+        "cachedInputTokens": 128,
+        "outputTokens": 2852,
+        "costUsd": 0.026994399999999998,
+        "rawResponse": "{\n  \"explanation\": \"The Pythagorean theorem says that for a right triangle with legs a and b and hypotenuse c, we have a² + b² = c². One elegant proof places four identical copies of the triangle inside a square of side a+b: their hypotenuses form a tilted inner square of side c. The big square's area is (a+b)², the four triangles contribute 2ab, and what remains is c² — which expands to a² + b². Drag the yellow corner to change the triangle shape; the whole dissection updates live.\",\n  \"manimCode\": \"const sc = 0.55;\\nconst origin = [-2.2, -1.8, 0];\\n\\nlet a = 2.2 * sc;\\nlet b = 3.0 * sc;\\n\\nfunction hyp(aa, bb) { return Math.sqrt(aa * aa + bb * bb); }\\n\\nconst bigSq = new Polygon({\\n  vertices: [\\n    origin,\\n    [origin[0] + a + b, origin[1], 0],\\n    [origin[0] + a + b, origin[1] + a + b, 0],\\n    [origin[0], origin[1] + a + b, 0]\\n  ],\\n  color: WHITE\\n});\\nbigSq.setStrokeWidth(2).setFillOpacity(0);\\n\\nfunction triVerts(offset, rot) {\\n  const pts = [\\n    [0, 0, 0],\\n    [a, 0, 0],\\n    [0, b, 0]\\n  ];\\n  const cos = Math.cos(rot), sin = Math.sin(rot);\\n  return pts.map(p => {\\n    const x = p[0] * cos - p[1] * sin + offset[0];\\n    const y = p[0] * sin + p[1] * cos + offset[1];\\n    return [x, y, 0];\\n  });\\n}\\n\\nconst colors = [BLUE_C, TEAL, BLUE_C, TEAL];\\nconst tris = colors.map(col => {\\n  const t = new Polygon({ vertices: [[0,0,0],[1,0,0],[0,1,0]], color: col });\\n  t.setFill(col, 0.55).setStrokeWidth(1.5);\\n  return t;\\n});\\n\\nconst innerSq = new Polygon({\\n  vertices: [[0,0,0],[1,0,0],[1,1,0],[0,1,0]],\\n  color: YELLOW\\n});\\ninnerSq.setFill(YELLOW, 0.35).setStrokeWidth(2);\\n\\nfunction layout() {\\n  const O = origin;\\n  const placements = [\\n    { off: [O[0], O[1], 0], rot: 0 },\\n    { off: [O[0] + a + b, O[1], 0], rot: Math.PI / 2 },\\n    { off: [O[0] + a + b, O[1] + a + b, 0], rot: Math.PI },\\n    { off: [O[0], O[1] + a + b, 0], rot: -Math.PI / 2 }\\n  ];\\n  for (let i = 0; i < 4; i++) {\\n    tris[i].setVertices(triVerts(placements[i].off, placements[i].rot));\\n  }\\n  const c = hyp(a, b);\\n  const inner = [\\n    [O[0] + a, O[1], 0],\\n    [O[0] + a + b, O[1] + a, 0],\\n    [O[0] + b, O[1] + a + b, 0],\\n    [O[0], O[1] + b, 0]\\n  ];\\n  innerSq.setVertices(inner);\\n  bigSq.setVertices([\\n    O,\\n    [O[0] + a + b, O[1], 0],\\n    [O[0] + a + b, O[1] + a + b, 0],\\n    [O[0], O[1] + a + b, 0]\\n  ]);\\n}\\n\\nlayout();\\nscene.add(bigSq, ...tris, innerSq);\\n\\nconst handle = new Dot({ point: [origin[0] + a, origin[1], 0], color: YELLOW });\\nhandle.scale(1.3);\\nscene.add(handle);\\n\\nlet labelA = null;\\nlet labelB = null;\\nlet labelC = null;\\nlet eqLabel = null;\\n\\nasync function refreshLabels() {\\n  const O = origin;\\n  const c = hyp(a, b);\\n  if (labelA) scene.remove(labelA);\\n  if (labelB) scene.remove(labelB);\\n  if (labelC) scene.remove(labelC);\\n  if (eqLabel) scene.remove(eqLabel);\\n\\n  labelA = new MathTex({ latex: 'a', color: WHITE });\\n  await labelA.waitForRender();\\n  labelA.scale(0.7);\\n  labelA.moveTo([O[0] + a / 2, O[1] - 0.35, 0]);\\n\\n  labelB = new MathTex({ latex: 'b', color: WHITE });\\n  await labelB.waitForRender();\\n  labelB.scale(0.7);\\n  labelB.moveTo([O[0] - 0.35, O[1] + b / 2, 0]);\\n\\n  labelC = new MathTex({ latex: 'c', color: YELLOW });\\n  await labelC.waitForRender();\\n  labelC.scale(0.75);\\n  const mid = [\\n    (O[0] + a + O[0] + a + b) / 2,\\n    (O[1] + O[1] + a) / 2,\\n    0\\n  ];\\n  labelC.moveTo([mid[0] + 0.25, mid[1] + 0.25, 0]);\\n\\n  const aR = (a / sc).toFixed(1);\\n  const bR = (b / sc).toFixed(1);\\n  const cR = (c / sc).toFixed(1);\\n  eqLabel = new MathTex({\\n    latex: `a^2 + b^2 = c^2 \\\\\\\\ (${aR})^2 + (${bR})^2 = (${cR})^2`,\\n    color: WHITE\\n  });\\n  await eqLabel.waitForRender();\\n  eqLabel.scale(0.55);\\n  eqLabel.moveTo([3.2, 0.5, 0]);\\n\\n  scene.add(labelA, labelB, labelC, eqLabel);\\n}\\n\\nawait refreshLabels();\\n\\nconst areaNote = new Text({\\n  text: '(a+b)² = 4·(½ab) + c²',\\n  color: GRAY,\\n  fontSize: 22\\n});\\nareaNote.moveTo([3.2, -1.2, 0]);\\nscene.add(areaNote);\\n\\nconst title = new Text({\\n  text: 'Four-triangle proof',\\n  color: WHITE,\\n  fontSize: 28\\n});\\ntitle.toCorner(UL);\\nscene.add(title);\\n\\nmakeDraggable(handle, scene, {\\n  constrainX: [origin[0] + 0.6, origin[0] + 3.2],\\n  constrainY: [origin[1] - 0.01, origin[1] + 0.01],\\n  onDrag: (mob) => {\\n    const [x] = mob.getCenter();\\n    a = Math.max(0.6, x - origin[0]);\\n    layout();\\n    handle.moveTo([origin[0] + a, origin[1], 0]);\\n    refreshLabels();\\n  }\\n});\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 220 });\\ncontrols.addSlider({\\n  label: 'Leg b',\\n  min: 0.8,\\n  max: 2.4,\\n  value: b,\\n  step: 0.05,\\n  onChange: (val) => {\\n    b = val;\\n    layout();\\n    refreshLabels();\\n  }\\n});\\ncontrols.addButton({\\n  label: 'Reset 3-4-5',\\n  onClick: () => {\\n    a = 1.65;\\n    b = 2.2;\\n    layout();\\n    handle.moveTo([origin[0] + a, origin[1], 0]);\\n    refreshLabels();\\n  }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "The Pythagorean theorem says that for a right triangle with legs a and b and hypotenuse c, we have a² + b² = c². One elegant proof places four identical copies of the triangle inside a square of side a+b: their hypotenuses form a tilted inner square of side c. The big square's area is (a+b)², the four triangles contribute 2ab, and what remains is c² — which expands to a² + b². Drag the yellow corner to change the triangle shape; the whole dissection updates live."
+      },
+      "code": "const sc = 0.55;\nconst origin = [-2.2, -1.8, 0];\n\nlet a = 2.2 * sc;\nlet b = 3.0 * sc;\n\nfunction hyp(aa, bb) { return Math.sqrt(aa * aa + bb * bb); }\n\nconst bigSq = new Polygon({\n  vertices: [\n    origin,\n    [origin[0] + a + b, origin[1], 0],\n    [origin[0] + a + b, origin[1] + a + b, 0],\n    [origin[0], origin[1] + a + b, 0]\n  ],\n  color: WHITE\n});\nbigSq.setStrokeWidth(2).setFillOpacity(0);\n\nfunction triVerts(offset, rot) {\n  const pts = [\n    [0, 0, 0],\n    [a, 0, 0],\n    [0, b, 0]\n  ];\n  const cos = Math.cos(rot), sin = Math.sin(rot);\n  return pts.map(p => {\n    const x = p[0] * cos - p[1] * sin + offset[0];\n    const y = p[0] * sin + p[1] * cos + offset[1];\n    return [x, y, 0];\n  });\n}\n\nconst colors = [BLUE_C, TEAL, BLUE_C, TEAL];\nconst tris = colors.map(col => {\n  const t = new Polygon({ vertices: [[0,0,0],[1,0,0],[0,1,0]], color: col });\n  t.setFill(col, 0.55).setStrokeWidth(1.5);\n  return t;\n});\n\nconst innerSq = new Polygon({\n  vertices: [[0,0,0],[1,0,0],[1,1,0],[0,1,0]],\n  color: YELLOW\n});\ninnerSq.setFill(YELLOW, 0.35).setStrokeWidth(2);\n\nfunction layout() {\n  const O = origin;\n  const placements = [\n    { off: [O[0], O[1], 0], rot: 0 },\n    { off: [O[0] + a + b, O[1], 0], rot: Math.PI / 2 },\n    { off: [O[0] + a + b, O[1] + a + b, 0], rot: Math.PI },\n    { off: [O[0], O[1] + a + b, 0], rot: -Math.PI / 2 }\n  ];\n  for (let i = 0; i < 4; i++) {\n    tris[i].setVertices(triVerts(placements[i].off, placements[i].rot));\n  }\n  const c = hyp(a, b);\n  const inner = [\n    [O[0] + a, O[1], 0],\n    [O[0] + a + b, O[1] + a, 0],\n    [O[0] + b, O[1] + a + b, 0],\n    [O[0], O[1] + b, 0]\n  ];\n  innerSq.setVertices(inner);\n  bigSq.setVertices([\n    O,\n    [O[0] + a + b, O[1], 0],\n    [O[0] + a + b, O[1] + a + b, 0],\n    [O[0], O[1] + a + b, 0]\n  ]);\n}\n\nlayout();\nscene.add(bigSq, ...tris, innerSq);\n\nconst handle = new Dot({ point: [origin[0] + a, origin[1], 0], color: YELLOW });\nhandle.scale(1.3);\nscene.add(handle);\n\nlet labelA = null;\nlet labelB = null;\nlet labelC = null;\nlet eqLabel = null;\n\nasync function refreshLabels() {\n  const O = origin;\n  const c = hyp(a, b);\n  if (labelA) scene.remove(labelA);\n  if (labelB) scene.remove(labelB);\n  if (labelC) scene.remove(labelC);\n  if (eqLabel) scene.remove(eqLabel);\n\n  labelA = new MathTex({ latex: 'a', color: WHITE });\n  await labelA.waitForRender();\n  labelA.scale(0.7);\n  labelA.moveTo([O[0] + a / 2, O[1] - 0.35, 0]);\n\n  labelB = new MathTex({ latex: 'b', color: WHITE });\n  await labelB.waitForRender();\n  labelB.scale(0.7);\n  labelB.moveTo([O[0] - 0.35, O[1] + b / 2, 0]);\n\n  labelC = new MathTex({ latex: 'c', color: YELLOW });\n  await labelC.waitForRender();\n  labelC.scale(0.75);\n  const mid = [\n    (O[0] + a + O[0] + a + b) / 2,\n    (O[1] + O[1] + a) / 2,\n    0\n  ];\n  labelC.moveTo([mid[0] + 0.25, mid[1] + 0.25, 0]);\n\n  const aR = (a / sc).toFixed(1);\n  const bR = (b / sc).toFixed(1);\n  const cR = (c / sc).toFixed(1);\n  eqLabel = new MathTex({\n    latex: `a^2 + b^2 = c^2 \\\\ (${aR})^2 + (${bR})^2 = (${cR})^2`,\n    color: WHITE\n  });\n  await eqLabel.waitForRender();\n  eqLabel.scale(0.55);\n  eqLabel.moveTo([3.2, 0.5, 0]);\n\n  scene.add(labelA, labelB, labelC, eqLabel);\n}\n\nawait refreshLabels();\n\nconst areaNote = new Text({\n  text: '(a+b)² = 4·(½ab) + c²',\n  color: GRAY,\n  fontSize: 22\n});\nareaNote.moveTo([3.2, -1.2, 0]);\nscene.add(areaNote);\n\nconst title = new Text({\n  text: 'Four-triangle proof',\n  color: WHITE,\n  fontSize: 28\n});\ntitle.toCorner(UL);\nscene.add(title);\n\nmakeDraggable(handle, scene, {\n  constrainX: [origin[0] + 0.6, origin[0] + 3.2],\n  constrainY: [origin[1] - 0.01, origin[1] + 0.01],\n  onDrag: (mob) => {\n    const [x] = mob.getCenter();\n    a = Math.max(0.6, x - origin[0]);\n    layout();\n    handle.moveTo([origin[0] + a, origin[1], 0]);\n    refreshLabels();\n  }\n});\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 220 });\ncontrols.addSlider({\n  label: 'Leg b',\n  min: 0.8,\n  max: 2.4,\n  value: b,\n  step: 0.05,\n  onChange: (val) => {\n    b = val;\n    layout();\n    refreshLabels();\n  }\n});\ncontrols.addButton({\n  label: 'Reset 3-4-5',\n  onClick: () => {\n    a = 1.65;\n    b = 2.2;\n    layout();\n    handle.moveTo([origin[0] + a, origin[1], 0]);\n    refreshLabels();\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5637,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/geo-pythagorean-proof.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/geo-pythagorean-proof.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:44.157Z"
+}

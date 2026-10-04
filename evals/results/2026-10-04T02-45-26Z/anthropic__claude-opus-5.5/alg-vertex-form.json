@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-vertex-form",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.08% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.57% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 24560,
+        "inputTokens": 8054,
+        "cachedInputTokens": 7569,
+        "outputTokens": 2882,
+        "costUsd": 0.0630258,
+        "rawResponse": "{\"explanation\":\"In vertex form y = a(x − h)² + k, the point (h, k) is the vertex, the turning point of the parabola. **h** moves the parabola left and right. Because of the minus sign, (x − 2) moves it 2 units to the *right*. **k** moves it up and down. **a** changes the shape: if |a| > 1 the parabola gets narrower, if |a| < 1 it gets wider, and if a is negative it flips upside down. Move the sliders and compare the yellow curve with the gray y = x² for reference. The red dot marks the vertex, and the dashed line through it is the axis of symmetry, x = h.\",\"manimCode\":\"const ax = new Axes({ xRange: [-6, 6, 1], yRange: [-5, 5, 1], xLength: 9, yLength: 6.6, tips: false });\\nax.moveTo([-1.8, -0.3, 0]);\\nscene.add(ax);\\n\\nlet a = 1, h = 0, k = 0;\\nconst YMAX = 5, XMIN = -6, XMAX = 6;\\n\\nfunction plotRange(A, H, K) {\\n  if (Math.abs(A) < 1e-6) {\\n    if (Math.abs(K) > YMAX) return null;\\n    return [XMIN, XMAX];\\n  }\\n  const lim = A > 0 ? (YMAX - K) / A : (-YMAX - K) / A;\\n  if (lim < 0) return null;\\n  const r = Math.sqrt(lim);\\n  const lo = Math.max(XMIN, H - r), hi = Math.min(XMAX, H + r);\\n  if (hi - lo < 0.01) return null;\\n  return [lo, hi];\\n}\\n\\n// reference parabola y = x^2\\nconst ref = ax.plot(x => x * x, { color: GRAY, xRange: [-Math.sqrt(5), Math.sqrt(5)], numSamples: 200 });\\nref.setStrokeWidth(2);\\nref.setOpacity(0.5);\\nscene.add(ref);\\n\\nlet curve = null;\\nfunction rebuildCurve() {\\n  if (curve) scene.remove(curve);\\n  curve = null;\\n  const rng = plotRange(a, h, k);\\n  if (!rng) return;\\n  const A = a, H = h, K = k;\\n  curve = ax.plot(x => A * (x - H) * (x - H) + K, { color: YELLOW, xRange: rng, numSamples: 300 });\\n  curve.setStrokeWidth(4);\\n  scene.add(curve);\\n}\\n\\n// axis of symmetry, drawn as short dashes\\nlet dashes = [];\\nfunction rebuildAxis() {\\n  dashes.forEach(d => scene.remove(d));\\n  dashes = [];\\n  for (let y = -5; y < 5; y += 0.5) {\\n    const seg = new Polygon({ vertices: [ax.c2p(h, y), ax.c2p(h, y + 0.25)], color: TEAL });\\n    seg.setStrokeWidth(2);\\n    seg.setFillOpacity(0);\\n    dashes.push(seg);\\n    scene.add(seg);\\n  }\\n}\\n\\nconst vertex = new Dot({ point: ax.c2p(h, k), color: RED });\\nscene.add(vertex);\\nconst inView = () => Math.abs(k) <= 5;\\n\\nlet vLabel = null;\\nfunction rebuildVertexLabel() {\\n  if (vLabel) scene.remove(vLabel);\\n  vLabel = new Text({ text: `(${h.toFixed(1)}, ${k.toFixed(1)})`, color: RED_A, fontSize: 20 });\\n  vLabel.moveTo(ax.c2p(h, k));\\n  vLabel.shift([0, a >= 0 ? -0.35 : 0.35, 0]);\\n  scene.add(vLabel);\\n}\\n\\n// equation label\\nconst f = v => v.toFixed(1);\\nlet eq = null;\\nlet eqToken = 0;\\nasync function rebuildEq() {\\n  const my = ++eqToken;\\n  const hPart = h === 0 ? 'x' : (h > 0 ? `(x - ${f(h)})` : `(x + ${f(-h)})`);\\n  const kPart = k === 0 ? '' : (k > 0 ? ` + ${f(k)}` : ` - ${f(-k)}`);\\n  const latex = `y = {\\\\\\\\color{orange}${f(a)}}\\\\\\\\,${hPart.replace('x', 'x').replace(/(-|\\\\+) ([\\\\d.]+)/, (m, s, n) => `${s} {\\\\\\\\color{teal}${n}}`)}^2${kPart.replace(/([\\\\d.]+)/, n => `{\\\\\\\\color{red}${n}}`)}`;\\n  const t = new MathTex({ latex: latex, fontSize: 34 });\\n  await t.waitForRender();\\n  if (my !== eqToken) return;\\n  if (eq) scene.remove(eq);\\n  eq = t;\\n  eq.moveTo([-1.8, 3.55, 0]);\\n  scene.add(eq);\\n}\\n\\nfunction refresh() {\\n  rebuildCurve();\\n  rebuildAxis();\\n  vertex.moveTo(ax.c2p(h, Math.max(-5, Math.min(5, k))));\\n  vertex.setOpacity(inView() ? 1 : 0);\\n  rebuildVertexLabel();\\n  rebuildEq();\\n}\\nrefresh();\\n\\nconst legend = new Text({ text: 'gray: y = x²', color: GRAY, fontSize: 18 });\\nlegend.moveTo([4.6, -3.5, 0]);\\nscene.add(legend);\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\ncontrols.addSlider({ label: 'a (stretch / flip)', min: -3, max: 3, value: 1, step: 0.1, onChange: v => { a = Math.round(v * 10) / 10; refresh(); } });\\ncontrols.addSlider({ label: 'h (horizontal shift)', min: -4, max: 4, value: 0, step: 0.1, onChange: v => { h = Math.round(v * 10) / 10; refresh(); } });\\ncontrols.addSlider({ label: 'k (vertical shift)', min: -4, max: 4, value: 0, step: 0.1, onChange: v => { k = Math.round(v * 10) / 10; refresh(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "In vertex form y = a(x − h)² + k, the point (h, k) is the vertex, the turning point of the parabola. **h** moves the parabola left and right. Because of the minus sign, (x − 2) moves it 2 units to the *right*. **k** moves it up and down. **a** changes the shape: if |a| > 1 the parabola gets narrower, if |a| < 1 it gets wider, and if a is negative it flips upside down. Move the sliders and compare the yellow curve with the gray y = x² for reference. The red dot marks the vertex, and the dashed line through it is the axis of symmetry, x = h."
+      },
+      "code": "const ax = new Axes({ xRange: [-6, 6, 1], yRange: [-5, 5, 1], xLength: 9, yLength: 6.6, tips: false });\nax.moveTo([-1.8, -0.3, 0]);\nscene.add(ax);\n\nlet a = 1, h = 0, k = 0;\nconst YMAX = 5, XMIN = -6, XMAX = 6;\n\nfunction plotRange(A, H, K) {\n  if (Math.abs(A) < 1e-6) {\n    if (Math.abs(K) > YMAX) return null;\n    return [XMIN, XMAX];\n  }\n  const lim = A > 0 ? (YMAX - K) / A : (-YMAX - K) / A;\n  if (lim < 0) return null;\n  const r = Math.sqrt(lim);\n  const lo = Math.max(XMIN, H - r), hi = Math.min(XMAX, H + r);\n  if (hi - lo < 0.01) return null;\n  return [lo, hi];\n}\n\n// reference parabola y = x^2\nconst ref = ax.plot(x => x * x, { color: GRAY, xRange: [-Math.sqrt(5), Math.sqrt(5)], numSamples: 200 });\nref.setStrokeWidth(2);\nref.setOpacity(0.5);\nscene.add(ref);\n\nlet curve = null;\nfunction rebuildCurve() {\n  if (curve) scene.remove(curve);\n  curve = null;\n  const rng = plotRange(a, h, k);\n  if (!rng) return;\n  const A = a, H = h, K = k;\n  curve = ax.plot(x => A * (x - H) * (x - H) + K, { color: YELLOW, xRange: rng, numSamples: 300 });\n  curve.setStrokeWidth(4);\n  scene.add(curve);\n}\n\n// axis of symmetry, drawn as short dashes\nlet dashes = [];\nfunction rebuildAxis() {\n  dashes.forEach(d => scene.remove(d));\n  dashes = [];\n  for (let y = -5; y < 5; y += 0.5) {\n    const seg = new Polygon({ vertices: [ax.c2p(h, y), ax.c2p(h, y + 0.25)], color: TEAL });\n    seg.setStrokeWidth(2);\n    seg.setFillOpacity(0);\n    dashes.push(seg);\n    scene.add(seg);\n  }\n}\n\nconst vertex = new Dot({ point: ax.c2p(h, k), color: RED });\nscene.add(vertex);\nconst inView = () => Math.abs(k) <= 5;\n\nlet vLabel = null;\nfunction rebuildVertexLabel() {\n  if (vLabel) scene.remove(vLabel);\n  vLabel = new Text({ text: `(${h.toFixed(1)}, ${k.toFixed(1)})`, color: RED_A, fontSize: 20 });\n  vLabel.moveTo(ax.c2p(h, k));\n  vLabel.shift([0, a >= 0 ? -0.35 : 0.35, 0]);\n  scene.add(vLabel);\n}\n\n// equation label\nconst f = v => v.toFixed(1);\nlet eq = null;\nlet eqToken = 0;\nasync function rebuildEq() {\n  const my = ++eqToken;\n  const hPart = h === 0 ? 'x' : (h > 0 ? `(x - ${f(h)})` : `(x + ${f(-h)})`);\n  const kPart = k === 0 ? '' : (k > 0 ? ` + ${f(k)}` : ` - ${f(-k)}`);\n  const latex = `y = {\\\\color{orange}${f(a)}}\\\\,${hPart.replace('x', 'x').replace(/(-|\\+) ([\\d.]+)/, (m, s, n) => `${s} {\\\\color{teal}${n}}`)}^2${kPart.replace(/([\\d.]+)/, n => `{\\\\color{red}${n}}`)}`;\n  const t = new MathTex({ latex: latex, fontSize: 34 });\n  await t.waitForRender();\n  if (my !== eqToken) return;\n  if (eq) scene.remove(eq);\n  eq = t;\n  eq.moveTo([-1.8, 3.55, 0]);\n  scene.add(eq);\n}\n\nfunction refresh() {\n  rebuildCurve();\n  rebuildAxis();\n  vertex.moveTo(ax.c2p(h, Math.max(-5, Math.min(5, k))));\n  vertex.setOpacity(inView() ? 1 : 0);\n  rebuildVertexLabel();\n  rebuildEq();\n}\nrefresh();\n\nconst legend = new Text({ text: 'gray: y = x²', color: GRAY, fontSize: 18 });\nlegend.moveTo([4.6, -3.5, 0]);\nscene.add(legend);\n\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\ncontrols.addSlider({ label: 'a (stretch / flip)', min: -3, max: 3, value: 1, step: 0.1, onChange: v => { a = Math.round(v * 10) / 10; refresh(); } });\ncontrols.addSlider({ label: 'h (horizontal shift)', min: -4, max: 4, value: 0, step: 0.1, onChange: v => { h = Math.round(v * 10) / 10; refresh(); } });\ncontrols.addSlider({ label: 'k (vertical shift)', min: -4, max: 4, value: 0, step: 0.1, onChange: v => { k = Math.round(v * 10) / 10; refresh(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5936,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 3,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/alg-vertex-form.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/alg-vertex-form.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:45:58.496Z"
+}

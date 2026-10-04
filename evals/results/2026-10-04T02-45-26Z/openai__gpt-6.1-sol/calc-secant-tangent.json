@@ -1,0 +1,79 @@
+{
+  "itemId": "calc-secant-tangent",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.80% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=2"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.59% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 31335,
+        "inputTokens": 4605,
+        "cachedInputTokens": 4581,
+        "outputTokens": 1647,
+        "costUsd": 0.0169761,
+        "rawResponse": "{\"explanation\":\"A secant line joins two points on a curve: P at x = 1 and Q at x = 1 + h. As h approaches zero, Q approaches P and the secant slope approaches the tangent slope. For f(x) = x²/2, the secant slope is 1 + h/2, which approaches f′(1) = 1. Use the slider to explore the approach from either side.\",\"manimCode\":\"const heading = new Text({ text: 'From secant to tangent', fontSize: 34, color: WHITE });\\nheading.moveTo([0, 3.15, 0]);\\nconst equation = new MathTex({ latex: '\\\\\\\\frac{f(1+h)-f(1)}{h}=1+\\\\\\\\frac{h}{2}\\\\\\\\;\\\\\\\\longrightarrow\\\\\\\\;f\\\\'(1)=1' });\\nawait equation.waitForRender();\\nequation.scale(0.8);\\nequation.moveTo([0, 2.35, 0]);\\nconst ax = new Axes({ xRange: [-1, 3, 1], yRange: [-2, 5, 1], xLength: 8.6, yLength: 4.3, tips: false });\\nax.moveTo([0, -0.45, 0]);\\nconst fn = x => x * x / 2;\\nconst curve = ax.plot(fn, { color: BLUE, xRange: [-1, 3], numSamples: 200 });\\nconst tangent = ax.plot(x => x - 0.5, { color: GREEN, xRange: [0, 2.6] });\\ntangent.setStrokeWidth(5);\\ntangent.setOpacity(0.55);\\nconst hTracker = new ValueTracker(1.5);\\nconst pDot = new Dot({ point: ax.c2p(1, fn(1)), color: WHITE });\\nconst qDot = new Dot({ point: ax.c2p(2.5, fn(2.5)), color: YELLOW });\\nconst secant = new Polygon({ vertices: [ax.c2p(0, -1.25), ax.c2p(2.6, 3.3)], color: YELLOW });\\nsecant.setFillOpacity(0);\\nsecant.setStrokeWidth(3);\\nsecant.addUpdater(mob => {\\n  const slope = 1 + hTracker.getValue() / 2;\\n  mob.setVertices([ax.c2p(0, 0.5 - slope), ax.c2p(2.6, 0.5 + 1.6 * slope)]);\\n});\\nqDot.addUpdater(mob => {\\n  const qx = 1 + hTracker.getValue();\\n  mob.moveTo(ax.c2p(qx, fn(qx)));\\n});\\nconst pLabel = new Text({ text: 'P', fontSize: 22, color: WHITE });\\npLabel.moveTo(ax.c2p(1, 0.5));\\npLabel.shift([-0.28, -0.3, 0]);\\nconst qLabel = new Text({ text: 'Q', fontSize: 22, color: YELLOW });\\nqLabel.addUpdater(mob => {\\n  const qx = 1 + hTracker.getValue();\\n  mob.moveTo(ax.c2p(qx, fn(qx)));\\n  mob.shift([0.24, 0.24, 0]);\\n});\\nconst curveLabel = new Text({ text: 'f(x) = x²/2', fontSize: 22, color: BLUE });\\ncurveLabel.moveTo([-3.1, 1.4, 0]);\\nconst legend = new Text({ text: 'Yellow: secant     Green: tangent', fontSize: 22, color: WHITE });\\nlegend.moveTo([0, -3.05, 0]);\\nawait scene.play(new Write(heading), new Write(equation));\\nawait scene.play(new Create(ax), new Create(curve));\\nscene.add(tangent, secant, pDot, qDot, pLabel, qLabel, curveLabel, legend);\\nawait scene.wait(0.8);\\nawait scene.play(hTracker.animateTo(0.03));\\nawait scene.wait(0.6);\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\ncontrols.addSlider({ label: 'h (0 gives the tangent limit)', min: -1.5, max: 1.5, value: 0.03, step: 0.01, onChange: value => { hTracker.setValue(value); } });\\ncontrols.addButton({ label: 'Tangent limit: h = 0', onClick: () => { hTracker.setValue(0); } });\\nmakeHoverable(pDot, scene, { hoverScale: 1.4 });\\nmakeHoverable(qDot, scene, { hoverScale: 1.4 });\\nawait scene.wait(999999);\"}",
+        "explanation": "A secant line joins two points on a curve: P at x = 1 and Q at x = 1 + h. As h approaches zero, Q approaches P and the secant slope approaches the tangent slope. For f(x) = x²/2, the secant slope is 1 + h/2, which approaches f′(1) = 1. Use the slider to explore the approach from either side."
+      },
+      "code": "const heading = new Text({ text: 'From secant to tangent', fontSize: 34, color: WHITE });\nheading.moveTo([0, 3.15, 0]);\nconst equation = new MathTex({ latex: '\\\\frac{f(1+h)-f(1)}{h}=1+\\\\frac{h}{2}\\\\;\\\\longrightarrow\\\\;f\\'(1)=1' });\nawait equation.waitForRender();\nequation.scale(0.8);\nequation.moveTo([0, 2.35, 0]);\nconst ax = new Axes({ xRange: [-1, 3, 1], yRange: [-2, 5, 1], xLength: 8.6, yLength: 4.3, tips: false });\nax.moveTo([0, -0.45, 0]);\nconst fn = x => x * x / 2;\nconst curve = ax.plot(fn, { color: BLUE, xRange: [-1, 3], numSamples: 200 });\nconst tangent = ax.plot(x => x - 0.5, { color: GREEN, xRange: [0, 2.6] });\ntangent.setStrokeWidth(5);\ntangent.setOpacity(0.55);\nconst hTracker = new ValueTracker(1.5);\nconst pDot = new Dot({ point: ax.c2p(1, fn(1)), color: WHITE });\nconst qDot = new Dot({ point: ax.c2p(2.5, fn(2.5)), color: YELLOW });\nconst secant = new Polygon({ vertices: [ax.c2p(0, -1.25), ax.c2p(2.6, 3.3)], color: YELLOW });\nsecant.setFillOpacity(0);\nsecant.setStrokeWidth(3);\nsecant.addUpdater(mob => {\n  const slope = 1 + hTracker.getValue() / 2;\n  mob.setVertices([ax.c2p(0, 0.5 - slope), ax.c2p(2.6, 0.5 + 1.6 * slope)]);\n});\nqDot.addUpdater(mob => {\n  const qx = 1 + hTracker.getValue();\n  mob.moveTo(ax.c2p(qx, fn(qx)));\n});\nconst pLabel = new Text({ text: 'P', fontSize: 22, color: WHITE });\npLabel.moveTo(ax.c2p(1, 0.5));\npLabel.shift([-0.28, -0.3, 0]);\nconst qLabel = new Text({ text: 'Q', fontSize: 22, color: YELLOW });\nqLabel.addUpdater(mob => {\n  const qx = 1 + hTracker.getValue();\n  mob.moveTo(ax.c2p(qx, fn(qx)));\n  mob.shift([0.24, 0.24, 0]);\n});\nconst curveLabel = new Text({ text: 'f(x) = x²/2', fontSize: 22, color: BLUE });\ncurveLabel.moveTo([-3.1, 1.4, 0]);\nconst legend = new Text({ text: 'Yellow: secant     Green: tangent', fontSize: 22, color: WHITE });\nlegend.moveTo([0, -3.05, 0]);\nawait scene.play(new Write(heading), new Write(equation));\nawait scene.play(new Create(ax), new Create(curve));\nscene.add(tangent, secant, pDot, qDot, pLabel, qLabel, curveLabel, legend);\nawait scene.wait(0.8);\nawait scene.play(hTracker.animateTo(0.03));\nawait scene.wait(0.6);\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\ncontrols.addSlider({ label: 'h (0 gives the tangent limit)', min: -1.5, max: 1.5, value: 0.03, step: 0.01, onChange: value => { hTracker.setValue(value); } });\ncontrols.addButton({ label: 'Tangent limit: h = 0', onClick: () => { hTracker.setValue(0); } });\nmakeHoverable(pDot, scene, { hoverScale: 1.4 });\nmakeHoverable(qDot, scene, { hoverScale: 1.4 });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 11905,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 3,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 2
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/calc-secant-tangent.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/calc-secant-tangent.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:56.894Z"
+}

@@ -9,7 +9,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:security": "firebase emulators:exec --project demo-veomath --only auth,firestore 'node --test tests/security.test.mjs'"
+    "test:security": "firebase emulators:exec --project demo-veomath --only auth,firestore 'node --test tests/security.test.mjs'",
+    "eval": "tsx --env-file-if-exists=.env.local evals/run.ts",
+    "eval:selftest": "tsx evals/selftest.ts"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.3.3",
@@ -35,6 +37,7 @@
     "eslint-config-next": "16.1.6",
     "firebase-tools": "^15.32.1",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-completing-square",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "21.63% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "12.15% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 19122,
+        "inputTokens": 5049,
+        "cachedInputTokens": 128,
+        "outputTokens": 1826,
+        "costUsd": 0.020836399999999998,
+        "rawResponse": "{\n  \"explanation\": \"Completing the square turns x² + 6x into a perfect square minus a constant. Geometrically, x² is a square of side x, and 6x is a rectangle of width 6. Split that rectangle into two pieces of width 3, attach one to each side of the square, and you get an (x+3) by (x+3) square with a 3×3 corner missing. That missing piece has area 9, so x² + 6x = (x+3)² − 9.\",\n  \"manimCode\": \"const controls = new Controls(scene, { position: 'top-right', width: 220 });\\nlet xVal = 2.5;\\nconst sc = 0.85;\\n\\nconst title = new Text({ text: 'Completing the Square: x² + 6x', color: WHITE, fontSize: 28 });\\ntitle.moveTo([0, 3.4, 0]);\\nscene.add(title);\\n\\nconst formula = new MathTex({ latex: 'x^2 + 6x = (x+3)^2 - 9' });\\nawait formula.waitForRender();\\nformula.moveTo([0, -3.3, 0]);\\nscene.add(formula);\\n\\nfunction buildModel(x) {\\n  const s = x * sc;\\n  const half = 3 * sc;\\n  const ox = -3.2;\\n  const oy = -1.8;\\n\\n  const mainSq = new Polygon({\\n    vertices: [[ox, oy, 0], [ox + s, oy, 0], [ox + s, oy + s, 0], [ox, oy + s, 0]],\\n    color: BLUE\\n  });\\n  mainSq.setFill(BLUE, 0.55).setStrokeWidth(2);\\n\\n  const rightRect = new Polygon({\\n    vertices: [[ox + s, oy, 0], [ox + s + half, oy, 0], [ox + s + half, oy + s, 0], [ox + s, oy + s, 0]],\\n    color: GREEN\\n  });\\n  rightRect.setFill(GREEN, 0.55).setStrokeWidth(2);\\n\\n  const topRect = new Polygon({\\n    vertices: [[ox, oy + s, 0], [ox + s, oy + s, 0], [ox + s, oy + s + half, 0], [ox, oy + s + half, 0]],\\n    color: GREEN\\n  });\\n  topRect.setFill(GREEN, 0.55).setStrokeWidth(2);\\n\\n  const missing = new Polygon({\\n    vertices: [[ox + s, oy + s, 0], [ox + s + half, oy + s, 0], [ox + s + half, oy + s + half, 0], [ox + s, oy + s + half, 0]],\\n    color: RED\\n  });\\n  missing.setFill(RED, 0.45).setStrokeWidth(2);\\n\\n  const outline = new Polygon({\\n    vertices: [[ox, oy, 0], [ox + s + half, oy, 0], [ox + s + half, oy + s + half, 0], [ox, oy + s + half, 0]],\\n    color: YELLOW\\n  });\\n  outline.setFillOpacity(0).setStrokeWidth(3);\\n\\n  const lblX2 = new Text({ text: 'x²', color: WHITE, fontSize: 22 });\\n  lblX2.moveTo([ox + s / 2, oy + s / 2, 0]);\\n\\n  const lbl3xR = new Text({ text: '3x', color: WHITE, fontSize: 18 });\\n  lbl3xR.moveTo([ox + s + half / 2, oy + s / 2, 0]);\\n\\n  const lbl3xT = new Text({ text: '3x', color: WHITE, fontSize: 18 });\\n  lbl3xT.moveTo([ox + s / 2, oy + s + half / 2, 0]);\\n\\n  const lbl9 = new Text({ text: '9', color: WHITE, fontSize: 20 });\\n  lbl9.moveTo([ox + s + half / 2, oy + s + half / 2, 0]);\\n\\n  const sideBot = new Text({ text: 'x', color: BLUE_A, fontSize: 16 });\\n  sideBot.moveTo([ox + s / 2, oy - 0.35, 0]);\\n\\n  const side3 = new Text({ text: '3', color: GREEN_A, fontSize: 16 });\\n  side3.moveTo([ox + s + half / 2, oy - 0.35, 0]);\\n\\n  const sideLeft = new Text({ text: 'x', color: BLUE_A, fontSize: 16 });\\n  sideLeft.moveTo([ox - 0.35, oy + s / 2, 0]);\\n\\n  const side3L = new Text({ text: '3', color: GREEN_A, fontSize: 16 });\\n  side3L.moveTo([ox - 0.35, oy + s + half / 2, 0]);\\n\\n  return new VGroup(outline, mainSq, rightRect, topRect, missing, lblX2, lbl3xR, lbl3xT, lbl9, sideBot, side3, sideLeft, side3L);\\n}\\n\\nlet model = buildModel(xVal);\\nscene.add(model);\\n\\nconst info = new Text({ text: 'Drag slider · missing corner = 3×3 = 9', color: GRAY, fontSize: 18 });\\ninfo.moveTo([0, 2.85, 0]);\\nscene.add(info);\\n\\ncontrols.addSlider({\\n  label: 'x value',\\n  min: 1,\\n  max: 4,\\n  value: xVal,\\n  step: 0.1,\\n  onChange: (v) => {\\n    xVal = v;\\n    scene.remove(model);\\n    model = buildModel(xVal);\\n    scene.add(model);\\n  }\\n});\\n\\ncontrols.addButton({\\n  label: 'Highlight missing 9',\\n  onClick: () => {\\n    // briefly pulse by rebuilding — visual cue via recreate\\n    scene.remove(model);\\n    model = buildModel(xVal);\\n    scene.add(model);\\n  }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "Completing the square turns x² + 6x into a perfect square minus a constant. Geometrically, x² is a square of side x, and 6x is a rectangle of width 6. Split that rectangle into two pieces of width 3, attach one to each side of the square, and you get an (x+3) by (x+3) square with a 3×3 corner missing. That missing piece has area 9, so x² + 6x = (x+3)² − 9."
+      },
+      "code": "const controls = new Controls(scene, { position: 'top-right', width: 220 });\nlet xVal = 2.5;\nconst sc = 0.85;\n\nconst title = new Text({ text: 'Completing the Square: x² + 6x', color: WHITE, fontSize: 28 });\ntitle.moveTo([0, 3.4, 0]);\nscene.add(title);\n\nconst formula = new MathTex({ latex: 'x^2 + 6x = (x+3)^2 - 9' });\nawait formula.waitForRender();\nformula.moveTo([0, -3.3, 0]);\nscene.add(formula);\n\nfunction buildModel(x) {\n  const s = x * sc;\n  const half = 3 * sc;\n  const ox = -3.2;\n  const oy = -1.8;\n\n  const mainSq = new Polygon({\n    vertices: [[ox, oy, 0], [ox + s, oy, 0], [ox + s, oy + s, 0], [ox, oy + s, 0]],\n    color: BLUE\n  });\n  mainSq.setFill(BLUE, 0.55).setStrokeWidth(2);\n\n  const rightRect = new Polygon({\n    vertices: [[ox + s, oy, 0], [ox + s + half, oy, 0], [ox + s + half, oy + s, 0], [ox + s, oy + s, 0]],\n    color: GREEN\n  });\n  rightRect.setFill(GREEN, 0.55).setStrokeWidth(2);\n\n  const topRect = new Polygon({\n    vertices: [[ox, oy + s, 0], [ox + s, oy + s, 0], [ox + s, oy + s + half, 0], [ox, oy + s + half, 0]],\n    color: GREEN\n  });\n  topRect.setFill(GREEN, 0.55).setStrokeWidth(2);\n\n  const missing = new Polygon({\n    vertices: [[ox + s, oy + s, 0], [ox + s + half, oy + s, 0], [ox + s + half, oy + s + half, 0], [ox + s, oy + s + half, 0]],\n    color: RED\n  });\n  missing.setFill(RED, 0.45).setStrokeWidth(2);\n\n  const outline = new Polygon({\n    vertices: [[ox, oy, 0], [ox + s + half, oy, 0], [ox + s + half, oy + s + half, 0], [ox, oy + s + half, 0]],\n    color: YELLOW\n  });\n  outline.setFillOpacity(0).setStrokeWidth(3);\n\n  const lblX2 = new Text({ text: 'x²', color: WHITE, fontSize: 22 });\n  lblX2.moveTo([ox + s / 2, oy + s / 2, 0]);\n\n  const lbl3xR = new Text({ text: '3x', color: WHITE, fontSize: 18 });\n  lbl3xR.moveTo([ox + s + half / 2, oy + s / 2, 0]);\n\n  const lbl3xT = new Text({ text: '3x', color: WHITE, fontSize: 18 });\n  lbl3xT.moveTo([ox + s / 2, oy + s + half / 2, 0]);\n\n  const lbl9 = new Text({ text: '9', color: WHITE, fontSize: 20 });\n  lbl9.moveTo([ox + s + half / 2, oy + s + half / 2, 0]);\n\n  const sideBot = new Text({ text: 'x', color: BLUE_A, fontSize: 16 });\n  sideBot.moveTo([ox + s / 2, oy - 0.35, 0]);\n\n  const side3 = new Text({ text: '3', color: GREEN_A, fontSize: 16 });\n  side3.moveTo([ox + s + half / 2, oy - 0.35, 0]);\n\n  const sideLeft = new Text({ text: 'x', color: BLUE_A, fontSize: 16 });\n  sideLeft.moveTo([ox - 0.35, oy + s / 2, 0]);\n\n  const side3L = new Text({ text: '3', color: GREEN_A, fontSize: 16 });\n  side3L.moveTo([ox - 0.35, oy + s + half / 2, 0]);\n\n  return new VGroup(outline, mainSq, rightRect, topRect, missing, lblX2, lbl3xR, lbl3xT, lbl9, sideBot, side3, sideLeft, side3L);\n}\n\nlet model = buildModel(xVal);\nscene.add(model);\n\nconst info = new Text({ text: 'Drag slider · missing corner = 3×3 = 9', color: GRAY, fontSize: 18 });\ninfo.moveTo([0, 2.85, 0]);\nscene.add(info);\n\ncontrols.addSlider({\n  label: 'x value',\n  min: 1,\n  max: 4,\n  value: xVal,\n  step: 0.1,\n  onChange: (v) => {\n    xVal = v;\n    scene.remove(model);\n    model = buildModel(xVal);\n    scene.add(model);\n  }\n});\n\ncontrols.addButton({\n  label: 'Highlight missing 9',\n  onClick: () => {\n    // briefly pulse by rebuilding — visual cue via recreate\n    scene.remove(model);\n    model = buildModel(xVal);\n    scene.add(model);\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 6305,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/alg-completing-square.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/alg-completing-square.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:12.552Z"
+}

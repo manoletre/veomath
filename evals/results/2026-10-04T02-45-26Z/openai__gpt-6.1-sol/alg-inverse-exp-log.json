@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-inverse-exp-log",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.00% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=2"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.35% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 31400,
+        "inputTokens": 4607,
+        "cachedInputTokens": 4581,
+        "outputTokens": 1623,
+        "costUsd": 0.0167401,
+        "rawResponse": "{\"explanation\":\"The graphs of y = e^x and y = ln(x) are reflections of each other across y = x. Reflection swaps coordinates: every point (t, e^t) becomes (e^t, t), which lies on y = ln(x). This shows that the functions undo each other: ln(e^t) = t for every real t, and e^{ln(x)} = x for x > 0.\",\"manimCode\":\"const heading = new Text({ text: 'Inverse functions: mirror across y = x', fontSize: 29, color: WHITE });\\nheading.moveTo([0, 3.35, 0]);\\nawait scene.play(new Write(heading));\\n\\nconst ax = new Axes({ xRange: [-3, 3, 1], yRange: [-3, 3, 1], xLength: 5.6, yLength: 5.6, tips: false });\\nax.moveTo([-1.7, -0.3, 0]);\\nconst mirror = ax.plot(x => x, { color: GRAY, xRange: [-3, 3] });\\nconst expCurve = ax.plot(x => Math.exp(x), { color: BLUE, xRange: [-3, Math.log(3)], numSamples: 250 });\\nconst logCurve = ax.plot(x => Math.log(x), { color: ORANGE, xRange: [Math.exp(-3), 3], numSamples: 500 });\\nawait scene.play(new Create(ax), new Create(mirror));\\nawait scene.play(new Create(expCurve));\\n\\nconst expLabel = new MathTex({ latex: 'y=e^x', color: BLUE });\\nconst logLabel = new MathTex({ latex: 'y=\\\\\\\\ln(x)', color: ORANGE });\\nconst mirrorLabel = new MathTex({ latex: 'y=x', color: GRAY });\\nconst pairLabel = new MathTex({ latex: '(t,e^t)\\\\\\\\;\\\\\\\\longleftrightarrow\\\\\\\\;(e^t,t)' });\\nconst identityLabel = new MathTex({ latex: '\\\\\\\\ln(e^t)=t' });\\nfor (const item of [expLabel, logLabel, mirrorLabel, pairLabel, identityLabel]) {\\n  await item.waitForRender();\\n}\\nexpLabel.moveTo([3.45, 2.0, 0]);\\nlogLabel.moveTo([3.45, 1.2, 0]);\\nmirrorLabel.moveTo([3.45, 0.4, 0]);\\npairLabel.scale(0.72).moveTo([3.45, -0.75, 0]);\\nidentityLabel.scale(0.9).moveTo([3.45, -1.65, 0]);\\nscene.add(expLabel, mirrorLabel);\\n\\nconst param = new ValueTracker(0.4);\\nconst expPoint = new Dot({ point: ax.c2p(0.4, Math.exp(0.4)), color: BLUE });\\nconst logPoint = new Dot({ point: ax.c2p(Math.exp(0.4), 0.4), color: ORANGE });\\nconst bridge = new Polygon({ vertices: [expPoint.getCenter(), logPoint.getCenter()], color: YELLOW });\\nbridge.setFillOpacity(0);\\nbridge.setStrokeWidth(2);\\nscene.add(expPoint);\\nconst travelingPoint = new Dot({ point: expPoint.getCenter(), color: YELLOW });\\nscene.add(travelingPoint);\\nawait scene.play(new Transform(travelingPoint, new Dot({ point: logPoint.getCenter(), color: YELLOW })), new Create(logCurve));\\nscene.remove(travelingPoint);\\nscene.add(bridge, expPoint, logPoint, logLabel, pairLabel, identityLabel);\\n\\nexpPoint.addUpdater(mob => {\\n  const tVal = param.getValue();\\n  mob.moveTo(ax.c2p(tVal, Math.exp(tVal)));\\n});\\nlogPoint.addUpdater(mob => {\\n  const tVal = param.getValue();\\n  mob.moveTo(ax.c2p(Math.exp(tVal), tVal));\\n});\\nbridge.addUpdater(mob => {\\n  const tVal = param.getValue();\\n  mob.setVertices([ax.c2p(tVal, Math.exp(tVal)), ax.c2p(Math.exp(tVal), tVal)]);\\n});\\nconst hint = new Text({ text: 'Slide t to explore matching points', fontSize: 18, color: YELLOW });\\nhint.moveTo([3.45, -2.6, 0]);\\nscene.add(hint);\\nawait scene.play(param.animateTo(-1.8));\\nawait scene.play(param.animateTo(1));\\nawait scene.play(param.animateTo(0.4));\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', width: 260 });\\ncontrols.addSlider({ label: 't: input to exponential', min: -2.8, max: 1.02, value: 0.4, step: 0.01, onChange: val => { param.setValue(val); } });\\nmakeHoverable(expPoint, scene, { hoverScale: 1.5 });\\nmakeHoverable(logPoint, scene, { hoverScale: 1.5 });\\nawait scene.wait(999999);\"}",
+        "explanation": "The graphs of y = e^x and y = ln(x) are reflections of each other across y = x. Reflection swaps coordinates: every point (t, e^t) becomes (e^t, t), which lies on y = ln(x). This shows that the functions undo each other: ln(e^t) = t for every real t, and e^{ln(x)} = x for x > 0."
+      },
+      "code": "const heading = new Text({ text: 'Inverse functions: mirror across y = x', fontSize: 29, color: WHITE });\nheading.moveTo([0, 3.35, 0]);\nawait scene.play(new Write(heading));\n\nconst ax = new Axes({ xRange: [-3, 3, 1], yRange: [-3, 3, 1], xLength: 5.6, yLength: 5.6, tips: false });\nax.moveTo([-1.7, -0.3, 0]);\nconst mirror = ax.plot(x => x, { color: GRAY, xRange: [-3, 3] });\nconst expCurve = ax.plot(x => Math.exp(x), { color: BLUE, xRange: [-3, Math.log(3)], numSamples: 250 });\nconst logCurve = ax.plot(x => Math.log(x), { color: ORANGE, xRange: [Math.exp(-3), 3], numSamples: 500 });\nawait scene.play(new Create(ax), new Create(mirror));\nawait scene.play(new Create(expCurve));\n\nconst expLabel = new MathTex({ latex: 'y=e^x', color: BLUE });\nconst logLabel = new MathTex({ latex: 'y=\\\\ln(x)', color: ORANGE });\nconst mirrorLabel = new MathTex({ latex: 'y=x', color: GRAY });\nconst pairLabel = new MathTex({ latex: '(t,e^t)\\\\;\\\\longleftrightarrow\\\\;(e^t,t)' });\nconst identityLabel = new MathTex({ latex: '\\\\ln(e^t)=t' });\nfor (const item of [expLabel, logLabel, mirrorLabel, pairLabel, identityLabel]) {\n  await item.waitForRender();\n}\nexpLabel.moveTo([3.45, 2.0, 0]);\nlogLabel.moveTo([3.45, 1.2, 0]);\nmirrorLabel.moveTo([3.45, 0.4, 0]);\npairLabel.scale(0.72).moveTo([3.45, -0.75, 0]);\nidentityLabel.scale(0.9).moveTo([3.45, -1.65, 0]);\nscene.add(expLabel, mirrorLabel);\n\nconst param = new ValueTracker(0.4);\nconst expPoint = new Dot({ point: ax.c2p(0.4, Math.exp(0.4)), color: BLUE });\nconst logPoint = new Dot({ point: ax.c2p(Math.exp(0.4), 0.4), color: ORANGE });\nconst bridge = new Polygon({ vertices: [expPoint.getCenter(), logPoint.getCenter()], color: YELLOW });\nbridge.setFillOpacity(0);\nbridge.setStrokeWidth(2);\nscene.add(expPoint);\nconst travelingPoint = new Dot({ point: expPoint.getCenter(), color: YELLOW });\nscene.add(travelingPoint);\nawait scene.play(new Transform(travelingPoint, new Dot({ point: logPoint.getCenter(), color: YELLOW })), new Create(logCurve));\nscene.remove(travelingPoint);\nscene.add(bridge, expPoint, logPoint, logLabel, pairLabel, identityLabel);\n\nexpPoint.addUpdater(mob => {\n  const tVal = param.getValue();\n  mob.moveTo(ax.c2p(tVal, Math.exp(tVal)));\n});\nlogPoint.addUpdater(mob => {\n  const tVal = param.getValue();\n  mob.moveTo(ax.c2p(Math.exp(tVal), tVal));\n});\nbridge.addUpdater(mob => {\n  const tVal = param.getValue();\n  mob.setVertices([ax.c2p(tVal, Math.exp(tVal)), ax.c2p(Math.exp(tVal), tVal)]);\n});\nconst hint = new Text({ text: 'Slide t to explore matching points', fontSize: 18, color: YELLOW });\nhint.moveTo([3.45, -2.6, 0]);\nscene.add(hint);\nawait scene.play(param.animateTo(-1.8));\nawait scene.play(param.animateTo(1));\nawait scene.play(param.animateTo(0.4));\n\nconst controls = new Controls(scene, { position: 'bottom-left', width: 260 });\ncontrols.addSlider({ label: 't: input to exponential', min: -2.8, max: 1.02, value: 0.4, step: 0.01, onChange: val => { param.setValue(val); } });\nmakeHoverable(expPoint, scene, { hoverScale: 1.5 });\nmakeHoverable(logPoint, scene, { hoverScale: 1.5 });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 15706,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 7,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 2
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/alg-inverse-exp-log.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/alg-inverse-exp-log.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:27.988Z"
+}

@@ -1,0 +1,78 @@
+{
+  "itemId": "geo-pythagorean-proof",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "12.73% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=0 clickables=4 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 98218,
+        "inputTokens": 12277,
+        "cachedInputTokens": 0,
+        "outputTokens": 3940,
+        "costUsd": 0.06395400000000001,
+        "rawResponse": "{\"explanation\":\"Put four identical right triangles, with legs a and b and hypotenuse c, inside a square of side a+b. In one arrangement, the uncovered region is a square of area c². Rearranging the same four triangles leaves two squares of areas a² and b²; because the outer square and triangles are unchanged, c² = a² + b².\",\"manimCode\":\"const a = 1.5;\\nconst b = 2.1;\\nconst L = a + b;\\nconst P = (x, y) => [x - L / 2, y - L / 2 + 0.25, 0];\\nconst colors = [BLUE_C, TEAL, BLUE_D, BLUE];\\n\\nconst title = new Text({ text: 'The Pythagorean theorem', color: WHITE, fontSize: 34 });\\ntitle.moveTo([0, 3.25, 0]);\\nconst subtitle = new Text({ text: 'Same outer square. Same four triangles.', color: GRAY, fontSize: 22 });\\nsubtitle.moveTo([0, 2.76, 0]);\\nconst frame = new Square({ sideLength: L, color: WHITE });\\nframe.moveTo([0, 0.25, 0]);\\nframe.setStrokeWidth(3);\\nframe.setFillOpacity(0);\\n\\nconst first = [\\n  [[0, 0], [a, 0], [0, b]],\\n  [[L, 0], [a, 0], [L, a]],\\n  [[L, L], [L, a], [b, L]],\\n  [[0, L], [b, L], [0, b]]\\n];\\nconst second = [\\n  [[0, a], [a, a], [0, L]],\\n  [[a, L], [a, a], [0, L]],\\n  [[a, 0], [L, 0], [a, a]],\\n  [[L, a], [L, 0], [a, a]]\\n];\\nfunction makeTriangle(corners, i) {\\n  const tri = new Polygon({ vertices: corners.map(([x, y]) => P(x, y)), color: colors[i] });\\n  tri.setFill(colors[i], 0.84);\\n  tri.setStrokeWidth(2);\\n  return tri;\\n}\\nfunction makeArea(corners) {\\n  const region = new Polygon({ vertices: corners.map(([x, y]) => P(x, y)), color: GOLD });\\n  region.setFill(GOLD, 0.42);\\n  region.setStrokeWidth(2);\\n  return region;\\n}\\nfunction makeLabel(str, x, y) {\\n  const label = new Text({ text: str, color: YELLOW, fontSize: 32 });\\n  label.moveTo(P(x, y));\\n  return label;\\n}\\nconst triangles = first.map((corners, i) => makeTriangle(corners, i));\\nlet areas = [makeArea([[a, 0], [L, a], [b, L], [0, b]])];\\nlet areaLabels = [makeLabel('c²', L / 2, L / 2)];\\n\\nconst widthLabel = new Text({ text: 'a + b', color: WHITE, fontSize: 23 });\\nwidthLabel.moveTo([0, 2.29, 0]);\\nconst aLabel = new Text({ text: 'a', color: WHITE, fontSize: 22 });\\naLabel.moveTo(P(a / 2, -0.29));\\nconst bLabel = new Text({ text: 'b', color: WHITE, fontSize: 22 });\\nbLabel.moveTo(P(a + b / 2, -0.29));\\nconst equation = new Text({ text: 'c² = a² + b²', color: YELLOW, fontSize: 38 });\\nequation.moveTo([0, -2.55, 0]);\\nconst hint = new Text({ text: 'Click any blue triangle to rearrange', color: GRAY, fontSize: 21 });\\nhint.moveTo([0, -3.28, 0]);\\n\\nscene.add(title, subtitle, frame, widthLabel, aLabel, bLabel);\\nawait scene.play(new AnimationGroup([new FadeIn(areas[0]), ...triangles.map(t => new FadeIn(t))]));\\nscene.add(areaLabels[0]);\\nawait scene.wait(1.2);\\n\\nlet arrangement = 0;\\nlet busy = false;\\nasync function rearrange() {\\n  if (busy) return;\\n  busy = true;\\n  const next = 1 - arrangement;\\n  const layout = next === 1 ? second : first;\\n  const oldAreas = areas;\\n  const oldLabels = areaLabels;\\n  await scene.play(new AnimationGroup([\\n    ...triangles.map((tri, i) => new Transform(tri, makeTriangle(layout[i], i))),\\n    ...oldAreas.map(region => new FadeOut(region)),\\n    ...oldLabels.map(label => new FadeOut(label))\\n  ]));\\n  oldAreas.forEach(region => scene.remove(region));\\n  oldLabels.forEach(label => scene.remove(label));\\n  if (next === 1) {\\n    areas = [\\n      makeArea([[0, 0], [a, 0], [a, a], [0, a]]),\\n      makeArea([[a, a], [L, a], [L, L], [a, L]])\\n    ];\\n    areaLabels = [makeLabel('a²', a / 2, a / 2), makeLabel('b²', a + b / 2, a + b / 2)];\\n  } else {\\n    areas = [makeArea([[a, 0], [L, a], [b, L], [0, b]])];\\n    areaLabels = [makeLabel('c²', L / 2, L / 2)];\\n  }\\n  scene.add(...areas);\\n  await scene.play(new AnimationGroup([...areas.map(region => new FadeIn(region)), ...areaLabels.map(label => new FadeIn(label))]));\\n  scene.add(...areaLabels);\\n  arrangement = next;\\n  busy = false;\\n}\\n\\nawait rearrange();\\nscene.add(equation, hint);\\ntriangles.forEach(tri => makeClickable(tri, scene, { onClick: rearrange }));\\nawait scene.wait(999999);\"}",
+        "explanation": "Put four identical right triangles, with legs a and b and hypotenuse c, inside a square of side a+b. In one arrangement, the uncovered region is a square of area c². Rearranging the same four triangles leaves two squares of areas a² and b²; because the outer square and triangles are unchanged, c² = a² + b²."
+      },
+      "code": "const a = 1.5;\nconst b = 2.1;\nconst L = a + b;\nconst P = (x, y) => [x - L / 2, y - L / 2 + 0.25, 0];\nconst colors = [BLUE_C, TEAL, BLUE_D, BLUE];\n\nconst title = new Text({ text: 'The Pythagorean theorem', color: WHITE, fontSize: 34 });\ntitle.moveTo([0, 3.25, 0]);\nconst subtitle = new Text({ text: 'Same outer square. Same four triangles.', color: GRAY, fontSize: 22 });\nsubtitle.moveTo([0, 2.76, 0]);\nconst frame = new Square({ sideLength: L, color: WHITE });\nframe.moveTo([0, 0.25, 0]);\nframe.setStrokeWidth(3);\nframe.setFillOpacity(0);\n\nconst first = [\n  [[0, 0], [a, 0], [0, b]],\n  [[L, 0], [a, 0], [L, a]],\n  [[L, L], [L, a], [b, L]],\n  [[0, L], [b, L], [0, b]]\n];\nconst second = [\n  [[0, a], [a, a], [0, L]],\n  [[a, L], [a, a], [0, L]],\n  [[a, 0], [L, 0], [a, a]],\n  [[L, a], [L, 0], [a, a]]\n];\nfunction makeTriangle(corners, i) {\n  const tri = new Polygon({ vertices: corners.map(([x, y]) => P(x, y)), color: colors[i] });\n  tri.setFill(colors[i], 0.84);\n  tri.setStrokeWidth(2);\n  return tri;\n}\nfunction makeArea(corners) {\n  const region = new Polygon({ vertices: corners.map(([x, y]) => P(x, y)), color: GOLD });\n  region.setFill(GOLD, 0.42);\n  region.setStrokeWidth(2);\n  return region;\n}\nfunction makeLabel(str, x, y) {\n  const label = new Text({ text: str, color: YELLOW, fontSize: 32 });\n  label.moveTo(P(x, y));\n  return label;\n}\nconst triangles = first.map((corners, i) => makeTriangle(corners, i));\nlet areas = [makeArea([[a, 0], [L, a], [b, L], [0, b]])];\nlet areaLabels = [makeLabel('c²', L / 2, L / 2)];\n\nconst widthLabel = new Text({ text: 'a + b', color: WHITE, fontSize: 23 });\nwidthLabel.moveTo([0, 2.29, 0]);\nconst aLabel = new Text({ text: 'a', color: WHITE, fontSize: 22 });\naLabel.moveTo(P(a / 2, -0.29));\nconst bLabel = new Text({ text: 'b', color: WHITE, fontSize: 22 });\nbLabel.moveTo(P(a + b / 2, -0.29));\nconst equation = new Text({ text: 'c² = a² + b²', color: YELLOW, fontSize: 38 });\nequation.moveTo([0, -2.55, 0]);\nconst hint = new Text({ text: 'Click any blue triangle to rearrange', color: GRAY, fontSize: 21 });\nhint.moveTo([0, -3.28, 0]);\n\nscene.add(title, subtitle, frame, widthLabel, aLabel, bLabel);\nawait scene.play(new AnimationGroup([new FadeIn(areas[0]), ...triangles.map(t => new FadeIn(t))]));\nscene.add(areaLabels[0]);\nawait scene.wait(1.2);\n\nlet arrangement = 0;\nlet busy = false;\nasync function rearrange() {\n  if (busy) return;\n  busy = true;\n  const next = 1 - arrangement;\n  const layout = next === 1 ? second : first;\n  const oldAreas = areas;\n  const oldLabels = areaLabels;\n  await scene.play(new AnimationGroup([\n    ...triangles.map((tri, i) => new Transform(tri, makeTriangle(layout[i], i))),\n    ...oldAreas.map(region => new FadeOut(region)),\n    ...oldLabels.map(label => new FadeOut(label))\n  ]));\n  oldAreas.forEach(region => scene.remove(region));\n  oldLabels.forEach(label => scene.remove(label));\n  if (next === 1) {\n    areas = [\n      makeArea([[0, 0], [a, 0], [a, a], [0, a]]),\n      makeArea([[a, a], [L, a], [L, L], [a, L]])\n    ];\n    areaLabels = [makeLabel('a²', a / 2, a / 2), makeLabel('b²', a + b / 2, a + b / 2)];\n  } else {\n    areas = [makeArea([[a, 0], [L, a], [b, L], [0, b]])];\n    areaLabels = [makeLabel('c²', L / 2, L / 2)];\n  }\n  scene.add(...areas);\n  await scene.play(new AnimationGroup([...areas.map(region => new FadeIn(region)), ...areaLabels.map(label => new FadeIn(label))]));\n  scene.add(...areaLabels);\n  arrangement = next;\n  busy = false;\n}\n\nawait rearrange();\nscene.add(equation, hint);\ntriangles.forEach(tri => makeClickable(tri, scene, { onClick: rearrange }));\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9140,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 3,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 4,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/geo-pythagorean-proof.0.final.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:28.155Z"
+}

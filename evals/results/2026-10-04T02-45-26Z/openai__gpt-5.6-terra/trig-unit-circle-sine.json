@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-unit-circle-sine",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.26% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.09% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 32016,
+        "inputTokens": 11733,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1574,
+        "costUsd": 0.0225396,
+        "rawResponse": "{\"explanation\":\"The sine graph is wavy because it records the vertical height of a point moving around a circle. As the point rises and falls smoothly, its height repeats every full turn—creating the familiar repeating wave.\",\"manimCode\":\"const title = new Text({ text: 'Sine: the height of a rotating point', color: WHITE, fontSize: 28 });\\ntitle.moveTo([0, 3.35, 0]);\\n\\nconst center = [-4.1, -0.45, 0];\\nconst unitCircle = new Circle({ radius: 1.25, color: BLUE });\\nunitCircle.moveTo(center);\\nconst hDiameter = new Polygon({ vertices: [[-5.35, -0.45, 0], [-2.85, -0.45, 0]], color: GRAY });\\nhDiameter.setStrokeWidth(1).setFillOpacity(0);\\nconst vDiameter = new Polygon({ vertices: [[-4.1, -1.7, 0], [-4.1, 0.8, 0]], color: GRAY });\\nvDiameter.setStrokeWidth(1).setFillOpacity(0);\\n\\nconst ax = new Axes({\\n  xRange: [0, 2 * Math.PI, Math.PI / 2],\\n  yRange: [-1.5, 1.5, 0.5],\\n  xLength: 6.4,\\n  yLength: 4.1,\\n  tips: true\\n});\\nax.moveTo([2.05, -0.45, 0]);\\nconst sineCurve = ax.plot(x => Math.sin(x), { color: YELLOW, numSamples: 300 });\\nconst graphName = new MathTex({ latex: 'y=\\\\\\\\sin(\\\\\\\\theta)' });\\nawait graphName.waitForRender();\\ngraphName.setColor(YELLOW);\\ngraphName.moveTo([3.55, 1.65, 0]);\\n\\nlet theta = 0.65;\\nconst movingPoint = new Dot({ color: YELLOW, radius: 0.1 });\\nconst heightPoint = new Dot({ color: TEAL, radius: 0.07 });\\nconst graphPoint = new Dot({ color: YELLOW, radius: 0.09 });\\nconst radiusLine = new Polygon({ vertices: [center, center], color: YELLOW });\\nradiusLine.setStrokeWidth(3).setFillOpacity(0);\\nconst projectionLine = new Polygon({ vertices: [center, center], color: TEAL });\\nprojectionLine.setStrokeWidth(3).setFillOpacity(0);\\nconst graphGuide = new Polygon({ vertices: [ax.c2p(0, 0), ax.c2p(0, 0)], color: TEAL });\\ngraphGuide.setStrokeWidth(2).setFillOpacity(0);\\n\\nfunction updateMotion() {\\n  const px = center[0] + 1.25 * Math.cos(theta);\\n  const py = center[1] + 1.25 * Math.sin(theta);\\n  const height = [center[0], py, 0];\\n  movingPoint.moveTo([px, py, 0]);\\n  heightPoint.moveTo(height);\\n  graphPoint.moveTo(ax.c2p(theta, Math.sin(theta)));\\n  radiusLine.setVertices([center, [px, py, 0]]);\\n  projectionLine.setVertices([[px, py, 0], height]);\\n  graphGuide.setVertices([ax.c2p(theta, 0), ax.c2p(theta, Math.sin(theta))]);\\n}\\nupdateMotion();\\n\\nscene.add(title, unitCircle, hDiameter, vDiameter, ax, sineCurve, graphName);\\nscene.add(radiusLine, projectionLine, graphGuide, movingPoint, heightPoint, graphPoint);\\nawait scene.play(new AnimationGroup([\\n  new Create(unitCircle),\\n  new Create(sineCurve),\\n  new FadeIn(movingPoint),\\n  new FadeIn(graphPoint)\\n]));\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 250 });\\ncontrols.addSlider({\\n  label: 'Rotation angle θ', min: 0, max: 2 * Math.PI, value: theta, step: 0.05,\\n  onChange: val => { theta = val; updateMotion(); }\\n});\\ncontrols.addButton({ label: 'Reset angle', onClick: () => { theta = 0.65; updateMotion(); } });\\nmakeHoverable(unitCircle, scene, { hoverColor: BLUE_A, hoverScale: 1.04 });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The sine graph is wavy because it records the vertical height of a point moving around a circle. As the point rises and falls smoothly, its height repeats every full turn—creating the familiar repeating wave."
+      },
+      "code": "const title = new Text({ text: 'Sine: the height of a rotating point', color: WHITE, fontSize: 28 });\ntitle.moveTo([0, 3.35, 0]);\n\nconst center = [-4.1, -0.45, 0];\nconst unitCircle = new Circle({ radius: 1.25, color: BLUE });\nunitCircle.moveTo(center);\nconst hDiameter = new Polygon({ vertices: [[-5.35, -0.45, 0], [-2.85, -0.45, 0]], color: GRAY });\nhDiameter.setStrokeWidth(1).setFillOpacity(0);\nconst vDiameter = new Polygon({ vertices: [[-4.1, -1.7, 0], [-4.1, 0.8, 0]], color: GRAY });\nvDiameter.setStrokeWidth(1).setFillOpacity(0);\n\nconst ax = new Axes({\n  xRange: [0, 2 * Math.PI, Math.PI / 2],\n  yRange: [-1.5, 1.5, 0.5],\n  xLength: 6.4,\n  yLength: 4.1,\n  tips: true\n});\nax.moveTo([2.05, -0.45, 0]);\nconst sineCurve = ax.plot(x => Math.sin(x), { color: YELLOW, numSamples: 300 });\nconst graphName = new MathTex({ latex: 'y=\\\\sin(\\\\theta)' });\nawait graphName.waitForRender();\ngraphName.setColor(YELLOW);\ngraphName.moveTo([3.55, 1.65, 0]);\n\nlet theta = 0.65;\nconst movingPoint = new Dot({ color: YELLOW, radius: 0.1 });\nconst heightPoint = new Dot({ color: TEAL, radius: 0.07 });\nconst graphPoint = new Dot({ color: YELLOW, radius: 0.09 });\nconst radiusLine = new Polygon({ vertices: [center, center], color: YELLOW });\nradiusLine.setStrokeWidth(3).setFillOpacity(0);\nconst projectionLine = new Polygon({ vertices: [center, center], color: TEAL });\nprojectionLine.setStrokeWidth(3).setFillOpacity(0);\nconst graphGuide = new Polygon({ vertices: [ax.c2p(0, 0), ax.c2p(0, 0)], color: TEAL });\ngraphGuide.setStrokeWidth(2).setFillOpacity(0);\n\nfunction updateMotion() {\n  const px = center[0] + 1.25 * Math.cos(theta);\n  const py = center[1] + 1.25 * Math.sin(theta);\n  const height = [center[0], py, 0];\n  movingPoint.moveTo([px, py, 0]);\n  heightPoint.moveTo(height);\n  graphPoint.moveTo(ax.c2p(theta, Math.sin(theta)));\n  radiusLine.setVertices([center, [px, py, 0]]);\n  projectionLine.setVertices([[px, py, 0], height]);\n  graphGuide.setVertices([ax.c2p(theta, 0), ax.c2p(theta, Math.sin(theta))]);\n}\nupdateMotion();\n\nscene.add(title, unitCircle, hDiameter, vDiameter, ax, sineCurve, graphName);\nscene.add(radiusLine, projectionLine, graphGuide, movingPoint, heightPoint, graphPoint);\nawait scene.play(new AnimationGroup([\n  new Create(unitCircle),\n  new Create(sineCurve),\n  new FadeIn(movingPoint),\n  new FadeIn(graphPoint)\n]));\n\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 250 });\ncontrols.addSlider({\n  label: 'Rotation angle θ', min: 0, max: 2 * Math.PI, value: theta, step: 0.05,\n  onChange: val => { theta = val; updateMotion(); }\n});\ncontrols.addButton({ label: 'Reset angle', onClick: () => { theta = 0.65; updateMotion(); } });\nmakeHoverable(unitCircle, scene, { hoverColor: BLUE_A, hoverScale: 1.04 });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 6809,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/trig-unit-circle-sine.0.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/trig-unit-circle-sine.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:58:30.586Z"
+}

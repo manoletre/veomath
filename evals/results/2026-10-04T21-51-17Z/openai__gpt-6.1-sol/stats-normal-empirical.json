@@ -1,0 +1,115 @@
+{
+  "itemId": "stats-normal-empirical",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 0.9090909090909091,
+  "firstAttemptScore": 0.9090909090909091,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9090909090909091,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "7.95% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=2 clickables=3 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "✗ click Text at (-3.4, -2.8) — 0.00% changed\n✓ click Text at (0.0, -2.8) — 2.76% changed\n✓ click Text at (3.4, -2.8) — 0.62% changed\n✓ drag Dot at (-3.8, -1.5) — 0.55% changed\n✓ drag Dot at (3.0, -1.5) — 0.55% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✗ click Text at (-3.4, -2.8) — 0.00% changed\n✓ click Text at (0.0, -2.8) — 2.76% changed\n✓ click Text at (3.4, -2.8) — 0.62% changed\n✓ drag Dot at (-3.8, -1.5) — 0.55% changed\n✓ drag Dot at (3.0, -1.5) — 0.55% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 33331,
+        "inputTokens": 5310,
+        "cachedInputTokens": 5287,
+        "outputTokens": 1679,
+        "costUsd": 0.017364700000000004,
+        "rawResponse": "{\"explanation\":\"For a normal distribution, approximately 68% of values lie within 1 standard deviation of the mean, 95% within 2, and 99.7% within 3. The shaded area represents the probability of falling inside that interval. Drag either yellow endpoint to change the interval, or click a rule below the graph to jump to it.\",\"manimCode\":\"const title = new Text({ text: 'The 68–95–99.7 rule', fontSize: 34, color: WHITE });\\ntitle.moveTo([0, 3.2, 0]);\\nconst ax = new Axes({ xRange: [-4, 4, 1], yRange: [-0.08, 0.48, 0.1], xLength: 10, yLength: 4.3, tips: false });\\nconst density = x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);\\nlet z = 1;\\nconst bell = ax.plot(density, { color: BLUE });\\nconst shaded = new Polygon({ vertices: [ax.c2p(-1, 0), ax.c2p(0, density(0)), ax.c2p(1, 0)], color: YELLOW });\\nshaded.setFill(YELLOW, 0.3);\\nshaded.setStrokeWidth(0);\\nconst leftGuide = new DashedLine({ start: ax.c2p(-1, 0), end: ax.c2p(-1, density(-1)), color: YELLOW });\\nconst rightGuide = new DashedLine({ start: ax.c2p(1, 0), end: ax.c2p(1, density(1)), color: YELLOW });\\nconst leftHandle = new Dot({ point: ax.c2p(-1, 0), radius: 0.13, color: YELLOW });\\nconst rightHandle = new Dot({ point: ax.c2p(1, 0), radius: 0.13, color: YELLOW });\\nconst readout = new Text({ text: '', fontSize: 26, color: YELLOW });\\nreadout.moveTo([0, 2.55, 0]);\\nconst hint = new Text({ text: 'Drag either yellow endpoint • Click a rule to jump to it', fontSize: 20, color: GRAY });\\nhint.moveTo([0, -3.4, 0]);\\nscene.add(title, ax, shaded, bell, leftGuide, rightGuide, leftHandle, rightHandle, readout, hint);\\n\\nfor (let k = -3; k <= 3; k++) {\\n  const label = new Text({ text: k === 0 ? 'μ' : 'μ ' + (k < 0 ? '− ' : '+ ') + Math.abs(k) + 'σ', fontSize: 19, color: GRAY });\\n  const p = ax.c2p(k, 0);\\n  label.moveTo([p[0], p[1] - 0.36, 0]);\\n  scene.add(label);\\n}\\n\\nconst presets = [\\n  { width: 1, caption: '±1σ: about 68%', x: -3.4 },\\n  { width: 2, caption: '±2σ: about 95%', x: 0 },\\n  { width: 3, caption: '±3σ: about 99.7%', x: 3.4 }\\n];\\nconst presetLabels = presets.map(p => {\\n  const label = new Text({ text: p.caption, fontSize: 23, color: WHITE });\\n  label.moveTo([p.x, -2.8, 0]);\\n  scene.add(label);\\n  return label;\\n});\\n\\nfunction probability(width) {\\n  const n = 160;\\n  const h = width / n;\\n  let total = density(0) + density(width);\\n  for (let i = 1; i < n; i++) total += (i % 2 === 0 ? 2 : 4) * density(i * h);\\n  return 2 * total * h / 3;\\n}\\n\\nfunction update() {\\n  const vertices = [ax.c2p(-z, 0)];\\n  for (let i = 0; i <= 120; i++) {\\n    const x = -z + 2 * z * i / 120;\\n    vertices.push(ax.c2p(x, density(x)));\\n  }\\n  vertices.push(ax.c2p(z, 0));\\n  shaded.setVertices(vertices);\\n  leftGuide.setStart(ax.c2p(-z, 0));\\n  leftGuide.setEnd(ax.c2p(-z, density(z)));\\n  rightGuide.setStart(ax.c2p(z, 0));\\n  rightGuide.setEnd(ax.c2p(z, density(z)));\\n  leftHandle.moveTo(ax.c2p(-z, 0));\\n  rightHandle.moveTo(ax.c2p(z, 0));\\n  readout.setText((100 * probability(z)).toFixed(2) + '% within ' + z.toFixed(2) + 'σ of the mean');\\n  presetLabels.forEach((label, i) => label.setColor(Math.abs(z - presets[i].width) < 0.015 ? YELLOW : WHITE));\\n}\\nupdate();\\n\\nmakeDraggable(leftHandle, scene, { onDrag: (mob, pos) => {\\n  z = Math.max(0.1, Math.min(3.5, -ax.pointToCoords(pos)[0]));\\n  update();\\n} });\\nmakeDraggable(rightHandle, scene, { onDrag: (mob, pos) => {\\n  z = Math.max(0.1, Math.min(3.5, ax.pointToCoords(pos)[0]));\\n  update();\\n} });\\npresetLabels.forEach((label, i) => {\\n  makeClickable(label, scene, { onClick: () => { z = presets[i].width; update(); } });\\n});\\nawait scene.wait(999999);\"}",
+        "explanation": "For a normal distribution, approximately 68% of values lie within 1 standard deviation of the mean, 95% within 2, and 99.7% within 3. The shaded area represents the probability of falling inside that interval. Drag either yellow endpoint to change the interval, or click a rule below the graph to jump to it."
+      },
+      "code": "const title = new Text({ text: 'The 68–95–99.7 rule', fontSize: 34, color: WHITE });\ntitle.moveTo([0, 3.2, 0]);\nconst ax = new Axes({ xRange: [-4, 4, 1], yRange: [-0.08, 0.48, 0.1], xLength: 10, yLength: 4.3, tips: false });\nconst density = x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);\nlet z = 1;\nconst bell = ax.plot(density, { color: BLUE });\nconst shaded = new Polygon({ vertices: [ax.c2p(-1, 0), ax.c2p(0, density(0)), ax.c2p(1, 0)], color: YELLOW });\nshaded.setFill(YELLOW, 0.3);\nshaded.setStrokeWidth(0);\nconst leftGuide = new DashedLine({ start: ax.c2p(-1, 0), end: ax.c2p(-1, density(-1)), color: YELLOW });\nconst rightGuide = new DashedLine({ start: ax.c2p(1, 0), end: ax.c2p(1, density(1)), color: YELLOW });\nconst leftHandle = new Dot({ point: ax.c2p(-1, 0), radius: 0.13, color: YELLOW });\nconst rightHandle = new Dot({ point: ax.c2p(1, 0), radius: 0.13, color: YELLOW });\nconst readout = new Text({ text: '', fontSize: 26, color: YELLOW });\nreadout.moveTo([0, 2.55, 0]);\nconst hint = new Text({ text: 'Drag either yellow endpoint • Click a rule to jump to it', fontSize: 20, color: GRAY });\nhint.moveTo([0, -3.4, 0]);\nscene.add(title, ax, shaded, bell, leftGuide, rightGuide, leftHandle, rightHandle, readout, hint);\n\nfor (let k = -3; k <= 3; k++) {\n  const label = new Text({ text: k === 0 ? 'μ' : 'μ ' + (k < 0 ? '− ' : '+ ') + Math.abs(k) + 'σ', fontSize: 19, color: GRAY });\n  const p = ax.c2p(k, 0);\n  label.moveTo([p[0], p[1] - 0.36, 0]);\n  scene.add(label);\n}\n\nconst presets = [\n  { width: 1, caption: '±1σ: about 68%', x: -3.4 },\n  { width: 2, caption: '±2σ: about 95%', x: 0 },\n  { width: 3, caption: '±3σ: about 99.7%', x: 3.4 }\n];\nconst presetLabels = presets.map(p => {\n  const label = new Text({ text: p.caption, fontSize: 23, color: WHITE });\n  label.moveTo([p.x, -2.8, 0]);\n  scene.add(label);\n  return label;\n});\n\nfunction probability(width) {\n  const n = 160;\n  const h = width / n;\n  let total = density(0) + density(width);\n  for (let i = 1; i < n; i++) total += (i % 2 === 0 ? 2 : 4) * density(i * h);\n  return 2 * total * h / 3;\n}\n\nfunction update() {\n  const vertices = [ax.c2p(-z, 0)];\n  for (let i = 0; i <= 120; i++) {\n    const x = -z + 2 * z * i / 120;\n    vertices.push(ax.c2p(x, density(x)));\n  }\n  vertices.push(ax.c2p(z, 0));\n  shaded.setVertices(vertices);\n  leftGuide.setStart(ax.c2p(-z, 0));\n  leftGuide.setEnd(ax.c2p(-z, density(z)));\n  rightGuide.setStart(ax.c2p(z, 0));\n  rightGuide.setEnd(ax.c2p(z, density(z)));\n  leftHandle.moveTo(ax.c2p(-z, 0));\n  rightHandle.moveTo(ax.c2p(z, 0));\n  readout.setText((100 * probability(z)).toFixed(2) + '% within ' + z.toFixed(2) + 'σ of the mean');\n  presetLabels.forEach((label, i) => label.setColor(Math.abs(z - presets[i].width) < 0.015 ? YELLOW : WHITE));\n}\nupdate();\n\nmakeDraggable(leftHandle, scene, { onDrag: (mob, pos) => {\n  z = Math.max(0.1, Math.min(3.5, -ax.pointToCoords(pos)[0]));\n  update();\n} });\nmakeDraggable(rightHandle, scene, { onDrag: (mob, pos) => {\n  z = Math.max(0.1, Math.min(3.5, ax.pointToCoords(pos)[0]));\n  update();\n} });\npresetLabels.forEach((label, i) => {\n  makeClickable(label, scene, { onClick: () => { z = presets[i].width; update(); } });\n});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 11001,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 2,
+        "clickables": 3,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "click",
+            "label": "Text at (-3.4, -2.8)",
+            "change": 0,
+            "responded": false
+          },
+          {
+            "kind": "click",
+            "label": "Text at (0.0, -2.8)",
+            "change": 0.027626953125,
+            "responded": true
+          },
+          {
+            "kind": "click",
+            "label": "Text at (3.4, -2.8)",
+            "change": 0.006155598958333334,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (-3.8, -1.5)",
+            "change": 0.0054991319444444445,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (3.0, -1.5)",
+            "change": 0.005501302083333334,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/stats-normal-empirical.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/stats-normal-empirical.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:53:31.840Z"
+}

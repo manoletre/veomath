@@ -1,0 +1,80 @@
+{
+  "itemId": "alg-vertex-form",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.80% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "FunctionGraph [x -5.50..5.50, y 0.00..29.25] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.93% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 17978,
+        "inputTokens": 5056,
+        "cachedInputTokens": 128,
+        "outputTokens": 1392,
+        "costUsd": 0.0182464,
+        "rawResponse": "{\"explanation\":\"The vertex form y = a(x − h)² + k makes transformations easy to read: h shifts the parabola left/right, k shifts it up/down, and a controls vertical stretch/compression and whether it opens up (a > 0) or down (a < 0). The vertex sits at the point (h, k). Use the sliders to change a, h, and k and watch the graph and vertex move in real time.\",\"manimCode\":\"const axes = new Axes({\\n  xRange: [-6, 6, 1],\\n  yRange: [-4, 4, 1],\\n  xLength: 11,\\n  yLength: 6.5,\\n  tips: true\\n});\\n\\nlet a = 1;\\nlet h = 0;\\nlet k = 0;\\n\\nlet curve = axes.plot(x => a * (x - h) * (x - h) + k, {\\n  color: BLUE,\\n  xRange: [-6, 6],\\n  numSamples: 400\\n});\\n\\nconst vertex = new Dot({ point: axes.c2p(h, k), color: YELLOW });\\n\\nlet eq = new MathTex({ latex: 'y = 1(x - 0)^{2} + 0', color: WHITE });\\nawait eq.waitForRender();\\neq.toCorner(UL);\\neq.shift(scaleVec(0.3, DOWN));\\neq.shift(scaleVec(0.2, RIGHT));\\n\\nconst vertexLabel = new Text({ text: 'vertex (h, k)', color: YELLOW, fontSize: 22 });\\nvertexLabel.nextTo(vertex, UR);\\n\\nscene.add(axes, curve, vertex, eq, vertexLabel);\\n\\nfunction formatNum(n) {\\n  const r = Math.round(n * 100) / 100;\\n  return Number.isInteger(r) ? String(r) : r.toFixed(2);\\n}\\n\\nfunction updateEquation() {\\n  const pos = eq.getCenter();\\n  scene.remove(eq);\\n  const aStr = formatNum(a);\\n  const hStr = formatNum(h);\\n  const kStr = formatNum(k);\\n  const hPart = h >= 0 ? `(x - ${hStr})` : `(x + ${formatNum(-h)})`;\\n  const kPart = k >= 0 ? `+ ${kStr}` : `- ${formatNum(-k)}`;\\n  eq = new MathTex({ latex: `y = ${aStr}${hPart}^{2} ${kPart}`, color: WHITE });\\n  // waitForRender is async; fire-and-forget then place\\n  eq.waitForRender().then(() => {\\n    eq.moveTo(pos);\\n  });\\n  scene.add(eq);\\n}\\n\\nfunction rebuild() {\\n  scene.remove(curve);\\n  curve = axes.plot(x => a * (x - h) * (x - h) + k, {\\n    color: a >= 0 ? BLUE : RED,\\n    xRange: [-6, 6],\\n    numSamples: 400\\n  });\\n  scene.add(curve);\\n  vertex.moveTo(axes.c2p(h, k));\\n  vertexLabel.nextTo(vertex, UR);\\n  updateEquation();\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\n\\ncontrols.addSlider({\\n  label: 'a (stretch / flip)',\\n  min: -3,\\n  max: 3,\\n  value: 1,\\n  step: 0.1,\\n  onChange: (val) => {\\n    a = val === 0 ? 0.01 : val;\\n    rebuild();\\n  }\\n});\\n\\ncontrols.addSlider({\\n  label: 'h (horizontal shift)',\\n  min: -4,\\n  max: 4,\\n  value: 0,\\n  step: 0.1,\\n  onChange: (val) => {\\n    h = val;\\n    rebuild();\\n  }\\n});\\n\\ncontrols.addSlider({\\n  label: 'k (vertical shift)',\\n  min: -3,\\n  max: 3,\\n  value: 0,\\n  step: 0.1,\\n  onChange: (val) => {\\n    k = val;\\n    rebuild();\\n  }\\n});\\n\\ncontrols.addButton({\\n  label: 'Reset',\\n  onClick: () => {\\n    a = 1;\\n    h = 0;\\n    k = 0;\\n    rebuild();\\n  }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The vertex form y = a(x − h)² + k makes transformations easy to read: h shifts the parabola left/right, k shifts it up/down, and a controls vertical stretch/compression and whether it opens up (a > 0) or down (a < 0). The vertex sits at the point (h, k). Use the sliders to change a, h, and k and watch the graph and vertex move in real time."
+      },
+      "code": "const axes = new Axes({\n  xRange: [-6, 6, 1],\n  yRange: [-4, 4, 1],\n  xLength: 11,\n  yLength: 6.5,\n  tips: true\n});\n\nlet a = 1;\nlet h = 0;\nlet k = 0;\n\nlet curve = axes.plot(x => a * (x - h) * (x - h) + k, {\n  color: BLUE,\n  xRange: [-6, 6],\n  numSamples: 400\n});\n\nconst vertex = new Dot({ point: axes.c2p(h, k), color: YELLOW });\n\nlet eq = new MathTex({ latex: 'y = 1(x - 0)^{2} + 0', color: WHITE });\nawait eq.waitForRender();\neq.toCorner(UL);\neq.shift(scaleVec(0.3, DOWN));\neq.shift(scaleVec(0.2, RIGHT));\n\nconst vertexLabel = new Text({ text: 'vertex (h, k)', color: YELLOW, fontSize: 22 });\nvertexLabel.nextTo(vertex, UR);\n\nscene.add(axes, curve, vertex, eq, vertexLabel);\n\nfunction formatNum(n) {\n  const r = Math.round(n * 100) / 100;\n  return Number.isInteger(r) ? String(r) : r.toFixed(2);\n}\n\nfunction updateEquation() {\n  const pos = eq.getCenter();\n  scene.remove(eq);\n  const aStr = formatNum(a);\n  const hStr = formatNum(h);\n  const kStr = formatNum(k);\n  const hPart = h >= 0 ? `(x - ${hStr})` : `(x + ${formatNum(-h)})`;\n  const kPart = k >= 0 ? `+ ${kStr}` : `- ${formatNum(-k)}`;\n  eq = new MathTex({ latex: `y = ${aStr}${hPart}^{2} ${kPart}`, color: WHITE });\n  // waitForRender is async; fire-and-forget then place\n  eq.waitForRender().then(() => {\n    eq.moveTo(pos);\n  });\n  scene.add(eq);\n}\n\nfunction rebuild() {\n  scene.remove(curve);\n  curve = axes.plot(x => a * (x - h) * (x - h) + k, {\n    color: a >= 0 ? BLUE : RED,\n    xRange: [-6, 6],\n    numSamples: 400\n  });\n  scene.add(curve);\n  vertex.moveTo(axes.c2p(h, k));\n  vertexLabel.nextTo(vertex, UR);\n  updateEquation();\n}\n\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\n\ncontrols.addSlider({\n  label: 'a (stretch / flip)',\n  min: -3,\n  max: 3,\n  value: 1,\n  step: 0.1,\n  onChange: (val) => {\n    a = val === 0 ? 0.01 : val;\n    rebuild();\n  }\n});\n\ncontrols.addSlider({\n  label: 'h (horizontal shift)',\n  min: -4,\n  max: 4,\n  value: 0,\n  step: 0.1,\n  onChange: (val) => {\n    h = val;\n    rebuild();\n  }\n});\n\ncontrols.addSlider({\n  label: 'k (vertical shift)',\n  min: -3,\n  max: 3,\n  value: 0,\n  step: 0.1,\n  onChange: (val) => {\n    k = val;\n    rebuild();\n  }\n});\n\ncontrols.addButton({\n  label: 'Reset',\n  onClick: () => {\n    a = 1;\n    h = 0;\n    k = 0;\n    rebuild();\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5564,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 3,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/alg-vertex-form.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/alg-vertex-form.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:56.391Z"
+}

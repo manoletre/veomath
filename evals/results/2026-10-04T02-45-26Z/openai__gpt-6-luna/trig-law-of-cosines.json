@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-law-of-cosines",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.97% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.09% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 14707,
+        "inputTokens": 12274,
+        "cachedInputTokens": 12032,
+        "outputTokens": 625,
+        "costUsd": 0.00045702000000000004,
+        "rawResponse": "{\"explanation\":\"The law of cosines says that for sides a and b with included angle C, the opposite side c satisfies c² = a² + b² − 2ab cos(C). The familiar Pythagorean theorem is the special case C = 90°, where cos(C) = 0; the correction term accounts for how far the angle is from a right angle.\",\"manimCode\":\"const title = new Text({ text: 'Law of Cosines', color: WHITE, fontSize: 36 });\\ntitle.moveTo([0, 3, 0]);\\n\\nconst A = [-2.6, -1.3, 0];\\nconst B = [2.6, -1.3, 0];\\nconst C = [0.5, 1.8, 0];\\nconst tri = new Polygon({ vertices: [A, B, C], color: BLUE_C });\\ntri.setFill(BLUE_C, 0.12);\\nconst sideA = new Text({ text: 'a', color: YELLOW, fontSize: 28 }); sideA.moveTo([1.7, 0.35, 0]);\\nconst sideB = new Text({ text: 'b', color: YELLOW, fontSize: 28 }); sideB.moveTo([-1.25, 0.35, 0]);\\nconst sideC = new Text({ text: 'c', color: YELLOW, fontSize: 28 }); sideC.moveTo([0, -1.65, 0]);\\nconst angle = new Text({ text: 'C', color: ORANGE, fontSize: 26 }); angle.moveTo([0.15, 1.35, 0]);\\n\\nconst formula = new MathTex({ latex: 'c^2 = a^2 + b^2 - 2ab\\\\\\\\cos(C)' });\\nawait formula.waitForRender(); formula.moveTo([0, -2.65, 0]);\\nconst right = new Text({ text: 'At C = 90°:  cos(C) = 0  ⇒  c² = a² + b²', color: WHITE, fontSize: 24 });\\nright.moveTo([0, -3.35, 0]);\\n\\nscene.add(title, tri, sideA, sideB, sideC, angle, formula, right);\\nconst controls = new Controls(scene, { position: 'top-right', width: 250 });\\ncontrols.addSlider({ label: 'Angle C (degrees)', min: 25, max: 150, value: 90, step: 1, onChange: () => {} });\\nmakeHoverable(tri, scene, { hoverColor: TEAL, hoverScale: 1.03 });\\nawait scene.wait(999999);\"}",
+        "explanation": "The law of cosines says that for sides a and b with included angle C, the opposite side c satisfies c² = a² + b² − 2ab cos(C). The familiar Pythagorean theorem is the special case C = 90°, where cos(C) = 0; the correction term accounts for how far the angle is from a right angle."
+      },
+      "code": "const title = new Text({ text: 'Law of Cosines', color: WHITE, fontSize: 36 });\ntitle.moveTo([0, 3, 0]);\n\nconst A = [-2.6, -1.3, 0];\nconst B = [2.6, -1.3, 0];\nconst C = [0.5, 1.8, 0];\nconst tri = new Polygon({ vertices: [A, B, C], color: BLUE_C });\ntri.setFill(BLUE_C, 0.12);\nconst sideA = new Text({ text: 'a', color: YELLOW, fontSize: 28 }); sideA.moveTo([1.7, 0.35, 0]);\nconst sideB = new Text({ text: 'b', color: YELLOW, fontSize: 28 }); sideB.moveTo([-1.25, 0.35, 0]);\nconst sideC = new Text({ text: 'c', color: YELLOW, fontSize: 28 }); sideC.moveTo([0, -1.65, 0]);\nconst angle = new Text({ text: 'C', color: ORANGE, fontSize: 26 }); angle.moveTo([0.15, 1.35, 0]);\n\nconst formula = new MathTex({ latex: 'c^2 = a^2 + b^2 - 2ab\\\\cos(C)' });\nawait formula.waitForRender(); formula.moveTo([0, -2.65, 0]);\nconst right = new Text({ text: 'At C = 90°:  cos(C) = 0  ⇒  c² = a² + b²', color: WHITE, fontSize: 24 });\nright.moveTo([0, -3.35, 0]);\n\nscene.add(title, tri, sideA, sideB, sideC, angle, formula, right);\nconst controls = new Controls(scene, { position: 'top-right', width: 250 });\ncontrols.addSlider({ label: 'Angle C (degrees)', min: 25, max: 150, value: 90, step: 1, onChange: () => {} });\nmakeHoverable(tri, scene, { hoverColor: TEAL, hoverScale: 1.03 });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5629,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/trig-law-of-cosines.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/trig-law-of-cosines.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:55:06.853Z"
+}

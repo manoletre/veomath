@@ -1,0 +1,91 @@
+{
+  "itemId": "alg-discriminant",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.10% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (0.0, -1.5) — 1.25% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (0.0, -1.5) — 1.25% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 52369,
+        "inputTokens": 5323,
+        "cachedInputTokens": 5287,
+        "outputTokens": 2284,
+        "costUsd": 0.023440700000000002,
+        "rawResponse": "{\"explanation\":\"For a quadratic ax² + bx + c = 0 (a ≠ 0), the quadratic formula contains √(b² − 4ac). A positive discriminant gives two distinct real roots, zero gives one repeated real root, and a negative discriminant gives no real roots. Drag the parabola’s vertex to see its intersections with the x-axis change; this example keeps a = 1 while b and c update.\",\"manimCode\":\"const title = new Text({ text: 'The discriminant counts real roots', fontSize: 30, color: WHITE });\\ntitle.moveTo([0, 3.3, 0]);\\nconst equation = new Text({ text: '', fontSize: 25, color: WHITE });\\nequation.moveTo([0, 2.8, 0]);\\nconst ax = new Axes({ xRange: [-2, 2, 0.5], yRange: [-3, 8, 1], xLength: 8.4, yLength: 4.6, tips: false });\\nlet h = 0;\\nlet k = -1;\\nconst f = x => (x - h) * (x - h) + k;\\nconst curve = ax.plot(f, { color: BLUE });\\nconst vertex = new Dot({ point: ax.c2p(h, k), radius: 0.14, color: YELLOW });\\nconst rootLeft = new Dot({ point: ax.c2p(-1, 0), radius: 0.11, color: GREEN });\\nconst rootRight = new Dot({ point: ax.c2p(1, 0), radius: 0.11, color: GREEN });\\nconst guide = new DashedLine({ start: ax.c2p(h, k), end: ax.c2p(h, 0), color: GRAY });\\nconst axisLabel = new Text({ text: 'x', fontSize: 22, color: GRAY });\\naxisLabel.moveTo([4.5, ax.c2p(0, 0)[1], 0]);\\nconst result = new Text({ text: '', fontSize: 24, color: GREEN });\\nresult.moveTo([0, -2.75, 0]);\\nconst rootsReadout = new Text({ text: '', fontSize: 21, color: WHITE });\\nrootsReadout.moveTo([0, -3.1, 0]);\\nconst hint = new Text({ text: 'Drag the yellow vertex · near the x-axis it snaps to a repeated root', fontSize: 18, color: GRAY });\\nhint.moveTo([0, -3.5, 0]);\\nscene.add(title, equation, ax, axisLabel, guide, curve, rootLeft, rootRight, vertex, result, rootsReadout, hint);\\n\\nfunction update() {\\n  const b = -2 * h;\\n  const c = h * h + k;\\n  const discriminant = b * b - 4 * c;\\n  const tone = k < 0 ? GREEN : k === 0 ? YELLOW : RED;\\n  curve.setFunction(f);\\n  vertex.moveTo(ax.c2p(h, k));\\n  guide.setStart(ax.c2p(h, k));\\n  guide.setEnd(ax.c2p(h, 0));\\n  guide.setOpacity(k === 0 ? 0 : 0.6);\\n  const signed = v => (v < 0 ? ' − ' : ' + ') + Math.abs(v).toFixed(2);\\n  equation.setText('y = x²' + signed(b) + 'x' + signed(c) + '     (a = 1)');\\n  result.setColor(tone);\\n  if (k < 0) {\\n    const offset = Math.sqrt(-k);\\n    rootLeft.moveTo(ax.c2p(h - offset, 0));\\n    rootRight.moveTo(ax.c2p(h + offset, 0));\\n    rootLeft.setColor(GREEN);\\n    rootRight.setColor(GREEN);\\n    rootLeft.setOpacity(1);\\n    rootRight.setOpacity(1);\\n    result.setText('Δ = b² − 4ac = ' + discriminant.toFixed(2) + ' > 0: two real roots');\\n    rootsReadout.setText('x = ' + (h - offset).toFixed(2) + '   and   x = ' + (h + offset).toFixed(2));\\n  } else if (k === 0) {\\n    rootLeft.moveTo(ax.c2p(h, 0));\\n    rootLeft.setColor(YELLOW);\\n    rootLeft.setOpacity(1);\\n    rootRight.setOpacity(0);\\n    result.setText('Δ = b² − 4ac = 0: one repeated real root');\\n    rootsReadout.setText('x = ' + h.toFixed(2) + '   ·   the parabola just touches the x-axis');\\n  } else {\\n    rootLeft.setOpacity(0);\\n    rootRight.setOpacity(0);\\n    result.setText('Δ = b² − 4ac = ' + discriminant.toFixed(2) + ' < 0: no real roots');\\n    rootsReadout.setText('The parabola stays above the x-axis');\\n  }\\n}\\nupdate();\\nmakeDraggable(vertex, scene, { onDrag: (mob, pos) => {\\n  const coords = ax.pointToCoords(pos);\\n  h = Math.max(-0.5, Math.min(0.5, coords[0]));\\n  k = Math.max(-1.5, Math.min(1.5, coords[1]));\\n  if (Math.abs(k) < 0.16) k = 0;\\n  update();\\n} });\\nawait scene.wait(999999);\"}",
+        "explanation": "For a quadratic ax² + bx + c = 0 (a ≠ 0), the quadratic formula contains √(b² − 4ac). A positive discriminant gives two distinct real roots, zero gives one repeated real root, and a negative discriminant gives no real roots. Drag the parabola’s vertex to see its intersections with the x-axis change; this example keeps a = 1 while b and c update."
+      },
+      "code": "const title = new Text({ text: 'The discriminant counts real roots', fontSize: 30, color: WHITE });\ntitle.moveTo([0, 3.3, 0]);\nconst equation = new Text({ text: '', fontSize: 25, color: WHITE });\nequation.moveTo([0, 2.8, 0]);\nconst ax = new Axes({ xRange: [-2, 2, 0.5], yRange: [-3, 8, 1], xLength: 8.4, yLength: 4.6, tips: false });\nlet h = 0;\nlet k = -1;\nconst f = x => (x - h) * (x - h) + k;\nconst curve = ax.plot(f, { color: BLUE });\nconst vertex = new Dot({ point: ax.c2p(h, k), radius: 0.14, color: YELLOW });\nconst rootLeft = new Dot({ point: ax.c2p(-1, 0), radius: 0.11, color: GREEN });\nconst rootRight = new Dot({ point: ax.c2p(1, 0), radius: 0.11, color: GREEN });\nconst guide = new DashedLine({ start: ax.c2p(h, k), end: ax.c2p(h, 0), color: GRAY });\nconst axisLabel = new Text({ text: 'x', fontSize: 22, color: GRAY });\naxisLabel.moveTo([4.5, ax.c2p(0, 0)[1], 0]);\nconst result = new Text({ text: '', fontSize: 24, color: GREEN });\nresult.moveTo([0, -2.75, 0]);\nconst rootsReadout = new Text({ text: '', fontSize: 21, color: WHITE });\nrootsReadout.moveTo([0, -3.1, 0]);\nconst hint = new Text({ text: 'Drag the yellow vertex · near the x-axis it snaps to a repeated root', fontSize: 18, color: GRAY });\nhint.moveTo([0, -3.5, 0]);\nscene.add(title, equation, ax, axisLabel, guide, curve, rootLeft, rootRight, vertex, result, rootsReadout, hint);\n\nfunction update() {\n  const b = -2 * h;\n  const c = h * h + k;\n  const discriminant = b * b - 4 * c;\n  const tone = k < 0 ? GREEN : k === 0 ? YELLOW : RED;\n  curve.setFunction(f);\n  vertex.moveTo(ax.c2p(h, k));\n  guide.setStart(ax.c2p(h, k));\n  guide.setEnd(ax.c2p(h, 0));\n  guide.setOpacity(k === 0 ? 0 : 0.6);\n  const signed = v => (v < 0 ? ' − ' : ' + ') + Math.abs(v).toFixed(2);\n  equation.setText('y = x²' + signed(b) + 'x' + signed(c) + '     (a = 1)');\n  result.setColor(tone);\n  if (k < 0) {\n    const offset = Math.sqrt(-k);\n    rootLeft.moveTo(ax.c2p(h - offset, 0));\n    rootRight.moveTo(ax.c2p(h + offset, 0));\n    rootLeft.setColor(GREEN);\n    rootRight.setColor(GREEN);\n    rootLeft.setOpacity(1);\n    rootRight.setOpacity(1);\n    result.setText('Δ = b² − 4ac = ' + discriminant.toFixed(2) + ' > 0: two real roots');\n    rootsReadout.setText('x = ' + (h - offset).toFixed(2) + '   and   x = ' + (h + offset).toFixed(2));\n  } else if (k === 0) {\n    rootLeft.moveTo(ax.c2p(h, 0));\n    rootLeft.setColor(YELLOW);\n    rootLeft.setOpacity(1);\n    rootRight.setOpacity(0);\n    result.setText('Δ = b² − 4ac = 0: one repeated real root');\n    rootsReadout.setText('x = ' + h.toFixed(2) + '   ·   the parabola just touches the x-axis');\n  } else {\n    rootLeft.setOpacity(0);\n    rootRight.setOpacity(0);\n    result.setText('Δ = b² − 4ac = ' + discriminant.toFixed(2) + ' < 0: no real roots');\n    rootsReadout.setText('The parabola stays above the x-axis');\n  }\n}\nupdate();\nmakeDraggable(vertex, scene, { onDrag: (mob, pos) => {\n  const coords = ax.pointToCoords(pos);\n  h = Math.max(-0.5, Math.min(0.5, coords[0]));\n  k = Math.max(-1.5, Math.min(1.5, coords[1]));\n  if (Math.abs(k) < 0.16) k = 0;\n  update();\n} });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 8679,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "drag",
+            "label": "Dot at (0.0, -1.5)",
+            "change": 0.012523871527777777,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/alg-discriminant.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/alg-discriminant.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:52:23.748Z"
+}

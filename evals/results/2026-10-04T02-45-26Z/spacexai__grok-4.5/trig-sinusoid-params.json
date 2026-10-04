@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-sinusoid-params",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.32% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=4 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.34% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 11899,
+        "inputTokens": 5058,
+        "cachedInputTokens": 128,
+        "outputTokens": 969,
+        "costUsd": 0.015712399999999998,
+        "rawResponse": "{\n  \"explanation\": \"The general sine wave y = A sin(B(x − C)) + D is shaped by four parameters: A (amplitude) stretches it vertically, B (frequency) controls how fast it oscillates, C (phase shift) slides it left/right, and D (vertical shift) moves it up/down. Drag the sliders to reshape the wave in real time and see how each constant transforms the graph.\",\n  \"manimCode\": \"const ax = new Axes({\\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\\n  yRange: [-4, 4, 1],\\n  xLength: 10,\\n  yLength: 5.5,\\n  tips: false\\n});\\nax.moveTo([0, 0.3, 0]);\\n\\nlet A = 1;\\nlet B = 1;\\nlet C = 0;\\nlet D = 0;\\n\\nlet curve = ax.plot(x => A * Math.sin(B * (x - C)) + D, { color: BLUE, numSamples: 400 });\\nscene.add(ax, curve);\\n\\nconst eq = new MathTex({ latex: 'y = A\\\\\\\\sin(B(x - C)) + D', fontSize: 32 });\\nawait eq.waitForRender();\\neq.moveTo([0, 3.4, 0]);\\nscene.add(eq);\\n\\nlet paramLabel = new Text({ text: `A=${A.toFixed(1)}  B=${B.toFixed(1)}  C=${C.toFixed(1)}  D=${D.toFixed(1)}`, color: YELLOW, fontSize: 22 });\\nparamLabel.moveTo([0, -3.5, 0]);\\nscene.add(paramLabel);\\n\\nfunction updateCurve() {\\n  scene.remove(curve);\\n  curve = ax.plot(x => A * Math.sin(B * (x - C)) + D, { color: BLUE, numSamples: 400 });\\n  scene.add(curve);\\n\\n  const pos = paramLabel.getCenter();\\n  scene.remove(paramLabel);\\n  paramLabel = new Text({\\n    text: `A=${A.toFixed(1)}  B=${B.toFixed(1)}  C=${C.toFixed(1)}  D=${D.toFixed(1)}`,\\n    color: YELLOW,\\n    fontSize: 22\\n  });\\n  paramLabel.moveTo(pos);\\n  scene.add(paramLabel);\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\ncontrols.addSlider({\\n  label: 'A (amplitude)',\\n  min: -3, max: 3, value: 1, step: 0.1,\\n  onChange: (v) => { A = v; updateCurve(); }\\n});\\ncontrols.addSlider({\\n  label: 'B (frequency)',\\n  min: 0.1, max: 4, value: 1, step: 0.1,\\n  onChange: (v) => { B = v; updateCurve(); }\\n});\\ncontrols.addSlider({\\n  label: 'C (phase shift)',\\n  min: -Math.PI, max: Math.PI, value: 0, step: 0.1,\\n  onChange: (v) => { C = v; updateCurve(); }\\n});\\ncontrols.addSlider({\\n  label: 'D (vertical shift)',\\n  min: -3, max: 3, value: 0, step: 0.1,\\n  onChange: (v) => { D = v; updateCurve(); }\\n});\\ncontrols.addButton({\\n  label: 'Reset',\\n  onClick: () => {\\n    A = 1; B = 1; C = 0; D = 0;\\n    updateCurve();\\n  }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "The general sine wave y = A sin(B(x − C)) + D is shaped by four parameters: A (amplitude) stretches it vertically, B (frequency) controls how fast it oscillates, C (phase shift) slides it left/right, and D (vertical shift) moves it up/down. Drag the sliders to reshape the wave in real time and see how each constant transforms the graph."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\n  yRange: [-4, 4, 1],\n  xLength: 10,\n  yLength: 5.5,\n  tips: false\n});\nax.moveTo([0, 0.3, 0]);\n\nlet A = 1;\nlet B = 1;\nlet C = 0;\nlet D = 0;\n\nlet curve = ax.plot(x => A * Math.sin(B * (x - C)) + D, { color: BLUE, numSamples: 400 });\nscene.add(ax, curve);\n\nconst eq = new MathTex({ latex: 'y = A\\\\sin(B(x - C)) + D', fontSize: 32 });\nawait eq.waitForRender();\neq.moveTo([0, 3.4, 0]);\nscene.add(eq);\n\nlet paramLabel = new Text({ text: `A=${A.toFixed(1)}  B=${B.toFixed(1)}  C=${C.toFixed(1)}  D=${D.toFixed(1)}`, color: YELLOW, fontSize: 22 });\nparamLabel.moveTo([0, -3.5, 0]);\nscene.add(paramLabel);\n\nfunction updateCurve() {\n  scene.remove(curve);\n  curve = ax.plot(x => A * Math.sin(B * (x - C)) + D, { color: BLUE, numSamples: 400 });\n  scene.add(curve);\n\n  const pos = paramLabel.getCenter();\n  scene.remove(paramLabel);\n  paramLabel = new Text({\n    text: `A=${A.toFixed(1)}  B=${B.toFixed(1)}  C=${C.toFixed(1)}  D=${D.toFixed(1)}`,\n    color: YELLOW,\n    fontSize: 22\n  });\n  paramLabel.moveTo(pos);\n  scene.add(paramLabel);\n}\n\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\ncontrols.addSlider({\n  label: 'A (amplitude)',\n  min: -3, max: 3, value: 1, step: 0.1,\n  onChange: (v) => { A = v; updateCurve(); }\n});\ncontrols.addSlider({\n  label: 'B (frequency)',\n  min: 0.1, max: 4, value: 1, step: 0.1,\n  onChange: (v) => { B = v; updateCurve(); }\n});\ncontrols.addSlider({\n  label: 'C (phase shift)',\n  min: -Math.PI, max: Math.PI, value: 0, step: 0.1,\n  onChange: (v) => { C = v; updateCurve(); }\n});\ncontrols.addSlider({\n  label: 'D (vertical shift)',\n  min: -3, max: 3, value: 0, step: 0.1,\n  onChange: (v) => { D = v; updateCurve(); }\n});\ncontrols.addButton({\n  label: 'Reset',\n  onClick: () => {\n    A = 1; B = 1; C = 0; D = 0;\n    updateCurve();\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5592,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 4,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/trig-sinusoid-params.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/trig-sinusoid-params.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:32.190Z"
+}

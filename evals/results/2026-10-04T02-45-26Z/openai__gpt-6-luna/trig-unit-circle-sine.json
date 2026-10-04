@@ -1,0 +1,80 @@
+{
+  "itemId": "trig-unit-circle-sine",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 0.8,
+  "firstAttemptScore": 0.8,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.8,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "0.88% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Axes [x 0.63..7.75, y -1.70..1.70] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.00% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 12817,
+        "inputTokens": 12264,
+        "cachedInputTokens": 0,
+        "outputTokens": 501,
+        "costUsd": 0.0014768999999999997,
+        "rawResponse": "{\"explanation\":\"The sine graph is wavy because it models a quantity that repeats smoothly: as the input increases, the output rises and falls in a regular cycle. It comes from tracking one coordinate of a point moving around a circle—the height goes up, reaches a maximum, comes back down, reaches a minimum, then repeats.\",\"manimCode\":\"const circle = new Circle({ radius: 1.25, color: BLUE });\\ncircle.moveTo([-3.2, 0.1, 0]);\\nconst center = new Dot({ point: [-3.2, 0.1, 0], color: WHITE });\\nconst marker = new Dot({ point: [-3.2, 1.35, 0], color: YELLOW });\\nconst radiusLine = new Polygon({ vertices: [[-3.2, 0.1, 0], [-3.2, 1.35, 0]], color: YELLOW });\\nradiusLine.setStrokeWidth(2).setFillOpacity(0);\\nconst ax = new Axes({ xRange: [0, 2 * Math.PI, Math.PI], yRange: [-1.5, 1.5, 1], xLength: 7, yLength: 3.4, tips: false });\\nax.moveTo([2.5, 0, 0]);\\nconst curve = ax.plot(x => Math.sin(x), { color: ORANGE, numSamples: 300 });\\nscene.add(circle, center, marker, radiusLine, ax, curve);\\nmakeDraggable(marker, scene, { onDrag: (mob) => {\\n  const [x, y] = mob.getCenter();\\n  const dx = x + 3.2, dy = y - 0.1;\\n  const theta = Math.atan2(dy, dx);\\n  const px = -3.2 + 1.25 * Math.cos(theta), py = 0.1 + 1.25 * Math.sin(theta);\\n  mob.moveTo([px, py, 0]);\\n  radiusLine.setVertices([[-3.2, 0.1, 0], [px, py, 0]]);\\n} });\\nawait scene.wait(999999);\"}",
+        "explanation": "The sine graph is wavy because it models a quantity that repeats smoothly: as the input increases, the output rises and falls in a regular cycle. It comes from tracking one coordinate of a point moving around a circle—the height goes up, reaches a maximum, comes back down, reaches a minimum, then repeats."
+      },
+      "code": "const circle = new Circle({ radius: 1.25, color: BLUE });\ncircle.moveTo([-3.2, 0.1, 0]);\nconst center = new Dot({ point: [-3.2, 0.1, 0], color: WHITE });\nconst marker = new Dot({ point: [-3.2, 1.35, 0], color: YELLOW });\nconst radiusLine = new Polygon({ vertices: [[-3.2, 0.1, 0], [-3.2, 1.35, 0]], color: YELLOW });\nradiusLine.setStrokeWidth(2).setFillOpacity(0);\nconst ax = new Axes({ xRange: [0, 2 * Math.PI, Math.PI], yRange: [-1.5, 1.5, 1], xLength: 7, yLength: 3.4, tips: false });\nax.moveTo([2.5, 0, 0]);\nconst curve = ax.plot(x => Math.sin(x), { color: ORANGE, numSamples: 300 });\nscene.add(circle, center, marker, radiusLine, ax, curve);\nmakeDraggable(marker, scene, { onDrag: (mob) => {\n  const [x, y] = mob.getCenter();\n  const dx = x + 3.2, dy = y - 0.1;\n  const theta = Math.atan2(dy, dx);\n  const px = -3.2 + 1.25 * Math.cos(theta), py = 0.1 + 1.25 * Math.sin(theta);\n  mob.moveTo([px, py, 0]);\n  radiusLine.setVertices([[-3.2, 0.1, 0], [px, py, 0]]);\n} });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 2744,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/trig-unit-circle-sine.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/trig-unit-circle-sine.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:54:40.790Z"
+}

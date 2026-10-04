@@ -1,0 +1,97 @@
+{
+  "itemId": "alg-phone-plans",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.15% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=1 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ click Text at (-0.3, 0.8) — 0.67% changed\n✓ drag Dot at (0.0, -2.2) — 0.68% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ click Text at (-0.3, 0.8) — 0.67% changed\n✓ drag Dot at (0.0, -2.2) — 0.68% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 49448,
+        "inputTokens": 5332,
+        "cachedInputTokens": 5287,
+        "outputTokens": 2128,
+        "costUsd": 0.0218987,
+        "rawResponse": "{\"explanation\":\"The plans cost the same when 20 + 0.10m = 35 + 0.05m. Solving gives 0.05m = 15, so they both cost $50 at 300 minutes. Plan A is cheaper below 300 minutes; Plan B is cheaper above 300 minutes.\",\"manimCode\":\"const title = new Text({ text: 'When do the phone plans cost the same?', fontSize: 30, color: WHITE });\\ntitle.moveTo([0, 3.35, 0]);\\nconst labelA = new Text({ text: 'A: $20 + $0.10 per minute', fontSize: 23, color: BLUE });\\nlabelA.moveTo([-2.6, 2.8, 0]);\\nconst labelB = new Text({ text: 'B: $35 + $0.05 per minute', fontSize: 23, color: GREEN });\\nlabelB.moveTo([2.6, 2.8, 0]);\\nscene.add(title, labelA, labelB);\\n\\nconst axes = new Axes({ xRange: [0, 600, 150], yRange: [0, 90, 20], xLength: 9, yLength: 4.4, tips: false });\\nconst costA = m => 20 + 0.10 * m;\\nconst costB = m => 35 + 0.05 * m;\\nconst curveA = axes.plot(costA, { color: BLUE });\\nconst curveB = axes.plot(costB, { color: GREEN });\\nawait scene.play(new AnimationGroup([new Create(axes), new Create(curveA), new Create(curveB)]));\\n\\nfor (const m of [0, 150, 300, 450, 600]) {\\n  const tickLabel = new Text({ text: String(m), fontSize: 17, color: GRAY });\\n  const p = axes.c2p(m, 0);\\n  tickLabel.moveTo([p[0], p[1] - 0.28, 0]);\\n  scene.add(tickLabel);\\n}\\nfor (const dollars of [20, 40, 60, 80]) {\\n  const tickLabel = new Text({ text: '$' + dollars, fontSize: 17, color: GRAY });\\n  const p = axes.c2p(0, dollars);\\n  tickLabel.moveTo([p[0] - 0.45, p[1], 0]);\\n  scene.add(tickLabel);\\n}\\nconst minutesLabel = new Text({ text: 'minutes', fontSize: 18, color: GRAY });\\nminutesLabel.moveTo([5.2, -2.2, 0]);\\nscene.add(minutesLabel);\\n\\nlet minutes = 160;\\nconst guide = new DashedLine({ start: axes.c2p(minutes, 0), end: axes.c2p(minutes, 60), color: YELLOW });\\nconst gap = new Line({ start: axes.c2p(minutes, costA(minutes)), end: axes.c2p(minutes, costB(minutes)), color: YELLOW });\\ngap.setStrokeWidth(5);\\nconst dotA = new Dot({ point: axes.c2p(minutes, costA(minutes)), radius: 0.09, color: BLUE });\\nconst dotB = new Dot({ point: axes.c2p(minutes, costB(minutes)), radius: 0.09, color: GREEN });\\nconst handle = new Dot({ point: axes.c2p(minutes, 0), radius: 0.14, color: YELLOW });\\nconst intersection = new Circle({ radius: 0.16, color: WHITE });\\nintersection.moveTo(axes.c2p(300, 50));\\nconst crossingLabel = new Text({ text: '300 min · $50', fontSize: 22, color: WHITE });\\nconst crossingPoint = axes.c2p(300, 50);\\ncrossingLabel.moveTo([crossingPoint[0] - 0.3, crossingPoint[1] + 0.55, 0]);\\nconst readout = new Text({ text: '', fontSize: 23, color: WHITE });\\nreadout.moveTo([0, -2.95, 0]);\\nconst status = new Text({ text: '', fontSize: 21, color: YELLOW });\\nstatus.moveTo([2.5, 1.95, 0]);\\nconst hint = new Text({ text: 'Drag the yellow minute handle — compare the two costs', fontSize: 20, color: GRAY });\\nhint.moveTo([0, -3.45, 0]);\\nscene.add(guide, gap, intersection, crossingLabel, dotA, dotB, handle, readout, status, hint);\\n\\nfunction update() {\\n  const a = costA(minutes);\\n  const b = costB(minutes);\\n  handle.moveTo(axes.c2p(minutes, 0));\\n  dotA.moveTo(axes.c2p(minutes, a));\\n  dotB.moveTo(axes.c2p(minutes, b));\\n  guide.setStart(axes.c2p(minutes, 0));\\n  guide.setEnd(axes.c2p(minutes, Math.max(a, b)));\\n  gap.setStart(axes.c2p(minutes, a));\\n  gap.setEnd(axes.c2p(minutes, b));\\n  gap.setOpacity(minutes === 300 ? 0 : 1);\\n  readout.setText(minutes + ' min     A: $' + a.toFixed(2) + '     B: $' + b.toFixed(2));\\n  if (minutes === 300) {\\n    status.setText('Equal: both cost $50!');\\n    status.setColor(YELLOW);\\n  } else {\\n    status.setText((a < b ? 'A' : 'B') + ' saves $' + Math.abs(a - b).toFixed(2));\\n    status.setColor(a < b ? BLUE : GREEN);\\n  }\\n}\\nupdate();\\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\\n  minutes = Math.max(0, Math.min(600, Math.round(axes.pointToCoords(pos)[0])));\\n  update();\\n} });\\nmakeClickable(crossingLabel, scene, { onClick: () => { minutes = 300; update(); } });\\nawait scene.wait(999999);\"}",
+        "explanation": "The plans cost the same when 20 + 0.10m = 35 + 0.05m. Solving gives 0.05m = 15, so they both cost $50 at 300 minutes. Plan A is cheaper below 300 minutes; Plan B is cheaper above 300 minutes."
+      },
+      "code": "const title = new Text({ text: 'When do the phone plans cost the same?', fontSize: 30, color: WHITE });\ntitle.moveTo([0, 3.35, 0]);\nconst labelA = new Text({ text: 'A: $20 + $0.10 per minute', fontSize: 23, color: BLUE });\nlabelA.moveTo([-2.6, 2.8, 0]);\nconst labelB = new Text({ text: 'B: $35 + $0.05 per minute', fontSize: 23, color: GREEN });\nlabelB.moveTo([2.6, 2.8, 0]);\nscene.add(title, labelA, labelB);\n\nconst axes = new Axes({ xRange: [0, 600, 150], yRange: [0, 90, 20], xLength: 9, yLength: 4.4, tips: false });\nconst costA = m => 20 + 0.10 * m;\nconst costB = m => 35 + 0.05 * m;\nconst curveA = axes.plot(costA, { color: BLUE });\nconst curveB = axes.plot(costB, { color: GREEN });\nawait scene.play(new AnimationGroup([new Create(axes), new Create(curveA), new Create(curveB)]));\n\nfor (const m of [0, 150, 300, 450, 600]) {\n  const tickLabel = new Text({ text: String(m), fontSize: 17, color: GRAY });\n  const p = axes.c2p(m, 0);\n  tickLabel.moveTo([p[0], p[1] - 0.28, 0]);\n  scene.add(tickLabel);\n}\nfor (const dollars of [20, 40, 60, 80]) {\n  const tickLabel = new Text({ text: '$' + dollars, fontSize: 17, color: GRAY });\n  const p = axes.c2p(0, dollars);\n  tickLabel.moveTo([p[0] - 0.45, p[1], 0]);\n  scene.add(tickLabel);\n}\nconst minutesLabel = new Text({ text: 'minutes', fontSize: 18, color: GRAY });\nminutesLabel.moveTo([5.2, -2.2, 0]);\nscene.add(minutesLabel);\n\nlet minutes = 160;\nconst guide = new DashedLine({ start: axes.c2p(minutes, 0), end: axes.c2p(minutes, 60), color: YELLOW });\nconst gap = new Line({ start: axes.c2p(minutes, costA(minutes)), end: axes.c2p(minutes, costB(minutes)), color: YELLOW });\ngap.setStrokeWidth(5);\nconst dotA = new Dot({ point: axes.c2p(minutes, costA(minutes)), radius: 0.09, color: BLUE });\nconst dotB = new Dot({ point: axes.c2p(minutes, costB(minutes)), radius: 0.09, color: GREEN });\nconst handle = new Dot({ point: axes.c2p(minutes, 0), radius: 0.14, color: YELLOW });\nconst intersection = new Circle({ radius: 0.16, color: WHITE });\nintersection.moveTo(axes.c2p(300, 50));\nconst crossingLabel = new Text({ text: '300 min · $50', fontSize: 22, color: WHITE });\nconst crossingPoint = axes.c2p(300, 50);\ncrossingLabel.moveTo([crossingPoint[0] - 0.3, crossingPoint[1] + 0.55, 0]);\nconst readout = new Text({ text: '', fontSize: 23, color: WHITE });\nreadout.moveTo([0, -2.95, 0]);\nconst status = new Text({ text: '', fontSize: 21, color: YELLOW });\nstatus.moveTo([2.5, 1.95, 0]);\nconst hint = new Text({ text: 'Drag the yellow minute handle — compare the two costs', fontSize: 20, color: GRAY });\nhint.moveTo([0, -3.45, 0]);\nscene.add(guide, gap, intersection, crossingLabel, dotA, dotB, handle, readout, status, hint);\n\nfunction update() {\n  const a = costA(minutes);\n  const b = costB(minutes);\n  handle.moveTo(axes.c2p(minutes, 0));\n  dotA.moveTo(axes.c2p(minutes, a));\n  dotB.moveTo(axes.c2p(minutes, b));\n  guide.setStart(axes.c2p(minutes, 0));\n  guide.setEnd(axes.c2p(minutes, Math.max(a, b)));\n  gap.setStart(axes.c2p(minutes, a));\n  gap.setEnd(axes.c2p(minutes, b));\n  gap.setOpacity(minutes === 300 ? 0 : 1);\n  readout.setText(minutes + ' min     A: $' + a.toFixed(2) + '     B: $' + b.toFixed(2));\n  if (minutes === 300) {\n    status.setText('Equal: both cost $50!');\n    status.setColor(YELLOW);\n  } else {\n    status.setText((a < b ? 'A' : 'B') + ' saves $' + Math.abs(a - b).toFixed(2));\n    status.setColor(a < b ? BLUE : GREEN);\n  }\n}\nupdate();\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\n  minutes = Math.max(0, Math.min(600, Math.round(axes.pointToCoords(pos)[0])));\n  update();\n} });\nmakeClickable(crossingLabel, scene, { onClick: () => { minutes = 300; update(); } });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 12940,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 1,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "click",
+            "label": "Text at (-0.3, 0.8)",
+            "change": 0.006667751736111111,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (0.0, -2.2)",
+            "change": 0.006807725694444444,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/alg-phone-plans.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/alg-phone-plans.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:52:26.196Z"
+}

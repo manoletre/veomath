@@ -1,0 +1,82 @@
+{
+  "itemId": "stats-galton-board",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 0,
+  "firstAttemptScore": 0,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": false,
+          "detail": "Uncaught TypeError: Cannot read properties of undefined (reading '0')"
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "6.41% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=3 checkboxes=1 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.79% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 48551,
+        "inputTokens": 8047,
+        "cachedInputTokens": 7569,
+        "outputTokens": 5299,
+        "costUsd": 0.11130979999999999,
+        "rawResponse": "{\"explanation\":\"At each peg of a Galton board, a ball bounces left or right with probability ½ (or p, if you tilt it with the slider). After n rows, the bin it lands in is just the number of right-bounces k. There are C(n,k) different paths that end in bin k, so the probability of landing there is C(n,k)·pᵏ(1−p)ⁿ⁻ᵏ, which is the binomial distribution. The blue histogram shows the share of balls in each bin. As more balls drop, it settles onto the red theoretical binomial curve (law of large numbers). With many rows, that curve looks like a bell curve.\",\"manimCode\":\"const n = 8;\\nconst dx = 0.5;\\nconst dy = 0.38;\\nconst topY = 3.0;\\nconst floorY = -3.4;\\nconst H = 2.9;\\nlet p = 0.5;\\n\\n// ---- Pegs ----\\nfor (let r = 0; r < n; r++) {\\n  for (let j = 0; j <= r; j++) {\\n    const peg = new Dot({ point: [(j - r / 2) * dx, topY - r * dy, 0], color: GRAY, radius: 0.05 });\\n    scene.add(peg);\\n  }\\n}\\n\\n// ---- Bin walls and floor ----\\nfor (let k = 0; k <= n + 1; k++) {\\n  const x = (k - n / 2 - 0.5) * dx;\\n  scene.add(new Line({ start: [x, floorY, 0], end: [x, -0.35, 0], color: GRAY_B || GRAY, strokeWidth: 2 }));\\n}\\nscene.add(new Line({ start: [(-n / 2 - 0.5) * dx, floorY, 0], end: [(n / 2 + 0.5) * dx, floorY, 0], color: WHITE, strokeWidth: 3 }));\\n\\n// ---- Histogram bars ----\\nconst counts = new Array(n + 1).fill(0);\\nlet total = 0;\\nconst bars = [];\\nfunction barVerts(k, h) {\\n  const x = (k - n / 2) * dx;\\n  const w = dx * 0.4;\\n  const hh = Math.max(h, 0.001);\\n  return [[x - w, floorY, 0], [x + w, floorY, 0], [x + w, floorY + hh, 0], [x - w, floorY + hh, 0]];\\n}\\nfor (let k = 0; k <= n; k++) {\\n  const b = new Polygon({ vertices: barVerts(k, 0), color: BLUE });\\n  b.setFill(BLUE, 0.55);\\n  b.setStrokeWidth(1);\\n  bars.push(b);\\n  scene.add(b);\\n}\\n\\n// ---- Binomial theory ----\\nfunction binom(nn, k) { let c = 1; for (let i = 1; i <= k; i++) c = c * (nn - k + i) / i; return c; }\\nfunction probs() { const a = []; for (let k = 0; k <= n; k++) a.push(binom(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k)); return a; }\\nlet P = probs();\\nlet maxP = Math.max(...P);\\nlet theoryMobs = [];\\nfunction buildTheory() {\\n  theoryMobs.forEach(m => scene.remove(m));\\n  theoryMobs = [];\\n  P = probs();\\n  maxP = Math.max(...P);\\n  const pts = P.map((pk, k) => [(k - n / 2) * dx, floorY + pk / maxP * H, 0]);\\n  for (let k = 0; k < n; k++) {\\n    theoryMobs.push(new Line({ start: pts[k], end: pts[k + 1], color: RED, strokeWidth: 3 }));\\n  }\\n  pts.forEach(pt => theoryMobs.push(new Dot({ point: pt, color: RED, radius: 0.06 })));\\n  theoryMobs.forEach(m => scene.add(m));\\n}\\nbuildTheory();\\n\\nfunction updateBars() {\\n  for (let k = 0; k <= n; k++) {\\n    const frac = total > 0 ? counts[k] / total : 0;\\n    const h = Math.min(frac / maxP * H, H + 0.4);\\n    bars[k].setVertices(barVerts(k, h));\\n  }\\n}\\n\\n// ---- Labels ----\\nconst formula = new MathTex({ latex: 'P(k)=\\\\\\\\binom{n}{k}p^k(1-p)^{n-k}', color: WHITE });\\nawait formula.waitForRender();\\nformula.scale(0.7);\\nformula.moveTo([-4.6, 2.6, 0]);\\nscene.add(formula);\\n\\nconst legend1 = new Text({ text: 'Blue: observed fraction', color: BLUE, fontSize: 20 });\\nlegend1.moveTo([-4.6, 1.7, 0]);\\nconst legend2 = new Text({ text: 'Red: binomial (n = 8)', color: RED, fontSize: 20 });\\nlegend2.moveTo([-4.6, 1.3, 0]);\\nscene.add(legend1, legend2);\\n\\nlet counterText = new Text({ text: 'Balls: 0', color: YELLOW, fontSize: 26 });\\ncounterText.moveTo([-4.6, 0.6, 0]);\\nscene.add(counterText);\\nlet shownTotal = -1;\\nfunction refreshCounter() {\\n  if (shownTotal === total) return;\\n  shownTotal = total;\\n  scene.remove(counterText);\\n  counterText = new Text({ text: 'Balls: ' + total, color: YELLOW, fontSize: 26 });\\n  counterText.moveTo([-4.6, 0.6, 0]);\\n  scene.add(counterText);\\n}\\n\\n// bin labels k\\nfor (let k = 0; k <= n; k++) {\\n  const t = new Text({ text: String(k), color: GRAY, fontSize: 18 });\\n  t.moveTo([(k - n / 2) * dx, floorY - 0.25, 0]);\\n  scene.add(t);\\n}\\n\\n// ---- Ball simulation ----\\nconst balls = [];\\nconst segT = 0.11;\\nconst fallT = 0.35;\\nfunction spawnBall() {\\n  if (balls.length > 45) return;\\n  const pts = [[0, topY + 0.5, 0]];\\n  let k = 0;\\n  for (let r = 0; r < n; r++) {\\n    pts.push([(k - r / 2) * dx, topY - r * dy + 0.11, 0]);\\n    if (Math.random() < p) k++;\\n  }\\n  const bx = (k - n / 2) * dx;\\n  pts.push([bx, topY - n * dy + 0.11, 0]);\\n  pts.push([bx, floorY + 0.1, 0]);\\n  const dot = new Dot({ point: pts[0], color: YELLOW, radius: 0.07 });\\n  scene.add(dot);\\n  balls.push({ dot, pts, k, start: performance.now() / 1000 });\\n}\\n\\nfunction ballPos(b, t) {\\n  const nPeg = b.pts.length - 2; // segments before final fall\\n  let idx = Math.floor(t / segT);\\n  if (idx < nPeg) {\\n    const s = t / segT - idx;\\n    const a = b.pts[idx], c = b.pts[idx + 1];\\n    const arc = idx > 0 ? 0.12 * Math.sin(Math.PI * s) : 0;\\n    return [a[0] + (c[0] - a[0]) * s, a[1] + (c[1] - a[1]) * s + arc, 0];\\n  }\\n  const s = Math.min((t - nPeg * segT) / fallT, 1);\\n  const a = b.pts[nPeg], c = b.pts[nPeg + 1];\\n  const e = s * s;\\n  return [a[0], a[1] + (c[1] - a[1]) * e, 0];\\n}\\nconst lifeT = (n + 1) * segT + fallT;\\n\\nlet autoDrop = true;\\nlet lastSpawn = 0;\\nlet lastCounter = 0;\\nconst ticker = new Dot({ point: [0, 0, 0], radius: 0.001 });\\nticker.setOpacity(0);\\nscene.add(ticker);\\nticker.addUpdater(() => {\\n  const now = performance.now() / 1000;\\n  if (autoDrop && now - lastSpawn > 0.09) { spawnBall(); lastSpawn = now; }\\n  for (let i = balls.length - 1; i >= 0; i--) {\\n    const b = balls[i];\\n    const t = now - b.start;\\n    if (t >= lifeT) {\\n      scene.remove(b.dot);\\n      balls.splice(i, 1);\\n      counts[b.k]++;\\n      total++;\\n      updateBars();\\n    } else {\\n      b.dot.moveTo(ballPos(b, t));\\n    }\\n  }\\n  if (now - lastCounter > 0.25) { refreshCounter(); lastCounter = now; }\\n});\\n\\nfunction resetAll() {\\n  balls.forEach(b => scene.remove(b.dot));\\n  balls.length = 0;\\n  for (let k = 0; k <= n; k++) counts[k] = 0;\\n  total = 0;\\n  updateBars();\\n  refreshCounter();\\n}\\n\\n// ---- Controls ----\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addCheckbox({ label: 'Auto drop', checked: true, onChange: (c) => { autoDrop = c; } });\\ncontrols.addButton({ label: 'Drop 1 ball', onClick: () => spawnBall() });\\ncontrols.addButton({ label: 'Drop 30 balls', onClick: () => {\\n  let i = 0;\\n  const id = setInterval(() => { spawnBall(); i++; if (i >= 30) clearInterval(id); }, 70);\\n}});\\ncontrols.addSlider({ label: 'p (right bounce)', min: 0.1, max: 0.9, value: 0.5, step: 0.05, onChange: (v) => {\\n  p = v;\\n  buildTheory();\\n  resetAll();\\n}});\\ncontrols.addButton({ label: 'Reset', onClick: () => resetAll() });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "At each peg of a Galton board, a ball bounces left or right with probability ½ (or p, if you tilt it with the slider). After n rows, the bin it lands in is just the number of right-bounces k. There are C(n,k) different paths that end in bin k, so the probability of landing there is C(n,k)·pᵏ(1−p)ⁿ⁻ᵏ, which is the binomial distribution. The blue histogram shows the share of balls in each bin. As more balls drop, it settles onto the red theoretical binomial curve (law of large numbers). With many rows, that curve looks like a bell curve."
+      },
+      "code": "const n = 8;\nconst dx = 0.5;\nconst dy = 0.38;\nconst topY = 3.0;\nconst floorY = -3.4;\nconst H = 2.9;\nlet p = 0.5;\n\n// ---- Pegs ----\nfor (let r = 0; r < n; r++) {\n  for (let j = 0; j <= r; j++) {\n    const peg = new Dot({ point: [(j - r / 2) * dx, topY - r * dy, 0], color: GRAY, radius: 0.05 });\n    scene.add(peg);\n  }\n}\n\n// ---- Bin walls and floor ----\nfor (let k = 0; k <= n + 1; k++) {\n  const x = (k - n / 2 - 0.5) * dx;\n  scene.add(new Line({ start: [x, floorY, 0], end: [x, -0.35, 0], color: GRAY_B || GRAY, strokeWidth: 2 }));\n}\nscene.add(new Line({ start: [(-n / 2 - 0.5) * dx, floorY, 0], end: [(n / 2 + 0.5) * dx, floorY, 0], color: WHITE, strokeWidth: 3 }));\n\n// ---- Histogram bars ----\nconst counts = new Array(n + 1).fill(0);\nlet total = 0;\nconst bars = [];\nfunction barVerts(k, h) {\n  const x = (k - n / 2) * dx;\n  const w = dx * 0.4;\n  const hh = Math.max(h, 0.001);\n  return [[x - w, floorY, 0], [x + w, floorY, 0], [x + w, floorY + hh, 0], [x - w, floorY + hh, 0]];\n}\nfor (let k = 0; k <= n; k++) {\n  const b = new Polygon({ vertices: barVerts(k, 0), color: BLUE });\n  b.setFill(BLUE, 0.55);\n  b.setStrokeWidth(1);\n  bars.push(b);\n  scene.add(b);\n}\n\n// ---- Binomial theory ----\nfunction binom(nn, k) { let c = 1; for (let i = 1; i <= k; i++) c = c * (nn - k + i) / i; return c; }\nfunction probs() { const a = []; for (let k = 0; k <= n; k++) a.push(binom(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k)); return a; }\nlet P = probs();\nlet maxP = Math.max(...P);\nlet theoryMobs = [];\nfunction buildTheory() {\n  theoryMobs.forEach(m => scene.remove(m));\n  theoryMobs = [];\n  P = probs();\n  maxP = Math.max(...P);\n  const pts = P.map((pk, k) => [(k - n / 2) * dx, floorY + pk / maxP * H, 0]);\n  for (let k = 0; k < n; k++) {\n    theoryMobs.push(new Line({ start: pts[k], end: pts[k + 1], color: RED, strokeWidth: 3 }));\n  }\n  pts.forEach(pt => theoryMobs.push(new Dot({ point: pt, color: RED, radius: 0.06 })));\n  theoryMobs.forEach(m => scene.add(m));\n}\nbuildTheory();\n\nfunction updateBars() {\n  for (let k = 0; k <= n; k++) {\n    const frac = total > 0 ? counts[k] / total : 0;\n    const h = Math.min(frac / maxP * H, H + 0.4);\n    bars[k].setVertices(barVerts(k, h));\n  }\n}\n\n// ---- Labels ----\nconst formula = new MathTex({ latex: 'P(k)=\\\\binom{n}{k}p^k(1-p)^{n-k}', color: WHITE });\nawait formula.waitForRender();\nformula.scale(0.7);\nformula.moveTo([-4.6, 2.6, 0]);\nscene.add(formula);\n\nconst legend1 = new Text({ text: 'Blue: observed fraction', color: BLUE, fontSize: 20 });\nlegend1.moveTo([-4.6, 1.7, 0]);\nconst legend2 = new Text({ text: 'Red: binomial (n = 8)', color: RED, fontSize: 20 });\nlegend2.moveTo([-4.6, 1.3, 0]);\nscene.add(legend1, legend2);\n\nlet counterText = new Text({ text: 'Balls: 0', color: YELLOW, fontSize: 26 });\ncounterText.moveTo([-4.6, 0.6, 0]);\nscene.add(counterText);\nlet shownTotal = -1;\nfunction refreshCounter() {\n  if (shownTotal === total) return;\n  shownTotal = total;\n  scene.remove(counterText);\n  counterText = new Text({ text: 'Balls: ' + total, color: YELLOW, fontSize: 26 });\n  counterText.moveTo([-4.6, 0.6, 0]);\n  scene.add(counterText);\n}\n\n// bin labels k\nfor (let k = 0; k <= n; k++) {\n  const t = new Text({ text: String(k), color: GRAY, fontSize: 18 });\n  t.moveTo([(k - n / 2) * dx, floorY - 0.25, 0]);\n  scene.add(t);\n}\n\n// ---- Ball simulation ----\nconst balls = [];\nconst segT = 0.11;\nconst fallT = 0.35;\nfunction spawnBall() {\n  if (balls.length > 45) return;\n  const pts = [[0, topY + 0.5, 0]];\n  let k = 0;\n  for (let r = 0; r < n; r++) {\n    pts.push([(k - r / 2) * dx, topY - r * dy + 0.11, 0]);\n    if (Math.random() < p) k++;\n  }\n  const bx = (k - n / 2) * dx;\n  pts.push([bx, topY - n * dy + 0.11, 0]);\n  pts.push([bx, floorY + 0.1, 0]);\n  const dot = new Dot({ point: pts[0], color: YELLOW, radius: 0.07 });\n  scene.add(dot);\n  balls.push({ dot, pts, k, start: performance.now() / 1000 });\n}\n\nfunction ballPos(b, t) {\n  const nPeg = b.pts.length - 2; // segments before final fall\n  let idx = Math.floor(t / segT);\n  if (idx < nPeg) {\n    const s = t / segT - idx;\n    const a = b.pts[idx], c = b.pts[idx + 1];\n    const arc = idx > 0 ? 0.12 * Math.sin(Math.PI * s) : 0;\n    return [a[0] + (c[0] - a[0]) * s, a[1] + (c[1] - a[1]) * s + arc, 0];\n  }\n  const s = Math.min((t - nPeg * segT) / fallT, 1);\n  const a = b.pts[nPeg], c = b.pts[nPeg + 1];\n  const e = s * s;\n  return [a[0], a[1] + (c[1] - a[1]) * e, 0];\n}\nconst lifeT = (n + 1) * segT + fallT;\n\nlet autoDrop = true;\nlet lastSpawn = 0;\nlet lastCounter = 0;\nconst ticker = new Dot({ point: [0, 0, 0], radius: 0.001 });\nticker.setOpacity(0);\nscene.add(ticker);\nticker.addUpdater(() => {\n  const now = performance.now() / 1000;\n  if (autoDrop && now - lastSpawn > 0.09) { spawnBall(); lastSpawn = now; }\n  for (let i = balls.length - 1; i >= 0; i--) {\n    const b = balls[i];\n    const t = now - b.start;\n    if (t >= lifeT) {\n      scene.remove(b.dot);\n      balls.splice(i, 1);\n      counts[b.k]++;\n      total++;\n      updateBars();\n    } else {\n      b.dot.moveTo(ballPos(b, t));\n    }\n  }\n  if (now - lastCounter > 0.25) { refreshCounter(); lastCounter = now; }\n});\n\nfunction resetAll() {\n  balls.forEach(b => scene.remove(b.dot));\n  balls.length = 0;\n  for (let k = 0; k <= n; k++) counts[k] = 0;\n  total = 0;\n  updateBars();\n  refreshCounter();\n}\n\n// ---- Controls ----\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addCheckbox({ label: 'Auto drop', checked: true, onChange: (c) => { autoDrop = c; } });\ncontrols.addButton({ label: 'Drop 1 ball', onClick: () => spawnBall() });\ncontrols.addButton({ label: 'Drop 30 balls', onClick: () => {\n  let i = 0;\n  const id = setInterval(() => { spawnBall(); i++; if (i >= 30) clearInterval(id); }, 70);\n}});\ncontrols.addSlider({ label: 'p (right bounce)', min: 0.1, max: 0.9, value: 0.5, step: 0.05, onChange: (v) => {\n  p = v;\n  buildTheory();\n  resetAll();\n}});\ncontrols.addButton({ label: 'Reset', onClick: () => resetAll() });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5108,
+        "fatalError": null,
+        "errors": [
+          "Uncaught TypeError: Cannot read properties of undefined (reading '0')"
+        ],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 3,
+          "checkboxes": 1
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/stats-galton-board.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/stats-galton-board.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:33.295Z"
+}

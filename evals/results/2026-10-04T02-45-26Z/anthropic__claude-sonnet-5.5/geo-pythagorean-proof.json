@@ -1,0 +1,78 @@
+{
+  "itemId": "geo-pythagorean-proof",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "22.91% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=0 clickables=8 hoverables=8"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 24100,
+        "inputTokens": 7968,
+        "cachedInputTokens": 7476,
+        "outputTokens": 2948,
+        "costUsd": 0.0329392,
+        "rawResponse": "{\"explanation\":\"Both big squares have side a+b, so they have equal area. On the left, four right triangles surround a tilted square of side c. Slide the same four triangles into the right square, and the leftover space becomes an a×a square and a b×b square. Removing the same four triangles from each side leaves c² = a² + b². Click the triangles to recolor them.\",\"manimCode\":\"const a = 1.5, b = 2, s = a + b;\\nconst L = [-5.5, -1.6], R = [1.5, -1.6];\\nconst P = (o, x, y) => [o[0] + x, o[1] + y, 0];\\n\\nfunction sq(o, color) {\\n  const p = new Polygon({ vertices: [P(o,0,0), P(o,s,0), P(o,s,s), P(o,0,s)], color: color });\\n  p.setFill(BLACK, 0);\\n  return p;\\n}\\nfunction tri(o, pts) {\\n  const p = new Polygon({ vertices: pts.map(q => P(o, q[0], q[1])), color: WHITE });\\n  p.setFill(BLUE, 0.7);\\n  return p;\\n}\\n\\nconst outL = sq(L, WHITE), outR = sq(R, WHITE);\\nawait scene.play(new Create(outL), new Create(outR));\\n\\n// Left: four triangles around a tilted square\\nconst leftTris = [\\n  tri(L, [[0,0],[b,0],[0,a]]),\\n  tri(L, [[b,0],[s,0],[s,b]]),\\n  tri(L, [[s,b],[s,s],[a,s]]),\\n  tri(L, [[a,s],[0,s],[0,a]])\\n];\\nconst cSq = new Polygon({ vertices: [P(L,b,0), P(L,s,b), P(L,a,s), P(L,0,a)], color: YELLOW });\\ncSq.setFill(YELLOW, 0.35);\\nconst cLabel = new Text({ text: 'c²', color: YELLOW, fontSize: 36 });\\ncLabel.moveTo(P(L, s/2, s/2));\\n\\nconst title = new Text({ text: 'Same four triangles, same big square (side a+b)', color: WHITE, fontSize: 26 });\\ntitle.moveTo([0, 3.3, 0]);\\nscene.add(title);\\n\\nfor (const t of leftTris) scene.add(t);\\nawait scene.play(new FadeIn(cSq), new FadeIn(cLabel));\\nawait scene.wait(1);\\n\\n// Right: rearranged triangles\\nconst rightTargets = [\\n  tri(R, [[0,b],[b,b],[b,s]]),\\n  tri(R, [[0,b],[0,s],[b,s]]),\\n  tri(R, [[b,0],[s,0],[s,b]]),\\n  tri(R, [[b,0],[b,b],[s,b]])\\n];\\nconst copies = leftTris.map(t => {\\n  const c = tri(L, [[0,0],[1,0],[0,1]]);\\n  c.setVertices(t.getVertices());\\n  c.setFill(BLUE, 0.7);\\n  return c;\\n});\\nfor (const c of copies) scene.add(c);\\nawait scene.play(...copies.map((c, i) => new Transform(c, rightTargets[i])));\\nawait scene.wait(0.5);\\n\\nconst aSq = new Polygon({ vertices: [P(R,b,b), P(R,s,b), P(R,s,s), P(R,b,s)], color: GREEN });\\naSq.setFill(GREEN, 0.4);\\nconst bSq = new Polygon({ vertices: [P(R,0,0), P(R,b,0), P(R,b,b), P(R,0,b)], color: RED });\\nbSq.setFill(RED, 0.4);\\nconst aLab = new Text({ text: 'a²', color: GREEN, fontSize: 30 });\\naLab.moveTo(P(R, b + a/2, b + a/2));\\nconst bLab = new Text({ text: 'b²', color: RED, fontSize: 34 });\\nbLab.moveTo(P(R, b/2, b/2));\\nawait scene.play(new FadeIn(aSq), new FadeIn(bSq), new FadeIn(aLab), new FadeIn(bLab));\\n\\nconst result = new MathTex({ latex: 'c^2 = a^2 + b^2' });\\nawait result.waitForRender();\\nresult.moveTo([0, -3.1, 0]);\\nawait scene.play(new Write(result));\\n\\n// Interactivity: click triangles to recolor\\nconst palette = [BLUE, TEAL, PURPLE, ORANGE];\\nlet k = 0;\\nfor (const t of leftTris.concat(copies)) {\\n  makeHoverable(t, scene, { hoverScale: 1.05 });\\n  makeClickable(t, scene, { onClick: (m) => { k = (k + 1) % palette.length; m.setFill(palette[k], 0.7); } });\\n}\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Both big squares have side a+b, so they have equal area. On the left, four right triangles surround a tilted square of side c. Slide the same four triangles into the right square, and the leftover space becomes an a×a square and a b×b square. Removing the same four triangles from each side leaves c² = a² + b². Click the triangles to recolor them."
+      },
+      "code": "const a = 1.5, b = 2, s = a + b;\nconst L = [-5.5, -1.6], R = [1.5, -1.6];\nconst P = (o, x, y) => [o[0] + x, o[1] + y, 0];\n\nfunction sq(o, color) {\n  const p = new Polygon({ vertices: [P(o,0,0), P(o,s,0), P(o,s,s), P(o,0,s)], color: color });\n  p.setFill(BLACK, 0);\n  return p;\n}\nfunction tri(o, pts) {\n  const p = new Polygon({ vertices: pts.map(q => P(o, q[0], q[1])), color: WHITE });\n  p.setFill(BLUE, 0.7);\n  return p;\n}\n\nconst outL = sq(L, WHITE), outR = sq(R, WHITE);\nawait scene.play(new Create(outL), new Create(outR));\n\n// Left: four triangles around a tilted square\nconst leftTris = [\n  tri(L, [[0,0],[b,0],[0,a]]),\n  tri(L, [[b,0],[s,0],[s,b]]),\n  tri(L, [[s,b],[s,s],[a,s]]),\n  tri(L, [[a,s],[0,s],[0,a]])\n];\nconst cSq = new Polygon({ vertices: [P(L,b,0), P(L,s,b), P(L,a,s), P(L,0,a)], color: YELLOW });\ncSq.setFill(YELLOW, 0.35);\nconst cLabel = new Text({ text: 'c²', color: YELLOW, fontSize: 36 });\ncLabel.moveTo(P(L, s/2, s/2));\n\nconst title = new Text({ text: 'Same four triangles, same big square (side a+b)', color: WHITE, fontSize: 26 });\ntitle.moveTo([0, 3.3, 0]);\nscene.add(title);\n\nfor (const t of leftTris) scene.add(t);\nawait scene.play(new FadeIn(cSq), new FadeIn(cLabel));\nawait scene.wait(1);\n\n// Right: rearranged triangles\nconst rightTargets = [\n  tri(R, [[0,b],[b,b],[b,s]]),\n  tri(R, [[0,b],[0,s],[b,s]]),\n  tri(R, [[b,0],[s,0],[s,b]]),\n  tri(R, [[b,0],[b,b],[s,b]])\n];\nconst copies = leftTris.map(t => {\n  const c = tri(L, [[0,0],[1,0],[0,1]]);\n  c.setVertices(t.getVertices());\n  c.setFill(BLUE, 0.7);\n  return c;\n});\nfor (const c of copies) scene.add(c);\nawait scene.play(...copies.map((c, i) => new Transform(c, rightTargets[i])));\nawait scene.wait(0.5);\n\nconst aSq = new Polygon({ vertices: [P(R,b,b), P(R,s,b), P(R,s,s), P(R,b,s)], color: GREEN });\naSq.setFill(GREEN, 0.4);\nconst bSq = new Polygon({ vertices: [P(R,0,0), P(R,b,0), P(R,b,b), P(R,0,b)], color: RED });\nbSq.setFill(RED, 0.4);\nconst aLab = new Text({ text: 'a²', color: GREEN, fontSize: 30 });\naLab.moveTo(P(R, b + a/2, b + a/2));\nconst bLab = new Text({ text: 'b²', color: RED, fontSize: 34 });\nbLab.moveTo(P(R, b/2, b/2));\nawait scene.play(new FadeIn(aSq), new FadeIn(bSq), new FadeIn(aLab), new FadeIn(bLab));\n\nconst result = new MathTex({ latex: 'c^2 = a^2 + b^2' });\nawait result.waitForRender();\nresult.moveTo([0, -3.1, 0]);\nawait scene.play(new Write(result));\n\n// Interactivity: click triangles to recolor\nconst palette = [BLUE, TEAL, PURPLE, ORANGE];\nlet k = 0;\nfor (const t of leftTris.concat(copies)) {\n  makeHoverable(t, scene, { hoverScale: 1.05 });\n  makeClickable(t, scene, { onClick: (m) => { k = (k + 1) % palette.length; m.setFill(palette[k], 0.7); } });\n}\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 10863,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 5,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 8,
+        "hoverables": 8
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/geo-pythagorean-proof.0.final.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:34:32.955Z"
+}

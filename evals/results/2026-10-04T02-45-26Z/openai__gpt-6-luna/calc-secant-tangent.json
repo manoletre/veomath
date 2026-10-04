@@ -1,0 +1,82 @@
+{
+  "itemId": "calc-secant-tangent",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.40% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.24% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": false,
+          "detail": "Uncaught TypeError: Assignment to constant variable."
+        }
+      },
+      "generation": {
+        "latencyMs": 18821,
+        "inputTokens": 12273,
+        "cachedInputTokens": 12032,
+        "outputTokens": 794,
+        "costUsd": 0.00054142,
+        "rawResponse": "{\"explanation\":\"A secant line passes through two points on a curve: one fixed at x and another at x+h. As h approaches 0, the second point approaches the first, and the secant’s slope approaches the derivative f′(x), giving the tangent line.\",\"manimCode\":\"const ax = new Axes({ xRange: [-3, 3, 1], yRange: [-1, 5, 1], xLength: 8, yLength: 5, tips: false });\\nconst f = x => 0.5 * x * x + 1;\\nconst curve = ax.plot(f, { color: BLUE, numSamples: 300 });\\nconst x0 = -1;\\nlet h = 2.2;\\nconst fixed = new Dot({ point: ax.c2p(x0, f(x0)), color: YELLOW });\\nconst moving = new Dot({ point: ax.c2p(x0 + h, f(x0 + h)), color: ORANGE });\\nconst secant = new Line({ start: ax.c2p(x0, f(x0)), end: ax.c2p(x0 + h, f(x0 + h)), color: ORANGE });\\nconst title = new Text({ text: 'Secant → tangent as h → 0', color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.25, 0]);\\nconst hLabel = new Text({ text: 'h = 2.20', color: ORANGE, fontSize: 24 });\\nhLabel.moveTo([4.3, 2.5, 0]);\\nscene.add(ax, curve, fixed, moving, secant, title, hLabel);\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\\ncontrols.addSlider({ label: 'h', min: 0.08, max: 2.5, value: h, step: 0.02, onChange: (v) => {\\n  h = v;\\n  const p0 = ax.c2p(x0, f(x0));\\n  const p1 = ax.c2p(x0 + h, f(x0 + h));\\n  moving.moveTo(p1);\\n  scene.remove(secant);\\n  secant = new Line({ start: p0, end: p1, color: ORANGE });\\n  scene.add(secant);\\n  scene.remove(hLabel);\\n  hLabel = new Text({ text: 'h = ' + h.toFixed(2), color: ORANGE, fontSize: 24 });\\n  hLabel.moveTo([4.3, 2.5, 0]);\\n  scene.add(hLabel);\\n}});\\nmakeDraggable(moving, scene, { onDrag: (mob) => {\\n  const p = mob.getCenter();\\n  const dx = p[0] - ax.c2p(x0, f(x0))[0];\\n  h = Math.max(0.08, Math.min(2.5, dx / (ax.xLength / 6)));\\n  const p0 = ax.c2p(x0, f(x0));\\n  const p1 = ax.c2p(x0 + h, f(x0 + h));\\n  mob.moveTo(p1);\\n  scene.remove(secant);\\n  secant = new Line({ start: p0, end: p1, color: ORANGE });\\n  scene.add(secant);\\n}});\\nawait scene.wait(999999);\"}",
+        "explanation": "A secant line passes through two points on a curve: one fixed at x and another at x+h. As h approaches 0, the second point approaches the first, and the secant’s slope approaches the derivative f′(x), giving the tangent line."
+      },
+      "code": "const ax = new Axes({ xRange: [-3, 3, 1], yRange: [-1, 5, 1], xLength: 8, yLength: 5, tips: false });\nconst f = x => 0.5 * x * x + 1;\nconst curve = ax.plot(f, { color: BLUE, numSamples: 300 });\nconst x0 = -1;\nlet h = 2.2;\nconst fixed = new Dot({ point: ax.c2p(x0, f(x0)), color: YELLOW });\nconst moving = new Dot({ point: ax.c2p(x0 + h, f(x0 + h)), color: ORANGE });\nconst secant = new Line({ start: ax.c2p(x0, f(x0)), end: ax.c2p(x0 + h, f(x0 + h)), color: ORANGE });\nconst title = new Text({ text: 'Secant → tangent as h → 0', color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.25, 0]);\nconst hLabel = new Text({ text: 'h = 2.20', color: ORANGE, fontSize: 24 });\nhLabel.moveTo([4.3, 2.5, 0]);\nscene.add(ax, curve, fixed, moving, secant, title, hLabel);\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\ncontrols.addSlider({ label: 'h', min: 0.08, max: 2.5, value: h, step: 0.02, onChange: (v) => {\n  h = v;\n  const p0 = ax.c2p(x0, f(x0));\n  const p1 = ax.c2p(x0 + h, f(x0 + h));\n  moving.moveTo(p1);\n  scene.remove(secant);\n  secant = new Line({ start: p0, end: p1, color: ORANGE });\n  scene.add(secant);\n  scene.remove(hLabel);\n  hLabel = new Text({ text: 'h = ' + h.toFixed(2), color: ORANGE, fontSize: 24 });\n  hLabel.moveTo([4.3, 2.5, 0]);\n  scene.add(hLabel);\n}});\nmakeDraggable(moving, scene, { onDrag: (mob) => {\n  const p = mob.getCenter();\n  const dx = p[0] - ax.c2p(x0, f(x0))[0];\n  h = Math.max(0.08, Math.min(2.5, dx / (ax.xLength / 6)));\n  const p0 = ax.c2p(x0, f(x0));\n  const p1 = ax.c2p(x0 + h, f(x0 + h));\n  mob.moveTo(p1);\n  scene.remove(secant);\n  secant = new Line({ start: p0, end: p1, color: ORANGE });\n  scene.add(secant);\n}});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3316,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [
+          "Uncaught TypeError: Assignment to constant variable."
+        ],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/calc-secant-tangent.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/calc-secant-tangent.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:56:12.173Z"
+}

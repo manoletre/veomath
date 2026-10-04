@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-bayes-medical",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "20.31% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=2"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.35% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 61023,
+        "inputTokens": 11764,
+        "cachedInputTokens": 11008,
+        "outputTokens": 3208,
+        "costUsd": 0.0422096,
+        "rawResponse": "{\"explanation\":\"A positive result is not 90% likely to mean disease, because the disease is rare. Out of 1,000 people, about 9 sick people test positive, but about 99 healthy people also test positive—so the chance is 9/(9+99) ≈ 8.3%. Use the slider to see how changing the underlying prevalence changes this result.\",\"manimCode\":\"const title = new Text({ text: 'Why a positive test is not always 90% certain', color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.25, 0]);\\n\\nconst sourceBox = new Rectangle({ width: 1.7, height: 2.6, color: BLUE });\\nsourceBox.setFill(BLUE_E, 0.35);\\nsourceBox.moveTo([-5.0, 0, 0]);\\nconst sourceLabel = new Text({ text: '1,000\\\\npeople tested', color: WHITE, fontSize: 23 });\\nsourceLabel.moveTo([-5.0, 0, 0]);\\n\\nconst sickBox = new Rectangle({ width: 2.0, height: 1.25, color: RED });\\nsickBox.setFill(RED_E, 0.38);\\nsickBox.moveTo([-2.25, 1.25, 0]);\\nconst healthyBox = new Rectangle({ width: 2.0, height: 1.25, color: GREEN });\\nhealthyBox.setFill(GREEN_E, 0.32);\\nhealthyBox.moveTo([-2.25, -1.25, 0]);\\n\\nconst truePosBox = new Rectangle({ width: 1.8, height: 1.25, color: YELLOW });\\ntruePosBox.setFill(GOLD, 0.38);\\ntruePosBox.moveTo([0.8, 1.25, 0]);\\nconst falsePosBox = new Rectangle({ width: 1.8, height: 1.25, color: ORANGE });\\nfalsePosBox.setFill(ORANGE, 0.30);\\nfalsePosBox.moveTo([0.8, -1.25, 0]);\\n\\nconst resultBox = new Rectangle({ width: 3.0, height: 1.8, color: PURPLE });\\nresultBox.setFill(PURPLE, 0.25);\\nresultBox.moveTo([4.25, 0, 0]);\\n\\nconst branch1 = new Arrow({ start: [-4.1, 0.5, 0], end: [-3.3, 1.12, 0], color: WHITE });\\nconst branch2 = new Arrow({ start: [-4.1, -0.5, 0], end: [-3.3, -1.12, 0], color: WHITE });\\nconst test1 = new Arrow({ start: [-1.2, 1.25, 0], end: [-0.15, 1.25, 0], color: YELLOW });\\nconst test2 = new Arrow({ start: [-1.2, -1.25, 0], end: [-0.15, -1.25, 0], color: ORANGE });\\nconst combine1 = new Arrow({ start: [1.75, 1.0, 0], end: [2.75, 0.35, 0], color: YELLOW });\\nconst combine2 = new Arrow({ start: [1.75, -1.0, 0], end: [2.75, -0.35, 0], color: ORANGE });\\n\\nlet sickLabel;\\nlet healthyLabel;\\nlet truePosLabel;\\nlet falsePosLabel;\\nlet resultLabel;\\n\\nfunction replaceLabel(oldLabel, value, position, color, fontSize) {\\n  if (oldLabel) scene.remove(oldLabel);\\n  const fresh = new Text({ text: value, color, fontSize });\\n  fresh.moveTo(position);\\n  scene.add(fresh);\\n  return fresh;\\n}\\n\\nfunction updateNumbers(prevalence) {\\n  const sick = 1000 * prevalence / 100;\\n  const healthy = 1000 - sick;\\n  const truePos = 0.9 * sick;\\n  const falsePos = 0.1 * healthy;\\n  const posterior = 100 * truePos / (truePos + falsePos);\\n\\n  sickLabel = replaceLabel(sickLabel, `SICK\\\\n${sick.toFixed(1)} people`, [-2.25, 1.25, 0], WHITE, 20);\\n  healthyLabel = replaceLabel(healthyLabel, `HEALTHY\\\\n${healthy.toFixed(1)} people`, [-2.25, -1.25, 0], WHITE, 19);\\n  truePosLabel = replaceLabel(truePosLabel, `TEST +\\\\n${truePos.toFixed(1)} true +`, [0.8, 1.25, 0], BLACK, 19);\\n  falsePosLabel = replaceLabel(falsePosLabel, `TEST +\\\\n${falsePos.toFixed(1)} false +`, [0.8, -1.25, 0], BLACK, 18);\\n  resultLabel = replaceLabel(resultLabel, `Chance sick\\\\nafter + test\\\\n${posterior.toFixed(1)}%`, [4.25, 0, 0], YELLOW, 24);\\n}\\n\\nscene.add(title);\\nawait scene.play(new AnimationGroup([\\n  new DrawBorderThenFill(sourceBox),\\n  new DrawBorderThenFill(sickBox),\\n  new DrawBorderThenFill(healthyBox),\\n  new DrawBorderThenFill(truePosBox),\\n  new DrawBorderThenFill(falsePosBox),\\n  new DrawBorderThenFill(resultBox)\\n]));\\nscene.add(sourceLabel);\\nawait scene.play(new AnimationGroup([\\n  new Create(branch1), new Create(branch2), new Create(test1),\\n  new Create(test2), new Create(combine1), new Create(combine2)\\n]));\\nupdateNumbers(1);\\n\\nmakeHoverable(truePosBox, scene, { hoverScale: 1.06, hoverColor: YELLOW });\\nmakeHoverable(falsePosBox, scene, { hoverScale: 1.06, hoverColor: YELLOW });\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 270 });\\ncontrols.addSlider({\\n  label: 'Disease prevalence (%)', min: 0.1, max: 20, value: 1, step: 0.1,\\n  onChange: (value) => updateNumbers(value)\\n});\\ncontrols.addButton({ label: 'Reset to 1%', onClick: () => updateNumbers(1) });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A positive result is not 90% likely to mean disease, because the disease is rare. Out of 1,000 people, about 9 sick people test positive, but about 99 healthy people also test positive—so the chance is 9/(9+99) ≈ 8.3%. Use the slider to see how changing the underlying prevalence changes this result."
+      },
+      "code": "const title = new Text({ text: 'Why a positive test is not always 90% certain', color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.25, 0]);\n\nconst sourceBox = new Rectangle({ width: 1.7, height: 2.6, color: BLUE });\nsourceBox.setFill(BLUE_E, 0.35);\nsourceBox.moveTo([-5.0, 0, 0]);\nconst sourceLabel = new Text({ text: '1,000\\npeople tested', color: WHITE, fontSize: 23 });\nsourceLabel.moveTo([-5.0, 0, 0]);\n\nconst sickBox = new Rectangle({ width: 2.0, height: 1.25, color: RED });\nsickBox.setFill(RED_E, 0.38);\nsickBox.moveTo([-2.25, 1.25, 0]);\nconst healthyBox = new Rectangle({ width: 2.0, height: 1.25, color: GREEN });\nhealthyBox.setFill(GREEN_E, 0.32);\nhealthyBox.moveTo([-2.25, -1.25, 0]);\n\nconst truePosBox = new Rectangle({ width: 1.8, height: 1.25, color: YELLOW });\ntruePosBox.setFill(GOLD, 0.38);\ntruePosBox.moveTo([0.8, 1.25, 0]);\nconst falsePosBox = new Rectangle({ width: 1.8, height: 1.25, color: ORANGE });\nfalsePosBox.setFill(ORANGE, 0.30);\nfalsePosBox.moveTo([0.8, -1.25, 0]);\n\nconst resultBox = new Rectangle({ width: 3.0, height: 1.8, color: PURPLE });\nresultBox.setFill(PURPLE, 0.25);\nresultBox.moveTo([4.25, 0, 0]);\n\nconst branch1 = new Arrow({ start: [-4.1, 0.5, 0], end: [-3.3, 1.12, 0], color: WHITE });\nconst branch2 = new Arrow({ start: [-4.1, -0.5, 0], end: [-3.3, -1.12, 0], color: WHITE });\nconst test1 = new Arrow({ start: [-1.2, 1.25, 0], end: [-0.15, 1.25, 0], color: YELLOW });\nconst test2 = new Arrow({ start: [-1.2, -1.25, 0], end: [-0.15, -1.25, 0], color: ORANGE });\nconst combine1 = new Arrow({ start: [1.75, 1.0, 0], end: [2.75, 0.35, 0], color: YELLOW });\nconst combine2 = new Arrow({ start: [1.75, -1.0, 0], end: [2.75, -0.35, 0], color: ORANGE });\n\nlet sickLabel;\nlet healthyLabel;\nlet truePosLabel;\nlet falsePosLabel;\nlet resultLabel;\n\nfunction replaceLabel(oldLabel, value, position, color, fontSize) {\n  if (oldLabel) scene.remove(oldLabel);\n  const fresh = new Text({ text: value, color, fontSize });\n  fresh.moveTo(position);\n  scene.add(fresh);\n  return fresh;\n}\n\nfunction updateNumbers(prevalence) {\n  const sick = 1000 * prevalence / 100;\n  const healthy = 1000 - sick;\n  const truePos = 0.9 * sick;\n  const falsePos = 0.1 * healthy;\n  const posterior = 100 * truePos / (truePos + falsePos);\n\n  sickLabel = replaceLabel(sickLabel, `SICK\\n${sick.toFixed(1)} people`, [-2.25, 1.25, 0], WHITE, 20);\n  healthyLabel = replaceLabel(healthyLabel, `HEALTHY\\n${healthy.toFixed(1)} people`, [-2.25, -1.25, 0], WHITE, 19);\n  truePosLabel = replaceLabel(truePosLabel, `TEST +\\n${truePos.toFixed(1)} true +`, [0.8, 1.25, 0], BLACK, 19);\n  falsePosLabel = replaceLabel(falsePosLabel, `TEST +\\n${falsePos.toFixed(1)} false +`, [0.8, -1.25, 0], BLACK, 18);\n  resultLabel = replaceLabel(resultLabel, `Chance sick\\nafter + test\\n${posterior.toFixed(1)}%`, [4.25, 0, 0], YELLOW, 24);\n}\n\nscene.add(title);\nawait scene.play(new AnimationGroup([\n  new DrawBorderThenFill(sourceBox),\n  new DrawBorderThenFill(sickBox),\n  new DrawBorderThenFill(healthyBox),\n  new DrawBorderThenFill(truePosBox),\n  new DrawBorderThenFill(falsePosBox),\n  new DrawBorderThenFill(resultBox)\n]));\nscene.add(sourceLabel);\nawait scene.play(new AnimationGroup([\n  new Create(branch1), new Create(branch2), new Create(test1),\n  new Create(test2), new Create(combine1), new Create(combine2)\n]));\nupdateNumbers(1);\n\nmakeHoverable(truePosBox, scene, { hoverScale: 1.06, hoverColor: YELLOW });\nmakeHoverable(falsePosBox, scene, { hoverScale: 1.06, hoverColor: YELLOW });\n\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 270 });\ncontrols.addSlider({\n  label: 'Disease prevalence (%)', min: 0.1, max: 20, value: 1, step: 0.1,\n  onChange: (value) => updateNumbers(value)\n});\ncontrols.addButton({ label: 'Reset to 1%', onClick: () => updateNumbers(1) });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 11673,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 2,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 2
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/stats-bayes-medical.0.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/stats-bayes-medical.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T03:00:31.542Z"
+}

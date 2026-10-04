@@ -1,0 +1,83 @@
+{
+  "itemId": "seq-compound-interest-e",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 0.8,
+  "firstAttemptScore": 0.8,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.8,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.81% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Axes [x -4.62..4.50, y -7.17..2.25] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.33% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": false,
+          "detail": "Uncaught TypeError: Assignment to constant variable."
+        }
+      },
+      "generation": {
+        "latencyMs": 18092,
+        "inputTokens": 12280,
+        "cachedInputTokens": 12032,
+        "outputTokens": 756,
+        "costUsd": 0.00052312,
+        "rawResponse": "{\"explanation\":\"If the 100% annual rate is split into n equal compounding periods, $1 grows to (1 + 1/n)^n after one year. As n increases without bound, this approaches e ≈ 2.71828, so continuous compounding gives about $2.72 after one year.\",\"manimCode\":\"const ax = new Axes({ xRange: [0, 24, 4], yRange: [1.5, 2.9, 0.2], xLength: 9, yLength: 4.5, tips: false });\\nconst growth = n => Math.pow(1 + 1 / n, n);\\nconst curve = ax.plot(x => growth(x), { color: BLUE, xRange: [0.5, 24], numSamples: 500 });\\nconst limitLine = new Line({ start: ax.c2p(0, Math.E), end: ax.c2p(24, Math.E), color: GOLD });\\nconst limitLabel = new Text({ text: 'continuous limit: e ≈ 2.718', color: GOLD, fontSize: 24 });\\nlimitLabel.moveTo(ax.c2p(14, 2.78));\\nconst dot = new Dot({ point: ax.c2p(1, growth(1)), color: YELLOW });\\nconst heading = new Text({ text: '$1 at 100% yearly interest', color: WHITE, fontSize: 30 });\\nheading.moveTo([0, 3.15, 0]);\\nconst amountLabel = new Text({ text: '1 period/year → $2.0000', color: YELLOW, fontSize: 24 });\\namountLabel.moveTo([0, -3.15, 0]);\\nscene.add(ax, curve, limitLine, limitLabel, dot, heading, amountLabel);\\nconst controls = new Controls(scene, { position: 'top-right', width: 270 });\\ncontrols.addSlider({ label: 'Periods per year', min: 1, max: 24, value: 1, step: 1, onChange: n => {\\n  const nn = Math.max(1, Math.round(n));\\n  dot.moveTo(ax.c2p(nn, growth(nn)));\\n  scene.remove(amountLabel);\\n  amountLabel = new Text({ text: `${nn} periods/year → $${growth(nn).toFixed(4)}`, color: YELLOW, fontSize: 24 });\\n  amountLabel.moveTo([0, -3.15, 0]);\\n  scene.add(amountLabel);\\n}});\\nawait scene.wait(999999);\"}",
+        "explanation": "If the 100% annual rate is split into n equal compounding periods, $1 grows to (1 + 1/n)^n after one year. As n increases without bound, this approaches e ≈ 2.71828, so continuous compounding gives about $2.72 after one year."
+      },
+      "code": "const ax = new Axes({ xRange: [0, 24, 4], yRange: [1.5, 2.9, 0.2], xLength: 9, yLength: 4.5, tips: false });\nconst growth = n => Math.pow(1 + 1 / n, n);\nconst curve = ax.plot(x => growth(x), { color: BLUE, xRange: [0.5, 24], numSamples: 500 });\nconst limitLine = new Line({ start: ax.c2p(0, Math.E), end: ax.c2p(24, Math.E), color: GOLD });\nconst limitLabel = new Text({ text: 'continuous limit: e ≈ 2.718', color: GOLD, fontSize: 24 });\nlimitLabel.moveTo(ax.c2p(14, 2.78));\nconst dot = new Dot({ point: ax.c2p(1, growth(1)), color: YELLOW });\nconst heading = new Text({ text: '$1 at 100% yearly interest', color: WHITE, fontSize: 30 });\nheading.moveTo([0, 3.15, 0]);\nconst amountLabel = new Text({ text: '1 period/year → $2.0000', color: YELLOW, fontSize: 24 });\namountLabel.moveTo([0, -3.15, 0]);\nscene.add(ax, curve, limitLine, limitLabel, dot, heading, amountLabel);\nconst controls = new Controls(scene, { position: 'top-right', width: 270 });\ncontrols.addSlider({ label: 'Periods per year', min: 1, max: 24, value: 1, step: 1, onChange: n => {\n  const nn = Math.max(1, Math.round(n));\n  dot.moveTo(ax.c2p(nn, growth(nn)));\n  scene.remove(amountLabel);\n  amountLabel = new Text({ text: `${nn} periods/year → $${growth(nn).toFixed(4)}`, color: YELLOW, fontSize: 24 });\n  amountLabel.moveTo([0, -3.15, 0]);\n  scene.add(amountLabel);\n}});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4008,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [
+          "Uncaught TypeError: Assignment to constant variable."
+        ],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/seq-compound-interest-e.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/seq-compound-interest-e.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:55:22.327Z"
+}

@@ -1,0 +1,109 @@
+{
+  "itemId": "calc-secant-tangent",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.42% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=2 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ hover Dot at (3.2, 0.6) — 0.09% changed\n✓ click Text at (4.9, -2.6) — 0.89% changed\n✓ click Text at (4.9, -3.1) — 0.92% changed\n✓ drag Dot at (3.2, 0.6) — 0.97% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ click Text at (4.9, -2.6) — 0.89% changed\n✓ click Text at (4.9, -3.1) — 0.92% changed\n✓ drag Dot at (3.2, 0.6) — 0.97% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 45041,
+        "inputTokens": 5311,
+        "cachedInputTokens": 5287,
+        "outputTokens": 2248,
+        "costUsd": 0.023056700000000003,
+        "rawResponse": "{\"explanation\":\"A secant line passes through two points, P = (a, f(a)) and Q = (a + h, f(a + h)), with slope [f(a + h) − f(a)]/h. As h approaches 0, Q approaches P and the secant slope approaches the derivative f′(a), giving the tangent line. Drag the yellow point toward the blue point to explore this limit from either side.\",\"manimCode\":\"const title = new Text({ text: 'From secant to tangent', fontSize: 34, color: WHITE });\\ntitle.moveTo([0, 3.25, 0]);\\nconst formula = new MathTex({ latex: 'f(x)=\\\\\\\\frac{x^2}{2},\\\\\\\\quad a=1,\\\\\\\\qquad m_h=\\\\\\\\frac{f(1+h)-f(1)}{h}=1+\\\\\\\\frac{h}{2}\\\\\\\\longrightarrow f\\\\'(1)=1' });\\nawait formula.waitForRender();\\nformula.scale(0.65);\\nformula.moveTo([0, 2.7, 0]);\\n\\nconst ax = new Axes({ xRange: [-2.5, 3.2, 1], yRange: [-1, 5.5, 1], xLength: 8.4, yLength: 4.3, tips: false });\\nconst f = x => x * x / 2;\\nconst curve = ax.plot(f, { color: BLUE });\\nlet h = 1.5;\\nconst p = ax.c2p(1, f(1));\\nconst tangent = new DashedLine({ start: ax.c2p(-0.3, -0.8), end: ax.c2p(3.2, 2.7), color: GREEN });\\nconst secant = new Line({ start: p, end: ax.c2p(2.5, f(2.5)), color: YELLOW });\\nsecant.setStrokeWidth(4);\\nconst baseDot = new Dot({ point: p, radius: 0.09, color: BLUE });\\nconst handle = new Dot({ point: ax.c2p(1 + h, f(1 + h)), radius: 0.14, color: YELLOW });\\nconst pLabel = new Text({ text: 'P', fontSize: 23, color: BLUE });\\npLabel.moveTo([p[0] - 0.25, p[1] + 0.3, 0]);\\nconst qLabel = new Text({ text: 'Q', fontSize: 23, color: YELLOW });\\nconst interval = new Line({ start: ax.c2p(1, -0.55), end: ax.c2p(2.5, -0.55), color: YELLOW });\\nconst firstGuide = new DashedLine({ start: ax.c2p(1, -0.55), end: p, color: GRAY });\\nconst secondGuide = new DashedLine({ start: ax.c2p(2.5, -0.55), end: ax.c2p(2.5, f(2.5)), color: GRAY });\\nconst hLabel = new Text({ text: 'h', fontSize: 22, color: YELLOW });\\nconst readout = new Text({ text: '', fontSize: 25, color: YELLOW });\\nreadout.moveTo([-0.8, -2.65, 0]);\\nconst legend = new Text({ text: 'Green dashed: tangent slope = 1', fontSize: 20, color: GREEN });\\nlegend.moveTo([-0.8, -3.08, 0]);\\nconst hint = new Text({ text: 'Drag Q toward P, or past it to approach from the left', fontSize: 20, color: GRAY });\\nhint.moveTo([0, -3.48, 0]);\\nconst zeroButton = new Text({ text: 'Set h = 0', fontSize: 23, color: GREEN });\\nzeroButton.moveTo([4.9, -2.65, 0]);\\nconst resetButton = new Text({ text: 'Reset', fontSize: 21, color: WHITE });\\nresetButton.moveTo([4.9, -3.08, 0]);\\n\\nscene.add(title, formula, ax, curve, tangent, firstGuide, secondGuide, interval, secant, baseDot, handle, pLabel, qLabel, hLabel, readout, legend, hint, zeroButton, resetButton);\\n\\nfunction update() {\\n  const xq = 1 + h;\\n  const q = ax.c2p(xq, f(xq));\\n  const m = 1 + h / 2;\\n  const isLimit = Math.abs(h) < 0.000001;\\n  const left = Math.max(-2.5, 1 + (-0.8 - 0.5) / m);\\n  const right = Math.min(3.2, 1 + (5.25 - 0.5) / m);\\n  secant.setStart(ax.c2p(left, 0.5 + m * (left - 1)));\\n  secant.setEnd(ax.c2p(right, 0.5 + m * (right - 1)));\\n  secant.setColor(isLimit ? GREEN : YELLOW);\\n  handle.moveTo(q);\\n  qLabel.moveTo([q[0] + 0.23, q[1] + 0.26, 0]);\\n  qLabel.setText(isLimit ? 'Q = P' : 'Q');\\n  qLabel.setOpacity(isLimit ? 0 : 1);\\n  secondGuide.setStart(ax.c2p(xq, -0.55));\\n  secondGuide.setEnd(q);\\n  interval.setStart(ax.c2p(1, -0.55));\\n  interval.setEnd(ax.c2p(xq, -0.55));\\n  interval.setOpacity(isLimit ? 0 : 1);\\n  hLabel.moveTo(ax.c2p(1 + h / 2, -0.83));\\n  hLabel.setText('h = ' + h.toFixed(2));\\n  readout.setText(isLimit ? 'h = 0: tangent slope = 1 (the limit)' : 'h = ' + h.toFixed(3) + '     secant slope = ' + m.toFixed(3));\\n  readout.setColor(isLimit ? GREEN : YELLOW);\\n}\\nupdate();\\n\\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\\n  const x = ax.pointToCoords(pos)[0];\\n  h = Math.max(-1.6, Math.min(1.8, x - 1));\\n  update();\\n} });\\nmakeClickable(zeroButton, scene, { onClick: () => { h = 0; update(); } });\\nmakeClickable(resetButton, scene, { onClick: () => { h = 1.5; update(); } });\\nconst hoverInfo = new Text({ text: '', fontSize: 20, color: YELLOW });\\nhoverInfo.moveTo([0, 2.25, 0]);\\nmakeHoverable(handle, scene, {\\n  onHoverStart: () => {\\n    hoverInfo.setText('Q = (' + (1 + h).toFixed(3) + ', ' + f(1 + h).toFixed(3) + ')');\\n    scene.add(hoverInfo);\\n  },\\n  onHoverEnd: () => scene.remove(hoverInfo)\\n});\\nawait scene.wait(999999);\"}",
+        "explanation": "A secant line passes through two points, P = (a, f(a)) and Q = (a + h, f(a + h)), with slope [f(a + h) − f(a)]/h. As h approaches 0, Q approaches P and the secant slope approaches the derivative f′(a), giving the tangent line. Drag the yellow point toward the blue point to explore this limit from either side."
+      },
+      "code": "const title = new Text({ text: 'From secant to tangent', fontSize: 34, color: WHITE });\ntitle.moveTo([0, 3.25, 0]);\nconst formula = new MathTex({ latex: 'f(x)=\\\\frac{x^2}{2},\\\\quad a=1,\\\\qquad m_h=\\\\frac{f(1+h)-f(1)}{h}=1+\\\\frac{h}{2}\\\\longrightarrow f\\'(1)=1' });\nawait formula.waitForRender();\nformula.scale(0.65);\nformula.moveTo([0, 2.7, 0]);\n\nconst ax = new Axes({ xRange: [-2.5, 3.2, 1], yRange: [-1, 5.5, 1], xLength: 8.4, yLength: 4.3, tips: false });\nconst f = x => x * x / 2;\nconst curve = ax.plot(f, { color: BLUE });\nlet h = 1.5;\nconst p = ax.c2p(1, f(1));\nconst tangent = new DashedLine({ start: ax.c2p(-0.3, -0.8), end: ax.c2p(3.2, 2.7), color: GREEN });\nconst secant = new Line({ start: p, end: ax.c2p(2.5, f(2.5)), color: YELLOW });\nsecant.setStrokeWidth(4);\nconst baseDot = new Dot({ point: p, radius: 0.09, color: BLUE });\nconst handle = new Dot({ point: ax.c2p(1 + h, f(1 + h)), radius: 0.14, color: YELLOW });\nconst pLabel = new Text({ text: 'P', fontSize: 23, color: BLUE });\npLabel.moveTo([p[0] - 0.25, p[1] + 0.3, 0]);\nconst qLabel = new Text({ text: 'Q', fontSize: 23, color: YELLOW });\nconst interval = new Line({ start: ax.c2p(1, -0.55), end: ax.c2p(2.5, -0.55), color: YELLOW });\nconst firstGuide = new DashedLine({ start: ax.c2p(1, -0.55), end: p, color: GRAY });\nconst secondGuide = new DashedLine({ start: ax.c2p(2.5, -0.55), end: ax.c2p(2.5, f(2.5)), color: GRAY });\nconst hLabel = new Text({ text: 'h', fontSize: 22, color: YELLOW });\nconst readout = new Text({ text: '', fontSize: 25, color: YELLOW });\nreadout.moveTo([-0.8, -2.65, 0]);\nconst legend = new Text({ text: 'Green dashed: tangent slope = 1', fontSize: 20, color: GREEN });\nlegend.moveTo([-0.8, -3.08, 0]);\nconst hint = new Text({ text: 'Drag Q toward P, or past it to approach from the left', fontSize: 20, color: GRAY });\nhint.moveTo([0, -3.48, 0]);\nconst zeroButton = new Text({ text: 'Set h = 0', fontSize: 23, color: GREEN });\nzeroButton.moveTo([4.9, -2.65, 0]);\nconst resetButton = new Text({ text: 'Reset', fontSize: 21, color: WHITE });\nresetButton.moveTo([4.9, -3.08, 0]);\n\nscene.add(title, formula, ax, curve, tangent, firstGuide, secondGuide, interval, secant, baseDot, handle, pLabel, qLabel, hLabel, readout, legend, hint, zeroButton, resetButton);\n\nfunction update() {\n  const xq = 1 + h;\n  const q = ax.c2p(xq, f(xq));\n  const m = 1 + h / 2;\n  const isLimit = Math.abs(h) < 0.000001;\n  const left = Math.max(-2.5, 1 + (-0.8 - 0.5) / m);\n  const right = Math.min(3.2, 1 + (5.25 - 0.5) / m);\n  secant.setStart(ax.c2p(left, 0.5 + m * (left - 1)));\n  secant.setEnd(ax.c2p(right, 0.5 + m * (right - 1)));\n  secant.setColor(isLimit ? GREEN : YELLOW);\n  handle.moveTo(q);\n  qLabel.moveTo([q[0] + 0.23, q[1] + 0.26, 0]);\n  qLabel.setText(isLimit ? 'Q = P' : 'Q');\n  qLabel.setOpacity(isLimit ? 0 : 1);\n  secondGuide.setStart(ax.c2p(xq, -0.55));\n  secondGuide.setEnd(q);\n  interval.setStart(ax.c2p(1, -0.55));\n  interval.setEnd(ax.c2p(xq, -0.55));\n  interval.setOpacity(isLimit ? 0 : 1);\n  hLabel.moveTo(ax.c2p(1 + h / 2, -0.83));\n  hLabel.setText('h = ' + h.toFixed(2));\n  readout.setText(isLimit ? 'h = 0: tangent slope = 1 (the limit)' : 'h = ' + h.toFixed(3) + '     secant slope = ' + m.toFixed(3));\n  readout.setColor(isLimit ? GREEN : YELLOW);\n}\nupdate();\n\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\n  const x = ax.pointToCoords(pos)[0];\n  h = Math.max(-1.6, Math.min(1.8, x - 1));\n  update();\n} });\nmakeClickable(zeroButton, scene, { onClick: () => { h = 0; update(); } });\nmakeClickable(resetButton, scene, { onClick: () => { h = 1.5; update(); } });\nconst hoverInfo = new Text({ text: '', fontSize: 20, color: YELLOW });\nhoverInfo.moveTo([0, 2.25, 0]);\nmakeHoverable(handle, scene, {\n  onHoverStart: () => {\n    hoverInfo.setText('Q = (' + (1 + h).toFixed(3) + ', ' + f(1 + h).toFixed(3) + ')');\n    scene.add(hoverInfo);\n  },\n  onHoverEnd: () => scene.remove(hoverInfo)\n});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 8105,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 2,
+        "hoverables": 1,
+        "interactions": [
+          {
+            "kind": "hover",
+            "label": "Dot at (3.2, 0.6)",
+            "change": 0.0009071180555555555,
+            "responded": true
+          },
+          {
+            "kind": "click",
+            "label": "Text at (4.9, -2.6)",
+            "change": 0.008882378472222223,
+            "responded": true
+          },
+          {
+            "kind": "click",
+            "label": "Text at (4.9, -3.1)",
+            "change": 0.009180772569444445,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (3.2, 0.6)",
+            "change": 0.009665798611111111,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/calc-secant-tangent.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/calc-secant-tangent.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:54:08.700Z"
+}

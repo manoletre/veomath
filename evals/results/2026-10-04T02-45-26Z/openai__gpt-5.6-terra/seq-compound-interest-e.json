@@ -1,0 +1,79 @@
+{
+  "itemId": "seq-compound-interest-e",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.05% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.62% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 38802,
+        "inputTokens": 11749,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1538,
+        "costUsd": 0.0221396,
+        "rawResponse": "{\"explanation\":\"With $1 at 100% annual interest compounded $n$ times per year, the balance after one year is $\\\\left(1+\\\\frac1n\\\\right)^n$. As $n$ grows without bound, this approaches the number $e\\\\approx2.71828$, so continuously compounded interest turns $1 into $e$ after one year.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [0, 40, 5],\\n  yRange: [0, 3.1, 0.5],\\n  xLength: 9.5,\\n  yLength: 4.5,\\n  tips: true\\n});\\nax.moveTo([0, -0.45, 0]);\\n\\nconst curve = ax.plot(x => Math.pow(1 + 1 / x, x), {\\n  color: BLUE,\\n  xRange: [1, 40],\\n  numSamples: 400\\n});\\n\\nconst eLevel = new Polygon({\\n  vertices: [ax.c2p(1, Math.E), ax.c2p(40, Math.E)],\\n  color: YELLOW\\n});\\neLevel.setStrokeWidth(2).setFillOpacity(0);\\n\\nconst title = new Text({ text: 'More frequent compounding', color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.35, 0]);\\n\\nconst formula = new MathTex({ latex: 'A_n=\\\\\\\\left(1+\\\\\\\\frac{1}{n}\\\\\\\\right)^n' });\\nawait formula.waitForRender();\\nformula.setColor(BLUE);\\nformula.moveTo([-3.7, 2.65, 0]);\\n\\nconst limitLabel = new MathTex({ latex: 'e\\\\\\\\approx2.71828' });\\nawait limitLabel.waitForRender();\\nlimitLabel.setColor(YELLOW);\\nlimitLabel.moveTo([4.2, 2.05, 0]);\\n\\nlet n = 1;\\nlet amount = Math.pow(1 + 1 / n, n);\\nconst marker = new Dot({ point: ax.c2p(n, amount), color: ORANGE });\\nconst guide = new Polygon({\\n  vertices: [ax.c2p(n, 0), ax.c2p(n, amount)],\\n  color: ORANGE\\n});\\nguide.setStrokeWidth(2).setFillOpacity(0);\\n\\nlet readout = new Text({\\n  text: 'n = 1     balance = $2.00000',\\n  color: ORANGE,\\n  fontSize: 24\\n});\\nreadout.moveTo([0, -3.25, 0]);\\n\\nscene.add(ax, title, formula, limitLabel, eLevel, curve, guide, marker, readout);\\nawait scene.play(new AnimationGroup([new Create(curve), new Create(eLevel), new FadeIn(marker)]));\\n\\nfunction updateReadout() {\\n  scene.remove(readout);\\n  readout = new Text({\\n    text: 'n = ' + n + '     balance = $' + amount.toFixed(5),\\n    color: ORANGE,\\n    fontSize: 24\\n  });\\n  readout.moveTo([0, -3.25, 0]);\\n  scene.add(readout);\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 250 });\\ncontrols.addSlider({\\n  label: 'Compounding periods (n)',\\n  min: 1,\\n  max: 40,\\n  value: 1,\\n  step: 1,\\n  onChange: value => {\\n    n = Math.round(value);\\n    amount = Math.pow(1 + 1 / n, n);\\n    marker.moveTo(ax.c2p(n, amount));\\n    guide.setVertices([ax.c2p(n, 0), ax.c2p(n, amount)]);\\n    updateReadout();\\n  }\\n});\\ncontrols.addButton({\\n  label: 'Reset to yearly',\\n  onClick: () => {\\n    n = 1;\\n    amount = 2;\\n    marker.moveTo(ax.c2p(n, amount));\\n    guide.setVertices([ax.c2p(n, 0), ax.c2p(n, amount)]);\\n    updateReadout();\\n  }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "With $1 at 100% annual interest compounded $n$ times per year, the balance after one year is $\\left(1+\\frac1n\\right)^n$. As $n$ grows without bound, this approaches the number $e\\approx2.71828$, so continuously compounded interest turns $1 into $e$ after one year."
+      },
+      "code": "const ax = new Axes({\n  xRange: [0, 40, 5],\n  yRange: [0, 3.1, 0.5],\n  xLength: 9.5,\n  yLength: 4.5,\n  tips: true\n});\nax.moveTo([0, -0.45, 0]);\n\nconst curve = ax.plot(x => Math.pow(1 + 1 / x, x), {\n  color: BLUE,\n  xRange: [1, 40],\n  numSamples: 400\n});\n\nconst eLevel = new Polygon({\n  vertices: [ax.c2p(1, Math.E), ax.c2p(40, Math.E)],\n  color: YELLOW\n});\neLevel.setStrokeWidth(2).setFillOpacity(0);\n\nconst title = new Text({ text: 'More frequent compounding', color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.35, 0]);\n\nconst formula = new MathTex({ latex: 'A_n=\\\\left(1+\\\\frac{1}{n}\\\\right)^n' });\nawait formula.waitForRender();\nformula.setColor(BLUE);\nformula.moveTo([-3.7, 2.65, 0]);\n\nconst limitLabel = new MathTex({ latex: 'e\\\\approx2.71828' });\nawait limitLabel.waitForRender();\nlimitLabel.setColor(YELLOW);\nlimitLabel.moveTo([4.2, 2.05, 0]);\n\nlet n = 1;\nlet amount = Math.pow(1 + 1 / n, n);\nconst marker = new Dot({ point: ax.c2p(n, amount), color: ORANGE });\nconst guide = new Polygon({\n  vertices: [ax.c2p(n, 0), ax.c2p(n, amount)],\n  color: ORANGE\n});\nguide.setStrokeWidth(2).setFillOpacity(0);\n\nlet readout = new Text({\n  text: 'n = 1     balance = $2.00000',\n  color: ORANGE,\n  fontSize: 24\n});\nreadout.moveTo([0, -3.25, 0]);\n\nscene.add(ax, title, formula, limitLabel, eLevel, curve, guide, marker, readout);\nawait scene.play(new AnimationGroup([new Create(curve), new Create(eLevel), new FadeIn(marker)]));\n\nfunction updateReadout() {\n  scene.remove(readout);\n  readout = new Text({\n    text: 'n = ' + n + '     balance = $' + amount.toFixed(5),\n    color: ORANGE,\n    fontSize: 24\n  });\n  readout.moveTo([0, -3.25, 0]);\n  scene.add(readout);\n}\n\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 250 });\ncontrols.addSlider({\n  label: 'Compounding periods (n)',\n  min: 1,\n  max: 40,\n  value: 1,\n  step: 1,\n  onChange: value => {\n    n = Math.round(value);\n    amount = Math.pow(1 + 1 / n, n);\n    marker.moveTo(ax.c2p(n, amount));\n    guide.setVertices([ax.c2p(n, 0), ax.c2p(n, amount)]);\n    updateReadout();\n  }\n});\ncontrols.addButton({\n  label: 'Reset to yearly',\n  onClick: () => {\n    n = 1;\n    amount = 2;\n    marker.moveTo(ax.c2p(n, amount));\n    guide.setVertices([ax.c2p(n, 0), ax.c2p(n, amount)]);\n    updateReadout();\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5254,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/seq-compound-interest-e.0.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/seq-compound-interest-e.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:59:29.732Z"
+}

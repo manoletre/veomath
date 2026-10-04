@@ -1,0 +1,81 @@
+{
+  "itemId": "alg-rational-asymptotes",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 0.7,
+  "firstAttemptScore": 0.7,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.7,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.59% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "FunctionGraph [x -5.00..1.11, y -5.08..0.46] exceeds frame ±7.11 × ±4.00\nFunctionGraph [x 1.75..5.00, y 1.27..6.58] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "MathTex \"y\" overlaps Text \"f(x) = (2x + 1)/(x − 3)\" (75%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.00% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 13355,
+        "inputTokens": 12280,
+        "cachedInputTokens": 12032,
+        "outputTokens": 566,
+        "costUsd": 0.00042812,
+        "rawResponse": "{\"explanation\":\"Rewrite the function as f(x)=2+7/(x−3). This makes the asymptotes clear: the denominator is zero at x=3, giving a vertical asymptote, and the fraction tends to zero for large |x|, giving the horizontal asymptote y=2.\",\"manimCode\":\"const ax = new Axes({ xRange: [-6, 8, 1], yRange: [-8, 8, 2], xLength: 10, yLength: 6, tips: true });\\nconst axisLabels = ax.getAxisLabels();\\nconst leftBranch = ax.plot(x => (2*x + 1)/(x - 3), { xRange: [-6, 2.55], color: BLUE, numSamples: 300 });\\nconst rightBranch = ax.plot(x => (2*x + 1)/(x - 3), { xRange: [3.45, 8], color: BLUE, numSamples: 300 });\\nconst verticalAsymptote = new Line({ start: ax.c2p(3, -8), end: ax.c2p(3, 8), color: RED });\\nverticalAsymptote.setStrokeWidth(2).setOpacity(0.8);\\nconst horizontalAsymptote = new Line({ start: ax.c2p(-6, 2), end: ax.c2p(8, 2), color: YELLOW });\\nhorizontalAsymptote.setStrokeWidth(2).setOpacity(0.8);\\nconst title = new Text({ text: 'f(x) = (2x + 1)/(x − 3)', color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.35, 0]);\\nconst vLabel = new Text({ text: 'x = 3', color: RED, fontSize: 22 });\\nvLabel.moveTo([2.15, 2.55, 0]);\\nconst hLabel = new Text({ text: 'y = 2', color: YELLOW, fontSize: 22 });\\nhLabel.moveTo([-4.5, 1.7, 0]);\\nscene.add(ax, axisLabels, verticalAsymptote, horizontalAsymptote, leftBranch, rightBranch, title, vLabel, hLabel);\\nmakeDraggable(vLabel, scene, { constrainX: [1.5, 3.2], constrainY: [-3, 3] });\\nawait scene.wait(999999);\"}",
+        "explanation": "Rewrite the function as f(x)=2+7/(x−3). This makes the asymptotes clear: the denominator is zero at x=3, giving a vertical asymptote, and the fraction tends to zero for large |x|, giving the horizontal asymptote y=2."
+      },
+      "code": "const ax = new Axes({ xRange: [-6, 8, 1], yRange: [-8, 8, 2], xLength: 10, yLength: 6, tips: true });\nconst axisLabels = ax.getAxisLabels();\nconst leftBranch = ax.plot(x => (2*x + 1)/(x - 3), { xRange: [-6, 2.55], color: BLUE, numSamples: 300 });\nconst rightBranch = ax.plot(x => (2*x + 1)/(x - 3), { xRange: [3.45, 8], color: BLUE, numSamples: 300 });\nconst verticalAsymptote = new Line({ start: ax.c2p(3, -8), end: ax.c2p(3, 8), color: RED });\nverticalAsymptote.setStrokeWidth(2).setOpacity(0.8);\nconst horizontalAsymptote = new Line({ start: ax.c2p(-6, 2), end: ax.c2p(8, 2), color: YELLOW });\nhorizontalAsymptote.setStrokeWidth(2).setOpacity(0.8);\nconst title = new Text({ text: 'f(x) = (2x + 1)/(x − 3)', color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.35, 0]);\nconst vLabel = new Text({ text: 'x = 3', color: RED, fontSize: 22 });\nvLabel.moveTo([2.15, 2.55, 0]);\nconst hLabel = new Text({ text: 'y = 2', color: YELLOW, fontSize: 22 });\nhLabel.moveTo([-4.5, 1.7, 0]);\nscene.add(ax, axisLabels, verticalAsymptote, horizontalAsymptote, leftBranch, rightBranch, title, vLabel, hLabel);\nmakeDraggable(vLabel, scene, { constrainX: [1.5, 3.2], constrainY: [-3, 3] });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4108,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/alg-rational-asymptotes.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/alg-rational-asymptotes.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:54:00.535Z"
+}

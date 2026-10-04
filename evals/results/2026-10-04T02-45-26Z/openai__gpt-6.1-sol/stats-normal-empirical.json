@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-normal-empirical",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "7.84% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "9.34% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 34218,
+        "inputTokens": 4604,
+        "cachedInputTokens": 4581,
+        "outputTokens": 1595,
+        "costUsd": 0.016454100000000003,
+        "rawResponse": "{\"explanation\":\"For a normal distribution, about 68% of values lie within 1 standard deviation of the mean, 95% within 2, and 99.7% within 3. These percentages are areas under the bell curve, centered symmetrically around the mean μ. Move the slider to compare the three intervals; σ denotes the standard deviation.\",\"manimCode\":\"const title = new Text({ text: 'The 68–95–99.7 rule', fontSize: 34, color: WHITE });\\ntitle.moveTo([-1, 3.15, 0]);\\nconst subtitle = new Text({ text: 'Area under the curve = probability', fontSize: 22, color: GRAY });\\nsubtitle.moveTo([-1, 2.55, 0]);\\n\\nconst ax = new Axes({\\n  xRange: [-4, 4, 1],\\n  yRange: [-0.05, 0.45, 0.1],\\n  xLength: 10,\\n  yLength: 4,\\n  tips: false\\n});\\nax.moveTo([0, -0.35, 0]);\\nconst density = x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);\\nconst bell = ax.plot(density, { color: WHITE, numSamples: 500 });\\nbell.setStrokeWidth(3);\\n\\nconst tickGroup = new VGroup();\\nconst tickNames = ['μ − 3σ', 'μ − 2σ', 'μ − σ', 'μ', 'μ + σ', 'μ + 2σ', 'μ + 3σ'];\\nfor (let j = -3; j <= 3; j++) {\\n  const tickLabel = new Text({ text: tickNames[j + 3], fontSize: 17, color: GRAY });\\n  tickLabel.moveTo(ax.coordsToPoint(j, 0));\\n  tickLabel.shift([0, -0.3, 0]);\\n  tickGroup.add(tickLabel);\\n}\\n\\nconst meanGuide = new Line({ start: ax.coordsToPoint(0, 0), end: ax.coordsToPoint(0, density(0)), color: GRAY });\\nmeanGuide.setStrokeWidth(1);\\nawait scene.play(new AnimationGroup([new Write(title), new FadeIn(subtitle), new Create(ax)]));\\nscene.add(tickGroup, meanGuide);\\nawait scene.play(new Create(bell));\\n\\nlet selected = 1;\\nlet shadedArea;\\nlet boundaryGroup;\\nlet percentageLabel;\\nlet intervalLabel;\\nconst percentages = ['68%', '95%', '99.7%'];\\nconst palette = [BLUE, TEAL, PURPLE];\\n\\nfunction showInterval(n) {\\n  selected = Math.max(1, Math.min(3, Math.round(n)));\\n  if (shadedArea) scene.remove(shadedArea);\\n  if (boundaryGroup) scene.remove(boundaryGroup);\\n  if (percentageLabel) scene.remove(percentageLabel);\\n  if (intervalLabel) scene.remove(intervalLabel);\\n  const hue = palette[selected - 1];\\n  shadedArea = ax.getArea(bell, [-selected, selected], { color: hue, opacity: 0.45 });\\n  boundaryGroup = new VGroup();\\n  for (const endpoint of [-selected, selected]) {\\n    const boundary = new Line({\\n      start: ax.coordsToPoint(endpoint, 0),\\n      end: ax.coordsToPoint(endpoint, density(endpoint)),\\n      color: hue\\n    });\\n    boundary.setStrokeWidth(4);\\n    boundaryGroup.add(boundary);\\n  }\\n  percentageLabel = new Text({ text: '≈ ' + percentages[selected - 1], fontSize: 34, color: hue });\\n  percentageLabel.moveTo([0, 1.8, 0]);\\n  intervalLabel = new Text({\\n    text: 'Within ' + selected + ' standard deviation' + (selected === 1 ? '' : 's') + ' of μ',\\n    fontSize: 23,\\n    color: hue\\n  });\\n  intervalLabel.moveTo([0, -3.1, 0]);\\n  scene.add(shadedArea);\\n  // Keep the bell outline and mean marker above the translucent area.\\n  scene.remove(bell, meanGuide);\\n  scene.add(bell, meanGuide, boundaryGroup, percentageLabel, intervalLabel);\\n}\\n\\nshowInterval(1);\\nawait scene.wait(1.2);\\nshowInterval(2);\\nawait scene.wait(1.2);\\nshowInterval(3);\\nawait scene.wait(1.2);\\nshowInterval(1);\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 220, theme: 'dark' });\\ncontrols.addSlider({\\n  label: 'Standard deviations (σ)',\\n  min: 1,\\n  max: 3,\\n  step: 1,\\n  value: 1,\\n  onChange: value => showInterval(value)\\n});\\nawait scene.wait(999999);\"}",
+        "explanation": "For a normal distribution, about 68% of values lie within 1 standard deviation of the mean, 95% within 2, and 99.7% within 3. These percentages are areas under the bell curve, centered symmetrically around the mean μ. Move the slider to compare the three intervals; σ denotes the standard deviation."
+      },
+      "code": "const title = new Text({ text: 'The 68–95–99.7 rule', fontSize: 34, color: WHITE });\ntitle.moveTo([-1, 3.15, 0]);\nconst subtitle = new Text({ text: 'Area under the curve = probability', fontSize: 22, color: GRAY });\nsubtitle.moveTo([-1, 2.55, 0]);\n\nconst ax = new Axes({\n  xRange: [-4, 4, 1],\n  yRange: [-0.05, 0.45, 0.1],\n  xLength: 10,\n  yLength: 4,\n  tips: false\n});\nax.moveTo([0, -0.35, 0]);\nconst density = x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);\nconst bell = ax.plot(density, { color: WHITE, numSamples: 500 });\nbell.setStrokeWidth(3);\n\nconst tickGroup = new VGroup();\nconst tickNames = ['μ − 3σ', 'μ − 2σ', 'μ − σ', 'μ', 'μ + σ', 'μ + 2σ', 'μ + 3σ'];\nfor (let j = -3; j <= 3; j++) {\n  const tickLabel = new Text({ text: tickNames[j + 3], fontSize: 17, color: GRAY });\n  tickLabel.moveTo(ax.coordsToPoint(j, 0));\n  tickLabel.shift([0, -0.3, 0]);\n  tickGroup.add(tickLabel);\n}\n\nconst meanGuide = new Line({ start: ax.coordsToPoint(0, 0), end: ax.coordsToPoint(0, density(0)), color: GRAY });\nmeanGuide.setStrokeWidth(1);\nawait scene.play(new AnimationGroup([new Write(title), new FadeIn(subtitle), new Create(ax)]));\nscene.add(tickGroup, meanGuide);\nawait scene.play(new Create(bell));\n\nlet selected = 1;\nlet shadedArea;\nlet boundaryGroup;\nlet percentageLabel;\nlet intervalLabel;\nconst percentages = ['68%', '95%', '99.7%'];\nconst palette = [BLUE, TEAL, PURPLE];\n\nfunction showInterval(n) {\n  selected = Math.max(1, Math.min(3, Math.round(n)));\n  if (shadedArea) scene.remove(shadedArea);\n  if (boundaryGroup) scene.remove(boundaryGroup);\n  if (percentageLabel) scene.remove(percentageLabel);\n  if (intervalLabel) scene.remove(intervalLabel);\n  const hue = palette[selected - 1];\n  shadedArea = ax.getArea(bell, [-selected, selected], { color: hue, opacity: 0.45 });\n  boundaryGroup = new VGroup();\n  for (const endpoint of [-selected, selected]) {\n    const boundary = new Line({\n      start: ax.coordsToPoint(endpoint, 0),\n      end: ax.coordsToPoint(endpoint, density(endpoint)),\n      color: hue\n    });\n    boundary.setStrokeWidth(4);\n    boundaryGroup.add(boundary);\n  }\n  percentageLabel = new Text({ text: '≈ ' + percentages[selected - 1], fontSize: 34, color: hue });\n  percentageLabel.moveTo([0, 1.8, 0]);\n  intervalLabel = new Text({\n    text: 'Within ' + selected + ' standard deviation' + (selected === 1 ? '' : 's') + ' of μ',\n    fontSize: 23,\n    color: hue\n  });\n  intervalLabel.moveTo([0, -3.1, 0]);\n  scene.add(shadedArea);\n  // Keep the bell outline and mean marker above the translucent area.\n  scene.remove(bell, meanGuide);\n  scene.add(bell, meanGuide, boundaryGroup, percentageLabel, intervalLabel);\n}\n\nshowInterval(1);\nawait scene.wait(1.2);\nshowInterval(2);\nawait scene.wait(1.2);\nshowInterval(3);\nawait scene.wait(1.2);\nshowInterval(1);\n\nconst controls = new Controls(scene, { position: 'top-right', width: 220, theme: 'dark' });\ncontrols.addSlider({\n  label: 'Standard deviations (σ)',\n  min: 1,\n  max: 3,\n  step: 1,\n  value: 1,\n  onChange: value => showInterval(value)\n});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 11321,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 2,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/stats-normal-empirical.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/stats-normal-empirical.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:35.957Z"
+}

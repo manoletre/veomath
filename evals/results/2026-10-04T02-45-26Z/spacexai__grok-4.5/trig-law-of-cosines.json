@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-law-of-cosines",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.01% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.24% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 24646,
+        "inputTokens": 5048,
+        "cachedInputTokens": 4992,
+        "outputTokens": 1945,
+        "costUsd": 0.013279599999999999,
+        "rawResponse": "{\n  \"explanation\": \"The law of cosines generalizes the Pythagorean theorem to any triangle: c² = a² + b² − 2ab cos(C). When angle C is 90°, cos(C) = 0 so the correction term vanishes and you recover a² + b² = c². For acute angles the correction is negative (c is shorter than the right-triangle case); for obtuse angles cos(C) < 0 so the term becomes positive and c is longer.\",\n  \"manimCode\": \"const sc = 0.55;\\nconst origin = [-2.5, -1.2, 0];\\n\\nlet lenA = 3.2;\\nlet lenB = 2.6;\\nlet angleC = Math.PI / 3;\\n\\nfunction computeVerts() {\\n  const A = origin;\\n  const B = [origin[0] + lenA * sc, origin[1], 0];\\n  const Cx = origin[0] + lenB * sc * Math.cos(angleC);\\n  const Cy = origin[1] + lenB * sc * Math.sin(angleC);\\n  const C = [Cx, Cy, 0];\\n  return { A, B, C };\\n}\\n\\nlet verts = computeVerts();\\n\\nconst tri = new Polygon({\\n  vertices: [verts.A, verts.B, verts.C],\\n  color: WHITE\\n});\\ntri.setFill(BLUE_E, 0.35).setStrokeWidth(3);\\n\\nconst dotA = new Dot({ point: verts.A, color: YELLOW });\\nconst dotB = new Dot({ point: verts.B, color: YELLOW });\\nconst dotC = new Dot({ point: verts.C, color: YELLOW });\\n\\nconst labelA = new Text({ text: 'C', color: WHITE, fontSize: 22 });\\nconst labelB = new Text({ text: 'A', color: WHITE, fontSize: 22 });\\nconst labelC = new Text({ text: 'B', color: WHITE, fontSize: 22 });\\n\\nfunction placeCornerLabels() {\\n  verts = computeVerts();\\n  labelA.moveTo([verts.A[0] - 0.35, verts.A[1] - 0.3, 0]);\\n  labelB.moveTo([verts.B[0] + 0.35, verts.B[1] - 0.3, 0]);\\n  labelC.moveTo([verts.C[0], verts.C[1] + 0.35, 0]);\\n}\\nplaceCornerLabels();\\n\\nconst sideLabelA = new Text({ text: 'b', color: TEAL, fontSize: 26 });\\nconst sideLabelB = new Text({ text: 'a', color: TEAL, fontSize: 26 });\\nconst sideLabelC = new Text({ text: 'c', color: ORANGE, fontSize: 26 });\\n\\nfunction placeSideLabels() {\\n  verts = computeVerts();\\n  const mid = (p, q, off) => [((p[0]+q[0])/2) + off[0], ((p[1]+q[1])/2) + off[1], 0];\\n  sideLabelA.moveTo(mid(verts.A, verts.C, [-0.35, 0.15]));\\n  sideLabelB.moveTo(mid(verts.B, verts.C, [0.35, 0.15]));\\n  sideLabelC.moveTo(mid(verts.A, verts.B, [0, -0.35]));\\n}\\nplaceSideLabels();\\n\\nconst formula = new MathTex({ latex: 'c^2 = a^2 + b^2 - 2ab\\\\\\\\cos C' });\\nawait formula.waitForRender();\\nformula.moveTo([2.8, 2.8, 0]);\\nformula.scale(0.85);\\n\\nconst pythag = new MathTex({ latex: 'a^2 + b^2' });\\nawait pythag.waitForRender();\\npythag.moveTo([2.8, 1.6, 0]);\\npythag.scale(0.75);\\npythag.setColor(BLUE_B);\\n\\nconst corr = new MathTex({ latex: '-\\\\\\\\,2ab\\\\\\\\cos C' });\\nawait corr.waitForRender();\\ncorr.moveTo([2.8, 0.9, 0]);\\ncorr.scale(0.75);\\ncorr.setColor(ORANGE);\\n\\nlet valueLabel = new Text({ text: '', color: WHITE, fontSize: 22 });\\nvalueLabel.moveTo([2.8, -0.2, 0]);\\n\\nfunction updateValueLabel() {\\n  const cosC = Math.cos(angleC);\\n  const c2 = lenA * lenA + lenB * lenB - 2 * lenA * lenB * cosC;\\n  const py = lenA * lenA + lenB * lenB;\\n  const term = -2 * lenA * lenB * cosC;\\n  const deg = (angleC * 180 / Math.PI).toFixed(0);\\n  const str = `C = ${deg}°\\\\ncos C = ${cosC.toFixed(2)}\\\\na²+b² = ${py.toFixed(2)}\\\\ncorr  = ${term.toFixed(2)}\\\\nc²    = ${c2.toFixed(2)}`;\\n  const pos = valueLabel.getCenter();\\n  scene.remove(valueLabel);\\n  valueLabel = new Text({ text: str, color: WHITE, fontSize: 20 });\\n  valueLabel.moveTo(pos);\\n  scene.add(valueLabel);\\n}\\n\\nfunction rebuild() {\\n  verts = computeVerts();\\n  tri.setVertices([verts.A, verts.B, verts.C]);\\n  dotA.moveTo(verts.A);\\n  dotB.moveTo(verts.B);\\n  dotC.moveTo(verts.C);\\n  placeCornerLabels();\\n  placeSideLabels();\\n  updateValueLabel();\\n}\\n\\nscene.add(tri, dotA, dotB, dotC);\\nscene.add(labelA, labelB, labelC);\\nscene.add(sideLabelA, sideLabelB, sideLabelC);\\nscene.add(formula, pythag, corr);\\nupdateValueLabel();\\n\\nconst rightNote = new Text({\\n  text: 'When C = 90°, cos C = 0 → Pythagorean',\\n  color: GRAY,\\n  fontSize: 18\\n});\\nrightNote.moveTo([2.8, -2.6, 0]);\\nscene.add(rightNote);\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', width: 260 });\\ncontrols.addSlider({\\n  label: 'Angle C (deg)',\\n  min: 20,\\n  max: 160,\\n  value: 60,\\n  step: 1,\\n  onChange: (v) => {\\n    angleC = v * Math.PI / 180;\\n    rebuild();\\n  }\\n});\\ncontrols.addSlider({\\n  label: 'Side a',\\n  min: 1.5,\\n  max: 4.5,\\n  value: lenA,\\n  step: 0.1,\\n  onChange: (v) => {\\n    lenA = v;\\n    rebuild();\\n  }\\n});\\ncontrols.addSlider({\\n  label: 'Side b',\\n  min: 1.5,\\n  max: 4.5,\\n  value: lenB,\\n  step: 0.1,\\n  onChange: (v) => {\\n    lenB = v;\\n    rebuild();\\n  }\\n});\\ncontrols.addButton({\\n  label: 'Set C = 90°',\\n  onClick: () => {\\n    angleC = Math.PI / 2;\\n    rebuild();\\n  }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "The law of cosines generalizes the Pythagorean theorem to any triangle: c² = a² + b² − 2ab cos(C). When angle C is 90°, cos(C) = 0 so the correction term vanishes and you recover a² + b² = c². For acute angles the correction is negative (c is shorter than the right-triangle case); for obtuse angles cos(C) < 0 so the term becomes positive and c is longer."
+      },
+      "code": "const sc = 0.55;\nconst origin = [-2.5, -1.2, 0];\n\nlet lenA = 3.2;\nlet lenB = 2.6;\nlet angleC = Math.PI / 3;\n\nfunction computeVerts() {\n  const A = origin;\n  const B = [origin[0] + lenA * sc, origin[1], 0];\n  const Cx = origin[0] + lenB * sc * Math.cos(angleC);\n  const Cy = origin[1] + lenB * sc * Math.sin(angleC);\n  const C = [Cx, Cy, 0];\n  return { A, B, C };\n}\n\nlet verts = computeVerts();\n\nconst tri = new Polygon({\n  vertices: [verts.A, verts.B, verts.C],\n  color: WHITE\n});\ntri.setFill(BLUE_E, 0.35).setStrokeWidth(3);\n\nconst dotA = new Dot({ point: verts.A, color: YELLOW });\nconst dotB = new Dot({ point: verts.B, color: YELLOW });\nconst dotC = new Dot({ point: verts.C, color: YELLOW });\n\nconst labelA = new Text({ text: 'C', color: WHITE, fontSize: 22 });\nconst labelB = new Text({ text: 'A', color: WHITE, fontSize: 22 });\nconst labelC = new Text({ text: 'B', color: WHITE, fontSize: 22 });\n\nfunction placeCornerLabels() {\n  verts = computeVerts();\n  labelA.moveTo([verts.A[0] - 0.35, verts.A[1] - 0.3, 0]);\n  labelB.moveTo([verts.B[0] + 0.35, verts.B[1] - 0.3, 0]);\n  labelC.moveTo([verts.C[0], verts.C[1] + 0.35, 0]);\n}\nplaceCornerLabels();\n\nconst sideLabelA = new Text({ text: 'b', color: TEAL, fontSize: 26 });\nconst sideLabelB = new Text({ text: 'a', color: TEAL, fontSize: 26 });\nconst sideLabelC = new Text({ text: 'c', color: ORANGE, fontSize: 26 });\n\nfunction placeSideLabels() {\n  verts = computeVerts();\n  const mid = (p, q, off) => [((p[0]+q[0])/2) + off[0], ((p[1]+q[1])/2) + off[1], 0];\n  sideLabelA.moveTo(mid(verts.A, verts.C, [-0.35, 0.15]));\n  sideLabelB.moveTo(mid(verts.B, verts.C, [0.35, 0.15]));\n  sideLabelC.moveTo(mid(verts.A, verts.B, [0, -0.35]));\n}\nplaceSideLabels();\n\nconst formula = new MathTex({ latex: 'c^2 = a^2 + b^2 - 2ab\\\\cos C' });\nawait formula.waitForRender();\nformula.moveTo([2.8, 2.8, 0]);\nformula.scale(0.85);\n\nconst pythag = new MathTex({ latex: 'a^2 + b^2' });\nawait pythag.waitForRender();\npythag.moveTo([2.8, 1.6, 0]);\npythag.scale(0.75);\npythag.setColor(BLUE_B);\n\nconst corr = new MathTex({ latex: '-\\\\,2ab\\\\cos C' });\nawait corr.waitForRender();\ncorr.moveTo([2.8, 0.9, 0]);\ncorr.scale(0.75);\ncorr.setColor(ORANGE);\n\nlet valueLabel = new Text({ text: '', color: WHITE, fontSize: 22 });\nvalueLabel.moveTo([2.8, -0.2, 0]);\n\nfunction updateValueLabel() {\n  const cosC = Math.cos(angleC);\n  const c2 = lenA * lenA + lenB * lenB - 2 * lenA * lenB * cosC;\n  const py = lenA * lenA + lenB * lenB;\n  const term = -2 * lenA * lenB * cosC;\n  const deg = (angleC * 180 / Math.PI).toFixed(0);\n  const str = `C = ${deg}°\\ncos C = ${cosC.toFixed(2)}\\na²+b² = ${py.toFixed(2)}\\ncorr  = ${term.toFixed(2)}\\nc²    = ${c2.toFixed(2)}`;\n  const pos = valueLabel.getCenter();\n  scene.remove(valueLabel);\n  valueLabel = new Text({ text: str, color: WHITE, fontSize: 20 });\n  valueLabel.moveTo(pos);\n  scene.add(valueLabel);\n}\n\nfunction rebuild() {\n  verts = computeVerts();\n  tri.setVertices([verts.A, verts.B, verts.C]);\n  dotA.moveTo(verts.A);\n  dotB.moveTo(verts.B);\n  dotC.moveTo(verts.C);\n  placeCornerLabels();\n  placeSideLabels();\n  updateValueLabel();\n}\n\nscene.add(tri, dotA, dotB, dotC);\nscene.add(labelA, labelB, labelC);\nscene.add(sideLabelA, sideLabelB, sideLabelC);\nscene.add(formula, pythag, corr);\nupdateValueLabel();\n\nconst rightNote = new Text({\n  text: 'When C = 90°, cos C = 0 → Pythagorean',\n  color: GRAY,\n  fontSize: 18\n});\nrightNote.moveTo([2.8, -2.6, 0]);\nscene.add(rightNote);\n\nconst controls = new Controls(scene, { position: 'bottom-left', width: 260 });\ncontrols.addSlider({\n  label: 'Angle C (deg)',\n  min: 20,\n  max: 160,\n  value: 60,\n  step: 1,\n  onChange: (v) => {\n    angleC = v * Math.PI / 180;\n    rebuild();\n  }\n});\ncontrols.addSlider({\n  label: 'Side a',\n  min: 1.5,\n  max: 4.5,\n  value: lenA,\n  step: 0.1,\n  onChange: (v) => {\n    lenA = v;\n    rebuild();\n  }\n});\ncontrols.addSlider({\n  label: 'Side b',\n  min: 1.5,\n  max: 4.5,\n  value: lenB,\n  step: 0.1,\n  onChange: (v) => {\n    lenB = v;\n    rebuild();\n  }\n});\ncontrols.addButton({\n  label: 'Set C = 90°',\n  onClick: () => {\n    angleC = Math.PI / 2;\n    rebuild();\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4399,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 3,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/trig-law-of-cosines.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/trig-law-of-cosines.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:04.622Z"
+}

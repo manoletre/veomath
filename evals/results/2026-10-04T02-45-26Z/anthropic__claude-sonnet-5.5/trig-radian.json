@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-radian",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.26% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.37% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 11907,
+        "inputTokens": 7947,
+        "cachedInputTokens": 7476,
+        "outputTokens": 1592,
+        "costUsd": 0.0192952,
+        "rawResponse": "{\"explanation\":\"A radian is the angle you get when you walk along a circle's edge a distance equal to its radius. Since the circumference is 2π times the radius, a full turn is 2π radians (about 6.28), and one radian is roughly 57.3°. Drag the yellow dot or use the slider to change the angle and see how the arc length compares to the radius.\",\"manimCode\":\"const R = 2;\\nconst cx = -1.5, cy = 0;\\nconst C = [cx, cy, 0];\\nconst circle = new Circle({ radius: R, color: BLUE });\\ncircle.moveTo(C);\\nscene.add(circle);\\n\\nconst title = new Text({ text: 'What is a radian?', color: WHITE, fontSize: 36 });\\ntitle.moveTo([0, 3.4, 0]);\\nawait scene.play(new Write(title));\\n\\nconst pt = (a) => [cx + R * Math.cos(a), cy + R * Math.sin(a), 0];\\n\\n// radius line along x-axis\\nconst r0 = new Line({ start: C, end: pt(0), color: WHITE });\\nawait scene.play(new Create(r0));\\nconst rLabel = new Text({ text: 'r', color: WHITE, fontSize: 28 });\\nrLabel.moveTo([cx + R / 2, cy - 0.35, 0]);\\nscene.add(rLabel);\\n\\n// Arc built as polygon (open path), updated live\\nfunction arcVerts(a) {\\n  const n = Math.max(2, Math.ceil(a * 30));\\n  const v = [];\\n  for (let i = 0; i <= n; i++) v.push(pt(a * i / n));\\n  return v;\\n}\\nlet angle = 1;\\nconst arc = new Polygon({ vertices: arcVerts(1), color: YELLOW });\\narc.setStrokeWidth(6).setFillOpacity(0);\\nconst radius2 = new Polygon({ vertices: [C, pt(1)], color: WHITE });\\nradius2.setStrokeWidth(3).setFillOpacity(0);\\nawait scene.play(new Create(arc));\\nscene.add(radius2);\\n\\nconst dot = new Dot({ point: pt(1), color: YELLOW });\\nscene.add(dot);\\n\\n// info text (immutable -> recreate)\\nlet info = null;\\nfunction updateInfo() {\\n  if (info) scene.remove(info);\\n  const deg = (angle * 180 / Math.PI).toFixed(1);\\n  info = new Text({\\n    text: 'θ = ' + angle.toFixed(2) + ' rad = ' + deg + '°\\\\narc = ' + angle.toFixed(2) + ' × r',\\n    color: YELLOW, fontSize: 26\\n  });\\n  info.moveTo([4, 1, 0]);\\n  scene.add(info);\\n}\\nupdateInfo();\\n\\nfunction setAngle(a) {\\n  angle = Math.min(2 * Math.PI, Math.max(0.05, a));\\n  arc.setVertices(arcVerts(angle));\\n  radius2.setVertices([C, pt(angle)]);\\n  dot.moveTo(pt(angle));\\n  updateInfo();\\n}\\n\\n// Animate the 1 radian unrolling: show r copies of radius\\nconst note = new Text({ text: '1 radian: arc length = radius', color: YELLOW, fontSize: 26 });\\nnote.moveTo([4, 2.5, 0]);\\nawait scene.play(new Write(note));\\nawait scene.wait(1);\\n\\n// sweep animation through 2π\\nconst tr = new ValueTracker(1);\\ntr.addUpdater(() => {});\\nfor (let k = 1; k <= 6; k++) {\\n  const target = k;\\n  const steps = 20;\\n  const start = angle;\\n  for (let i = 1; i <= steps; i++) {\\n    setAngle(start + (target - start) * i / steps);\\n    await scene.wait(0.02);\\n  }\\n  await scene.wait(0.4);\\n}\\nfor (let i = 1; i <= 20; i++) {\\n  setAngle(6 + (2 * Math.PI - 6) * i / 20);\\n  await scene.wait(0.02);\\n}\\nconst full = new Text({ text: 'Full circle = 2π ≈ 6.28 radians', color: GREEN, fontSize: 24 });\\nfull.moveTo([4, -1.2, 0]);\\nawait scene.play(new Write(full));\\n\\n// interactivity: slider\\nconst controls = new Controls(scene, { position: 'bottom-right' });\\ncontrols.addSlider({ label: 'Angle (rad)', min: 0.05, max: 6.28, value: angle, step: 0.01, onChange: (v) => setAngle(v) });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A radian is the angle you get when you walk along a circle's edge a distance equal to its radius. Since the circumference is 2π times the radius, a full turn is 2π radians (about 6.28), and one radian is roughly 57.3°. Drag the yellow dot or use the slider to change the angle and see how the arc length compares to the radius."
+      },
+      "code": "const R = 2;\nconst cx = -1.5, cy = 0;\nconst C = [cx, cy, 0];\nconst circle = new Circle({ radius: R, color: BLUE });\ncircle.moveTo(C);\nscene.add(circle);\n\nconst title = new Text({ text: 'What is a radian?', color: WHITE, fontSize: 36 });\ntitle.moveTo([0, 3.4, 0]);\nawait scene.play(new Write(title));\n\nconst pt = (a) => [cx + R * Math.cos(a), cy + R * Math.sin(a), 0];\n\n// radius line along x-axis\nconst r0 = new Line({ start: C, end: pt(0), color: WHITE });\nawait scene.play(new Create(r0));\nconst rLabel = new Text({ text: 'r', color: WHITE, fontSize: 28 });\nrLabel.moveTo([cx + R / 2, cy - 0.35, 0]);\nscene.add(rLabel);\n\n// Arc built as polygon (open path), updated live\nfunction arcVerts(a) {\n  const n = Math.max(2, Math.ceil(a * 30));\n  const v = [];\n  for (let i = 0; i <= n; i++) v.push(pt(a * i / n));\n  return v;\n}\nlet angle = 1;\nconst arc = new Polygon({ vertices: arcVerts(1), color: YELLOW });\narc.setStrokeWidth(6).setFillOpacity(0);\nconst radius2 = new Polygon({ vertices: [C, pt(1)], color: WHITE });\nradius2.setStrokeWidth(3).setFillOpacity(0);\nawait scene.play(new Create(arc));\nscene.add(radius2);\n\nconst dot = new Dot({ point: pt(1), color: YELLOW });\nscene.add(dot);\n\n// info text (immutable -> recreate)\nlet info = null;\nfunction updateInfo() {\n  if (info) scene.remove(info);\n  const deg = (angle * 180 / Math.PI).toFixed(1);\n  info = new Text({\n    text: 'θ = ' + angle.toFixed(2) + ' rad = ' + deg + '°\\narc = ' + angle.toFixed(2) + ' × r',\n    color: YELLOW, fontSize: 26\n  });\n  info.moveTo([4, 1, 0]);\n  scene.add(info);\n}\nupdateInfo();\n\nfunction setAngle(a) {\n  angle = Math.min(2 * Math.PI, Math.max(0.05, a));\n  arc.setVertices(arcVerts(angle));\n  radius2.setVertices([C, pt(angle)]);\n  dot.moveTo(pt(angle));\n  updateInfo();\n}\n\n// Animate the 1 radian unrolling: show r copies of radius\nconst note = new Text({ text: '1 radian: arc length = radius', color: YELLOW, fontSize: 26 });\nnote.moveTo([4, 2.5, 0]);\nawait scene.play(new Write(note));\nawait scene.wait(1);\n\n// sweep animation through 2π\nconst tr = new ValueTracker(1);\ntr.addUpdater(() => {});\nfor (let k = 1; k <= 6; k++) {\n  const target = k;\n  const steps = 20;\n  const start = angle;\n  for (let i = 1; i <= steps; i++) {\n    setAngle(start + (target - start) * i / steps);\n    await scene.wait(0.02);\n  }\n  await scene.wait(0.4);\n}\nfor (let i = 1; i <= 20; i++) {\n  setAngle(6 + (2 * Math.PI - 6) * i / 20);\n  await scene.wait(0.02);\n}\nconst full = new Text({ text: 'Full circle = 2π ≈ 6.28 radians', color: GREEN, fontSize: 24 });\nfull.moveTo([4, -1.2, 0]);\nawait scene.play(new Write(full));\n\n// interactivity: slider\nconst controls = new Controls(scene, { position: 'bottom-right' });\ncontrols.addSlider({ label: 'Angle (rad)', min: 0.05, max: 6.28, value: angle, step: 0.01, onChange: (v) => setAngle(v) });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 16634,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 5,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/trig-radian.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/trig-radian.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:34:50.632Z"
+}

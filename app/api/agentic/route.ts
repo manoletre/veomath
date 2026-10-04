@@ -5,6 +5,7 @@ import { generateAndIterateSlide, SlideSpec } from '../shared/animationIterator'
 import { meteredOpenAI, recordPrompt, requireUser, securityError, publicError, RequestError } from '../../lib/server-security';
 import { getDb } from '../../lib/firebase-admin';
 import { readJson, validateAgentic } from '../../lib/request-validation';
+import { PRODUCTION_MODEL } from '../shared/model';
 
 const PLAN_SYSTEM_PROMPT = `You are a mathematics explainer that plans interactive visual documents.
 
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
 
 async function handlePlan(openai: OpenAI, body: { topic: string }) {
   const response = await openai.chat.completions.create({
-    model: 'gpt-5.4',
+    model: PRODUCTION_MODEL,
     messages: [
       { role: 'system', content: PLAN_SYSTEM_PROMPT },
       { role: 'user', content: `Create an interactive explainer document plan for: ${body.topic}` },
@@ -132,7 +133,7 @@ Rules:
 
 async function handlePlanFromPdf(openai: OpenAI, body: { fileId: string }) {
   const response = await openai.responses.create({
-    model: 'gpt-4o',
+    model: PRODUCTION_MODEL,
     input: [
       {
         role: 'system',
@@ -144,6 +145,7 @@ async function handlePlanFromPdf(openai: OpenAI, body: { fileId: string }) {
           {
             type: 'input_file',
             file_id: body.fileId,
+            detail: 'low',
           },
           {
             type: 'input_text',
@@ -186,8 +188,7 @@ async function handlePlanFromPdf(openai: OpenAI, body: { fileId: string }) {
     },
   });
 
-  const textOutput = response.output.find(o => o.type === 'message');
-  const textContent = textOutput?.content?.find(c => c.type === 'output_text')?.text;
+  const textContent = response.output_text;
   if (!textContent) throw new Error('No text output from plan-from-pdf');
   const content = JSON.parse(textContent);
   return NextResponse.json(content);
@@ -200,7 +201,7 @@ async function extractSlideContext(
   slideDescription: string,
 ): Promise<string> {
   const response = await openai.responses.create({
-    model: 'gpt-4o',
+    model: PRODUCTION_MODEL,
     input: [
       {
         role: 'system',
@@ -212,6 +213,7 @@ async function extractSlideContext(
           {
             type: 'input_file',
             file_id: fileId,
+            detail: 'low',
           },
           {
             type: 'input_text',
@@ -240,8 +242,7 @@ async function extractSlideContext(
     },
   });
 
-  const textOutput = response.output.find(o => o.type === 'message');
-  const textContent = textOutput?.content?.find(c => c.type === 'output_text')?.text;
+  const textContent = response.output_text;
   if (!textContent) return '';
   try {
     const parsed = JSON.parse(textContent);
@@ -270,7 +271,7 @@ function generateTextItems(
   send({ type: 'progress', stage: 'generating', message: 'Generating text sections...' });
 
   return openai.chat.completions.create({
-    model: 'gpt-5.4',
+    model: PRODUCTION_MODEL,
     messages: [
       { role: 'system', content: GENERATE_TEXT_SYSTEM_PROMPT },
       {
@@ -486,7 +487,7 @@ Context in the document: ${body.sessionContext}${paperContext ? `\n\n--- Relevan
   }
 
   const response = await openai.chat.completions.create({
-    model: 'gpt-5.4',
+    model: PRODUCTION_MODEL,
     messages: messages as import('openai/resources/chat/completions').ChatCompletionMessageParam[],
     response_format: {
       type: 'json_schema',
@@ -550,7 +551,7 @@ async function handleRegenerateCourse(
         send({ type: 'progress', stage: 'generating', message: 'Regenerating text sections...' });
 
         const textResponse = await openai.chat.completions.create({
-          model: 'gpt-5.4',
+          model: PRODUCTION_MODEL,
           messages: [
             { role: 'system', content: REGENERATE_COURSE_SYSTEM_PROMPT },
             {

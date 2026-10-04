@@ -1,0 +1,80 @@
+{
+  "itemId": "alg-rational-asymptotes",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 0.8,
+  "firstAttemptScore": 0.8,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.8,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.19% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Group [x -1.49..6.22, y -0.97..4.27] exceeds frame ±7.11 × ±4.00\nFunctionGraph [x -5.50..-0.09, y -15.17..-0.25] exceeds frame ±7.11 × ±4.00\nFunctionGraph [x 0.09..5.50, y 0.25..15.17] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=1 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.14% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 17516,
+        "inputTokens": 5056,
+        "cachedInputTokens": 4992,
+        "outputTokens": 1534,
+        "costUsd": 0.0108296,
+        "rawResponse": "{\n  \"explanation\": \"The rational function f(x) = (2x + 1)/(x - 3) has a vertical asymptote where the denominator is zero (x = 3) and a horizontal asymptote y = 2, found by dividing leading coefficients of the equal-degree numerator and denominator. The graph approaches these lines but never crosses the vertical asymptote, creating two separate branches.\",\n  \"manimCode\": \"const ax = new Axes({\\n  xRange: [-6, 12, 2],\\n  yRange: [-8, 12, 2],\\n  xLength: 11,\\n  yLength: 6.5,\\n  tips: true\\n});\\nax.moveTo([0.3, 0.2, 0]);\\n\\nconst labels = ax.getAxisLabels('x', 'y');\\n\\nconst leftBranch = ax.plot(x => (2 * x + 1) / (x - 3), {\\n  color: BLUE,\\n  xRange: [-6, 2.85],\\n  numSamples: 400\\n});\\nconst rightBranch = ax.plot(x => (2 * x + 1) / (x - 3), {\\n  color: BLUE,\\n  xRange: [3.15, 12],\\n  numSamples: 400\\n});\\n\\nconst vAsymp = new Line({\\n  start: ax.c2p(3, -8),\\n  end: ax.c2p(3, 12),\\n  color: RED\\n});\\nvAsymp.setStrokeWidth(2).setOpacity(0.85);\\n\\nconst hAsymp = new Line({\\n  start: ax.c2p(-6, 2),\\n  end: ax.c2p(12, 2),\\n  color: ORANGE\\n});\\nhAsymp.setStrokeWidth(2).setOpacity(0.85);\\n\\nconst title = new MathTex({ latex: 'f(x) = \\\\\\\\frac{2x+1}{x-3}' });\\nawait title.waitForRender();\\ntitle.scale(0.85);\\ntitle.moveTo([-3.8, 3.4, 0]);\\n\\nconst vLabel = new MathTex({ latex: 'x = 3' });\\nawait vLabel.waitForRender();\\nvLabel.scale(0.65);\\nvLabel.setColor(RED);\\nvLabel.moveTo(ax.c2p(3, 10.5));\\nvLabel.shift([0.9, 0, 0]);\\n\\nconst hLabel = new MathTex({ latex: 'y = 2' });\\nawait hLabel.waitForRender();\\nhLabel.scale(0.65);\\nhLabel.setColor(ORANGE);\\nhLabel.moveTo(ax.c2p(10.5, 2));\\nhLabel.shift([0, 0.45, 0]);\\n\\nscene.add(ax, labels, vAsymp, hAsymp, leftBranch, rightBranch, title, vLabel, hLabel);\\n\\nconst t = new ValueTracker(5);\\nconst trackerDot = new Dot({ color: YELLOW });\\ntrackerDot.addUpdater(() => {\\n  const x = t.getValue();\\n  if (Math.abs(x - 3) < 0.2) return;\\n  trackerDot.moveTo(ax.c2p(x, (2 * x + 1) / (x - 3)));\\n});\\nscene.add(trackerDot);\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', width: 260 });\\ncontrols.addSlider({\\n  label: 'x on curve',\\n  min: -5,\\n  max: 11,\\n  value: 5,\\n  step: 0.05,\\n  onChange: (val) => {\\n    if (Math.abs(val - 3) >= 0.15) t.setValue(val);\\n  }\\n});\\ncontrols.addCheckbox({\\n  label: 'Show asymptotes',\\n  checked: true,\\n  onChange: (checked) => {\\n    vAsymp.setOpacity(checked ? 0.85 : 0);\\n    hAsymp.setOpacity(checked ? 0.85 : 0);\\n    vLabel.setOpacity(checked ? 1 : 0);\\n    hLabel.setOpacity(checked ? 1 : 0);\\n  }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "The rational function f(x) = (2x + 1)/(x - 3) has a vertical asymptote where the denominator is zero (x = 3) and a horizontal asymptote y = 2, found by dividing leading coefficients of the equal-degree numerator and denominator. The graph approaches these lines but never crosses the vertical asymptote, creating two separate branches."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-6, 12, 2],\n  yRange: [-8, 12, 2],\n  xLength: 11,\n  yLength: 6.5,\n  tips: true\n});\nax.moveTo([0.3, 0.2, 0]);\n\nconst labels = ax.getAxisLabels('x', 'y');\n\nconst leftBranch = ax.plot(x => (2 * x + 1) / (x - 3), {\n  color: BLUE,\n  xRange: [-6, 2.85],\n  numSamples: 400\n});\nconst rightBranch = ax.plot(x => (2 * x + 1) / (x - 3), {\n  color: BLUE,\n  xRange: [3.15, 12],\n  numSamples: 400\n});\n\nconst vAsymp = new Line({\n  start: ax.c2p(3, -8),\n  end: ax.c2p(3, 12),\n  color: RED\n});\nvAsymp.setStrokeWidth(2).setOpacity(0.85);\n\nconst hAsymp = new Line({\n  start: ax.c2p(-6, 2),\n  end: ax.c2p(12, 2),\n  color: ORANGE\n});\nhAsymp.setStrokeWidth(2).setOpacity(0.85);\n\nconst title = new MathTex({ latex: 'f(x) = \\\\frac{2x+1}{x-3}' });\nawait title.waitForRender();\ntitle.scale(0.85);\ntitle.moveTo([-3.8, 3.4, 0]);\n\nconst vLabel = new MathTex({ latex: 'x = 3' });\nawait vLabel.waitForRender();\nvLabel.scale(0.65);\nvLabel.setColor(RED);\nvLabel.moveTo(ax.c2p(3, 10.5));\nvLabel.shift([0.9, 0, 0]);\n\nconst hLabel = new MathTex({ latex: 'y = 2' });\nawait hLabel.waitForRender();\nhLabel.scale(0.65);\nhLabel.setColor(ORANGE);\nhLabel.moveTo(ax.c2p(10.5, 2));\nhLabel.shift([0, 0.45, 0]);\n\nscene.add(ax, labels, vAsymp, hAsymp, leftBranch, rightBranch, title, vLabel, hLabel);\n\nconst t = new ValueTracker(5);\nconst trackerDot = new Dot({ color: YELLOW });\ntrackerDot.addUpdater(() => {\n  const x = t.getValue();\n  if (Math.abs(x - 3) < 0.2) return;\n  trackerDot.moveTo(ax.c2p(x, (2 * x + 1) / (x - 3)));\n});\nscene.add(trackerDot);\n\nconst controls = new Controls(scene, { position: 'bottom-left', width: 260 });\ncontrols.addSlider({\n  label: 'x on curve',\n  min: -5,\n  max: 11,\n  value: 5,\n  step: 0.05,\n  onChange: (val) => {\n    if (Math.abs(val - 3) >= 0.15) t.setValue(val);\n  }\n});\ncontrols.addCheckbox({\n  label: 'Show asymptotes',\n  checked: true,\n  onChange: (checked) => {\n    vAsymp.setOpacity(checked ? 0.85 : 0);\n    hAsymp.setOpacity(checked ? 0.85 : 0);\n    vLabel.setOpacity(checked ? 1 : 0);\n    hLabel.setOpacity(checked ? 1 : 0);\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4571,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 1
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/alg-rational-asymptotes.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/alg-rational-asymptotes.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:17.813Z"
+}

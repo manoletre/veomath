@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-law-of-cosines",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.87% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.76% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 61192,
+        "inputTokens": 12274,
+        "cachedInputTokens": 11008,
+        "outputTokens": 2393,
+        "costUsd": 0.028663600000000004,
+        "rawResponse": "{\"explanation\":\"The Pythagorean theorem says \\\\(c^2=a^2+b^2\\\\) when the angle between sides \\\\(a\\\\) and \\\\(b\\\\) is 90°. At any other angle \\\\(C\\\\), the law of cosines adds a correction: \\\\(c^2=a^2+b^2-2ab\\\\cos C\\\\). The correction is negative for an acute angle, zero for a right angle, and positive for an obtuse angle.\",\"manimCode\":\"const a = 4;\\nconst b = 3;\\nconst origin = [-2.4, -1.1, 0];\\nconst B = [origin[0] + a, origin[1], 0];\\nlet angle = 60;\\n\\nfunction positions() {\\n  const r = angle * Math.PI / 180;\\n  const A = [origin[0] + b * Math.cos(r), origin[1] + b * Math.sin(r), 0];\\n  const F = [A[0], origin[1], 0];\\n  return { A, F };\\n}\\n\\nconst title = new Text({ text: 'Pythagoras + a correction', color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.35, 0]);\\nconst formula = new MathTex({ latex: 'c^2=a^2+b^2-2ab\\\\\\\\cos C' });\\nawait formula.waitForRender();\\nformula.moveTo([0, 2.65, 0]);\\n\\nconst { A, F } = positions();\\nconst triangle = new Polygon({ vertices: [origin, B, A], color: BLUE });\\ntriangle.setFill(BLUE_E, 0.18);\\nconst sideA = new Polygon({ vertices: [origin, B], color: BLUE });\\nconst sideB = new Polygon({ vertices: [origin, A], color: GREEN });\\nconst sideC = new Polygon({ vertices: [A, B], color: YELLOW });\\nsideA.setStrokeWidth(5);\\nsideB.setStrokeWidth(5);\\nsideC.setStrokeWidth(5);\\nconst projection = new Polygon({ vertices: [origin, F], color: ORANGE });\\nprojection.setStrokeWidth(4);\\nconst height = new Polygon({ vertices: [F, A], color: GRAY });\\nheight.setStrokeWidth(2);\\nconst dotA = new Dot({ point: A, color: WHITE });\\nconst dotB = new Dot({ point: B, color: WHITE });\\nconst dotC = new Dot({ point: origin, color: WHITE });\\nconst foot = new Dot({ point: F, color: ORANGE });\\n\\nconst labelA = new Text({ text: 'A', color: WHITE, fontSize: 22 });\\nconst labelB = new Text({ text: 'B', color: WHITE, fontSize: 22 });\\nconst labelC = new Text({ text: 'C', color: WHITE, fontSize: 22 });\\nconst nameA = new Text({ text: 'a', color: BLUE, fontSize: 25 });\\nconst nameB = new Text({ text: 'b', color: GREEN, fontSize: 25 });\\nconst nameC = new Text({ text: 'c', color: YELLOW, fontSize: 25 });\\nlabelB.moveTo([B[0] + 0.23, B[1] - 0.28, 0]);\\nlabelC.moveTo([origin[0] - 0.25, origin[1] - 0.28, 0]);\\nnameA.moveTo([(origin[0] + B[0]) / 2, origin[1] - 0.38, 0]);\\n\\nconst identity = new MathTex({ latex: 'c^2=(a-b\\\\\\\\cos C)^2+(b\\\\\\\\sin C)^2' });\\nawait identity.waitForRender();\\nidentity.moveTo([0, -2.45, 0]);\\nlet status = new Text({ text: '', color: ORANGE, fontSize: 23 });\\n\\nfunction refresh() {\\n  const { A: p, F: f } = positions();\\n  triangle.setVertices([origin, B, p]);\\n  sideB.setVertices([origin, p]);\\n  sideC.setVertices([p, B]);\\n  projection.setVertices([origin, f]);\\n  height.setVertices([f, p]);\\n  dotA.moveTo(p);\\n  foot.moveTo(f);\\n  labelA.moveTo([p[0], p[1] + 0.3, 0]);\\n  nameB.moveTo([(origin[0] + p[0]) / 2 - 0.26, (origin[1] + p[1]) / 2 + 0.12, 0]);\\n  nameC.moveTo([(B[0] + p[0]) / 2 + 0.24, (B[1] + p[1]) / 2 + 0.16, 0]);\\n  const correction = -2 * a * b * Math.cos(angle * Math.PI / 180);\\n  const kind = angle < 89.5 ? 'Acute: subtract' : angle > 90.5 ? 'Obtuse: add' : 'Right angle: no correction';\\n  scene.remove(status);\\n  status = new Text({ text: `${kind}  |  correction = ${correction.toFixed(1)}`, color: ORANGE, fontSize: 23 });\\n  status.moveTo([0, -3.15, 0]);\\n  scene.add(status);\\n}\\n\\nscene.add(title, formula, triangle, projection, height, sideA, sideB, sideC, dotA, dotB, dotC, foot, labelA, labelB, labelC, nameA, nameB, nameC, identity);\\nrefresh();\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'Angle C', min: 35, max: 145, value: 60, step: 1, onChange: (value) => { angle = value; refresh(); } });\\nawait scene.wait(999999);\"}",
+        "explanation": "The Pythagorean theorem says \\(c^2=a^2+b^2\\) when the angle between sides \\(a\\) and \\(b\\) is 90°. At any other angle \\(C\\), the law of cosines adds a correction: \\(c^2=a^2+b^2-2ab\\cos C\\). The correction is negative for an acute angle, zero for a right angle, and positive for an obtuse angle."
+      },
+      "code": "const a = 4;\nconst b = 3;\nconst origin = [-2.4, -1.1, 0];\nconst B = [origin[0] + a, origin[1], 0];\nlet angle = 60;\n\nfunction positions() {\n  const r = angle * Math.PI / 180;\n  const A = [origin[0] + b * Math.cos(r), origin[1] + b * Math.sin(r), 0];\n  const F = [A[0], origin[1], 0];\n  return { A, F };\n}\n\nconst title = new Text({ text: 'Pythagoras + a correction', color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.35, 0]);\nconst formula = new MathTex({ latex: 'c^2=a^2+b^2-2ab\\\\cos C' });\nawait formula.waitForRender();\nformula.moveTo([0, 2.65, 0]);\n\nconst { A, F } = positions();\nconst triangle = new Polygon({ vertices: [origin, B, A], color: BLUE });\ntriangle.setFill(BLUE_E, 0.18);\nconst sideA = new Polygon({ vertices: [origin, B], color: BLUE });\nconst sideB = new Polygon({ vertices: [origin, A], color: GREEN });\nconst sideC = new Polygon({ vertices: [A, B], color: YELLOW });\nsideA.setStrokeWidth(5);\nsideB.setStrokeWidth(5);\nsideC.setStrokeWidth(5);\nconst projection = new Polygon({ vertices: [origin, F], color: ORANGE });\nprojection.setStrokeWidth(4);\nconst height = new Polygon({ vertices: [F, A], color: GRAY });\nheight.setStrokeWidth(2);\nconst dotA = new Dot({ point: A, color: WHITE });\nconst dotB = new Dot({ point: B, color: WHITE });\nconst dotC = new Dot({ point: origin, color: WHITE });\nconst foot = new Dot({ point: F, color: ORANGE });\n\nconst labelA = new Text({ text: 'A', color: WHITE, fontSize: 22 });\nconst labelB = new Text({ text: 'B', color: WHITE, fontSize: 22 });\nconst labelC = new Text({ text: 'C', color: WHITE, fontSize: 22 });\nconst nameA = new Text({ text: 'a', color: BLUE, fontSize: 25 });\nconst nameB = new Text({ text: 'b', color: GREEN, fontSize: 25 });\nconst nameC = new Text({ text: 'c', color: YELLOW, fontSize: 25 });\nlabelB.moveTo([B[0] + 0.23, B[1] - 0.28, 0]);\nlabelC.moveTo([origin[0] - 0.25, origin[1] - 0.28, 0]);\nnameA.moveTo([(origin[0] + B[0]) / 2, origin[1] - 0.38, 0]);\n\nconst identity = new MathTex({ latex: 'c^2=(a-b\\\\cos C)^2+(b\\\\sin C)^2' });\nawait identity.waitForRender();\nidentity.moveTo([0, -2.45, 0]);\nlet status = new Text({ text: '', color: ORANGE, fontSize: 23 });\n\nfunction refresh() {\n  const { A: p, F: f } = positions();\n  triangle.setVertices([origin, B, p]);\n  sideB.setVertices([origin, p]);\n  sideC.setVertices([p, B]);\n  projection.setVertices([origin, f]);\n  height.setVertices([f, p]);\n  dotA.moveTo(p);\n  foot.moveTo(f);\n  labelA.moveTo([p[0], p[1] + 0.3, 0]);\n  nameB.moveTo([(origin[0] + p[0]) / 2 - 0.26, (origin[1] + p[1]) / 2 + 0.12, 0]);\n  nameC.moveTo([(B[0] + p[0]) / 2 + 0.24, (B[1] + p[1]) / 2 + 0.16, 0]);\n  const correction = -2 * a * b * Math.cos(angle * Math.PI / 180);\n  const kind = angle < 89.5 ? 'Acute: subtract' : angle > 90.5 ? 'Obtuse: add' : 'Right angle: no correction';\n  scene.remove(status);\n  status = new Text({ text: `${kind}  |  correction = ${correction.toFixed(1)}`, color: ORANGE, fontSize: 23 });\n  status.moveTo([0, -3.15, 0]);\n  scene.add(status);\n}\n\nscene.add(title, formula, triangle, projection, height, sideA, sideB, sideC, dotA, dotB, dotC, foot, labelA, labelB, labelC, nameA, nameB, nameC, identity);\nrefresh();\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'Angle C', min: 35, max: 145, value: 60, step: 1, onChange: (value) => { angle = value; refresh(); } });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3140,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/trig-law-of-cosines.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/trig-law-of-cosines.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:50:31.843Z"
+}

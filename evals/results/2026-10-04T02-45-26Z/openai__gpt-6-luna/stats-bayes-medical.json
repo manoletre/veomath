@@ -1,0 +1,78 @@
+{
+  "itemId": "stats-bayes-medical",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.79% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 19409,
+        "inputTokens": 12295,
+        "cachedInputTokens": 0,
+        "outputTokens": 916,
+        "costUsd": 0.0016874999999999998,
+        "rawResponse": "{\"explanation\":\"A 90%-accurate test has 90% sensitivity and 90% specificity: among sick people, 90% test positive, while among healthy people, 10% do. Out of 10,000 people, that gives about 90 true positives and 990 false positives, so only 90 of the 1,080 positive results are sick—about 8.3%.\",\"manimCode\":\"const title = new Text({ text: 'Positive test ≠ likely sick', color: WHITE, fontSize: 34 });\\ntitle.moveTo([0, 3.05, 0]);\\n\\nconst n = 100;\\nconst sickCount = 1;\\nconst truePositiveCount = 0.9;\\nconst falsePositiveCount = 9.9;\\nconst totalPositive = truePositiveCount + falsePositiveCount;\\n\\nconst sickLabel = new Text({ text: '1% sick', color: YELLOW, fontSize: 24 });\\nsickLabel.moveTo([-3.6, 2.15, 0]);\\nconst healthyLabel = new Text({ text: '99% healthy', color: BLUE_C, fontSize: 24 });\\nhealthyLabel.moveTo([2.5, 2.15, 0]);\\n\\nconst sickBar = new Rectangle({ width: 0.52, height: 2.15, color: YELLOW });\\nsickBar.setFill(YELLOW, 0.85).moveTo([-3.6, 0.45, 0]);\\nconst sickFalse = new Rectangle({ width: 0.52, height: 0.24, color: GRAY });\\nsickFalse.setFill(GRAY, 0.6).moveTo([-2.75, -0.5, 0]);\\nconst healthyTrue = new Rectangle({ width: 0.52, height: 0.34, color: ORANGE });\\nhealthyTrue.setFill(ORANGE, 0.9).moveTo([2.25, -0.45, 0]);\\nconst healthyNeg = new Rectangle({ width: 0.52, height: 2.0, color: BLUE });\\nhealthyNeg.setFill(BLUE, 0.65).moveTo([3.1, 0.55, 0]);\\n\\nconst leftExplain = new Text({ text: 'Among 1 sick person:\\\\n0.9 positive', color: WHITE, fontSize: 20 });\\nleftExplain.moveTo([-3.15, -1.6, 0]);\\nconst rightExplain = new Text({ text: 'Among 99 healthy:\\\\n9.9 false positives', color: WHITE, fontSize: 20 });\\nrightExplain.moveTo([2.7, -1.6, 0]);\\n\\nconst result = new Text({ text: 'P(sick | positive) = 0.9 / (0.9 + 9.9) = 8.3%', color: GOLD, fontSize: 27 });\\nresult.moveTo([0, -3.0, 0]);\\nconst note = new Text({ text: 'Illustrative counts per 100 people', color: GRAY, fontSize: 16 });\\nnote.moveTo([0, -3.45, 0]);\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new AnimationGroup([new Write(sickLabel), new Write(healthyLabel)]));\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(sickBar), new DrawBorderThenFill(sickFalse), new DrawBorderThenFill(healthyTrue), new DrawBorderThenFill(healthyNeg)]));\\nawait scene.play(new AnimationGroup([new Write(leftExplain), new Write(rightExplain)]));\\nawait scene.play(new Write(result));\\nawait scene.play(new Write(note));\\nconst controls = new Controls(scene, { position: 'top-right', width: 220 });\\ncontrols.addButton({ label: 'Highlight positives', onClick: () => { healthyTrue.setColor(GOLD); sickBar.setColor(GOLD); } });\\nawait scene.wait(999999);\"}",
+        "explanation": "A 90%-accurate test has 90% sensitivity and 90% specificity: among sick people, 90% test positive, while among healthy people, 10% do. Out of 10,000 people, that gives about 90 true positives and 990 false positives, so only 90 of the 1,080 positive results are sick—about 8.3%."
+      },
+      "code": "const title = new Text({ text: 'Positive test ≠ likely sick', color: WHITE, fontSize: 34 });\ntitle.moveTo([0, 3.05, 0]);\n\nconst n = 100;\nconst sickCount = 1;\nconst truePositiveCount = 0.9;\nconst falsePositiveCount = 9.9;\nconst totalPositive = truePositiveCount + falsePositiveCount;\n\nconst sickLabel = new Text({ text: '1% sick', color: YELLOW, fontSize: 24 });\nsickLabel.moveTo([-3.6, 2.15, 0]);\nconst healthyLabel = new Text({ text: '99% healthy', color: BLUE_C, fontSize: 24 });\nhealthyLabel.moveTo([2.5, 2.15, 0]);\n\nconst sickBar = new Rectangle({ width: 0.52, height: 2.15, color: YELLOW });\nsickBar.setFill(YELLOW, 0.85).moveTo([-3.6, 0.45, 0]);\nconst sickFalse = new Rectangle({ width: 0.52, height: 0.24, color: GRAY });\nsickFalse.setFill(GRAY, 0.6).moveTo([-2.75, -0.5, 0]);\nconst healthyTrue = new Rectangle({ width: 0.52, height: 0.34, color: ORANGE });\nhealthyTrue.setFill(ORANGE, 0.9).moveTo([2.25, -0.45, 0]);\nconst healthyNeg = new Rectangle({ width: 0.52, height: 2.0, color: BLUE });\nhealthyNeg.setFill(BLUE, 0.65).moveTo([3.1, 0.55, 0]);\n\nconst leftExplain = new Text({ text: 'Among 1 sick person:\\n0.9 positive', color: WHITE, fontSize: 20 });\nleftExplain.moveTo([-3.15, -1.6, 0]);\nconst rightExplain = new Text({ text: 'Among 99 healthy:\\n9.9 false positives', color: WHITE, fontSize: 20 });\nrightExplain.moveTo([2.7, -1.6, 0]);\n\nconst result = new Text({ text: 'P(sick | positive) = 0.9 / (0.9 + 9.9) = 8.3%', color: GOLD, fontSize: 27 });\nresult.moveTo([0, -3.0, 0]);\nconst note = new Text({ text: 'Illustrative counts per 100 people', color: GRAY, fontSize: 16 });\nnote.moveTo([0, -3.45, 0]);\n\nawait scene.play(new Write(title));\nawait scene.play(new AnimationGroup([new Write(sickLabel), new Write(healthyLabel)]));\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(sickBar), new DrawBorderThenFill(sickFalse), new DrawBorderThenFill(healthyTrue), new DrawBorderThenFill(healthyNeg)]));\nawait scene.play(new AnimationGroup([new Write(leftExplain), new Write(rightExplain)]));\nawait scene.play(new Write(result));\nawait scene.play(new Write(note));\nconst controls = new Controls(scene, { position: 'top-right', width: 220 });\ncontrols.addButton({ label: 'Highlight positives', onClick: () => { healthyTrue.setColor(GOLD); sickBar.setColor(GOLD); } });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9920,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 6,
+        "controls": {
+          "sliders": 0,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/stats-bayes-medical.0.final.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:55:46.409Z"
+}

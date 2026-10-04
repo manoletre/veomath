@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-tangent-graph",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 0.875,
+  "firstAttemptScore": 0.875,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.875,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.88% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "FunctionGraph [x -5.50..-4.16, y 0.00..19.63] exceeds frame ±7.11 × ±4.00\nFunctionGraph [x -4.09..-1.41, y -19.63..19.63] exceeds frame ±7.11 × ±4.00\nFunctionGraph [x -1.34..1.34, y -19.63..19.63] exceeds frame ±7.11 × ±4.00\nFunctionGraph [x 1.41..4.09, y -19.63..19.63] exceeds frame ±7.11 × ±4.00\nFunctionGraph [x 4.16..5.50, y -19.63..-0.00] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=2 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 15606,
+        "inputTokens": 12278,
+        "cachedInputTokens": 12032,
+        "outputTokens": 638,
+        "costUsd": 0.00046392,
+        "rawResponse": "{\"explanation\":\"The graph of \\\\(y=\\\\tan x\\\\) repeats every \\\\(\\\\pi\\\\) and has vertical asymptotes wherever \\\\(\\\\cos x=0\\\\), at \\\\(x=\\\\frac{\\\\pi}{2}+k\\\\pi\\\\). On \\\\([-2\\\\pi,2\\\\pi]\\\\), these occur at \\\\(-\\\\frac{3\\\\pi}{2},-\\\\frac{\\\\pi}{2},\\\\frac{\\\\pi}{2},\\\\frac{3\\\\pi}{2}\\\\); the curve approaches but never reaches them because tangent is undefined there.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\\n  yRange: [-4, 4, 1],\\n  xLength: 11,\\n  yLength: 5.5,\\n  tips: false\\n});\\nscene.add(ax, ax.getAxisLabels());\\n\\n// Plot separately on intervals split by each vertical asymptote.\\nconst eps = 0.035;\\nconst branches = [\\n  [-2 * Math.PI, -3 * Math.PI / 2 - eps],\\n  [-3 * Math.PI / 2 + eps, -Math.PI / 2 - eps],\\n  [-Math.PI / 2 + eps, Math.PI / 2 - eps],\\n  [Math.PI / 2 + eps, 3 * Math.PI / 2 - eps],\\n  [3 * Math.PI / 2 + eps, 2 * Math.PI]\\n];\\nconst curves = branches.map((r, i) => ax.plot(x => Math.tan(x), {\\n  color: [BLUE, TEAL, BLUE, TEAL, BLUE][i],\\n  xRange: r,\\n  numSamples: 240\\n}));\\nscene.add(...curves);\\n\\nconst asymptotes = [-3 * Math.PI / 2, -Math.PI / 2, Math.PI / 2, 3 * Math.PI / 2].map(x => {\\n  const line = new Line({ start: ax.c2p(x, -4), end: ax.c2p(x, 4), color: YELLOW });\\n  line.setOpacity(0.65);\\n  return line;\\n});\\nscene.add(...asymptotes);\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', width: 230 });\\ncontrols.addButton({ label: 'Highlight asymptotes', onClick: () => {\\n  asymptotes.forEach(a => a.setColor(ORANGE));\\n}});\\ncontrols.addButton({ label: 'Reset highlight', onClick: () => {\\n  asymptotes.forEach(a => a.setColor(YELLOW));\\n}});\\nawait scene.wait(999999);\"}",
+        "explanation": "The graph of \\(y=\\tan x\\) repeats every \\(\\pi\\) and has vertical asymptotes wherever \\(\\cos x=0\\), at \\(x=\\frac{\\pi}{2}+k\\pi\\). On \\([-2\\pi,2\\pi]\\), these occur at \\(-\\frac{3\\pi}{2},-\\frac{\\pi}{2},\\frac{\\pi}{2},\\frac{3\\pi}{2}\\); the curve approaches but never reaches them because tangent is undefined there."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\n  yRange: [-4, 4, 1],\n  xLength: 11,\n  yLength: 5.5,\n  tips: false\n});\nscene.add(ax, ax.getAxisLabels());\n\n// Plot separately on intervals split by each vertical asymptote.\nconst eps = 0.035;\nconst branches = [\n  [-2 * Math.PI, -3 * Math.PI / 2 - eps],\n  [-3 * Math.PI / 2 + eps, -Math.PI / 2 - eps],\n  [-Math.PI / 2 + eps, Math.PI / 2 - eps],\n  [Math.PI / 2 + eps, 3 * Math.PI / 2 - eps],\n  [3 * Math.PI / 2 + eps, 2 * Math.PI]\n];\nconst curves = branches.map((r, i) => ax.plot(x => Math.tan(x), {\n  color: [BLUE, TEAL, BLUE, TEAL, BLUE][i],\n  xRange: r,\n  numSamples: 240\n}));\nscene.add(...curves);\n\nconst asymptotes = [-3 * Math.PI / 2, -Math.PI / 2, Math.PI / 2, 3 * Math.PI / 2].map(x => {\n  const line = new Line({ start: ax.c2p(x, -4), end: ax.c2p(x, 4), color: YELLOW });\n  line.setOpacity(0.65);\n  return line;\n});\nscene.add(...asymptotes);\n\nconst controls = new Controls(scene, { position: 'bottom-left', width: 230 });\ncontrols.addButton({ label: 'Highlight asymptotes', onClick: () => {\n  asymptotes.forEach(a => a.setColor(ORANGE));\n}});\ncontrols.addButton({ label: 'Reset highlight', onClick: () => {\n  asymptotes.forEach(a => a.setColor(YELLOW));\n}});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4831,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 2,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/trig-tangent-graph.0.final.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:55:18.251Z"
+}

@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-discriminant",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "6.40% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=3 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.67% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 45905,
+        "inputTokens": 4617,
+        "cachedInputTokens": 0,
+        "outputTokens": 1898,
+        "costUsd": 0.028214,
+        "rawResponse": "{\"explanation\":\"The discriminant Δ = b² − 4ac is the expression under the square root in the quadratic formula. If Δ > 0, the parabola crosses the x-axis twice; if Δ = 0, it touches the axis at one repeated real root; and if Δ < 0, it never meets the axis, so there are no real roots. Move the slider to explore these cases for x² − 2x + c.\",\"manimCode\":\"const heading = new Text({ text: 'The discriminant counts real roots', color: WHITE, fontSize: 32 });\\nheading.moveTo([0, 3.2, 0]);\\nconst formula = new MathTex({ latex: 'ax^2+bx+c=0\\\\quad(a\\\\ne0),\\\\qquad \\\\Delta=b^2-4ac' });\\nawait formula.waitForRender();\\nformula.scale(0.8);\\nformula.moveTo([0, 2.5, 0]);\\nscene.add(heading, formula);\\n\\nconst ax = new Axes({ xRange: [-2, 4, 1], yRange: [-3, 6, 1], xLength: 7, yLength: 4.4, tips: false });\\nax.moveTo([-2, -0.3, 0]);\\nconst zeroLine = new Line({ start: ax.c2p(-2, 0), end: ax.c2p(4, 0), color: WHITE });\\nzeroLine.setStrokeWidth(3);\\nconst axisCaption = new Text({ text: 'x-axis: y = 0', color: GRAY, fontSize: 18 });\\naxisCaption.moveTo([-4.4, -2.8, 0]);\\nscene.add(ax, zeroLine, axisCaption);\\n\\nconst example = new MathTex({ latex: 'y=x^2-2x+c' });\\nawait example.waitForRender();\\nexample.scale(0.8);\\nexample.moveTo([3.8, 2.05, 0]);\\nscene.add(example);\\n\\nlet constant = 0;\\nlet curve = null;\\nlet markers = [];\\nlet readouts = [];\\nfunction refresh(value) {\\n  constant = value;\\n  if (curve) scene.remove(curve);\\n  markers.forEach(m => scene.remove(m));\\n  readouts.forEach(m => scene.remove(m));\\n  markers = [];\\n  readouts = [];\\n  const delta = 4 - 4 * constant;\\n  const tangent = Math.abs(delta) < 0.000001;\\n  const tint = tangent ? YELLOW : delta > 0 ? GREEN : RED;\\n  const span = Math.sqrt(6.5 - constant);\\n  curve = ax.plot(x => x * x - 2 * x + constant, {\\n    xRange: [Math.max(-2, 1 - span), Math.min(4, 1 + span)],\\n    color: BLUE,\\n    numSamples: 240\\n  });\\n  curve.setStrokeWidth(4);\\n  scene.add(curve);\\n  if (delta >= -0.000001) {\\n    const distance = Math.sqrt(Math.max(0, 1 - constant));\\n    const roots = tangent ? [1] : [1 - distance, 1 + distance];\\n    roots.forEach(root => {\\n      const marker = new Dot({ point: ax.c2p(root, 0), color: tint });\\n      markers.push(marker);\\n      scene.add(marker);\\n    });\\n  }\\n  const rows = [\\n    { str: 'c = ' + constant.toFixed(2), y: 1.4, color: WHITE, size: 25 },\\n    { str: 'Δ = 4 − 4c = ' + delta.toFixed(2), y: 0.8, color: tint, size: 24 },\\n    { str: tangent ? 'Δ = 0: one real root' : delta > 0 ? 'Δ > 0: two real roots' : 'Δ < 0: no real roots', y: 0.1, color: tint, size: 23 },\\n    { str: tangent ? 'Touches the x-axis' : delta > 0 ? 'Crosses the x-axis twice' : 'Never meets the x-axis', y: -0.5, color: WHITE, size: 19 },\\n    { str: tangent ? 'x = 1 (repeated)' : delta > 0 ? 'x = ' + (1 - Math.sqrt(1 - constant)).toFixed(2) + ', ' + (1 + Math.sqrt(1 - constant)).toFixed(2) : 'The roots are complex', y: -1.1, color: GRAY, size: 20 }\\n  ];\\n  rows.forEach(row => {\\n    const label = new Text({ text: row.str, color: row.color, fontSize: row.size });\\n    label.moveTo([3.8, row.y, 0]);\\n    readouts.push(label);\\n    scene.add(label);\\n  });\\n}\\nrefresh(0);\\nconst instruction = new Text({ text: 'Change c to move the parabola up or down. The turning point reaches the axis at c = 1.', color: GRAY, fontSize: 19 });\\ninstruction.moveTo([0, -3.3, 0]);\\nscene.add(instruction);\\nawait scene.wait(1.5);\\nrefresh(1);\\nawait scene.wait(1.5);\\nrefresh(2);\\nawait scene.wait(1.5);\\nrefresh(0);\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\\ncontrols.addSlider({ label: 'Constant c', min: -1, max: 3, value: 0, step: 0.05, onChange: value => refresh(value) });\\ncontrols.addButton({ label: 'Two real roots: c = 0', onClick: () => refresh(0) });\\ncontrols.addButton({ label: 'Repeated root: c = 1', onClick: () => refresh(1) });\\ncontrols.addButton({ label: 'No real roots: c = 2', onClick: () => refresh(2) });\\nawait scene.wait(999999);\"}",
+        "explanation": "The discriminant Δ = b² − 4ac is the expression under the square root in the quadratic formula. If Δ > 0, the parabola crosses the x-axis twice; if Δ = 0, it touches the axis at one repeated real root; and if Δ < 0, it never meets the axis, so there are no real roots. Move the slider to explore these cases for x² − 2x + c."
+      },
+      "code": "const heading = new Text({ text: 'The discriminant counts real roots', color: WHITE, fontSize: 32 });\nheading.moveTo([0, 3.2, 0]);\nconst formula = new MathTex({ latex: 'ax^2+bx+c=0\\quad(a\\ne0),\\qquad \\Delta=b^2-4ac' });\nawait formula.waitForRender();\nformula.scale(0.8);\nformula.moveTo([0, 2.5, 0]);\nscene.add(heading, formula);\n\nconst ax = new Axes({ xRange: [-2, 4, 1], yRange: [-3, 6, 1], xLength: 7, yLength: 4.4, tips: false });\nax.moveTo([-2, -0.3, 0]);\nconst zeroLine = new Line({ start: ax.c2p(-2, 0), end: ax.c2p(4, 0), color: WHITE });\nzeroLine.setStrokeWidth(3);\nconst axisCaption = new Text({ text: 'x-axis: y = 0', color: GRAY, fontSize: 18 });\naxisCaption.moveTo([-4.4, -2.8, 0]);\nscene.add(ax, zeroLine, axisCaption);\n\nconst example = new MathTex({ latex: 'y=x^2-2x+c' });\nawait example.waitForRender();\nexample.scale(0.8);\nexample.moveTo([3.8, 2.05, 0]);\nscene.add(example);\n\nlet constant = 0;\nlet curve = null;\nlet markers = [];\nlet readouts = [];\nfunction refresh(value) {\n  constant = value;\n  if (curve) scene.remove(curve);\n  markers.forEach(m => scene.remove(m));\n  readouts.forEach(m => scene.remove(m));\n  markers = [];\n  readouts = [];\n  const delta = 4 - 4 * constant;\n  const tangent = Math.abs(delta) < 0.000001;\n  const tint = tangent ? YELLOW : delta > 0 ? GREEN : RED;\n  const span = Math.sqrt(6.5 - constant);\n  curve = ax.plot(x => x * x - 2 * x + constant, {\n    xRange: [Math.max(-2, 1 - span), Math.min(4, 1 + span)],\n    color: BLUE,\n    numSamples: 240\n  });\n  curve.setStrokeWidth(4);\n  scene.add(curve);\n  if (delta >= -0.000001) {\n    const distance = Math.sqrt(Math.max(0, 1 - constant));\n    const roots = tangent ? [1] : [1 - distance, 1 + distance];\n    roots.forEach(root => {\n      const marker = new Dot({ point: ax.c2p(root, 0), color: tint });\n      markers.push(marker);\n      scene.add(marker);\n    });\n  }\n  const rows = [\n    { str: 'c = ' + constant.toFixed(2), y: 1.4, color: WHITE, size: 25 },\n    { str: 'Δ = 4 − 4c = ' + delta.toFixed(2), y: 0.8, color: tint, size: 24 },\n    { str: tangent ? 'Δ = 0: one real root' : delta > 0 ? 'Δ > 0: two real roots' : 'Δ < 0: no real roots', y: 0.1, color: tint, size: 23 },\n    { str: tangent ? 'Touches the x-axis' : delta > 0 ? 'Crosses the x-axis twice' : 'Never meets the x-axis', y: -0.5, color: WHITE, size: 19 },\n    { str: tangent ? 'x = 1 (repeated)' : delta > 0 ? 'x = ' + (1 - Math.sqrt(1 - constant)).toFixed(2) + ', ' + (1 + Math.sqrt(1 - constant)).toFixed(2) : 'The roots are complex', y: -1.1, color: GRAY, size: 20 }\n  ];\n  rows.forEach(row => {\n    const label = new Text({ text: row.str, color: row.color, fontSize: row.size });\n    label.moveTo([3.8, row.y, 0]);\n    readouts.push(label);\n    scene.add(label);\n  });\n}\nrefresh(0);\nconst instruction = new Text({ text: 'Change c to move the parabola up or down. The turning point reaches the axis at c = 1.', color: GRAY, fontSize: 19 });\ninstruction.moveTo([0, -3.3, 0]);\nscene.add(instruction);\nawait scene.wait(1.5);\nrefresh(1);\nawait scene.wait(1.5);\nrefresh(2);\nawait scene.wait(1.5);\nrefresh(0);\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\ncontrols.addSlider({ label: 'Constant c', min: -1, max: 3, value: 0, step: 0.05, onChange: value => refresh(value) });\ncontrols.addButton({ label: 'Two real roots: c = 0', onClick: () => refresh(0) });\ncontrols.addButton({ label: 'Repeated root: c = 1', onClick: () => refresh(1) });\ncontrols.addButton({ label: 'No real roots: c = 2', onClick: () => refresh(2) });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 8013,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 3,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/alg-discriminant.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/alg-discriminant.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T17:06:58.319Z"
+}

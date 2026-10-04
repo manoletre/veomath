@@ -1,0 +1,91 @@
+{
+  "itemId": "trig-tangent-graph",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.07% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (0.7, 0.7) — 0.38% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (0.7, 0.7) — 0.38% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 40944,
+        "inputTokens": 5316,
+        "cachedInputTokens": 5287,
+        "outputTokens": 1756,
+        "costUsd": 0.0181467,
+        "rawResponse": "{\"explanation\":\"The graph of y = tan(x) repeats every π and has vertical asymptotes wherever cos(x) = 0, because tan(x) = sin(x)/cos(x). From −2π to 2π, these occur at x = −3π/2, −π/2, π/2, and 3π/2. As x approaches any asymptote, tan(x) tends to +∞ from the left and −∞ from the right; the function is undefined on the asymptote itself.\",\"manimCode\":\"const pi = Math.PI;\\nconst ax = new Axes({ xRange: [-2*pi, 2*pi, pi/2], yRange: [-3.3, 3.3, 1], xLength: 11.4, yLength: 4.6, tips: false });\\nconst title = new Text({ text: 'y = tan(x)', fontSize: 34, color: BLUE });\\ntitle.moveTo([0, 3.22, 0]);\\nconst formula = new MathTex({ latex: 'x = \\\\\\\\frac{\\\\\\\\pi}{2} + k\\\\\\\\pi \\\\\\\\quad (k \\\\\\\\in \\\\\\\\mathbb{Z})', color: RED });\\nawait formula.waitForRender();\\nformula.scale(0.65);\\nformula.moveTo([0, 2.72, 0]);\\nscene.add(title, formula, ax);\\n\\n// Plot each branch separately: never connect across a discontinuity.\\nconst visibleAngle = Math.atan(3.3);\\nconst curves = [];\\nfor (let k = -2; k <= 2; k++) {\\n  const lo = Math.max(-2*pi, k*pi - visibleAngle);\\n  const hi = Math.min(2*pi, k*pi + visibleAngle);\\n  const branch = ax.plot(x => Math.tan(x), { xRange: [lo, hi, 0.015], color: BLUE });\\n  branch.setStrokeWidth(3);\\n  curves.push(branch);\\n}\\nconst asymptotes = [];\\nconst asymValues = [-1.5*pi, -0.5*pi, 0.5*pi, 1.5*pi];\\nconst asymNames = ['-\\\\\\\\frac{3\\\\\\\\pi}{2}', '-\\\\\\\\frac{\\\\\\\\pi}{2}', '\\\\\\\\frac{\\\\\\\\pi}{2}', '\\\\\\\\frac{3\\\\\\\\pi}{2}'];\\nfor (let i = 0; i < asymValues.length; i++) {\\n  const xx = asymValues[i];\\n  const dashed = new DashedLine({ start: ax.c2p(xx, -3.3), end: ax.c2p(xx, 3.3), color: RED });\\n  dashed.setOpacity(0.7);\\n  asymptotes.push(dashed);\\n  const label = new MathTex({ latex: asymNames[i], color: RED });\\n  await label.waitForRender();\\n  label.scale(0.55);\\n  label.moveTo([ax.c2p(xx, 0)[0], -2.57, 0]);\\n  scene.add(label);\\n}\\nfor (const sign of [-1, 1]) {\\n  const endpointLabel = new MathTex({ latex: sign < 0 ? '-2\\\\\\\\pi' : '2\\\\\\\\pi', color: GRAY });\\n  await endpointLabel.waitForRender();\\n  endpointLabel.scale(0.55);\\n  endpointLabel.moveTo([ax.c2p(sign*2*pi, 0)[0], -0.35, 0]);\\n  scene.add(endpointLabel);\\n}\\nawait scene.play(new AnimationGroup([...asymptotes.map(m => new Create(m)), ...curves.map(m => new Create(m))]));\\n\\nlet selectedX = pi/4;\\nconst handle = new Dot({ point: ax.c2p(selectedX, Math.tan(selectedX)), radius: 0.13, color: YELLOW });\\nconst guide = new DashedLine({ start: ax.c2p(selectedX, 0), end: ax.c2p(selectedX, Math.tan(selectedX)), color: YELLOW });\\nguide.setOpacity(0.5);\\nconst readout = new Text({ text: '', fontSize: 24, color: YELLOW });\\nreadout.moveTo([0, -3.03, 0]);\\nconst hint = new Text({ text: 'Drag the yellow point across branches • red dashed lines are not part of the graph', fontSize: 18, color: GRAY });\\nhint.moveTo([0, -3.48, 0]);\\nscene.add(guide, handle, readout, hint);\\n\\nfunction update() {\\n  const yy = Math.tan(selectedX);\\n  handle.moveTo(ax.c2p(selectedX, yy));\\n  guide.setStart(ax.c2p(selectedX, 0));\\n  guide.setEnd(ax.c2p(selectedX, yy));\\n  readout.setText('x = ' + (selectedX/pi).toFixed(3) + 'π     tan(x) = ' + yy.toFixed(3));\\n}\\nupdate();\\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\\n  const requested = Math.max(-2*pi, Math.min(2*pi, ax.pointToCoords(pos)[0]));\\n  const branchIndex = Math.max(-2, Math.min(2, Math.round(requested/pi)));\\n  const lo = Math.max(-2*pi, branchIndex*pi - visibleAngle);\\n  const hi = Math.min(2*pi, branchIndex*pi + visibleAngle);\\n  selectedX = Math.max(lo, Math.min(hi, requested));\\n  update();\\n} });\\nawait scene.wait(999999);\"}",
+        "explanation": "The graph of y = tan(x) repeats every π and has vertical asymptotes wherever cos(x) = 0, because tan(x) = sin(x)/cos(x). From −2π to 2π, these occur at x = −3π/2, −π/2, π/2, and 3π/2. As x approaches any asymptote, tan(x) tends to +∞ from the left and −∞ from the right; the function is undefined on the asymptote itself."
+      },
+      "code": "const pi = Math.PI;\nconst ax = new Axes({ xRange: [-2*pi, 2*pi, pi/2], yRange: [-3.3, 3.3, 1], xLength: 11.4, yLength: 4.6, tips: false });\nconst title = new Text({ text: 'y = tan(x)', fontSize: 34, color: BLUE });\ntitle.moveTo([0, 3.22, 0]);\nconst formula = new MathTex({ latex: 'x = \\\\frac{\\\\pi}{2} + k\\\\pi \\\\quad (k \\\\in \\\\mathbb{Z})', color: RED });\nawait formula.waitForRender();\nformula.scale(0.65);\nformula.moveTo([0, 2.72, 0]);\nscene.add(title, formula, ax);\n\n// Plot each branch separately: never connect across a discontinuity.\nconst visibleAngle = Math.atan(3.3);\nconst curves = [];\nfor (let k = -2; k <= 2; k++) {\n  const lo = Math.max(-2*pi, k*pi - visibleAngle);\n  const hi = Math.min(2*pi, k*pi + visibleAngle);\n  const branch = ax.plot(x => Math.tan(x), { xRange: [lo, hi, 0.015], color: BLUE });\n  branch.setStrokeWidth(3);\n  curves.push(branch);\n}\nconst asymptotes = [];\nconst asymValues = [-1.5*pi, -0.5*pi, 0.5*pi, 1.5*pi];\nconst asymNames = ['-\\\\frac{3\\\\pi}{2}', '-\\\\frac{\\\\pi}{2}', '\\\\frac{\\\\pi}{2}', '\\\\frac{3\\\\pi}{2}'];\nfor (let i = 0; i < asymValues.length; i++) {\n  const xx = asymValues[i];\n  const dashed = new DashedLine({ start: ax.c2p(xx, -3.3), end: ax.c2p(xx, 3.3), color: RED });\n  dashed.setOpacity(0.7);\n  asymptotes.push(dashed);\n  const label = new MathTex({ latex: asymNames[i], color: RED });\n  await label.waitForRender();\n  label.scale(0.55);\n  label.moveTo([ax.c2p(xx, 0)[0], -2.57, 0]);\n  scene.add(label);\n}\nfor (const sign of [-1, 1]) {\n  const endpointLabel = new MathTex({ latex: sign < 0 ? '-2\\\\pi' : '2\\\\pi', color: GRAY });\n  await endpointLabel.waitForRender();\n  endpointLabel.scale(0.55);\n  endpointLabel.moveTo([ax.c2p(sign*2*pi, 0)[0], -0.35, 0]);\n  scene.add(endpointLabel);\n}\nawait scene.play(new AnimationGroup([...asymptotes.map(m => new Create(m)), ...curves.map(m => new Create(m))]));\n\nlet selectedX = pi/4;\nconst handle = new Dot({ point: ax.c2p(selectedX, Math.tan(selectedX)), radius: 0.13, color: YELLOW });\nconst guide = new DashedLine({ start: ax.c2p(selectedX, 0), end: ax.c2p(selectedX, Math.tan(selectedX)), color: YELLOW });\nguide.setOpacity(0.5);\nconst readout = new Text({ text: '', fontSize: 24, color: YELLOW });\nreadout.moveTo([0, -3.03, 0]);\nconst hint = new Text({ text: 'Drag the yellow point across branches • red dashed lines are not part of the graph', fontSize: 18, color: GRAY });\nhint.moveTo([0, -3.48, 0]);\nscene.add(guide, handle, readout, hint);\n\nfunction update() {\n  const yy = Math.tan(selectedX);\n  handle.moveTo(ax.c2p(selectedX, yy));\n  guide.setStart(ax.c2p(selectedX, 0));\n  guide.setEnd(ax.c2p(selectedX, yy));\n  readout.setText('x = ' + (selectedX/pi).toFixed(3) + 'π     tan(x) = ' + yy.toFixed(3));\n}\nupdate();\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\n  const requested = Math.max(-2*pi, Math.min(2*pi, ax.pointToCoords(pos)[0]));\n  const branchIndex = Math.max(-2, Math.min(2, Math.round(requested/pi)));\n  const lo = Math.max(-2*pi, branchIndex*pi - visibleAngle);\n  const hi = Math.min(2*pi, branchIndex*pi + visibleAngle);\n  selectedX = Math.max(lo, Math.min(hi, requested));\n  update();\n} });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 8912,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "drag",
+            "label": "Dot at (0.7, 0.7)",
+            "change": 0.0038270399305555558,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/trig-tangent-graph.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/trig-tangent-graph.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:53:08.575Z"
+}

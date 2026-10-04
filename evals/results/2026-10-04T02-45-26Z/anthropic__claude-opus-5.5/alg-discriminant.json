@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-discriminant",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.81% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.46% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 36963,
+        "inputTokens": 8066,
+        "cachedInputTokens": 7569,
+        "outputTokens": 4043,
+        "costUsd": 0.08634179999999998,
+        "rawResponse": "{\"explanation\":\"The discriminant Δ = b² − 4ac is the part under the square root in the quadratic formula x = (−b ± √Δ)/(2a). If Δ > 0, ± gives two different real roots and the parabola crosses the x-axis twice. If Δ = 0, ± adds nothing, so there is one repeated root and the vertex just touches the axis. If Δ < 0, a negative number has no real square root, so the parabola never reaches the x-axis. Move the a, b, c sliders to see this (a = 1, b = 2, c = 1 gives Δ = 0 exactly).\",\"manimCode\":\"const XMIN = -6, XMAX = 6, YMIN = -5, YMAX = 5;\\nconst ax = new Axes({ xRange: [XMIN, XMAX, 1], yRange: [YMIN, YMAX, 1], xLength: 7.5, yLength: 6.2, tips: false });\\nscene.add(ax);\\n\\nconst formula = new MathTex({ latex: 'y = ax^2 + bx + c' });\\nawait formula.waitForRender();\\nformula.scale(0.8);\\nformula.moveTo([-5.0, 3.5, 0]);\\nconst formula2 = new MathTex({ latex: '\\\\\\\\Delta = b^2 - 4ac' });\\nawait formula2.waitForRender();\\nformula2.scale(0.8);\\nformula2.moveTo([-5.0, 2.7, 0]);\\nscene.add(formula, formula2);\\n\\nlet a = 1, b = 0, c = -2;\\nlet curveGroup = null;\\nlet rootDots = [];\\nlet vertexDot = null;\\nlet deltaText = null;\\nlet statusText = null;\\nlet rootsText = null;\\n\\nfunction f(x) { return a * x * x + b * x + c; }\\n\\nfunction buildCurve(col) {\\n  // plot only the runs where the curve stays inside the y-range\\n  const N = 400;\\n  const parts = [];\\n  let runStart = null;\\n  let prevX = XMIN;\\n  for (let i = 0; i <= N; i++) {\\n    const x = XMIN + (XMAX - XMIN) * i / N;\\n    const y = f(x);\\n    const inside = y >= YMIN && y <= YMAX;\\n    if (inside && runStart === null) runStart = x;\\n    if ((!inside || i === N) && runStart !== null) {\\n      const end = inside ? x : prevX;\\n      if (end - runStart > 0.02) {\\n        parts.push(ax.plot(f, { color: col, xRange: [runStart, end], numSamples: 200 }));\\n      }\\n      runStart = null;\\n    }\\n    prevX = x;\\n  }\\n  return new VGroup(...parts);\\n}\\n\\nfunction makeText(str, col, size, pos) {\\n  const t = new Text({ text: str, color: col, fontSize: size });\\n  t.moveTo(pos);\\n  scene.add(t);\\n  return t;\\n}\\n\\nfunction fmt(v) { return (Math.abs(v) < 1e-9 ? 0 : v).toFixed(2); }\\n\\nfunction update() {\\n  if (curveGroup) scene.remove(curveGroup);\\n  rootDots.forEach(d => scene.remove(d));\\n  rootDots = [];\\n  if (vertexDot) scene.remove(vertexDot);\\n  vertexDot = null;\\n  if (deltaText) scene.remove(deltaText);\\n  if (statusText) scene.remove(statusText);\\n  if (rootsText) scene.remove(rootsText);\\n\\n  const D = b * b - 4 * a * c;\\n  const isQuad = Math.abs(a) > 1e-9;\\n  let col, status, rootsStr = '';\\n  if (!isQuad) {\\n    col = GRAY; status = 'a = 0: not a quadratic';\\n  } else if (Math.abs(D) < 1e-9) {\\n    col = YELLOW; status = 'Δ = 0 → one real root';\\n    const r = -b / (2 * a);\\n    rootsStr = 'x = ' + fmt(r);\\n    if (r >= XMIN && r <= XMAX) rootDots.push(new Dot({ point: ax.c2p(r, 0), color: YELLOW, radius: 0.12 }));\\n  } else if (D > 0) {\\n    col = GREEN; status = 'Δ > 0 → two real roots';\\n    const s = Math.sqrt(D);\\n    const r1 = (-b - s) / (2 * a), r2 = (-b + s) / (2 * a);\\n    rootsStr = 'x = ' + fmt(Math.min(r1, r2)) + ',  ' + fmt(Math.max(r1, r2));\\n    [r1, r2].forEach(r => {\\n      if (r >= XMIN && r <= XMAX) rootDots.push(new Dot({ point: ax.c2p(r, 0), color: GREEN, radius: 0.12 }));\\n    });\\n  } else {\\n    col = RED; status = 'Δ < 0 → no real roots';\\n    rootsStr = 'parabola misses the x-axis';\\n  }\\n\\n  curveGroup = buildCurve(isQuad ? BLUE : GRAY);\\n  scene.add(curveGroup);\\n\\n  if (isQuad) {\\n    const vx = -b / (2 * a), vy = f(vx);\\n    if (vx >= XMIN && vx <= XMAX && vy >= YMIN && vy <= YMAX) {\\n      vertexDot = new Dot({ point: ax.c2p(vx, vy), color: col, radius: 0.07 });\\n      scene.add(vertexDot);\\n    }\\n  }\\n  rootDots.forEach(d => scene.add(d));\\n\\n  deltaText = makeText('Δ = ' + fmt(b * b) + ' − ' + fmt(4 * a * c) + ' = ' + fmt(D), WHITE, 22, [4.9, -1.2, 0]);\\n  statusText = makeText(status, col, 24, [4.9, -1.9, 0]);\\n  rootsText = makeText(rootsStr, col, 20, [4.9, -2.6, 0]);\\n}\\n\\nupdate();\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'a', min: -2, max: 2, value: 1, step: 0.1, onChange: (v) => { a = Math.round(v * 10) / 10; update(); } });\\ncontrols.addSlider({ label: 'b', min: -5, max: 5, value: 0, step: 0.1, onChange: (v) => { b = Math.round(v * 10) / 10; update(); } });\\ncontrols.addSlider({ label: 'c', min: -4, max: 4, value: -2, step: 0.1, onChange: (v) => { c = Math.round(v * 10) / 10; update(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The discriminant Δ = b² − 4ac is the part under the square root in the quadratic formula x = (−b ± √Δ)/(2a). If Δ > 0, ± gives two different real roots and the parabola crosses the x-axis twice. If Δ = 0, ± adds nothing, so there is one repeated root and the vertex just touches the axis. If Δ < 0, a negative number has no real square root, so the parabola never reaches the x-axis. Move the a, b, c sliders to see this (a = 1, b = 2, c = 1 gives Δ = 0 exactly)."
+      },
+      "code": "const XMIN = -6, XMAX = 6, YMIN = -5, YMAX = 5;\nconst ax = new Axes({ xRange: [XMIN, XMAX, 1], yRange: [YMIN, YMAX, 1], xLength: 7.5, yLength: 6.2, tips: false });\nscene.add(ax);\n\nconst formula = new MathTex({ latex: 'y = ax^2 + bx + c' });\nawait formula.waitForRender();\nformula.scale(0.8);\nformula.moveTo([-5.0, 3.5, 0]);\nconst formula2 = new MathTex({ latex: '\\\\Delta = b^2 - 4ac' });\nawait formula2.waitForRender();\nformula2.scale(0.8);\nformula2.moveTo([-5.0, 2.7, 0]);\nscene.add(formula, formula2);\n\nlet a = 1, b = 0, c = -2;\nlet curveGroup = null;\nlet rootDots = [];\nlet vertexDot = null;\nlet deltaText = null;\nlet statusText = null;\nlet rootsText = null;\n\nfunction f(x) { return a * x * x + b * x + c; }\n\nfunction buildCurve(col) {\n  // plot only the runs where the curve stays inside the y-range\n  const N = 400;\n  const parts = [];\n  let runStart = null;\n  let prevX = XMIN;\n  for (let i = 0; i <= N; i++) {\n    const x = XMIN + (XMAX - XMIN) * i / N;\n    const y = f(x);\n    const inside = y >= YMIN && y <= YMAX;\n    if (inside && runStart === null) runStart = x;\n    if ((!inside || i === N) && runStart !== null) {\n      const end = inside ? x : prevX;\n      if (end - runStart > 0.02) {\n        parts.push(ax.plot(f, { color: col, xRange: [runStart, end], numSamples: 200 }));\n      }\n      runStart = null;\n    }\n    prevX = x;\n  }\n  return new VGroup(...parts);\n}\n\nfunction makeText(str, col, size, pos) {\n  const t = new Text({ text: str, color: col, fontSize: size });\n  t.moveTo(pos);\n  scene.add(t);\n  return t;\n}\n\nfunction fmt(v) { return (Math.abs(v) < 1e-9 ? 0 : v).toFixed(2); }\n\nfunction update() {\n  if (curveGroup) scene.remove(curveGroup);\n  rootDots.forEach(d => scene.remove(d));\n  rootDots = [];\n  if (vertexDot) scene.remove(vertexDot);\n  vertexDot = null;\n  if (deltaText) scene.remove(deltaText);\n  if (statusText) scene.remove(statusText);\n  if (rootsText) scene.remove(rootsText);\n\n  const D = b * b - 4 * a * c;\n  const isQuad = Math.abs(a) > 1e-9;\n  let col, status, rootsStr = '';\n  if (!isQuad) {\n    col = GRAY; status = 'a = 0: not a quadratic';\n  } else if (Math.abs(D) < 1e-9) {\n    col = YELLOW; status = 'Δ = 0 → one real root';\n    const r = -b / (2 * a);\n    rootsStr = 'x = ' + fmt(r);\n    if (r >= XMIN && r <= XMAX) rootDots.push(new Dot({ point: ax.c2p(r, 0), color: YELLOW, radius: 0.12 }));\n  } else if (D > 0) {\n    col = GREEN; status = 'Δ > 0 → two real roots';\n    const s = Math.sqrt(D);\n    const r1 = (-b - s) / (2 * a), r2 = (-b + s) / (2 * a);\n    rootsStr = 'x = ' + fmt(Math.min(r1, r2)) + ',  ' + fmt(Math.max(r1, r2));\n    [r1, r2].forEach(r => {\n      if (r >= XMIN && r <= XMAX) rootDots.push(new Dot({ point: ax.c2p(r, 0), color: GREEN, radius: 0.12 }));\n    });\n  } else {\n    col = RED; status = 'Δ < 0 → no real roots';\n    rootsStr = 'parabola misses the x-axis';\n  }\n\n  curveGroup = buildCurve(isQuad ? BLUE : GRAY);\n  scene.add(curveGroup);\n\n  if (isQuad) {\n    const vx = -b / (2 * a), vy = f(vx);\n    if (vx >= XMIN && vx <= XMAX && vy >= YMIN && vy <= YMAX) {\n      vertexDot = new Dot({ point: ax.c2p(vx, vy), color: col, radius: 0.07 });\n      scene.add(vertexDot);\n    }\n  }\n  rootDots.forEach(d => scene.add(d));\n\n  deltaText = makeText('Δ = ' + fmt(b * b) + ' − ' + fmt(4 * a * c) + ' = ' + fmt(D), WHITE, 22, [4.9, -1.2, 0]);\n  statusText = makeText(status, col, 24, [4.9, -1.9, 0]);\n  rootsText = makeText(rootsStr, col, 20, [4.9, -2.6, 0]);\n}\n\nupdate();\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'a', min: -2, max: 2, value: 1, step: 0.1, onChange: (v) => { a = Math.round(v * 10) / 10; update(); } });\ncontrols.addSlider({ label: 'b', min: -5, max: 5, value: 0, step: 0.1, onChange: (v) => { b = Math.round(v * 10) / 10; update(); } });\ncontrols.addSlider({ label: 'c', min: -4, max: 4, value: -2, step: 0.1, onChange: (v) => { c = Math.round(v * 10) / 10; update(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 6558,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 3,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/alg-discriminant.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/alg-discriminant.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:57.077Z"
+}

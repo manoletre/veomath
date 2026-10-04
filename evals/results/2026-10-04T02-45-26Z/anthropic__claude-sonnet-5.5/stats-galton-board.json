@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-galton-board",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 0,
+  "firstAttemptScore": 0,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": false,
+          "detail": "Did not reach the final scene.wait() within 45s"
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "6.13% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=2 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 21630,
+        "inputTokens": 7958,
+        "cachedInputTokens": 7476,
+        "outputTokens": 2737,
+        "costUsd": 0.0307892,
+        "rawResponse": "{\"explanation\":\"Each ball hits 8 rows of pegs and bounces left or right with probability 1/2 at each one. Its final bin is the number of right bounces, which follows Binomial(8, 1/2). As balls pile up, the bars take the bell shape and approach the yellow theoretical dots. Use the button to drop more balls.\",\"manimCode\":\"const n = 8, dx = 0.6, dy = 0.38, top = 3.1, base = -2.6;\\nconst rowY = r => top - r * dy;\\n\\n// pegs\\nfor (let r = 0; r < n; r++) {\\n  for (let j = 0; j <= r; j++) {\\n    scene.add(new Dot({ point: [(j - r / 2) * dx, rowY(r), 0], color: GRAY, radius: 0.05 }));\\n  }\\n}\\n// bin dividers + baseline\\nconst floor = new Line({ start: [-2.9, base, 0], end: [2.9, base, 0], color: WHITE });\\nscene.add(floor);\\nfor (let k = 0; k <= n + 1; k++) {\\n  const x = (k - 4.5) * dx;\\n  scene.add(new Line({ start: [x, base, 0], end: [x, base + 2.3, 0], color: GRAY_D || GRAY, strokeWidth: 1 }));\\n}\\n\\n// theoretical binomial\\nfunction choose(a, b) { let r = 1; for (let i = 1; i <= b; i++) r = r * (a - b + i) / i; return r; }\\nconst pmf = k => choose(n, k) / Math.pow(2, n);\\nconst S = 6; // height scale\\nfor (let k = 0; k <= n; k++) {\\n  scene.add(new Dot({ point: [(k - 4) * dx, base + pmf(k) * S, 0], color: YELLOW, radius: 0.07 }));\\n}\\nconst legend = new Text({ text: 'yellow dots: Binomial(8, 1/2)', color: YELLOW, fontSize: 22 });\\nlegend.moveTo([4.6, 2.4, 0]);\\nscene.add(legend);\\nconst title = new Text({ text: 'Galton Board', color: WHITE, fontSize: 36 });\\ntitle.moveTo([-4.5, 3.2, 0]);\\nscene.add(title);\\n\\nconst counts = new Array(n + 1).fill(0);\\nlet total = 0;\\nlet bars = [];\\nlet info = null;\\nfunction redraw() {\\n  bars.forEach(b => scene.remove(b));\\n  bars = [];\\n  for (let k = 0; k <= n; k++) {\\n    if (counts[k] === 0) continue;\\n    const h = Math.max(0.02, counts[k] / total * S);\\n    const b = new Rectangle({ width: dx * 0.85, height: h, color: BLUE });\\n    b.setFill(BLUE, 0.7);\\n    b.moveTo([(k - 4) * dx, base + h / 2, 0]);\\n    scene.add(b);\\n    bars.push(b);\\n  }\\n  if (info) scene.remove(info);\\n  info = new Text({ text: 'Balls: ' + total, color: WHITE, fontSize: 26 });\\n  info.moveTo([-4.5, 2.4, 0]);\\n  scene.add(info);\\n}\\nredraw();\\n\\nasync function dropBall() {\\n  const ball = new Dot({ point: [0, top + 0.6, 0], color: RED, radius: 0.1 });\\n  scene.add(ball);\\n  let x = 0, y = top + 0.6;\\n  let k = 0;\\n  for (let r = 0; r < n; r++) {\\n    const ty = rowY(r) + 0.15;\\n    await scene.play(new Shift(ball, { direction: [0, ty - y, 0], runTime: 0.06 }));\\n    y = ty;\\n    const right = Math.random() < 0.5;\\n    if (right) k++;\\n    const step = right ? dx / 2 : -dx / 2;\\n    const ny = (r < n - 1 ? rowY(r + 1) : rowY(n - 1) - dy) + 0.15;\\n    await scene.play(new Shift(ball, { direction: [step, ny - y, 0], runTime: 0.08 }));\\n    x += step; y = ny;\\n  }\\n  await scene.play(new Shift(ball, { direction: [0, base + 0.1 - y, 0], runTime: 0.1 }));\\n  scene.remove(ball);\\n  counts[k]++; total++;\\n  redraw();\\n}\\n\\nlet running = false;\\nasync function dropMany(m) {\\n  if (running) return;\\n  running = true;\\n  for (let i = 0; i < m; i++) await dropBall();\\n  running = false;\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addButton({ label: 'Drop 20 balls', onClick: () => { dropMany(20); } });\\ncontrols.addButton({ label: 'Reset', onClick: () => {\\n  if (running) return;\\n  counts.fill(0); total = 0; redraw();\\n} });\\n\\nawait dropMany(25);\\nawait scene.wait(999999);\"}",
+        "explanation": "Each ball hits 8 rows of pegs and bounces left or right with probability 1/2 at each one. Its final bin is the number of right bounces, which follows Binomial(8, 1/2). As balls pile up, the bars take the bell shape and approach the yellow theoretical dots. Use the button to drop more balls."
+      },
+      "code": "const n = 8, dx = 0.6, dy = 0.38, top = 3.1, base = -2.6;\nconst rowY = r => top - r * dy;\n\n// pegs\nfor (let r = 0; r < n; r++) {\n  for (let j = 0; j <= r; j++) {\n    scene.add(new Dot({ point: [(j - r / 2) * dx, rowY(r), 0], color: GRAY, radius: 0.05 }));\n  }\n}\n// bin dividers + baseline\nconst floor = new Line({ start: [-2.9, base, 0], end: [2.9, base, 0], color: WHITE });\nscene.add(floor);\nfor (let k = 0; k <= n + 1; k++) {\n  const x = (k - 4.5) * dx;\n  scene.add(new Line({ start: [x, base, 0], end: [x, base + 2.3, 0], color: GRAY_D || GRAY, strokeWidth: 1 }));\n}\n\n// theoretical binomial\nfunction choose(a, b) { let r = 1; for (let i = 1; i <= b; i++) r = r * (a - b + i) / i; return r; }\nconst pmf = k => choose(n, k) / Math.pow(2, n);\nconst S = 6; // height scale\nfor (let k = 0; k <= n; k++) {\n  scene.add(new Dot({ point: [(k - 4) * dx, base + pmf(k) * S, 0], color: YELLOW, radius: 0.07 }));\n}\nconst legend = new Text({ text: 'yellow dots: Binomial(8, 1/2)', color: YELLOW, fontSize: 22 });\nlegend.moveTo([4.6, 2.4, 0]);\nscene.add(legend);\nconst title = new Text({ text: 'Galton Board', color: WHITE, fontSize: 36 });\ntitle.moveTo([-4.5, 3.2, 0]);\nscene.add(title);\n\nconst counts = new Array(n + 1).fill(0);\nlet total = 0;\nlet bars = [];\nlet info = null;\nfunction redraw() {\n  bars.forEach(b => scene.remove(b));\n  bars = [];\n  for (let k = 0; k <= n; k++) {\n    if (counts[k] === 0) continue;\n    const h = Math.max(0.02, counts[k] / total * S);\n    const b = new Rectangle({ width: dx * 0.85, height: h, color: BLUE });\n    b.setFill(BLUE, 0.7);\n    b.moveTo([(k - 4) * dx, base + h / 2, 0]);\n    scene.add(b);\n    bars.push(b);\n  }\n  if (info) scene.remove(info);\n  info = new Text({ text: 'Balls: ' + total, color: WHITE, fontSize: 26 });\n  info.moveTo([-4.5, 2.4, 0]);\n  scene.add(info);\n}\nredraw();\n\nasync function dropBall() {\n  const ball = new Dot({ point: [0, top + 0.6, 0], color: RED, radius: 0.1 });\n  scene.add(ball);\n  let x = 0, y = top + 0.6;\n  let k = 0;\n  for (let r = 0; r < n; r++) {\n    const ty = rowY(r) + 0.15;\n    await scene.play(new Shift(ball, { direction: [0, ty - y, 0], runTime: 0.06 }));\n    y = ty;\n    const right = Math.random() < 0.5;\n    if (right) k++;\n    const step = right ? dx / 2 : -dx / 2;\n    const ny = (r < n - 1 ? rowY(r + 1) : rowY(n - 1) - dy) + 0.15;\n    await scene.play(new Shift(ball, { direction: [step, ny - y, 0], runTime: 0.08 }));\n    x += step; y = ny;\n  }\n  await scene.play(new Shift(ball, { direction: [0, base + 0.1 - y, 0], runTime: 0.1 }));\n  scene.remove(ball);\n  counts[k]++; total++;\n  redraw();\n}\n\nlet running = false;\nasync function dropMany(m) {\n  if (running) return;\n  running = true;\n  for (let i = 0; i < m; i++) await dropBall();\n  running = false;\n}\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addButton({ label: 'Drop 20 balls', onClick: () => { dropMany(20); } });\ncontrols.addButton({ label: 'Reset', onClick: () => {\n  if (running) return;\n  counts.fill(0); total = 0; redraw();\n} });\n\nawait dropMany(25);\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 47588,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 45,
+        "controls": {
+          "sliders": 0,
+          "buttons": 2,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/stats-galton-board.0.final.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:35:57.372Z"
+}

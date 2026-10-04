@@ -1,0 +1,64 @@
+{
+  "runId": "2026-10-04T21-51-17Z",
+  "startedAt": "2026-10-04T21:51:17.307Z",
+  "datasetVersion": 1,
+  "datasetHash": "ee618dfa7529",
+  "promptHash": "af1b61ba43ce",
+  "models": [
+    "openai/gpt-6.1-sol"
+  ],
+  "itemIds": [
+    "alg-vertex-form",
+    "alg-completing-square",
+    "alg-phone-plans",
+    "alg-discriminant",
+    "alg-inverse-exp-log",
+    "alg-rational-asymptotes",
+    "geo-pythagorean-proof",
+    "geo-triangle-angle-sum",
+    "geo-inscribed-angle",
+    "geo-similar-area",
+    "geo-cone-cylinder",
+    "trig-unit-circle-sine",
+    "trig-radian",
+    "trig-sinusoid-params",
+    "trig-law-of-cosines",
+    "trig-tangent-graph",
+    "seq-geometric-series",
+    "seq-compound-interest-e",
+    "stats-normal-empirical",
+    "stats-galton-board",
+    "stats-bayes-medical",
+    "stats-regression-drag",
+    "calc-secant-tangent",
+    "calc-riemann-sums",
+    "calc-matrix-transform"
+  ],
+  "summaries": [
+    {
+      "model": "openai/gpt-6.1-sol",
+      "via": "gateway",
+      "items": 25,
+      "meanScore": 0.9745454545454545,
+      "firstAttemptMeanScore": 0.9745454545454545,
+      "retryRate": 0,
+      "fullPassRate": 0.72,
+      "checkPassRates": {
+        "generated": 1,
+        "runs": 1,
+        "completes": 1,
+        "nonBlank": 1,
+        "inFrame": 1,
+        "noTextOverlap": 0.88,
+        "noRawLatex": 1,
+        "interactive": 1,
+        "respondsToInteraction": 0.84,
+        "canvasInteraction": 1,
+        "stableUnderInteraction": 1
+      },
+      "meanLatencyMs": 48940.6,
+      "totalCostUsd": 0.5770808000000001
+    }
+  ],
+  "finishedAt": "2026-10-04T21:54:31.418Z"
+}

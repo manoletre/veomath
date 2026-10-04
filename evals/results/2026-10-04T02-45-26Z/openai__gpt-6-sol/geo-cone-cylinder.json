@@ -1,0 +1,149 @@
+{
+  "itemId": "geo-cone-cylinder",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0,
+  "retried": true,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": false,
+          "detail": "TypeError: Cannot read properties of null (reading '4')"
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": false,
+          "detail": "0.00% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": false,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 70150,
+        "inputTokens": 12276,
+        "cachedInputTokens": 11008,
+        "outputTokens": 2761,
+        "costUsd": 0.032347600000000004,
+        "rawResponse": "{\"explanation\":\"Measure distance z downward from the cone’s tip. At that height, the cone’s radius is Rz/h, so its cross-sectional area is (z/h)² times the cylinder’s constant area πR². Averaging that fraction over the height gives ∫₀¹t²dt = 1/3, so the cone has one third of the cylinder’s volume.\",\"manimCode\":\"const title = new Text({ text: 'Why is the cone one third?', color: WHITE, fontSize: 34 });\\ntitle.moveTo([0, 3.25, 0]);\\n\\nconst coneX = -4;\\nconst cylX = -0.8;\\nconst topY = 1.45;\\nconst bottomY = -1.55;\\nconst R = 1.2;\\n\\nconst cone = new Polygon({\\n  vertices: [[coneX, topY, 0], [coneX - R, bottomY, 0], [coneX + R, bottomY, 0]],\\n  color: BLUE\\n});\\ncone.setFill(BLUE, 0.18);\\ncone.setStrokeWidth(3);\\n\\nconst cylinder = new Polygon({\\n  vertices: [[cylX - R, topY, 0], [cylX + R, topY, 0], [cylX + R, bottomY, 0], [cylX - R, bottomY, 0]],\\n  color: TEAL\\n});\\ncylinder.setFill(TEAL, 0.14);\\ncylinder.setStrokeWidth(3);\\n\\nconst coneName = new Text({ text: 'Cone', color: BLUE, fontSize: 26 });\\nconeName.moveTo([coneX, -2.02, 0]);\\nconst cylName = new Text({ text: 'Cylinder', color: TEAL, fontSize: 26 });\\ncylName.moveTo([cylX, -2.02, 0]);\\n\\nconst ax = new Axes({ xRange: [0, 1, 0.25], yRange: [0, 1, 0.25], xLength: 2.8, yLength: 2.8, tips: false });\\nax.moveTo([3.65, -0.15, 0]);\\nconst curve = ax.plot(t => t * t, { color: YELLOW, xRange: [0, 1], numSamples: 120 });\\nconst area = ax.getArea(curve, [0, 1], { color: YELLOW, opacity: 0.28 });\\nconst graphName = new Text({ text: 'Area fraction', color: YELLOW, fontSize: 25 });\\ngraphName.moveTo([3.65, 1.9, 0]);\\nconst graphX = new Text({ text: 't = distance from tip / h', color: GRAY, fontSize: 17 });\\ngraphX.moveTo([3.65, -1.95, 0]);\\n\\nlet t = 0.6;\\nconst yAt = () => topY - 3 * t;\\nconst coneSlice = new Polygon({ vertices: [[coneX - R * t, yAt(), 0], [coneX + R * t, yAt(), 0]], color: YELLOW });\\nconeSlice.setStrokeWidth(6).setFillOpacity(0);\\nconst cylSlice = new Polygon({ vertices: [[cylX - R, yAt(), 0], [cylX + R, yAt(), 0]], color: YELLOW });\\ncylSlice.setStrokeWidth(6).setFillOpacity(0);\\nconst graphDot = new Dot({ point: ax.c2p(t, t * t), color: YELLOW });\\n\\nconst relation = new MathTex({ latex: 'A_{\\\\mathrm{cone}}(t)=t^2 A_{\\\\mathrm{cylinder}}' });\\nawait relation.waitForRender();\\nrelation.moveTo([-2.4, 2.28, 0]);\\nconst result = new MathTex({ latex: 'V_{\\\\mathrm{cone}}=\\\\pi R^2h\\\\int_0^1 t^2\\\\,dt=\\\\frac{1}{3}\\\\pi R^2h' });\\nawait result.waitForRender();\\nresult.moveTo([-0.65, -3.12, 0]);\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new AnimationGroup([new Create(cone), new Create(cylinder), new Create(ax)]));\\nscene.add(area, curve, coneName, cylName, graphName, graphX, coneSlice, cylSlice, graphDot);\\nawait scene.play(new AnimationGroup([new Write(relation), new Write(result)]));\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 220 });\\ncontrols.addSlider({ label: 'Slice position t', min: 0.02, max: 1, value: t, step: 0.01, onChange: v => {\\n  t = v;\\n  const y = yAt();\\n  coneSlice.setVertices([[coneX - R * t, y, 0], [coneX + R * t, y, 0]]);\\n  cylSlice.setVertices([[cylX - R, y, 0], [cylX + R, y, 0]]);\\n  graphDot.moveTo(ax.c2p(t, t * t));\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Measure distance z downward from the cone’s tip. At that height, the cone’s radius is Rz/h, so its cross-sectional area is (z/h)² times the cylinder’s constant area πR². Averaging that fraction over the height gives ∫₀¹t²dt = 1/3, so the cone has one third of the cylinder’s volume."
+      },
+      "code": "const title = new Text({ text: 'Why is the cone one third?', color: WHITE, fontSize: 34 });\ntitle.moveTo([0, 3.25, 0]);\n\nconst coneX = -4;\nconst cylX = -0.8;\nconst topY = 1.45;\nconst bottomY = -1.55;\nconst R = 1.2;\n\nconst cone = new Polygon({\n  vertices: [[coneX, topY, 0], [coneX - R, bottomY, 0], [coneX + R, bottomY, 0]],\n  color: BLUE\n});\ncone.setFill(BLUE, 0.18);\ncone.setStrokeWidth(3);\n\nconst cylinder = new Polygon({\n  vertices: [[cylX - R, topY, 0], [cylX + R, topY, 0], [cylX + R, bottomY, 0], [cylX - R, bottomY, 0]],\n  color: TEAL\n});\ncylinder.setFill(TEAL, 0.14);\ncylinder.setStrokeWidth(3);\n\nconst coneName = new Text({ text: 'Cone', color: BLUE, fontSize: 26 });\nconeName.moveTo([coneX, -2.02, 0]);\nconst cylName = new Text({ text: 'Cylinder', color: TEAL, fontSize: 26 });\ncylName.moveTo([cylX, -2.02, 0]);\n\nconst ax = new Axes({ xRange: [0, 1, 0.25], yRange: [0, 1, 0.25], xLength: 2.8, yLength: 2.8, tips: false });\nax.moveTo([3.65, -0.15, 0]);\nconst curve = ax.plot(t => t * t, { color: YELLOW, xRange: [0, 1], numSamples: 120 });\nconst area = ax.getArea(curve, [0, 1], { color: YELLOW, opacity: 0.28 });\nconst graphName = new Text({ text: 'Area fraction', color: YELLOW, fontSize: 25 });\ngraphName.moveTo([3.65, 1.9, 0]);\nconst graphX = new Text({ text: 't = distance from tip / h', color: GRAY, fontSize: 17 });\ngraphX.moveTo([3.65, -1.95, 0]);\n\nlet t = 0.6;\nconst yAt = () => topY - 3 * t;\nconst coneSlice = new Polygon({ vertices: [[coneX - R * t, yAt(), 0], [coneX + R * t, yAt(), 0]], color: YELLOW });\nconeSlice.setStrokeWidth(6).setFillOpacity(0);\nconst cylSlice = new Polygon({ vertices: [[cylX - R, yAt(), 0], [cylX + R, yAt(), 0]], color: YELLOW });\ncylSlice.setStrokeWidth(6).setFillOpacity(0);\nconst graphDot = new Dot({ point: ax.c2p(t, t * t), color: YELLOW });\n\nconst relation = new MathTex({ latex: 'A_{\\mathrm{cone}}(t)=t^2 A_{\\mathrm{cylinder}}' });\nawait relation.waitForRender();\nrelation.moveTo([-2.4, 2.28, 0]);\nconst result = new MathTex({ latex: 'V_{\\mathrm{cone}}=\\pi R^2h\\int_0^1 t^2\\,dt=\\frac{1}{3}\\pi R^2h' });\nawait result.waitForRender();\nresult.moveTo([-0.65, -3.12, 0]);\n\nawait scene.play(new Write(title));\nawait scene.play(new AnimationGroup([new Create(cone), new Create(cylinder), new Create(ax)]));\nscene.add(area, curve, coneName, cylName, graphName, graphX, coneSlice, cylSlice, graphDot);\nawait scene.play(new AnimationGroup([new Write(relation), new Write(result)]));\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 220 });\ncontrols.addSlider({ label: 'Slice position t', min: 0.02, max: 1, value: t, step: 0.01, onChange: v => {\n  t = v;\n  const y = yAt();\n  coneSlice.setVertices([[coneX - R * t, y, 0], [coneX + R * t, y, 0]]);\n  cylSlice.setVertices([[cylX - R, y, 0], [cylX + R, y, 0]]);\n  graphDot.moveTo(ax.c2p(t, t * t));\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3040,
+        "fatalError": "TypeError: Cannot read properties of null (reading '4')",
+        "errors": [
+          "TypeError: Cannot read properties of null (reading '4')"
+        ],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/geo-cone-cylinder.0.final.jpg"
+      }
+    },
+    {
+      "kind": "auto-retry",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.17% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.07% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 56149,
+        "inputTokens": 13356,
+        "cachedInputTokens": 11008,
+        "outputTokens": 2214,
+        "costUsd": 0.029037600000000004,
+        "rawResponse": "{\"explanation\":\"At a fraction t of the way from the cone’s tip to its base, the cone’s radius is tR. Its cross-sectional area is therefore t² times the cylinder’s area at the same height. Adding those slices gives an average area fraction of ∫₀¹t²dt = ⅓, so the cone has one third of the cylinder’s volume. Move the slider to compare corresponding slices.\",\"manimCode\":\"const title = new Text({ text: 'Why is a cone one third of a cylinder?', color: WHITE, fontSize: 32 });\\ntitle.moveTo([-1.2, 3.25, 0]);\\n\\nconst coneX = -4.4;\\nconst cylX = -1.1;\\nconst topY = 1.5;\\nconst bottomY = -1.4;\\nconst h = topY - bottomY;\\nconst R = 1.05;\\n\\nconst cone = new Polygon({\\n  vertices: [[coneX, topY, 0], [coneX - R, bottomY, 0], [coneX + R, bottomY, 0]],\\n  color: BLUE\\n});\\ncone.setFill(BLUE, 0.17);\\ncone.setStrokeWidth(3);\\n\\nconst cylinder = new Polygon({\\n  vertices: [[cylX - R, topY, 0], [cylX + R, topY, 0], [cylX + R, bottomY, 0], [cylX - R, bottomY, 0]],\\n  color: TEAL\\n});\\ncylinder.setFill(TEAL, 0.14);\\ncylinder.setStrokeWidth(3);\\n\\nconst coneName = new Text({ text: 'Cone', color: BLUE, fontSize: 25 });\\nconeName.moveTo([coneX, -1.85, 0]);\\nconst cylName = new Text({ text: 'Cylinder', color: TEAL, fontSize: 25 });\\ncylName.moveTo([cylX, -1.85, 0]);\\n\\nlet t = 0.6;\\nfunction sliceY() { return topY - h * t; }\\nfunction sliceVertices(centerX, halfWidth) {\\n  const y = sliceY();\\n  const thickness = 0.055;\\n  return [[centerX - halfWidth, y - thickness, 0], [centerX + halfWidth, y - thickness, 0], [centerX + halfWidth, y + thickness, 0], [centerX - halfWidth, y + thickness, 0]];\\n}\\nconst coneSlice = new Polygon({ vertices: sliceVertices(coneX, R * t), color: YELLOW });\\nconeSlice.setFill(YELLOW, 0.95);\\nconst cylSlice = new Polygon({ vertices: sliceVertices(cylX, R), color: YELLOW });\\ncylSlice.setFill(YELLOW, 0.95);\\n\\nconst graphTitle = new Text({ text: 'Slice area fraction', color: YELLOW, fontSize: 24 });\\ngraphTitle.moveTo([3.5, 2.15, 0]);\\nconst ax = new Axes({ xRange: [0, 1, 0.25], yRange: [0, 1, 0.25], xLength: 2.7, yLength: 2.2, tips: false });\\nax.moveTo([3.5, 0.55, 0]);\\nconst curve = ax.plot(x => x * x, { color: YELLOW, xRange: [0, 1], numSamples: 100 });\\nconst graphDot = new Dot({ point: ax.c2p(t, t * t), color: WHITE });\\nconst graphCaption = new Text({ text: 't²', color: YELLOW, fontSize: 24 });\\ngraphCaption.moveTo([5.15, 1.55, 0]);\\n\\nconst relation = new Text({ text: 'radius = tR   →   slice area = t²πR²', color: WHITE, fontSize: 23 });\\nrelation.moveTo([-1.9, 2.25, 0]);\\nconst result = new Text({ text: 'Vcone = πR²h ∫₀¹ t² dt = ⅓ πR²h', color: GOLD, fontSize: 26 });\\nresult.moveTo([-1.85, -2.85, 0]);\\n\\nscene.add(title, cone, cylinder, coneSlice, cylSlice, coneName, cylName, relation, ax, curve, graphDot, graphTitle, graphCaption, result);\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 220 });\\ncontrols.addSlider({ label: 'Height fraction t', min: 0.05, max: 1, value: t, step: 0.01, onChange: v => {\\n  t = v;\\n  coneSlice.setVertices(sliceVertices(coneX, R * t));\\n  cylSlice.setVertices(sliceVertices(cylX, R));\\n  graphDot.moveTo(ax.c2p(t, t * t));\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "At a fraction t of the way from the cone’s tip to its base, the cone’s radius is tR. Its cross-sectional area is therefore t² times the cylinder’s area at the same height. Adding those slices gives an average area fraction of ∫₀¹t²dt = ⅓, so the cone has one third of the cylinder’s volume. Move the slider to compare corresponding slices."
+      },
+      "code": "const title = new Text({ text: 'Why is a cone one third of a cylinder?', color: WHITE, fontSize: 32 });\ntitle.moveTo([-1.2, 3.25, 0]);\n\nconst coneX = -4.4;\nconst cylX = -1.1;\nconst topY = 1.5;\nconst bottomY = -1.4;\nconst h = topY - bottomY;\nconst R = 1.05;\n\nconst cone = new Polygon({\n  vertices: [[coneX, topY, 0], [coneX - R, bottomY, 0], [coneX + R, bottomY, 0]],\n  color: BLUE\n});\ncone.setFill(BLUE, 0.17);\ncone.setStrokeWidth(3);\n\nconst cylinder = new Polygon({\n  vertices: [[cylX - R, topY, 0], [cylX + R, topY, 0], [cylX + R, bottomY, 0], [cylX - R, bottomY, 0]],\n  color: TEAL\n});\ncylinder.setFill(TEAL, 0.14);\ncylinder.setStrokeWidth(3);\n\nconst coneName = new Text({ text: 'Cone', color: BLUE, fontSize: 25 });\nconeName.moveTo([coneX, -1.85, 0]);\nconst cylName = new Text({ text: 'Cylinder', color: TEAL, fontSize: 25 });\ncylName.moveTo([cylX, -1.85, 0]);\n\nlet t = 0.6;\nfunction sliceY() { return topY - h * t; }\nfunction sliceVertices(centerX, halfWidth) {\n  const y = sliceY();\n  const thickness = 0.055;\n  return [[centerX - halfWidth, y - thickness, 0], [centerX + halfWidth, y - thickness, 0], [centerX + halfWidth, y + thickness, 0], [centerX - halfWidth, y + thickness, 0]];\n}\nconst coneSlice = new Polygon({ vertices: sliceVertices(coneX, R * t), color: YELLOW });\nconeSlice.setFill(YELLOW, 0.95);\nconst cylSlice = new Polygon({ vertices: sliceVertices(cylX, R), color: YELLOW });\ncylSlice.setFill(YELLOW, 0.95);\n\nconst graphTitle = new Text({ text: 'Slice area fraction', color: YELLOW, fontSize: 24 });\ngraphTitle.moveTo([3.5, 2.15, 0]);\nconst ax = new Axes({ xRange: [0, 1, 0.25], yRange: [0, 1, 0.25], xLength: 2.7, yLength: 2.2, tips: false });\nax.moveTo([3.5, 0.55, 0]);\nconst curve = ax.plot(x => x * x, { color: YELLOW, xRange: [0, 1], numSamples: 100 });\nconst graphDot = new Dot({ point: ax.c2p(t, t * t), color: WHITE });\nconst graphCaption = new Text({ text: 't²', color: YELLOW, fontSize: 24 });\ngraphCaption.moveTo([5.15, 1.55, 0]);\n\nconst relation = new Text({ text: 'radius = tR   →   slice area = t²πR²', color: WHITE, fontSize: 23 });\nrelation.moveTo([-1.9, 2.25, 0]);\nconst result = new Text({ text: 'Vcone = πR²h ∫₀¹ t² dt = ⅓ πR²h', color: GOLD, fontSize: 26 });\nresult.moveTo([-1.85, -2.85, 0]);\n\nscene.add(title, cone, cylinder, coneSlice, cylSlice, coneName, cylName, relation, ax, curve, graphDot, graphTitle, graphCaption, result);\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 220 });\ncontrols.addSlider({ label: 'Height fraction t', min: 0.05, max: 1, value: t, step: 0.01, onChange: v => {\n  t = v;\n  coneSlice.setVertices(sliceVertices(coneX, R * t));\n  cylSlice.setVertices(sliceVertices(cylX, R));\n  graphDot.moveTo(ax.c2p(t, t * t));\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 2868,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/geo-cone-cylinder.1.final.jpg",
+        "interacted": "openai__gpt-6-sol/geo-cone-cylinder.1.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T03:01:20.638Z"
+}

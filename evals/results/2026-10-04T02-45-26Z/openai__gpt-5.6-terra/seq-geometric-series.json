@@ -1,0 +1,148 @@
+{
+  "itemId": "seq-geometric-series",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 0,
+  "retried": true,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": false,
+          "detail": "TypeError: Cannot read properties of null (reading '4')"
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": false,
+          "detail": "0.00% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": false,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 30457,
+        "inputTokens": 11752,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1352,
+        "costUsd": 0.019913599999999997,
+        "rawResponse": "{\"explanation\":\"Each new piece is half of the unfilled region, so its area is half the previous piece. The colored pieces leave a smaller and smaller corner uncovered; in the limit that remaining area is 0, so the total filled area is 1.\",\"manimCode\":\"const title = new Text({ text: 'Filling one whole square', color: WHITE, fontSize: 32 });\\ntitle.moveTo([0, 3.25, 0]);\\n\\nconst outline = new Square({ sideLength: 4, color: WHITE });\\noutline.moveTo([0, -0.25, 0]);\\noutline.setStrokeWidth(3);\\n\\nconst half = new Rectangle({ width: 2, height: 4, color: BLUE });\\nhalf.setFill(BLUE, 0.8);\\nhalf.moveTo([-1, -0.25, 0]);\\n\\nconst quarter = new Rectangle({ width: 2, height: 2, color: GREEN });\\nquarter.setFill(GREEN, 0.8);\\nquarter.moveTo([1, 0.75, 0]);\\n\\nconst eighth = new Rectangle({ width: 1, height: 2, color: YELLOW });\\neighth.setFill(YELLOW, 0.85);\\neighth.moveTo([0.5, -1.25, 0]);\\n\\nconst sixteenth = new Rectangle({ width: 1, height: 1, color: ORANGE });\\nsixteenth.setFill(ORANGE, 0.85);\\nsixteenth.moveTo([1.5, -0.75, 0]);\\n\\nconst tiny = new Rectangle({ width: 0.5, height: 1, color: PURPLE });\\ntiny.setFill(PURPLE, 0.85);\\ntiny.moveTo([1.25, -1.75, 0]);\\n\\nconst l1 = new MathTex({ latex: '\\\\frac12' });\\nconst l2 = new MathTex({ latex: '\\\\frac14' });\\nconst l3 = new MathTex({ latex: '\\\\frac18' });\\nconst l4 = new MathTex({ latex: '\\\\frac1{16}' });\\nawait l1.waitForRender();\\nawait l2.waitForRender();\\nawait l3.waitForRender();\\nawait l4.waitForRender();\\nl1.moveTo([-1, -0.25, 0]);\\nl2.moveTo([1, 0.75, 0]);\\nl3.moveTo([0.5, -1.25, 0]);\\nl4.moveTo([1.5, -0.75, 0]);\\n\\nconst equation = new MathTex({ latex: '\\\\frac12+\\\\frac14+\\\\frac18+\\\\frac1{16}+\\\\cdots=1' });\\nawait equation.waitForRender();\\nequation.moveTo([0, -3.35, 0]);\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new Create(outline));\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(half), new Write(l1)]));\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(quarter), new Write(l2)]));\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(eighth), new Write(l3)]));\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(sixteenth), new Write(l4)]));\\nawait scene.play(new DrawBorderThenFill(tiny));\\nawait scene.play(new Write(equation));\\n\\nmakeHoverable(outline, scene, { hoverColor: YELLOW, hoverScale: 1.02 });\\nawait scene.wait(999999);\"}",
+        "explanation": "Each new piece is half of the unfilled region, so its area is half the previous piece. The colored pieces leave a smaller and smaller corner uncovered; in the limit that remaining area is 0, so the total filled area is 1."
+      },
+      "code": "const title = new Text({ text: 'Filling one whole square', color: WHITE, fontSize: 32 });\ntitle.moveTo([0, 3.25, 0]);\n\nconst outline = new Square({ sideLength: 4, color: WHITE });\noutline.moveTo([0, -0.25, 0]);\noutline.setStrokeWidth(3);\n\nconst half = new Rectangle({ width: 2, height: 4, color: BLUE });\nhalf.setFill(BLUE, 0.8);\nhalf.moveTo([-1, -0.25, 0]);\n\nconst quarter = new Rectangle({ width: 2, height: 2, color: GREEN });\nquarter.setFill(GREEN, 0.8);\nquarter.moveTo([1, 0.75, 0]);\n\nconst eighth = new Rectangle({ width: 1, height: 2, color: YELLOW });\neighth.setFill(YELLOW, 0.85);\neighth.moveTo([0.5, -1.25, 0]);\n\nconst sixteenth = new Rectangle({ width: 1, height: 1, color: ORANGE });\nsixteenth.setFill(ORANGE, 0.85);\nsixteenth.moveTo([1.5, -0.75, 0]);\n\nconst tiny = new Rectangle({ width: 0.5, height: 1, color: PURPLE });\ntiny.setFill(PURPLE, 0.85);\ntiny.moveTo([1.25, -1.75, 0]);\n\nconst l1 = new MathTex({ latex: '\\frac12' });\nconst l2 = new MathTex({ latex: '\\frac14' });\nconst l3 = new MathTex({ latex: '\\frac18' });\nconst l4 = new MathTex({ latex: '\\frac1{16}' });\nawait l1.waitForRender();\nawait l2.waitForRender();\nawait l3.waitForRender();\nawait l4.waitForRender();\nl1.moveTo([-1, -0.25, 0]);\nl2.moveTo([1, 0.75, 0]);\nl3.moveTo([0.5, -1.25, 0]);\nl4.moveTo([1.5, -0.75, 0]);\n\nconst equation = new MathTex({ latex: '\\frac12+\\frac14+\\frac18+\\frac1{16}+\\cdots=1' });\nawait equation.waitForRender();\nequation.moveTo([0, -3.35, 0]);\n\nawait scene.play(new Write(title));\nawait scene.play(new Create(outline));\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(half), new Write(l1)]));\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(quarter), new Write(l2)]));\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(eighth), new Write(l3)]));\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(sixteenth), new Write(l4)]));\nawait scene.play(new DrawBorderThenFill(tiny));\nawait scene.play(new Write(equation));\n\nmakeHoverable(outline, scene, { hoverColor: YELLOW, hoverScale: 1.02 });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3116,
+        "fatalError": "TypeError: Cannot read properties of null (reading '4')",
+        "errors": [
+          "TypeError: Cannot read properties of null (reading '4')"
+        ],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/seq-geometric-series.0.final.jpg"
+      }
+    },
+    {
+      "kind": "auto-retry",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "15.01% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 23250,
+        "inputTokens": 12465,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1082,
+        "costUsd": 0.0180996,
+        "rawResponse": "{\"explanation\":\"Each piece fills half of the area that remains: first \\\\(\\\\frac12\\\\), then \\\\(\\\\frac14\\\\), then \\\\(\\\\frac18\\\\), and so on. The unfilled corner keeps shrinking toward zero, so the total filled area approaches one whole square.\",\"manimCode\":\"const title = new Text({ text: 'Filling one whole square', color: WHITE, fontSize: 32 });\\ntitle.moveTo([0, 3.25, 0]);\\n\\nconst outline = new Square({ sideLength: 4, color: WHITE });\\noutline.moveTo([0, -0.25, 0]);\\noutline.setStrokeWidth(3);\\n\\nconst half = new Rectangle({ width: 2, height: 4, color: BLUE });\\nhalf.setFill(BLUE, 0.8);\\nhalf.moveTo([-1, -0.25, 0]);\\n\\nconst quarter = new Rectangle({ width: 2, height: 2, color: GREEN });\\nquarter.setFill(GREEN, 0.8);\\nquarter.moveTo([1, 0.75, 0]);\\n\\nconst eighth = new Rectangle({ width: 1, height: 2, color: YELLOW });\\neighth.setFill(YELLOW, 0.85);\\neighth.moveTo([0.5, -1.25, 0]);\\n\\nconst sixteenth = new Rectangle({ width: 1, height: 1, color: ORANGE });\\nsixteenth.setFill(ORANGE, 0.85);\\nsixteenth.moveTo([1.5, -0.75, 0]);\\n\\nconst thirtySecond = new Rectangle({ width: 0.5, height: 1, color: PURPLE });\\nthirtySecond.setFill(PURPLE, 0.85);\\nthirtySecond.moveTo([1.25, -1.75, 0]);\\n\\n// Double backslashes are required inside JavaScript strings for LaTex commands.\\nconst l1 = new MathTex({ latex: '\\\\\\\\frac{1}{2}' });\\nconst l2 = new MathTex({ latex: '\\\\\\\\frac{1}{4}' });\\nconst l3 = new MathTex({ latex: '\\\\\\\\frac{1}{8}' });\\nconst l4 = new MathTex({ latex: '\\\\\\\\frac{1}{16}' });\\nconst equation = new MathTex({ latex: '\\\\\\\\frac{1}{2}+\\\\\\\\frac{1}{4}+\\\\\\\\frac{1}{8}+\\\\\\\\frac{1}{16}+\\\\\\\\cdots=1' });\\n\\nawait l1.waitForRender();\\nawait l2.waitForRender();\\nawait l3.waitForRender();\\nawait l4.waitForRender();\\nawait equation.waitForRender();\\n\\nl1.moveTo([-1, -0.25, 0]);\\nl2.moveTo([1, 0.75, 0]);\\nl3.moveTo([0.5, -1.25, 0]);\\nl4.moveTo([1.5, -0.75, 0]);\\nequation.moveTo([0, -3.35, 0]);\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new Create(outline));\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(half), new Write(l1)]));\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(quarter), new Write(l2)]));\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(eighth), new Write(l3)]));\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(sixteenth), new Write(l4)]));\\nawait scene.play(new DrawBorderThenFill(thirtySecond));\\nawait scene.play(new Write(equation));\\n\\nmakeHoverable(outline, scene, { hoverColor: YELLOW, hoverScale: 1.02 });\\nawait scene.wait(999999);\"}",
+        "explanation": "Each piece fills half of the area that remains: first \\(\\frac12\\), then \\(\\frac14\\), then \\(\\frac18\\), and so on. The unfilled corner keeps shrinking toward zero, so the total filled area approaches one whole square."
+      },
+      "code": "const title = new Text({ text: 'Filling one whole square', color: WHITE, fontSize: 32 });\ntitle.moveTo([0, 3.25, 0]);\n\nconst outline = new Square({ sideLength: 4, color: WHITE });\noutline.moveTo([0, -0.25, 0]);\noutline.setStrokeWidth(3);\n\nconst half = new Rectangle({ width: 2, height: 4, color: BLUE });\nhalf.setFill(BLUE, 0.8);\nhalf.moveTo([-1, -0.25, 0]);\n\nconst quarter = new Rectangle({ width: 2, height: 2, color: GREEN });\nquarter.setFill(GREEN, 0.8);\nquarter.moveTo([1, 0.75, 0]);\n\nconst eighth = new Rectangle({ width: 1, height: 2, color: YELLOW });\neighth.setFill(YELLOW, 0.85);\neighth.moveTo([0.5, -1.25, 0]);\n\nconst sixteenth = new Rectangle({ width: 1, height: 1, color: ORANGE });\nsixteenth.setFill(ORANGE, 0.85);\nsixteenth.moveTo([1.5, -0.75, 0]);\n\nconst thirtySecond = new Rectangle({ width: 0.5, height: 1, color: PURPLE });\nthirtySecond.setFill(PURPLE, 0.85);\nthirtySecond.moveTo([1.25, -1.75, 0]);\n\n// Double backslashes are required inside JavaScript strings for LaTex commands.\nconst l1 = new MathTex({ latex: '\\\\frac{1}{2}' });\nconst l2 = new MathTex({ latex: '\\\\frac{1}{4}' });\nconst l3 = new MathTex({ latex: '\\\\frac{1}{8}' });\nconst l4 = new MathTex({ latex: '\\\\frac{1}{16}' });\nconst equation = new MathTex({ latex: '\\\\frac{1}{2}+\\\\frac{1}{4}+\\\\frac{1}{8}+\\\\frac{1}{16}+\\\\cdots=1' });\n\nawait l1.waitForRender();\nawait l2.waitForRender();\nawait l3.waitForRender();\nawait l4.waitForRender();\nawait equation.waitForRender();\n\nl1.moveTo([-1, -0.25, 0]);\nl2.moveTo([1, 0.75, 0]);\nl3.moveTo([0.5, -1.25, 0]);\nl4.moveTo([1.5, -0.75, 0]);\nequation.moveTo([0, -3.35, 0]);\n\nawait scene.play(new Write(title));\nawait scene.play(new Create(outline));\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(half), new Write(l1)]));\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(quarter), new Write(l2)]));\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(eighth), new Write(l3)]));\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(sixteenth), new Write(l4)]));\nawait scene.play(new DrawBorderThenFill(thirtySecond));\nawait scene.play(new Write(equation));\n\nmakeHoverable(outline, scene, { hoverColor: YELLOW, hoverScale: 1.02 });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 17161,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 8,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/seq-geometric-series.1.final.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T03:01:58.179Z"
+}

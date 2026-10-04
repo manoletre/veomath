@@ -1,0 +1,79 @@
+{
+  "itemId": "calc-secant-tangent",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.06% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=2 buttons=1 checkboxes=1 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.69% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 30213,
+        "inputTokens": 8048,
+        "cachedInputTokens": 0,
+        "outputTokens": 3174,
+        "costUsd": 0.127856,
+        "rawResponse": "{\"explanation\":\"A secant line goes through two points on the curve, P = (x₀, f(x₀)) and Q = (x₀+h, f(x₀+h)). Its slope is the difference quotient [f(x₀+h) − f(x₀)] / h. As h gets smaller, Q slides along the curve toward P, and the secant (orange) turns until it matches the tangent line (green). In the limit h → 0, the secant slope equals the derivative f′(x₀). The animation shrinks h automatically. You can then use the sliders to change h and x₀, or press the button to watch the limit again.\",\"manimCode\":\"const f = (x) => 0.25 * x * x + 0.5;\\nconst df = (x) => 0.5 * x;\\n\\nconst axes = new Axes({ xRange: [-1, 5, 1], yRange: [-1, 6, 1], xLength: 8, yLength: 5.5, tips: false });\\naxes.shift([-1.8, -0.3, 0]);\\nconst curve = axes.plot(f, { color: BLUE });\\nscene.add(axes, curve);\\n\\nlet x0 = 1.5;\\nlet h = 2;\\nlet showTangent = true;\\n\\nconst L = 4;\\nfunction lineThrough(x, y, m) {\\n  const P = axes.c2p(x, y);\\n  const R = axes.c2p(x + 1, y + m);\\n  let dx = R[0] - P[0], dy = R[1] - P[1];\\n  const n = Math.hypot(dx, dy) || 1;\\n  dx /= n; dy /= n;\\n  return [[P[0] - L * dx, P[1] - L * dy, 0], [P[0] + L * dx, P[1] + L * dy, 0]];\\n}\\n\\nconst tangent = new Polygon({ vertices: [[0,0,0],[1,0,0]], color: GREEN });\\ntangent.setStrokeWidth(2).setFillOpacity(0);\\nconst secant = new Polygon({ vertices: [[0,0,0],[1,0,0]], color: ORANGE });\\nsecant.setStrokeWidth(4).setFillOpacity(0);\\nconst runSeg = new Polygon({ vertices: [[0,0,0],[1,0,0]], color: GRAY });\\nrunSeg.setStrokeWidth(2).setFillOpacity(0);\\nconst riseSeg = new Polygon({ vertices: [[0,0,0],[1,0,0]], color: GRAY });\\nriseSeg.setStrokeWidth(2).setFillOpacity(0);\\nconst dotP = new Dot({ point: axes.c2p(x0, f(x0)), color: YELLOW });\\nconst dotQ = new Dot({ point: axes.c2p(x0 + h, f(x0 + h)), color: RED });\\n\\nscene.add(tangent, runSeg, riseSeg, secant, dotP, dotQ);\\n\\nconst formula = new MathTex({ latex: 'm_{\\\\\\\\text{sec}} = \\\\\\\\frac{f(x_0+h)-f(x_0)}{h}', color: WHITE });\\nawait formula.waitForRender();\\nformula.scale(0.7);\\nformula.moveTo([4.3, -1.2, 0]);\\nscene.add(formula);\\n\\nlet info = null;\\nlet lastStr = '';\\nfunction updateInfo() {\\n  const ms = Math.abs(h) < 1e-6 ? df(x0) : (f(x0 + h) - f(x0)) / h;\\n  const str = 'h = ' + h.toFixed(2) + '\\\\nsecant slope = ' + ms.toFixed(3) + '\\\\ntangent slope = ' + df(x0).toFixed(3);\\n  if (str === lastStr) return;\\n  lastStr = str;\\n  if (info) scene.remove(info);\\n  info = new Text({ text: str, color: WHITE, fontSize: 22 });\\n  info.moveTo([4.3, -2.6, 0]);\\n  scene.add(info);\\n}\\n\\nfunction update() {\\n  const y0 = f(x0);\\n  const x1 = x0 + h, y1 = f(x1);\\n  const ms = Math.abs(h) < 1e-6 ? df(x0) : (y1 - y0) / h;\\n  secant.setVertices(lineThrough(x0, y0, ms));\\n  if (showTangent) {\\n    tangent.setVertices(lineThrough(x0, y0, df(x0)));\\n  } else {\\n    const p = axes.c2p(x0, y0);\\n    tangent.setVertices([p, p]);\\n  }\\n  runSeg.setVertices([axes.c2p(x0, y0), axes.c2p(x1, y0)]);\\n  riseSeg.setVertices([axes.c2p(x1, y0), axes.c2p(x1, y1)]);\\n  dotP.moveTo(axes.c2p(x0, y0));\\n  dotQ.moveTo(axes.c2p(x1, y1));\\n  updateInfo();\\n}\\nupdate();\\ndotP.addUpdater(() => update());\\n\\nlet animating = false;\\nasync function animateToZero() {\\n  if (animating) return;\\n  animating = true;\\n  const start = Math.abs(h) < 0.05 ? 2 : h;\\n  const steps = 90;\\n  for (let i = 0; i <= steps; i++) {\\n    const t = i / steps;\\n    h = start * Math.pow(1 - t, 2);\\n    if (i === steps) h = 0.0;\\n    await scene.wait(0.03);\\n  }\\n  animating = false;\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'h', min: -2, max: 2.5, value: 2, step: 0.01, onChange: (v) => { if (!animating) h = v; } });\\ncontrols.addSlider({ label: 'x₀', min: 0, max: 3.5, value: 1.5, step: 0.05, onChange: (v) => { x0 = v; } });\\ncontrols.addCheckbox({ label: 'Show tangent', checked: true, onChange: (c) => { showTangent = c; } });\\ncontrols.addButton({ label: 'Animate h → 0', onClick: () => { h = 2; animateToZero(); } });\\n\\nawait scene.wait(0.8);\\nawait animateToZero();\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A secant line goes through two points on the curve, P = (x₀, f(x₀)) and Q = (x₀+h, f(x₀+h)). Its slope is the difference quotient [f(x₀+h) − f(x₀)] / h. As h gets smaller, Q slides along the curve toward P, and the secant (orange) turns until it matches the tangent line (green). In the limit h → 0, the secant slope equals the derivative f′(x₀). The animation shrinks h automatically. You can then use the sliders to change h and x₀, or press the button to watch the limit again."
+      },
+      "code": "const f = (x) => 0.25 * x * x + 0.5;\nconst df = (x) => 0.5 * x;\n\nconst axes = new Axes({ xRange: [-1, 5, 1], yRange: [-1, 6, 1], xLength: 8, yLength: 5.5, tips: false });\naxes.shift([-1.8, -0.3, 0]);\nconst curve = axes.plot(f, { color: BLUE });\nscene.add(axes, curve);\n\nlet x0 = 1.5;\nlet h = 2;\nlet showTangent = true;\n\nconst L = 4;\nfunction lineThrough(x, y, m) {\n  const P = axes.c2p(x, y);\n  const R = axes.c2p(x + 1, y + m);\n  let dx = R[0] - P[0], dy = R[1] - P[1];\n  const n = Math.hypot(dx, dy) || 1;\n  dx /= n; dy /= n;\n  return [[P[0] - L * dx, P[1] - L * dy, 0], [P[0] + L * dx, P[1] + L * dy, 0]];\n}\n\nconst tangent = new Polygon({ vertices: [[0,0,0],[1,0,0]], color: GREEN });\ntangent.setStrokeWidth(2).setFillOpacity(0);\nconst secant = new Polygon({ vertices: [[0,0,0],[1,0,0]], color: ORANGE });\nsecant.setStrokeWidth(4).setFillOpacity(0);\nconst runSeg = new Polygon({ vertices: [[0,0,0],[1,0,0]], color: GRAY });\nrunSeg.setStrokeWidth(2).setFillOpacity(0);\nconst riseSeg = new Polygon({ vertices: [[0,0,0],[1,0,0]], color: GRAY });\nriseSeg.setStrokeWidth(2).setFillOpacity(0);\nconst dotP = new Dot({ point: axes.c2p(x0, f(x0)), color: YELLOW });\nconst dotQ = new Dot({ point: axes.c2p(x0 + h, f(x0 + h)), color: RED });\n\nscene.add(tangent, runSeg, riseSeg, secant, dotP, dotQ);\n\nconst formula = new MathTex({ latex: 'm_{\\\\text{sec}} = \\\\frac{f(x_0+h)-f(x_0)}{h}', color: WHITE });\nawait formula.waitForRender();\nformula.scale(0.7);\nformula.moveTo([4.3, -1.2, 0]);\nscene.add(formula);\n\nlet info = null;\nlet lastStr = '';\nfunction updateInfo() {\n  const ms = Math.abs(h) < 1e-6 ? df(x0) : (f(x0 + h) - f(x0)) / h;\n  const str = 'h = ' + h.toFixed(2) + '\\nsecant slope = ' + ms.toFixed(3) + '\\ntangent slope = ' + df(x0).toFixed(3);\n  if (str === lastStr) return;\n  lastStr = str;\n  if (info) scene.remove(info);\n  info = new Text({ text: str, color: WHITE, fontSize: 22 });\n  info.moveTo([4.3, -2.6, 0]);\n  scene.add(info);\n}\n\nfunction update() {\n  const y0 = f(x0);\n  const x1 = x0 + h, y1 = f(x1);\n  const ms = Math.abs(h) < 1e-6 ? df(x0) : (y1 - y0) / h;\n  secant.setVertices(lineThrough(x0, y0, ms));\n  if (showTangent) {\n    tangent.setVertices(lineThrough(x0, y0, df(x0)));\n  } else {\n    const p = axes.c2p(x0, y0);\n    tangent.setVertices([p, p]);\n  }\n  runSeg.setVertices([axes.c2p(x0, y0), axes.c2p(x1, y0)]);\n  riseSeg.setVertices([axes.c2p(x1, y0), axes.c2p(x1, y1)]);\n  dotP.moveTo(axes.c2p(x0, y0));\n  dotQ.moveTo(axes.c2p(x1, y1));\n  updateInfo();\n}\nupdate();\ndotP.addUpdater(() => update());\n\nlet animating = false;\nasync function animateToZero() {\n  if (animating) return;\n  animating = true;\n  const start = Math.abs(h) < 0.05 ? 2 : h;\n  const steps = 90;\n  for (let i = 0; i <= steps; i++) {\n    const t = i / steps;\n    h = start * Math.pow(1 - t, 2);\n    if (i === steps) h = 0.0;\n    await scene.wait(0.03);\n  }\n  animating = false;\n}\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'h', min: -2, max: 2.5, value: 2, step: 0.01, onChange: (v) => { if (!animating) h = v; } });\ncontrols.addSlider({ label: 'x₀', min: 0, max: 3.5, value: 1.5, step: 0.05, onChange: (v) => { x0 = v; } });\ncontrols.addCheckbox({ label: 'Show tangent', checked: true, onChange: (c) => { showTangent = c; } });\ncontrols.addButton({ label: 'Animate h → 0', onClick: () => { h = 2; animateToZero(); } });\n\nawait scene.wait(0.8);\nawait animateToZero();\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9579,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 2,
+          "buttons": 1,
+          "checkboxes": 1
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/calc-secant-tangent.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/calc-secant-tangent.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:33:30.609Z"
+}

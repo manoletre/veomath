@@ -1,0 +1,80 @@
+{
+  "itemId": "alg-phone-plans",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.19% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Text \"Minutes\" [x -2.12..-1.32, y -4.23..-4.06] exceeds frame ±7.11 × ±4.00\nText \"Cost ($)\" [x -7.69..-6.92, y -1.03..-0.82] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.63% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 20099,
+        "inputTokens": 5070,
+        "cachedInputTokens": 128,
+        "outputTokens": 1559,
+        "costUsd": 0.0192764,
+        "rawResponse": "{\n  \"explanation\": \"Plan A costs C = 20 + 0.10m and Plan B costs C = 35 + 0.05m. Setting them equal gives 20 + 0.10m = 35 + 0.05m, so 0.05m = 15 and m = 300 minutes. At that point both plans cost $50. The graph shows the two cost lines crossing at the break-even point.\",\n  \"manimCode\": \"const ax = new Axes({\\n  xRange: [0, 600, 100],\\n  yRange: [0, 80, 10],\\n  xLength: 10,\\n  yLength: 5.5,\\n  tips: true\\n});\\nax.shift([-0.5, -0.3, 0]);\\n\\nconst xLabel = new Text({ text: 'Minutes', fontSize: 22, color: GRAY });\\nxLabel.nextTo(ax, DOWN);\\nxLabel.shift([0, 0.15, 0]);\\nconst yLabel = new Text({ text: 'Cost ($)', fontSize: 22, color: GRAY });\\nyLabel.nextTo(ax, LEFT);\\nyLabel.shift([0.3, 0, 0]);\\n\\nconst lineA = ax.plot(m => 20 + 0.10 * m, { color: BLUE, xRange: [0, 600] });\\nconst lineB = ax.plot(m => 35 + 0.05 * m, { color: ORANGE, xRange: [0, 600] });\\n\\nconst intersectDot = new Dot({ point: ax.c2p(300, 50), color: YELLOW, radius: 0.12 });\\n\\nconst labelA = new Text({ text: 'A: 20 + 0.10m', fontSize: 20, color: BLUE });\\nlabelA.moveTo(ax.c2p(480, 72));\\nconst labelB = new Text({ text: 'B: 35 + 0.05m', fontSize: 20, color: ORANGE });\\nlabelB.moveTo(ax.c2p(480, 55));\\n\\nconst eqLabel = new MathTex({ latex: 'm = 300 \\\\\\\\quad C = \\\\\\\\$50' });\\nawait eqLabel.waitForRender();\\neqLabel.moveTo([0, 3.2, 0]);\\neqLabel.setColor(YELLOW);\\n\\nconst title = new Text({ text: 'Break-even: when do the plans cost the same?', fontSize: 26, color: WHITE });\\ntitle.moveTo([0, 3.7, 0]);\\n\\nscene.add(ax, xLabel, yLabel, lineA, lineB, intersectDot, labelA, labelB, eqLabel, title);\\n\\n// Vertical & horizontal guide lines at intersection\\nconst vGuide = new Polygon({\\n  vertices: [ax.c2p(300, 0), ax.c2p(300, 50)],\\n  color: YELLOW,\\n  strokeWidth: 2\\n});\\nvGuide.setFillOpacity(0);\\nconst hGuide = new Polygon({\\n  vertices: [ax.c2p(0, 50), ax.c2p(300, 50)],\\n  color: YELLOW,\\n  strokeWidth: 2\\n});\\nhGuide.setFillOpacity(0);\\nscene.add(vGuide, hGuide);\\n\\n// Interactive slider to explore cost at any minute count\\nlet currentM = 300;\\nlet costDotA = new Dot({ point: ax.c2p(300, 50), color: BLUE, radius: 0.1 });\\nlet costDotB = new Dot({ point: ax.c2p(300, 50), color: ORANGE, radius: 0.1 });\\nscene.add(costDotA, costDotB);\\n\\nlet infoText = new Text({ text: 'At 300 min: A=$50  B=$50', fontSize: 22, color: WHITE });\\ninfoText.moveTo([0, -3.5, 0]);\\nscene.add(infoText);\\n\\nfunction updateInfo(m) {\\n  currentM = m;\\n  const cA = 20 + 0.10 * m;\\n  const cB = 35 + 0.05 * m;\\n  costDotA.moveTo(ax.c2p(m, cA));\\n  costDotB.moveTo(ax.c2p(m, cB));\\n  const pos = infoText.getCenter();\\n  scene.remove(infoText);\\n  const cheaper = cA < cB ? 'A cheaper' : cB < cA ? 'B cheaper' : 'SAME cost';\\n  infoText = new Text({\\n    text: `At ${Math.round(m)} min: A=$${cA.toFixed(2)}  B=$${cB.toFixed(2)}  (${cheaper})`,\\n    fontSize: 22,\\n    color: WHITE\\n  });\\n  infoText.moveTo(pos);\\n  scene.add(infoText);\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\ncontrols.addSlider({\\n  label: 'Minutes',\\n  min: 0,\\n  max: 600,\\n  value: 300,\\n  step: 10,\\n  onChange: (val) => updateInfo(val)\\n});\\ncontrols.addButton({\\n  label: 'Reset to break-even',\\n  onClick: () => {\\n    updateInfo(300);\\n  }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "Plan A costs C = 20 + 0.10m and Plan B costs C = 35 + 0.05m. Setting them equal gives 20 + 0.10m = 35 + 0.05m, so 0.05m = 15 and m = 300 minutes. At that point both plans cost $50. The graph shows the two cost lines crossing at the break-even point."
+      },
+      "code": "const ax = new Axes({\n  xRange: [0, 600, 100],\n  yRange: [0, 80, 10],\n  xLength: 10,\n  yLength: 5.5,\n  tips: true\n});\nax.shift([-0.5, -0.3, 0]);\n\nconst xLabel = new Text({ text: 'Minutes', fontSize: 22, color: GRAY });\nxLabel.nextTo(ax, DOWN);\nxLabel.shift([0, 0.15, 0]);\nconst yLabel = new Text({ text: 'Cost ($)', fontSize: 22, color: GRAY });\nyLabel.nextTo(ax, LEFT);\nyLabel.shift([0.3, 0, 0]);\n\nconst lineA = ax.plot(m => 20 + 0.10 * m, { color: BLUE, xRange: [0, 600] });\nconst lineB = ax.plot(m => 35 + 0.05 * m, { color: ORANGE, xRange: [0, 600] });\n\nconst intersectDot = new Dot({ point: ax.c2p(300, 50), color: YELLOW, radius: 0.12 });\n\nconst labelA = new Text({ text: 'A: 20 + 0.10m', fontSize: 20, color: BLUE });\nlabelA.moveTo(ax.c2p(480, 72));\nconst labelB = new Text({ text: 'B: 35 + 0.05m', fontSize: 20, color: ORANGE });\nlabelB.moveTo(ax.c2p(480, 55));\n\nconst eqLabel = new MathTex({ latex: 'm = 300 \\\\quad C = \\\\$50' });\nawait eqLabel.waitForRender();\neqLabel.moveTo([0, 3.2, 0]);\neqLabel.setColor(YELLOW);\n\nconst title = new Text({ text: 'Break-even: when do the plans cost the same?', fontSize: 26, color: WHITE });\ntitle.moveTo([0, 3.7, 0]);\n\nscene.add(ax, xLabel, yLabel, lineA, lineB, intersectDot, labelA, labelB, eqLabel, title);\n\n// Vertical & horizontal guide lines at intersection\nconst vGuide = new Polygon({\n  vertices: [ax.c2p(300, 0), ax.c2p(300, 50)],\n  color: YELLOW,\n  strokeWidth: 2\n});\nvGuide.setFillOpacity(0);\nconst hGuide = new Polygon({\n  vertices: [ax.c2p(0, 50), ax.c2p(300, 50)],\n  color: YELLOW,\n  strokeWidth: 2\n});\nhGuide.setFillOpacity(0);\nscene.add(vGuide, hGuide);\n\n// Interactive slider to explore cost at any minute count\nlet currentM = 300;\nlet costDotA = new Dot({ point: ax.c2p(300, 50), color: BLUE, radius: 0.1 });\nlet costDotB = new Dot({ point: ax.c2p(300, 50), color: ORANGE, radius: 0.1 });\nscene.add(costDotA, costDotB);\n\nlet infoText = new Text({ text: 'At 300 min: A=$50  B=$50', fontSize: 22, color: WHITE });\ninfoText.moveTo([0, -3.5, 0]);\nscene.add(infoText);\n\nfunction updateInfo(m) {\n  currentM = m;\n  const cA = 20 + 0.10 * m;\n  const cB = 35 + 0.05 * m;\n  costDotA.moveTo(ax.c2p(m, cA));\n  costDotB.moveTo(ax.c2p(m, cB));\n  const pos = infoText.getCenter();\n  scene.remove(infoText);\n  const cheaper = cA < cB ? 'A cheaper' : cB < cA ? 'B cheaper' : 'SAME cost';\n  infoText = new Text({\n    text: `At ${Math.round(m)} min: A=$${cA.toFixed(2)}  B=$${cB.toFixed(2)}  (${cheaper})`,\n    fontSize: 22,\n    color: WHITE\n  });\n  infoText.moveTo(pos);\n  scene.add(infoText);\n}\n\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\ncontrols.addSlider({\n  label: 'Minutes',\n  min: 0,\n  max: 600,\n  value: 300,\n  step: 10,\n  onChange: (val) => updateInfo(val)\n});\ncontrols.addButton({\n  label: 'Reset to break-even',\n  onClick: () => {\n    updateInfo(300);\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3285,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/alg-phone-plans.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/alg-phone-plans.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:13.181Z"
+}

@@ -1,0 +1,91 @@
+{
+  "itemId": "geo-inscribed-angle",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.29% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (-1.5, 2.3) — 0.67% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (-1.5, 2.3) — 0.67% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 48858,
+        "inputTokens": 5319,
+        "cachedInputTokens": 5287,
+        "outputTokens": 2326,
+        "costUsd": 0.023852700000000004,
+        "rawResponse": "{\"explanation\":\"An inscribed angle is half the measure of the arc it intercepts. Drag P along the same arc between the fixed endpoints A and B: the triangle changes, but the angle at P stays constant. If P crosses an endpoint onto the other arc, the angle switches to its supplementary angle—here, from 60° to 120°.\",\"manimCode\":\"const center = [-1.5, 0, 0];\\nconst radius = 2.3;\\nconst tau = 2 * Math.PI;\\nconst alpha = 7 * Math.PI / 6;\\nconst beta = 11 * Math.PI / 6;\\nlet theta = Math.PI / 2;\\nconst onCircle = a => [center[0] + radius * Math.cos(a), center[1] + radius * Math.sin(a), 0];\\nconst A = onCircle(alpha);\\nconst B = onCircle(beta);\\n\\nconst title = new Text({ text: 'The inscribed angle theorem', fontSize: 32, color: WHITE });\\ntitle.moveTo([0, 3.2, 0]);\\nconst hint = new Text({ text: 'Drag yellow P — stay on the same arc to keep the angle fixed', fontSize: 20, color: GRAY });\\nhint.moveTo([0, -3.3, 0]);\\nconst circle = new Circle({ radius, color: BLUE });\\ncircle.moveTo(center);\\ncircle.setStrokeWidth(2);\\nconst endpointA = new Dot({ point: A, color: BLUE, radius: 0.08 });\\nconst endpointB = new Dot({ point: B, color: BLUE, radius: 0.08 });\\nconst handle = new Dot({ point: onCircle(theta), color: YELLOW, radius: 0.13 });\\nconst labelA = new Text({ text: 'A', fontSize: 25, color: BLUE });\\nconst labelB = new Text({ text: 'B', fontSize: 25, color: BLUE });\\nlabelA.moveTo([A[0] - 0.18, A[1] - 0.3, 0]);\\nlabelB.moveTo([B[0] + 0.18, B[1] - 0.3, 0]);\\nconst labelP = new Text({ text: 'P', fontSize: 25, color: YELLOW });\\nconst chordA = new Line({ start: onCircle(theta), end: A, color: WHITE });\\nconst chordB = new Line({ start: onCircle(theta), end: B, color: WHITE });\\n\\nconst arcPieces = [];\\nfor (let i = 0; i < 64; i++) {\\n  const piece = new Line({ start: A, end: B, color: GOLD });\\n  piece.setStrokeWidth(5);\\n  arcPieces.push(piece);\\n}\\nconst anglePieces = [];\\nfor (let i = 0; i < 20; i++) {\\n  const piece = new Line({ start: A, end: B, color: YELLOW });\\n  piece.setStrokeWidth(3);\\n  anglePieces.push(piece);\\n}\\nconst angleLabel = new Text({ text: '', fontSize: 22, color: YELLOW });\\nconst arcHeading = new Text({ text: 'Intercepted arc AB', fontSize: 23, color: GOLD });\\narcHeading.moveTo([3.6, 1.9, 0]);\\nconst arcReadout = new Text({ text: '', fontSize: 37, color: GOLD });\\narcReadout.moveTo([3.6, 1.25, 0]);\\nconst angleHeading = new Text({ text: 'Angle APB', fontSize: 23, color: YELLOW });\\nangleHeading.moveTo([3.6, 0.3, 0]);\\nconst angleReadout = new Text({ text: '', fontSize: 42, color: YELLOW });\\nangleReadout.moveTo([3.6, -0.35, 0]);\\nconst formula = new MathTex({ latex: '\\\\\\\\theta = \\\\\\\\tfrac{1}{2}\\\\\\\\,m(\\\\\\\\widehat{AB})', color: WHITE });\\nawait formula.waitForRender();\\nformula.scale(0.8);\\nformula.moveTo([3.6, -1.35, 0]);\\nconst note = new Text({ text: 'A and B remain fixed', fontSize: 19, color: GRAY });\\nnote.moveTo([3.6, -2.15, 0]);\\n\\nscene.add(title, hint, circle, ...arcPieces, chordA, chordB, ...anglePieces, endpointA, endpointB, labelA, labelB, labelP, angleLabel, arcHeading, arcReadout, angleHeading, angleReadout, formula, note, handle);\\n\\nfunction update() {\\n  const P = onCircle(theta);\\n  handle.moveTo(P);\\n  labelP.moveTo([P[0] + 0.25 * Math.cos(theta), P[1] + 0.25 * Math.sin(theta), 0]);\\n  chordA.setStart(P);\\n  chordB.setStart(P);\\n  const onMinorArc = theta > alpha && theta < beta;\\n  const arcStart = onMinorArc ? beta : alpha;\\n  const arcSweep = onMinorArc ? 4 * Math.PI / 3 : 2 * Math.PI / 3;\\n  for (let i = 0; i < arcPieces.length; i++) {\\n    arcPieces[i].setStart(onCircle(arcStart + arcSweep * i / arcPieces.length));\\n    arcPieces[i].setEnd(onCircle(arcStart + arcSweep * (i + 1) / arcPieces.length));\\n  }\\n  const startAngle = Math.atan2(A[1] - P[1], A[0] - P[0]);\\n  const endAngle = Math.atan2(B[1] - P[1], B[0] - P[0]);\\n  const sweep = Math.atan2(Math.sin(endAngle - startAngle), Math.cos(endAngle - startAngle));\\n  const markerRadius = 0.42;\\n  const markerPoint = a => [P[0] + markerRadius * Math.cos(a), P[1] + markerRadius * Math.sin(a), 0];\\n  for (let i = 0; i < anglePieces.length; i++) {\\n    anglePieces[i].setStart(markerPoint(startAngle + sweep * i / anglePieces.length));\\n    anglePieces[i].setEnd(markerPoint(startAngle + sweep * (i + 1) / anglePieces.length));\\n  }\\n  const bisector = startAngle + sweep / 2;\\n  angleLabel.moveTo([P[0] + 0.76 * Math.cos(bisector), P[1] + 0.76 * Math.sin(bisector), 0]);\\n  const degrees = onMinorArc ? 120 : 60;\\n  angleLabel.setText(degrees + '°');\\n  angleReadout.setText(degrees + '°');\\n  arcReadout.setText((2 * degrees) + '°');\\n}\\nupdate();\\n\\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\\n  theta = (Math.atan2(pos[1] - center[1], pos[0] - center[0]) + tau) % tau;\\n  // The angle is undefined at A or B; leave a small gap around each endpoint.\\n  for (const endpointAngle of [alpha, beta]) {\\n    const difference = Math.atan2(Math.sin(theta - endpointAngle), Math.cos(theta - endpointAngle));\\n    if (Math.abs(difference) < 0.12) {\\n      theta = (endpointAngle + (difference >= 0 ? 0.12 : -0.12) + tau) % tau;\\n    }\\n  }\\n  update();\\n} });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "An inscribed angle is half the measure of the arc it intercepts. Drag P along the same arc between the fixed endpoints A and B: the triangle changes, but the angle at P stays constant. If P crosses an endpoint onto the other arc, the angle switches to its supplementary angle—here, from 60° to 120°."
+      },
+      "code": "const center = [-1.5, 0, 0];\nconst radius = 2.3;\nconst tau = 2 * Math.PI;\nconst alpha = 7 * Math.PI / 6;\nconst beta = 11 * Math.PI / 6;\nlet theta = Math.PI / 2;\nconst onCircle = a => [center[0] + radius * Math.cos(a), center[1] + radius * Math.sin(a), 0];\nconst A = onCircle(alpha);\nconst B = onCircle(beta);\n\nconst title = new Text({ text: 'The inscribed angle theorem', fontSize: 32, color: WHITE });\ntitle.moveTo([0, 3.2, 0]);\nconst hint = new Text({ text: 'Drag yellow P — stay on the same arc to keep the angle fixed', fontSize: 20, color: GRAY });\nhint.moveTo([0, -3.3, 0]);\nconst circle = new Circle({ radius, color: BLUE });\ncircle.moveTo(center);\ncircle.setStrokeWidth(2);\nconst endpointA = new Dot({ point: A, color: BLUE, radius: 0.08 });\nconst endpointB = new Dot({ point: B, color: BLUE, radius: 0.08 });\nconst handle = new Dot({ point: onCircle(theta), color: YELLOW, radius: 0.13 });\nconst labelA = new Text({ text: 'A', fontSize: 25, color: BLUE });\nconst labelB = new Text({ text: 'B', fontSize: 25, color: BLUE });\nlabelA.moveTo([A[0] - 0.18, A[1] - 0.3, 0]);\nlabelB.moveTo([B[0] + 0.18, B[1] - 0.3, 0]);\nconst labelP = new Text({ text: 'P', fontSize: 25, color: YELLOW });\nconst chordA = new Line({ start: onCircle(theta), end: A, color: WHITE });\nconst chordB = new Line({ start: onCircle(theta), end: B, color: WHITE });\n\nconst arcPieces = [];\nfor (let i = 0; i < 64; i++) {\n  const piece = new Line({ start: A, end: B, color: GOLD });\n  piece.setStrokeWidth(5);\n  arcPieces.push(piece);\n}\nconst anglePieces = [];\nfor (let i = 0; i < 20; i++) {\n  const piece = new Line({ start: A, end: B, color: YELLOW });\n  piece.setStrokeWidth(3);\n  anglePieces.push(piece);\n}\nconst angleLabel = new Text({ text: '', fontSize: 22, color: YELLOW });\nconst arcHeading = new Text({ text: 'Intercepted arc AB', fontSize: 23, color: GOLD });\narcHeading.moveTo([3.6, 1.9, 0]);\nconst arcReadout = new Text({ text: '', fontSize: 37, color: GOLD });\narcReadout.moveTo([3.6, 1.25, 0]);\nconst angleHeading = new Text({ text: 'Angle APB', fontSize: 23, color: YELLOW });\nangleHeading.moveTo([3.6, 0.3, 0]);\nconst angleReadout = new Text({ text: '', fontSize: 42, color: YELLOW });\nangleReadout.moveTo([3.6, -0.35, 0]);\nconst formula = new MathTex({ latex: '\\\\theta = \\\\tfrac{1}{2}\\\\,m(\\\\widehat{AB})', color: WHITE });\nawait formula.waitForRender();\nformula.scale(0.8);\nformula.moveTo([3.6, -1.35, 0]);\nconst note = new Text({ text: 'A and B remain fixed', fontSize: 19, color: GRAY });\nnote.moveTo([3.6, -2.15, 0]);\n\nscene.add(title, hint, circle, ...arcPieces, chordA, chordB, ...anglePieces, endpointA, endpointB, labelA, labelB, labelP, angleLabel, arcHeading, arcReadout, angleHeading, angleReadout, formula, note, handle);\n\nfunction update() {\n  const P = onCircle(theta);\n  handle.moveTo(P);\n  labelP.moveTo([P[0] + 0.25 * Math.cos(theta), P[1] + 0.25 * Math.sin(theta), 0]);\n  chordA.setStart(P);\n  chordB.setStart(P);\n  const onMinorArc = theta > alpha && theta < beta;\n  const arcStart = onMinorArc ? beta : alpha;\n  const arcSweep = onMinorArc ? 4 * Math.PI / 3 : 2 * Math.PI / 3;\n  for (let i = 0; i < arcPieces.length; i++) {\n    arcPieces[i].setStart(onCircle(arcStart + arcSweep * i / arcPieces.length));\n    arcPieces[i].setEnd(onCircle(arcStart + arcSweep * (i + 1) / arcPieces.length));\n  }\n  const startAngle = Math.atan2(A[1] - P[1], A[0] - P[0]);\n  const endAngle = Math.atan2(B[1] - P[1], B[0] - P[0]);\n  const sweep = Math.atan2(Math.sin(endAngle - startAngle), Math.cos(endAngle - startAngle));\n  const markerRadius = 0.42;\n  const markerPoint = a => [P[0] + markerRadius * Math.cos(a), P[1] + markerRadius * Math.sin(a), 0];\n  for (let i = 0; i < anglePieces.length; i++) {\n    anglePieces[i].setStart(markerPoint(startAngle + sweep * i / anglePieces.length));\n    anglePieces[i].setEnd(markerPoint(startAngle + sweep * (i + 1) / anglePieces.length));\n  }\n  const bisector = startAngle + sweep / 2;\n  angleLabel.moveTo([P[0] + 0.76 * Math.cos(bisector), P[1] + 0.76 * Math.sin(bisector), 0]);\n  const degrees = onMinorArc ? 120 : 60;\n  angleLabel.setText(degrees + '°');\n  angleReadout.setText(degrees + '°');\n  arcReadout.setText((2 * degrees) + '°');\n}\nupdate();\n\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\n  theta = (Math.atan2(pos[1] - center[1], pos[0] - center[0]) + tau) % tau;\n  // The angle is undefined at A or B; leave a small gap around each endpoint.\n  for (const endpointAngle of [alpha, beta]) {\n    const difference = Math.atan2(Math.sin(theta - endpointAngle), Math.cos(theta - endpointAngle));\n    if (Math.abs(difference) < 0.12) {\n      theta = (endpointAngle + (difference >= 0 ? 0.12 : -0.12) + tau) % tau;\n    }\n  }\n  update();\n} });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5669,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "drag",
+            "label": "Dot at (-1.5, 2.3)",
+            "change": 0.00669921875,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/geo-inscribed-angle.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/geo-inscribed-angle.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:52:47.783Z"
+}

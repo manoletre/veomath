@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-inverse-exp-log",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.24% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.77% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 22962,
+        "inputTokens": 8051,
+        "cachedInputTokens": 7569,
+        "outputTokens": 2532,
+        "costUsd": 0.056001800000000004,
+        "rawResponse": "{\"explanation\":\"Two functions are inverses when each one undoes the other. On a graph, that means swapping x and y: every point (a, eᵃ) on y = eˣ matches a point (eᵃ, a) on y = ln(x). Swapping coordinates is the same as reflecting across the line y = x, so the graph of ln(x) is the mirror image of eˣ. Move the slider and you'll see that the segment from P to Q always crosses y = x at a right angle, and its midpoint always sits on that line.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-4, 4, 1], yRange: [-4, 4, 1],\\n  xLength: 7, yLength: 7, tips: false\\n});\\nax.moveTo([-2.2, 0, 0]);\\n\\nconst expCurve = ax.plot(x => Math.exp(x), { color: BLUE, xRange: [-4, Math.log(4)], numSamples: 300 });\\nconst lnCurve = ax.plot(x => Math.log(x), { color: ORANGE, xRange: [Math.exp(-4), 4], numSamples: 300 });\\nconst idLine = ax.plot(x => x, { color: GRAY, xRange: [-4, 4] });\\n\\nawait scene.play(new Create(ax));\\nawait scene.play(new Create(idLine));\\nawait scene.play(new Create(expCurve));\\n\\nconst expLabel = new MathTex({ latex: 'y = e^x', color: BLUE });\\nawait expLabel.waitForRender();\\nexpLabel.moveTo([4.2, 1.2, 0]);\\nconst idLabel = new MathTex({ latex: 'y = x', color: GRAY });\\nawait idLabel.waitForRender();\\nidLabel.moveTo([4.2, 0.4, 0]);\\nawait scene.play(new AnimationGroup([new Write(expLabel), new Write(idLabel)]));\\n\\n// Reflect: morph a copy of e^x into ln(x)\\nconst expCopy = ax.plot(x => Math.exp(x), { color: BLUE, xRange: [-4, Math.log(4)], numSamples: 300 });\\nscene.add(expCopy);\\nawait scene.play(new Transform(expCopy, lnCurve));\\nscene.remove(expCopy);\\nscene.add(lnCurve);\\n\\nconst lnLabel = new MathTex({ latex: 'y = \\\\\\\\ln x', color: ORANGE });\\nawait lnLabel.waitForRender();\\nlnLabel.moveTo([4.2, -0.4, 0]);\\nawait scene.play(new Write(lnLabel));\\n\\n// Interactive mirror pair\\nlet a = 0.5;\\nconst P = new Dot({ point: ax.c2p(a, Math.exp(a)), color: BLUE_A });\\nconst Q = new Dot({ point: ax.c2p(Math.exp(a), a), color: ORANGE });\\nconst M = new Dot({ point: ax.c2p((a + Math.exp(a)) / 2, (a + Math.exp(a)) / 2), color: WHITE });\\nconst seg = new Polygon({ vertices: [P.getCenter(), Q.getCenter()], color: YELLOW });\\nseg.setStrokeWidth(3).setFillOpacity(0);\\n\\nseg.addUpdater(() => {\\n  seg.setVertices([ax.c2p(a, Math.exp(a)), ax.c2p(Math.exp(a), a)]);\\n});\\nP.addUpdater(() => P.moveTo(ax.c2p(a, Math.exp(a))));\\nQ.addUpdater(() => Q.moveTo(ax.c2p(Math.exp(a), a)));\\nM.addUpdater(() => {\\n  const m = (a + Math.exp(a)) / 2;\\n  M.moveTo(ax.c2p(m, m));\\n});\\n\\nawait scene.play(new AnimationGroup([new FadeIn(seg), new FadeIn(P), new FadeIn(Q), new FadeIn(M)]));\\n\\nlet readout = null;\\nfunction updateReadout() {\\n  if (readout) scene.remove(readout);\\n  const ea = Math.exp(a);\\n  readout = new VGroup(\\n    new Text({ text: 'P = (' + a.toFixed(2) + ', ' + ea.toFixed(2) + ')', color: BLUE_A, fontSize: 24 }),\\n    new Text({ text: 'Q = (' + ea.toFixed(2) + ', ' + a.toFixed(2) + ')', color: ORANGE, fontSize: 24 }),\\n    new Text({ text: 'swap x and y = reflect', color: YELLOW, fontSize: 22 })\\n  );\\n  readout.arrange(DOWN, 0.2);\\n  readout.moveTo([4.2, -2.3, 0]);\\n  scene.add(readout);\\n}\\nupdateReadout();\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({\\n  label: 'a (point on e^x)', min: -3, max: 1.35, value: a, step: 0.01,\\n  onChange: (v) => { a = v; updateReadout(); }\\n});\\ncontrols.addButton({\\n  label: 'Sweep',\\n  onClick: async () => {\\n    for (let i = 0; i <= 120; i++) {\\n      a = -3 + (4.35 * i) / 120;\\n      if (i % 6 === 0) updateReadout();\\n      await scene.wait(0.03);\\n    }\\n    updateReadout();\\n  }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Two functions are inverses when each one undoes the other. On a graph, that means swapping x and y: every point (a, eᵃ) on y = eˣ matches a point (eᵃ, a) on y = ln(x). Swapping coordinates is the same as reflecting across the line y = x, so the graph of ln(x) is the mirror image of eˣ. Move the slider and you'll see that the segment from P to Q always crosses y = x at a right angle, and its midpoint always sits on that line."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-4, 4, 1], yRange: [-4, 4, 1],\n  xLength: 7, yLength: 7, tips: false\n});\nax.moveTo([-2.2, 0, 0]);\n\nconst expCurve = ax.plot(x => Math.exp(x), { color: BLUE, xRange: [-4, Math.log(4)], numSamples: 300 });\nconst lnCurve = ax.plot(x => Math.log(x), { color: ORANGE, xRange: [Math.exp(-4), 4], numSamples: 300 });\nconst idLine = ax.plot(x => x, { color: GRAY, xRange: [-4, 4] });\n\nawait scene.play(new Create(ax));\nawait scene.play(new Create(idLine));\nawait scene.play(new Create(expCurve));\n\nconst expLabel = new MathTex({ latex: 'y = e^x', color: BLUE });\nawait expLabel.waitForRender();\nexpLabel.moveTo([4.2, 1.2, 0]);\nconst idLabel = new MathTex({ latex: 'y = x', color: GRAY });\nawait idLabel.waitForRender();\nidLabel.moveTo([4.2, 0.4, 0]);\nawait scene.play(new AnimationGroup([new Write(expLabel), new Write(idLabel)]));\n\n// Reflect: morph a copy of e^x into ln(x)\nconst expCopy = ax.plot(x => Math.exp(x), { color: BLUE, xRange: [-4, Math.log(4)], numSamples: 300 });\nscene.add(expCopy);\nawait scene.play(new Transform(expCopy, lnCurve));\nscene.remove(expCopy);\nscene.add(lnCurve);\n\nconst lnLabel = new MathTex({ latex: 'y = \\\\ln x', color: ORANGE });\nawait lnLabel.waitForRender();\nlnLabel.moveTo([4.2, -0.4, 0]);\nawait scene.play(new Write(lnLabel));\n\n// Interactive mirror pair\nlet a = 0.5;\nconst P = new Dot({ point: ax.c2p(a, Math.exp(a)), color: BLUE_A });\nconst Q = new Dot({ point: ax.c2p(Math.exp(a), a), color: ORANGE });\nconst M = new Dot({ point: ax.c2p((a + Math.exp(a)) / 2, (a + Math.exp(a)) / 2), color: WHITE });\nconst seg = new Polygon({ vertices: [P.getCenter(), Q.getCenter()], color: YELLOW });\nseg.setStrokeWidth(3).setFillOpacity(0);\n\nseg.addUpdater(() => {\n  seg.setVertices([ax.c2p(a, Math.exp(a)), ax.c2p(Math.exp(a), a)]);\n});\nP.addUpdater(() => P.moveTo(ax.c2p(a, Math.exp(a))));\nQ.addUpdater(() => Q.moveTo(ax.c2p(Math.exp(a), a)));\nM.addUpdater(() => {\n  const m = (a + Math.exp(a)) / 2;\n  M.moveTo(ax.c2p(m, m));\n});\n\nawait scene.play(new AnimationGroup([new FadeIn(seg), new FadeIn(P), new FadeIn(Q), new FadeIn(M)]));\n\nlet readout = null;\nfunction updateReadout() {\n  if (readout) scene.remove(readout);\n  const ea = Math.exp(a);\n  readout = new VGroup(\n    new Text({ text: 'P = (' + a.toFixed(2) + ', ' + ea.toFixed(2) + ')', color: BLUE_A, fontSize: 24 }),\n    new Text({ text: 'Q = (' + ea.toFixed(2) + ', ' + a.toFixed(2) + ')', color: ORANGE, fontSize: 24 }),\n    new Text({ text: 'swap x and y = reflect', color: YELLOW, fontSize: 22 })\n  );\n  readout.arrange(DOWN, 0.2);\n  readout.moveTo([4.2, -2.3, 0]);\n  scene.add(readout);\n}\nupdateReadout();\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({\n  label: 'a (point on e^x)', min: -3, max: 1.35, value: a, step: 0.01,\n  onChange: (v) => { a = v; updateReadout(); }\n});\ncontrols.addButton({\n  label: 'Sweep',\n  onClick: async () => {\n    for (let i = 0; i <= 120; i++) {\n      a = -3 + (4.35 * i) / 120;\n      if (i % 6 === 0) updateReadout();\n      await scene.wait(0.03);\n    }\n    updateReadout();\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 16378,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 7,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/alg-inverse-exp-log.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/alg-inverse-exp-log.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:49.439Z"
+}

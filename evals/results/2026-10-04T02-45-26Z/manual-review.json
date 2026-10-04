@@ -1,0 +1,217 @@
+{
+  "version": 1,
+  "runId": "2026-10-04T02-45-26Z",
+  "createdAt": "2026-10-04T17:26:50.683Z",
+  "entries": [
+    {
+      "model": "openai/gpt-6-sol",
+      "itemId": "alg-inverse-exp-log",
+      "rating": 5,
+      "notes": "",
+      "reviewedAt": "2026-10-04T21:14:51.329Z"
+    },
+    {
+      "model": "moonshotai/kimi-k3",
+      "itemId": "alg-completing-square",
+      "rating": 5,
+      "notes": "",
+      "reviewedAt": "2026-10-04T21:15:39.121Z"
+    },
+    {
+      "model": "zai/glm-5.3",
+      "itemId": "stats-regression-drag",
+      "rating": 1,
+      "notes": "",
+      "reviewedAt": "2026-10-04T21:15:46.961Z"
+    },
+    {
+      "model": "openai/gpt-5.6-terra",
+      "itemId": "trig-law-of-cosines",
+      "rating": 4,
+      "notes": "",
+      "reviewedAt": "2026-10-04T21:21:18.105Z"
+    },
+    {
+      "model": "anthropic/claude-opus-5.5",
+      "itemId": "calc-secant-tangent",
+      "rating": 5,
+      "notes": "",
+      "reviewedAt": "2026-10-04T21:21:43.083Z"
+    },
+    {
+      "model": "spacexai/grok-4.5",
+      "itemId": "alg-inverse-exp-log",
+      "rating": 5,
+      "notes": "",
+      "reviewedAt": "2026-10-04T21:21:59.879Z"
+    },
+    {
+      "model": "openai/gpt-6.1-sol",
+      "itemId": "seq-compound-interest-e",
+      "rating": 2,
+      "notes": "The diagram shown is very small and kind of overlaps and not very clear. I do not understand what the blue and yellow curve is.",
+      "reviewedAt": "2026-10-04T21:23:30.866Z"
+    },
+    {
+      "model": "openai/gpt-6.1-sol",
+      "itemId": "geo-similar-area",
+      "rating": 4,
+      "notes": "",
+      "reviewedAt": "2026-10-04T21:24:21.734Z"
+    },
+    {
+      "model": "openai/gpt-5.6-terra",
+      "itemId": "calc-matrix-transform",
+      "rating": 4,
+      "notes": "There is no animation but the visual is good",
+      "reviewedAt": "2026-10-04T21:24:40.684Z"
+    },
+    {
+      "model": "openai/gpt-5.6-terra",
+      "itemId": "stats-galton-board",
+      "rating": 2,
+      "notes": "I need some recordings of where the ball lands, the left animation is good but nothing happens on the right.",
+      "reviewedAt": "2026-10-04T21:25:47.251Z"
+    },
+    {
+      "model": "openai/gpt-6-luna",
+      "itemId": "calc-riemann-sums",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "anthropic/claude-sonnet-5.5",
+      "itemId": "stats-bayes-medical",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "openai/gpt-5.6-terra",
+      "itemId": "trig-tangent-graph",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "zai/glm-5.3",
+      "itemId": "geo-cone-cylinder",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "anthropic/claude-opus-5.5",
+      "itemId": "alg-rational-asymptotes",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "openai/gpt-6-sol",
+      "itemId": "trig-radian",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "openai/gpt-6-sol",
+      "itemId": "geo-inscribed-angle",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "anthropic/claude-sonnet-5.5",
+      "itemId": "seq-compound-interest-e",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "zai/glm-5.3",
+      "itemId": "geo-triangle-angle-sum",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "moonshotai/kimi-k3",
+      "itemId": "seq-geometric-series",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "moonshotai/kimi-k3",
+      "itemId": "stats-bayes-medical",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "moonshotai/kimi-k3",
+      "itemId": "stats-normal-empirical",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "spacexai/grok-4.5",
+      "itemId": "alg-discriminant",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "anthropic/claude-sonnet-5.5",
+      "itemId": "alg-phone-plans",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "anthropic/claude-opus-5.5",
+      "itemId": "alg-vertex-form",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "spacexai/grok-4.5",
+      "itemId": "trig-law-of-cosines",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "openai/gpt-6.1-sol",
+      "itemId": "trig-sinusoid-params",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "spacexai/grok-4.5",
+      "itemId": "trig-unit-circle-sine",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "openai/gpt-6-luna",
+      "itemId": "geo-pythagorean-proof",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    },
+    {
+      "model": "openai/gpt-6-luna",
+      "itemId": "trig-sinusoid-params",
+      "rating": null,
+      "notes": "",
+      "reviewedAt": null
+    }
+  ]
+}

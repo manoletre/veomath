@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-law-of-cosines",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.34% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=3"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.07% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 34549,
+        "inputTokens": 11743,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1721,
+        "costUsd": 0.0243236,
+        "rawResponse": "{\"explanation\":\"The law of cosines extends the Pythagorean theorem to every triangle: \\\\(c^2=a^2+b^2-2ab\\\\cos C\\\\). When \\\\(C=90^\\\\circ\\\\), \\\\(\\\\cos C=0\\\\), so the correction term disappears and we recover \\\\(c^2=a^2+b^2\\\\). Acute angles make the correction negative (shortening \\\\(c\\\\)); obtuse angles make it positive (lengthening \\\\(c\\\\)).\",\"manimCode\":\"const vertexC = [-2.6, -1.35, 0];\\nconst sideA = 2.8;\\nconst sideB = 3.8;\\nlet angle = 65 * Math.PI / 180;\\n\\nfunction pointB() {\\n  return [vertexC[0] + sideA * Math.cos(angle), vertexC[1] + sideA * Math.sin(angle), 0];\\n}\\nfunction pointA() {\\n  return [vertexC[0] + sideB, vertexC[1], 0];\\n}\\n\\nconst A = pointA();\\nconst B = pointB();\\nconst triangle = new Polygon({ vertices: [vertexC, A, B], color: WHITE });\\ntriangle.setFill(BLUE_E, 0.28).setStrokeWidth(2);\\n\\nconst edgeA = new Polygon({ vertices: [vertexC, B], color: BLUE });\\nedgeA.setStrokeWidth(5).setFillOpacity(0);\\nconst edgeB = new Polygon({ vertices: [vertexC, A], color: GREEN });\\nedgeB.setStrokeWidth(5).setFillOpacity(0);\\nconst edgeC = new Polygon({ vertices: [A, B], color: YELLOW });\\nedgeC.setStrokeWidth(5).setFillOpacity(0);\\n\\nconst dotC = new Dot({ point: vertexC, color: WHITE });\\nconst dotA = new Dot({ point: A, color: WHITE });\\nconst dotB = new Dot({ point: B, color: WHITE });\\n\\nconst title = new Text({ text: 'Law of Cosines', color: WHITE, fontSize: 34 });\\ntitle.moveTo([0, 3.15, 0]);\\nconst formula = new MathTex({ latex: 'c^2=a^2+b^2-2ab\\\\\\\\cos C' });\\nawait formula.waitForRender();\\nformula.moveTo([0.2, -2.65, 0]);\\n\\nconst pyth = new Text({ text: 'Pythagorean part:  a² + b²', color: GREEN, fontSize: 20 });\\npyth.moveTo([-3.55, 2.15, 0]);\\nconst correction = new Text({ text: 'correction:  −2ab cos C', color: YELLOW, fontSize: 20 });\\ncorrection.moveTo([2.5, 2.15, 0]);\\n\\nconst labelA = new Text({ text: 'a', color: BLUE, fontSize: 28 });\\nlabelA.moveTo([-1.45, 0.25, 0]);\\nconst labelB = new Text({ text: 'b', color: GREEN, fontSize: 28 });\\nlabelB.moveTo([-0.7, -1.8, 0]);\\nconst labelC = new Text({ text: 'c', color: YELLOW, fontSize: 28 });\\nlabelC.moveTo([0.8, 0.15, 0]);\\nconst labelAngle = new Text({ text: 'C', color: WHITE, fontSize: 25 });\\nlabelAngle.moveTo([-2.15, -0.92, 0]);\\n\\nscene.add(triangle, edgeA, edgeB, edgeC, dotC, dotA, dotB, title, formula, pyth, correction, labelA, labelB, labelC, labelAngle);\\nawait scene.play(new AnimationGroup([new Create(triangle), new Write(formula)]));\\n\\nfunction updateTriangle() {\\n  const freshB = pointB();\\n  triangle.setVertices([vertexC, pointA(), freshB]);\\n  edgeA.setVertices([vertexC, freshB]);\\n  edgeB.setVertices([vertexC, pointA()]);\\n  edgeC.setVertices([pointA(), freshB]);\\n  dotB.moveTo(freshB);\\n}\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 270 });\\ncontrols.addSlider({\\n  label: 'Angle C (degrees)', min: 20, max: 150, value: 65, step: 1,\\n  onChange: (value) => {\\n    angle = value * Math.PI / 180;\\n    updateTriangle();\\n  }\\n});\\ncontrols.addButton({ label: 'Make C a right angle', onClick: () => {\\n  angle = Math.PI / 2;\\n  updateTriangle();\\n}});\\n\\nmakeHoverable(edgeA, scene, { hoverColor: WHITE, hoverScale: 1.03 });\\nmakeHoverable(edgeB, scene, { hoverColor: WHITE, hoverScale: 1.03 });\\nmakeHoverable(edgeC, scene, { hoverColor: WHITE, hoverScale: 1.03 });\\nawait scene.wait(999999);\"}",
+        "explanation": "The law of cosines extends the Pythagorean theorem to every triangle: \\(c^2=a^2+b^2-2ab\\cos C\\). When \\(C=90^\\circ\\), \\(\\cos C=0\\), so the correction term disappears and we recover \\(c^2=a^2+b^2\\). Acute angles make the correction negative (shortening \\(c\\)); obtuse angles make it positive (lengthening \\(c\\))."
+      },
+      "code": "const vertexC = [-2.6, -1.35, 0];\nconst sideA = 2.8;\nconst sideB = 3.8;\nlet angle = 65 * Math.PI / 180;\n\nfunction pointB() {\n  return [vertexC[0] + sideA * Math.cos(angle), vertexC[1] + sideA * Math.sin(angle), 0];\n}\nfunction pointA() {\n  return [vertexC[0] + sideB, vertexC[1], 0];\n}\n\nconst A = pointA();\nconst B = pointB();\nconst triangle = new Polygon({ vertices: [vertexC, A, B], color: WHITE });\ntriangle.setFill(BLUE_E, 0.28).setStrokeWidth(2);\n\nconst edgeA = new Polygon({ vertices: [vertexC, B], color: BLUE });\nedgeA.setStrokeWidth(5).setFillOpacity(0);\nconst edgeB = new Polygon({ vertices: [vertexC, A], color: GREEN });\nedgeB.setStrokeWidth(5).setFillOpacity(0);\nconst edgeC = new Polygon({ vertices: [A, B], color: YELLOW });\nedgeC.setStrokeWidth(5).setFillOpacity(0);\n\nconst dotC = new Dot({ point: vertexC, color: WHITE });\nconst dotA = new Dot({ point: A, color: WHITE });\nconst dotB = new Dot({ point: B, color: WHITE });\n\nconst title = new Text({ text: 'Law of Cosines', color: WHITE, fontSize: 34 });\ntitle.moveTo([0, 3.15, 0]);\nconst formula = new MathTex({ latex: 'c^2=a^2+b^2-2ab\\\\cos C' });\nawait formula.waitForRender();\nformula.moveTo([0.2, -2.65, 0]);\n\nconst pyth = new Text({ text: 'Pythagorean part:  a² + b²', color: GREEN, fontSize: 20 });\npyth.moveTo([-3.55, 2.15, 0]);\nconst correction = new Text({ text: 'correction:  −2ab cos C', color: YELLOW, fontSize: 20 });\ncorrection.moveTo([2.5, 2.15, 0]);\n\nconst labelA = new Text({ text: 'a', color: BLUE, fontSize: 28 });\nlabelA.moveTo([-1.45, 0.25, 0]);\nconst labelB = new Text({ text: 'b', color: GREEN, fontSize: 28 });\nlabelB.moveTo([-0.7, -1.8, 0]);\nconst labelC = new Text({ text: 'c', color: YELLOW, fontSize: 28 });\nlabelC.moveTo([0.8, 0.15, 0]);\nconst labelAngle = new Text({ text: 'C', color: WHITE, fontSize: 25 });\nlabelAngle.moveTo([-2.15, -0.92, 0]);\n\nscene.add(triangle, edgeA, edgeB, edgeC, dotC, dotA, dotB, title, formula, pyth, correction, labelA, labelB, labelC, labelAngle);\nawait scene.play(new AnimationGroup([new Create(triangle), new Write(formula)]));\n\nfunction updateTriangle() {\n  const freshB = pointB();\n  triangle.setVertices([vertexC, pointA(), freshB]);\n  edgeA.setVertices([vertexC, freshB]);\n  edgeB.setVertices([vertexC, pointA()]);\n  edgeC.setVertices([pointA(), freshB]);\n  dotB.moveTo(freshB);\n}\n\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 270 });\ncontrols.addSlider({\n  label: 'Angle C (degrees)', min: 20, max: 150, value: 65, step: 1,\n  onChange: (value) => {\n    angle = value * Math.PI / 180;\n    updateTriangle();\n  }\n});\ncontrols.addButton({ label: 'Make C a right angle', onClick: () => {\n  angle = Math.PI / 2;\n  updateTriangle();\n}});\n\nmakeHoverable(edgeA, scene, { hoverColor: WHITE, hoverScale: 1.03 });\nmakeHoverable(edgeB, scene, { hoverColor: WHITE, hoverScale: 1.03 });\nmakeHoverable(edgeC, scene, { hoverColor: WHITE, hoverScale: 1.03 });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5288,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 3
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/trig-law-of-cosines.0.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/trig-law-of-cosines.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:58:55.697Z"
+}

@@ -1,0 +1,80 @@
+{
+  "itemId": "trig-tangent-graph",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "5.37% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "FunctionGraph [x -5.46..-4.17, y 0.03..13.74] exceeds frame ±7.11 × ±4.00\nFunctionGraph [x -4.08..-1.42, y -13.74..13.74] exceeds frame ±7.11 × ±4.00\nFunctionGraph [x -1.33..1.33, y -13.74..13.74] exceeds frame ±7.11 × ±4.00\nFunctionGraph [x 1.42..4.08, y -13.74..13.74] exceeds frame ±7.11 × ±4.00\nFunctionGraph [x 4.17..5.46, y -13.74..-0.03] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=2 checkboxes=0 draggables=0 clickables=0 hoverables=4"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.37% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 45873,
+        "inputTokens": 5054,
+        "cachedInputTokens": 128,
+        "outputTokens": 2973,
+        "costUsd": 0.0277284,
+        "rawResponse": "{\"explanation\":\"The tangent function y = tan(x) equals sin(x)/cos(x), so it is undefined wherever cos(x) = 0. Those points are vertical asymptotes: x = π/2 + kπ (odd multiples of π/2). On (−2π, 2π) they sit at −3π/2, −π/2, π/2, and 3π/2. Between consecutive asymptotes tan(x) is continuous and strictly increases from −∞ to +∞, and the whole pattern repeats every π.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\\n  yRange: [-4, 4, 1],\\n  xLength: 11,\\n  yLength: 5.5,\\n  tips: true\\n});\\nax.moveTo([0, 0.2, 0]);\\n\\nconst xLabel = new MathTex({ latex: 'x' });\\nawait xLabel.waitForRender();\\nxLabel.scale(0.7);\\nxLabel.nextTo(ax, RIGHT);\\nxLabel.shift(scaleVec(0.3, DOWN));\\n\\nconst yLabel = new MathTex({ latex: 'y' });\\nawait yLabel.waitForRender();\\nyLabel.scale(0.7);\\nyLabel.nextTo(ax, UP);\\nyLabel.shift(scaleVec(0.3, LEFT));\\n\\nconst title = new MathTex({ latex: 'y = \\\\\\\\tan(x)' });\\nawait title.waitForRender();\\ntitle.scale(0.85);\\ntitle.moveTo([0, 3.5, 0]);\\n\\nscene.add(ax, xLabel, yLabel, title);\\n\\n// Branches between asymptotes (open intervals)\\nconst branches = [\\n  [-2 * Math.PI + 0.05, -3 * Math.PI / 2 - 0.05],\\n  [-3 * Math.PI / 2 + 0.05, -Math.PI / 2 - 0.05],\\n  [-Math.PI / 2 + 0.05, Math.PI / 2 - 0.05],\\n  [Math.PI / 2 + 0.05, 3 * Math.PI / 2 - 0.05],\\n  [3 * Math.PI / 2 + 0.05, 2 * Math.PI - 0.05]\\n];\\n\\nconst curves = [];\\nfor (const [a, b] of branches) {\\n  const c = ax.plot(x => Math.tan(x), {\\n    color: BLUE,\\n    xRange: [a, b],\\n    numSamples: 200\\n  });\\n  curves.push(c);\\n  scene.add(c);\\n}\\n\\n// Vertical asymptotes\\nconst asymX = [-3 * Math.PI / 2, -Math.PI / 2, Math.PI / 2, 3 * Math.PI / 2];\\nconst asymLabels = ['-3\\\\\\\\pi/2', '-\\\\\\\\pi/2', '\\\\\\\\pi/2', '3\\\\\\\\pi/2'];\\nconst asymLines = [];\\n\\nfor (let i = 0; i < asymX.length; i++) {\\n  const x = asymX[i];\\n  const line = new Line({\\n    start: ax.c2p(x, -4),\\n    end: ax.c2p(x, 4),\\n    color: RED_C\\n  });\\n  line.setStrokeWidth(2);\\n  line.setOpacity(0.7);\\n  asymLines.push(line);\\n  scene.add(line);\\n\\n  const lab = new MathTex({ latex: asymLabels[i] });\\n  await lab.waitForRender();\\n  lab.scale(0.45);\\n  lab.setColor(RED_A);\\n  const pt = ax.c2p(x, -4);\\n  lab.moveTo([pt[0], pt[1] - 0.35, 0]);\\n  scene.add(lab);\\n}\\n\\n// Interactive explorer: moving point + value readout\\nlet tVal = 0.8;\\nconst dot = new Dot({ point: ax.c2p(tVal, Math.tan(tVal)), color: YELLOW });\\nscene.add(dot);\\n\\nlet valueTex = new MathTex({\\n  latex: `\\\\\\\\tan(${tVal.toFixed(2)}) \\\\\\\\approx ${Math.tan(tVal).toFixed(2)}`\\n});\\nawait valueTex.waitForRender();\\nvalueTex.scale(0.55);\\nvalueTex.moveTo([0, -3.4, 0]);\\nscene.add(valueTex);\\n\\nconst note = new Text({\\n  text: 'Asymptotes where cos(x)=0  (odd multiples of π/2)',\\n  color: GRAY,\\n  fontSize: 22\\n});\\nnote.moveTo([0, -3.85, 0]);\\nscene.add(note);\\n\\nfunction refreshDotAndLabel(v) {\\n  tVal = v;\\n  // Keep clear of asymptotes so tan is finite\\n  const eps = 0.08;\\n  for (const a of asymX) {\\n    if (Math.abs(v - a) < eps) {\\n      v = a + (v >= a ? eps : -eps);\\n      tVal = v;\\n      break;\\n    }\\n  }\\n  const y = Math.tan(v);\\n  const clampedY = Math.max(-3.9, Math.min(3.9, y));\\n  dot.moveTo(ax.c2p(v, clampedY));\\n\\n  const pos = valueTex.getCenter();\\n  scene.remove(valueTex);\\n  const yStr = Math.abs(y) > 50 ? (y > 0 ? '+\\\\\\\\infty' : '-\\\\\\\\infty') : y.toFixed(2);\\n  valueTex = new MathTex({\\n    latex: `\\\\\\\\tan(${v.toFixed(2)}) \\\\\\\\approx ${yStr}`\\n  });\\n  valueTex.waitForRender().then(() => {\\n    valueTex.scale(0.55);\\n    valueTex.moveTo(pos);\\n    scene.add(valueTex);\\n  });\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\ncontrols.addSlider({\\n  label: 'x',\\n  min: -2 * Math.PI + 0.1,\\n  max: 2 * Math.PI - 0.1,\\n  value: tVal,\\n  step: 0.05,\\n  onChange: (v) => refreshDotAndLabel(v)\\n});\\ncontrols.addButton({\\n  label: 'Jump near π/2',\\n  onClick: () => refreshDotAndLabel(Math.PI / 2 - 0.15)\\n});\\ncontrols.addButton({\\n  label: 'Reset',\\n  onClick: () => refreshDotAndLabel(0.8)\\n});\\n\\n// Hover feedback on asymptotes\\nfor (const line of asymLines) {\\n  makeHoverable(line, scene, { hoverColor: YELLOW, hoverScale: 1.0 });\\n}\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The tangent function y = tan(x) equals sin(x)/cos(x), so it is undefined wherever cos(x) = 0. Those points are vertical asymptotes: x = π/2 + kπ (odd multiples of π/2). On (−2π, 2π) they sit at −3π/2, −π/2, π/2, and 3π/2. Between consecutive asymptotes tan(x) is continuous and strictly increases from −∞ to +∞, and the whole pattern repeats every π."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\n  yRange: [-4, 4, 1],\n  xLength: 11,\n  yLength: 5.5,\n  tips: true\n});\nax.moveTo([0, 0.2, 0]);\n\nconst xLabel = new MathTex({ latex: 'x' });\nawait xLabel.waitForRender();\nxLabel.scale(0.7);\nxLabel.nextTo(ax, RIGHT);\nxLabel.shift(scaleVec(0.3, DOWN));\n\nconst yLabel = new MathTex({ latex: 'y' });\nawait yLabel.waitForRender();\nyLabel.scale(0.7);\nyLabel.nextTo(ax, UP);\nyLabel.shift(scaleVec(0.3, LEFT));\n\nconst title = new MathTex({ latex: 'y = \\\\tan(x)' });\nawait title.waitForRender();\ntitle.scale(0.85);\ntitle.moveTo([0, 3.5, 0]);\n\nscene.add(ax, xLabel, yLabel, title);\n\n// Branches between asymptotes (open intervals)\nconst branches = [\n  [-2 * Math.PI + 0.05, -3 * Math.PI / 2 - 0.05],\n  [-3 * Math.PI / 2 + 0.05, -Math.PI / 2 - 0.05],\n  [-Math.PI / 2 + 0.05, Math.PI / 2 - 0.05],\n  [Math.PI / 2 + 0.05, 3 * Math.PI / 2 - 0.05],\n  [3 * Math.PI / 2 + 0.05, 2 * Math.PI - 0.05]\n];\n\nconst curves = [];\nfor (const [a, b] of branches) {\n  const c = ax.plot(x => Math.tan(x), {\n    color: BLUE,\n    xRange: [a, b],\n    numSamples: 200\n  });\n  curves.push(c);\n  scene.add(c);\n}\n\n// Vertical asymptotes\nconst asymX = [-3 * Math.PI / 2, -Math.PI / 2, Math.PI / 2, 3 * Math.PI / 2];\nconst asymLabels = ['-3\\\\pi/2', '-\\\\pi/2', '\\\\pi/2', '3\\\\pi/2'];\nconst asymLines = [];\n\nfor (let i = 0; i < asymX.length; i++) {\n  const x = asymX[i];\n  const line = new Line({\n    start: ax.c2p(x, -4),\n    end: ax.c2p(x, 4),\n    color: RED_C\n  });\n  line.setStrokeWidth(2);\n  line.setOpacity(0.7);\n  asymLines.push(line);\n  scene.add(line);\n\n  const lab = new MathTex({ latex: asymLabels[i] });\n  await lab.waitForRender();\n  lab.scale(0.45);\n  lab.setColor(RED_A);\n  const pt = ax.c2p(x, -4);\n  lab.moveTo([pt[0], pt[1] - 0.35, 0]);\n  scene.add(lab);\n}\n\n// Interactive explorer: moving point + value readout\nlet tVal = 0.8;\nconst dot = new Dot({ point: ax.c2p(tVal, Math.tan(tVal)), color: YELLOW });\nscene.add(dot);\n\nlet valueTex = new MathTex({\n  latex: `\\\\tan(${tVal.toFixed(2)}) \\\\approx ${Math.tan(tVal).toFixed(2)}`\n});\nawait valueTex.waitForRender();\nvalueTex.scale(0.55);\nvalueTex.moveTo([0, -3.4, 0]);\nscene.add(valueTex);\n\nconst note = new Text({\n  text: 'Asymptotes where cos(x)=0  (odd multiples of π/2)',\n  color: GRAY,\n  fontSize: 22\n});\nnote.moveTo([0, -3.85, 0]);\nscene.add(note);\n\nfunction refreshDotAndLabel(v) {\n  tVal = v;\n  // Keep clear of asymptotes so tan is finite\n  const eps = 0.08;\n  for (const a of asymX) {\n    if (Math.abs(v - a) < eps) {\n      v = a + (v >= a ? eps : -eps);\n      tVal = v;\n      break;\n    }\n  }\n  const y = Math.tan(v);\n  const clampedY = Math.max(-3.9, Math.min(3.9, y));\n  dot.moveTo(ax.c2p(v, clampedY));\n\n  const pos = valueTex.getCenter();\n  scene.remove(valueTex);\n  const yStr = Math.abs(y) > 50 ? (y > 0 ? '+\\\\infty' : '-\\\\infty') : y.toFixed(2);\n  valueTex = new MathTex({\n    latex: `\\\\tan(${v.toFixed(2)}) \\\\approx ${yStr}`\n  });\n  valueTex.waitForRender().then(() => {\n    valueTex.scale(0.55);\n    valueTex.moveTo(pos);\n    scene.add(valueTex);\n  });\n}\n\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\ncontrols.addSlider({\n  label: 'x',\n  min: -2 * Math.PI + 0.1,\n  max: 2 * Math.PI - 0.1,\n  value: tVal,\n  step: 0.05,\n  onChange: (v) => refreshDotAndLabel(v)\n});\ncontrols.addButton({\n  label: 'Jump near π/2',\n  onClick: () => refreshDotAndLabel(Math.PI / 2 - 0.15)\n});\ncontrols.addButton({\n  label: 'Reset',\n  onClick: () => refreshDotAndLabel(0.8)\n});\n\n// Hover feedback on asymptotes\nfor (const line of asymLines) {\n  makeHoverable(line, scene, { hoverColor: YELLOW, hoverScale: 1.0 });\n}\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5841,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 2,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 4
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/trig-tangent-graph.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/trig-tangent-graph.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:22.860Z"
+}

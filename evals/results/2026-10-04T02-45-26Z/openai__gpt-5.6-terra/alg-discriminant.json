@@ -1,0 +1,78 @@
+{
+  "itemId": "alg-discriminant",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.36% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=3 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 31025,
+        "inputTokens": 11754,
+        "cachedInputTokens": 0,
+        "outputTokens": 1505,
+        "costUsd": 0.041567999999999994,
+        "rawResponse": "{\"explanation\":\"For a quadratic \\\\(ax^2+bx+c\\\\), the discriminant \\\\(D=b^2-4ac\\\\) measures how the parabola meets the x-axis. Positive \\\\(D\\\\) gives two crossings, zero gives one tangency, and negative \\\\(D\\\\) gives no real crossings. Use the controls to switch among the three cases.\",\"manimCode\":\"const title = new Text({ text: 'The discriminant decides the real roots', color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.45, 0]);\\n\\nconst formula = new MathTex({ latex: 'D=b^2-4ac' });\\nawait formula.waitForRender();\\nformula.setColor(YELLOW);\\nformula.moveTo([0, 2.75, 0]);\\n\\nconst ax = new Axes({\\n  xRange: [-3, 3, 1],\\n  yRange: [-1.5, 4, 1],\\n  xLength: 7.2,\\n  yLength: 4.5,\\n  tips: true\\n});\\nax.moveTo([-1.25, -0.55, 0]);\\n\\nconst xLab = new Text({ text: 'x', color: GRAY, fontSize: 20 });\\nxLab.moveTo([2.55, -2.75, 0]);\\n\\nconst rule = new Text({ text: 'Look for x-axis intersections', color: GRAY, fontSize: 18 });\\nrule.moveTo([3.95, 1.55, 0]);\\n\\nscene.add(title, formula, ax, xLab, rule);\\n\\nlet curve;\\nlet rootDots = [];\\nlet info;\\nlet equation;\\n\\nfunction removeCurrent() {\\n  if (curve) scene.remove(curve);\\n  rootDots.forEach(d => scene.remove(d));\\n  if (info) scene.remove(info);\\n  if (equation) scene.remove(equation);\\n}\\n\\nfunction showCase(kind) {\\n  removeCurrent();\\n  let fn, eq, message, roots, curveColor;\\n\\n  if (kind === 'two') {\\n    fn = x => x * x - 1;\\n    eq = 'y=x^2-1';\\n    message = 'D = 4 > 0\\\\\\\\n2 real roots';\\n    roots = [-1, 1];\\n    curveColor = BLUE;\\n  } else if (kind === 'one') {\\n    fn = x => x * x;\\n    eq = 'y=x^2';\\n    message = 'D = 0\\\\\\\\n1 real root (double root)';\\n    roots = [0];\\n    curveColor = GREEN;\\n  } else {\\n    fn = x => x * x + 1;\\n    eq = 'y=x^2+1';\\n    message = 'D = -4 < 0\\\\\\\\n0 real roots';\\n    roots = [];\\n    curveColor = RED;\\n  }\\n\\n  curve = ax.plot(fn, { color: curveColor, xRange: [-2, 2], numSamples: 180 });\\n  equation = new Text({ text: eq, color: curveColor, fontSize: 23 });\\n  equation.moveTo([4.05, 0.8, 0]);\\n  info = new Text({ text: message, color: WHITE, fontSize: 22 });\\n  info.moveTo([4.05, 0.05, 0]);\\n\\n  rootDots = roots.map(r => new Dot({ point: ax.c2p(r, 0), color: YELLOW }));\\n  scene.add(curve, equation, info, ...rootDots);\\n}\\n\\nshowCase('two');\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', theme: 'dark', width: 220 });\\ncontrols.addButton({ label: 'D > 0: two roots', onClick: () => showCase('two') });\\ncontrols.addButton({ label: 'D = 0: one root', onClick: () => showCase('one') });\\ncontrols.addButton({ label: 'D < 0: no roots', onClick: () => showCase('zero') });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "For a quadratic \\(ax^2+bx+c\\), the discriminant \\(D=b^2-4ac\\) measures how the parabola meets the x-axis. Positive \\(D\\) gives two crossings, zero gives one tangency, and negative \\(D\\) gives no real crossings. Use the controls to switch among the three cases."
+      },
+      "code": "const title = new Text({ text: 'The discriminant decides the real roots', color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.45, 0]);\n\nconst formula = new MathTex({ latex: 'D=b^2-4ac' });\nawait formula.waitForRender();\nformula.setColor(YELLOW);\nformula.moveTo([0, 2.75, 0]);\n\nconst ax = new Axes({\n  xRange: [-3, 3, 1],\n  yRange: [-1.5, 4, 1],\n  xLength: 7.2,\n  yLength: 4.5,\n  tips: true\n});\nax.moveTo([-1.25, -0.55, 0]);\n\nconst xLab = new Text({ text: 'x', color: GRAY, fontSize: 20 });\nxLab.moveTo([2.55, -2.75, 0]);\n\nconst rule = new Text({ text: 'Look for x-axis intersections', color: GRAY, fontSize: 18 });\nrule.moveTo([3.95, 1.55, 0]);\n\nscene.add(title, formula, ax, xLab, rule);\n\nlet curve;\nlet rootDots = [];\nlet info;\nlet equation;\n\nfunction removeCurrent() {\n  if (curve) scene.remove(curve);\n  rootDots.forEach(d => scene.remove(d));\n  if (info) scene.remove(info);\n  if (equation) scene.remove(equation);\n}\n\nfunction showCase(kind) {\n  removeCurrent();\n  let fn, eq, message, roots, curveColor;\n\n  if (kind === 'two') {\n    fn = x => x * x - 1;\n    eq = 'y=x^2-1';\n    message = 'D = 4 > 0\\\\n2 real roots';\n    roots = [-1, 1];\n    curveColor = BLUE;\n  } else if (kind === 'one') {\n    fn = x => x * x;\n    eq = 'y=x^2';\n    message = 'D = 0\\\\n1 real root (double root)';\n    roots = [0];\n    curveColor = GREEN;\n  } else {\n    fn = x => x * x + 1;\n    eq = 'y=x^2+1';\n    message = 'D = -4 < 0\\\\n0 real roots';\n    roots = [];\n    curveColor = RED;\n  }\n\n  curve = ax.plot(fn, { color: curveColor, xRange: [-2, 2], numSamples: 180 });\n  equation = new Text({ text: eq, color: curveColor, fontSize: 23 });\n  equation.moveTo([4.05, 0.8, 0]);\n  info = new Text({ text: message, color: WHITE, fontSize: 22 });\n  info.moveTo([4.05, 0.05, 0]);\n\n  rootDots = roots.map(r => new Dot({ point: ax.c2p(r, 0), color: YELLOW }));\n  scene.add(curve, equation, info, ...rootDots);\n}\n\nshowCase('two');\n\nconst controls = new Controls(scene, { position: 'bottom-right', theme: 'dark', width: 220 });\ncontrols.addButton({ label: 'D > 0: two roots', onClick: () => showCase('two') });\ncontrols.addButton({ label: 'D = 0: one root', onClick: () => showCase('one') });\ncontrols.addButton({ label: 'D < 0: no roots', onClick: () => showCase('zero') });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3238,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 3,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/alg-discriminant.0.final.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:56:52.132Z"
+}

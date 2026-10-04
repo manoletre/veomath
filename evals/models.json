@@ -1,0 +1,14 @@
+{
+  "note": "id = Vercel AI Gateway-style ID (used to name results). via: gateway (API key), claude (`claude -p`, Claude subscription) or codex (`codex exec`, ChatGPT subscription). Optional `effort` sets reasoning effort for CLI backends.",
+  "models": [
+    { "id": "openai/gpt-6.1-sol", "via": "gateway", "default": true, "note": "Codex rejects gpt-6.1-sol on a ChatGPT login, so it runs on the gateway" },
+    { "id": "openai/gpt-6-sol", "via": "codex", "cliModel": "gpt-6-sol", "default": true },
+    { "id": "openai/gpt-6-luna", "via": "codex", "cliModel": "gpt-6-luna", "default": true },
+    { "id": "openai/gpt-5.6-terra", "via": "codex", "cliModel": "gpt-5.6-terra", "default": true },
+    { "id": "anthropic/claude-opus-5.5", "via": "claude", "cliModel": "claude-opus-5-5", "default": true },
+    { "id": "anthropic/claude-sonnet-5.5", "via": "claude", "cliModel": "claude-sonnet-5-5", "default": true },
+    { "id": "spacexai/grok-4.5", "via": "gateway", "default": true },
+    { "id": "zai/glm-5.3", "via": "gateway", "default": true },
+    { "id": "moonshotai/kimi-k3", "via": "gateway", "default": true }
+  ]
+}

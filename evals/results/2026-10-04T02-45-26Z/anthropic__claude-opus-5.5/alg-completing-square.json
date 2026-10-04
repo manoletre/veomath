@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-completing-square",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "12.66% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=1 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "9.67% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 26429,
+        "inputTokens": 8046,
+        "cachedInputTokens": 7569,
+        "outputTokens": 2970,
+        "costUsd": 0.06472180000000001,
+        "rawResponse": "{\"explanation\":\"Think of x² + 6x as an area. x² is an x-by-x square, and 6x is a strip of width 6 and length x. Cut that strip in half and put one 3-by-x piece on the right of the square and the other along the bottom. Now the shape is almost a square with side x + 3. Only the 3-by-3 corner is missing, so you have to add 9 to complete it and then take 9 away to keep the value the same: x² + 6x = (x + 3)² − 9. Use the slider to change x; the shape and the numbers update to show the identity works for every x. Check the box to show or hide the missing corner.\",\"manimCode\":\"const u = 0.5;\\nconst O = [-6, 3];\\nlet xv = 4;\\nlet showCorner = false;\\n\\nfunction rectV(x0, y0, w, h) {\\n  return [[x0, y0, 0], [x0 + w, y0, 0], [x0 + w, y0 - h, 0], [x0, y0 - h, 0]];\\n}\\n\\nconst sq = new Polygon({ vertices: rectV(O[0], O[1], xv * u, xv * u), color: BLUE });\\nsq.setFill(BLUE, 0.5);\\nconst rR = new Polygon({ vertices: rectV(O[0] + xv * u, O[1], 3 * u, xv * u), color: GREEN });\\nrR.setFill(GREEN, 0.5);\\nconst rB = new Polygon({ vertices: rectV(O[0], O[1] - xv * u, xv * u, 3 * u), color: GREEN });\\nrB.setFill(GREEN, 0.5);\\nconst corner = new Polygon({ vertices: rectV(O[0] + xv * u, O[1] - xv * u, 3 * u, 3 * u), color: GOLD });\\ncorner.setFill(GOLD, 0.6);\\n\\nlet labels = [];\\nfunction makeLabels() {\\n  labels.forEach(l => scene.remove(l));\\n  labels = [];\\n  const s = xv * u, t = 3 * u;\\n  const mk = (str, pos, col, fs) => {\\n    const tx = new Text({ text: str, color: col, fontSize: fs || 26 });\\n    tx.moveTo(pos);\\n    labels.push(tx);\\n    scene.add(tx);\\n  };\\n  mk('x', [O[0] + s / 2, O[1] + 0.3, 0], WHITE);\\n  mk('3', [O[0] + s + t / 2, O[1] + 0.3, 0], WHITE);\\n  mk('x', [O[0] - 0.3, O[1] - s / 2, 0], WHITE);\\n  mk('3', [O[0] - 0.3, O[1] - s - t / 2, 0], WHITE);\\n  mk('x²', [O[0] + s / 2, O[1] - s / 2, 0], WHITE, 30);\\n  mk('3x', [O[0] + s + t / 2, O[1] - s / 2, 0], WHITE);\\n  mk('3x', [O[0] + s / 2, O[1] - s - t / 2, 0], WHITE);\\n  if (showCorner) mk('9', [O[0] + s + t / 2, O[1] - s - t / 2, 0], BLACK, 30);\\n  const lhs = xv * xv + 6 * xv;\\n  const full = (xv + 3) * (xv + 3);\\n  mk('x = ' + xv + ':  ' + (xv * xv) + ' + ' + (6 * xv) + ' = ' + lhs + ' = ' + full + ' − 9', [3, -2.8, 0], YELLOW, 26);\\n}\\n\\nfunction update() {\\n  const s = xv * u, t = 3 * u;\\n  sq.setVertices(rectV(O[0], O[1], s, s));\\n  rR.setVertices(rectV(O[0] + s, O[1], t, s));\\n  rB.setVertices(rectV(O[0], O[1] - s, s, t));\\n  corner.setVertices(rectV(O[0] + s, O[1] - s, t, t));\\n  scene.remove(corner);\\n  if (showCorner) scene.add(corner);\\n  makeLabels();\\n}\\n\\n// Equations\\nconst e1 = new MathTex({ latex: 'x^2 + 6x' });\\nconst e2 = new MathTex({ latex: '= x^2 + 3x + 3x' });\\nconst e3 = new MathTex({ latex: '= (x^2 + 3x + 3x + 9) - 9' });\\nconst e4 = new MathTex({ latex: '= (x+3)^2 - 9', color: GOLD });\\nfor (const e of [e1, e2, e3, e4]) await e.waitForRender();\\ne1.moveTo([3, 2.6, 0]);\\ne2.moveTo([3, 1.6, 0]);\\ne3.moveTo([3, 0.6, 0]);\\ne4.moveTo([3, -0.6, 0]);\\n[e1, e2, e3, e4].forEach(e => e.scale(0.85));\\n\\nawait scene.play(new Write(e1));\\nawait scene.play(new DrawBorderThenFill(sq));\\nawait scene.play(new Write(e2));\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(rR), new DrawBorderThenFill(rB)]));\\nmakeLabels();\\nawait scene.wait(0.5);\\nshowCorner = true;\\nawait scene.play(new FadeIn(corner));\\nmakeLabels();\\nawait scene.play(new Write(e3));\\nawait scene.play(new Write(e4));\\n\\nconst controls = new Controls(scene, { position: 'bottom-left' });\\ncontrols.addSlider({ label: 'x', min: 1, max: 6, value: 4, step: 1, onChange: (v) => { xv = v; update(); } });\\ncontrols.addCheckbox({ label: 'Complete the square (+9)', checked: true, onChange: (c) => { showCorner = c; update(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Think of x² + 6x as an area. x² is an x-by-x square, and 6x is a strip of width 6 and length x. Cut that strip in half and put one 3-by-x piece on the right of the square and the other along the bottom. Now the shape is almost a square with side x + 3. Only the 3-by-3 corner is missing, so you have to add 9 to complete it and then take 9 away to keep the value the same: x² + 6x = (x + 3)² − 9. Use the slider to change x; the shape and the numbers update to show the identity works for every x. Check the box to show or hide the missing corner."
+      },
+      "code": "const u = 0.5;\nconst O = [-6, 3];\nlet xv = 4;\nlet showCorner = false;\n\nfunction rectV(x0, y0, w, h) {\n  return [[x0, y0, 0], [x0 + w, y0, 0], [x0 + w, y0 - h, 0], [x0, y0 - h, 0]];\n}\n\nconst sq = new Polygon({ vertices: rectV(O[0], O[1], xv * u, xv * u), color: BLUE });\nsq.setFill(BLUE, 0.5);\nconst rR = new Polygon({ vertices: rectV(O[0] + xv * u, O[1], 3 * u, xv * u), color: GREEN });\nrR.setFill(GREEN, 0.5);\nconst rB = new Polygon({ vertices: rectV(O[0], O[1] - xv * u, xv * u, 3 * u), color: GREEN });\nrB.setFill(GREEN, 0.5);\nconst corner = new Polygon({ vertices: rectV(O[0] + xv * u, O[1] - xv * u, 3 * u, 3 * u), color: GOLD });\ncorner.setFill(GOLD, 0.6);\n\nlet labels = [];\nfunction makeLabels() {\n  labels.forEach(l => scene.remove(l));\n  labels = [];\n  const s = xv * u, t = 3 * u;\n  const mk = (str, pos, col, fs) => {\n    const tx = new Text({ text: str, color: col, fontSize: fs || 26 });\n    tx.moveTo(pos);\n    labels.push(tx);\n    scene.add(tx);\n  };\n  mk('x', [O[0] + s / 2, O[1] + 0.3, 0], WHITE);\n  mk('3', [O[0] + s + t / 2, O[1] + 0.3, 0], WHITE);\n  mk('x', [O[0] - 0.3, O[1] - s / 2, 0], WHITE);\n  mk('3', [O[0] - 0.3, O[1] - s - t / 2, 0], WHITE);\n  mk('x²', [O[0] + s / 2, O[1] - s / 2, 0], WHITE, 30);\n  mk('3x', [O[0] + s + t / 2, O[1] - s / 2, 0], WHITE);\n  mk('3x', [O[0] + s / 2, O[1] - s - t / 2, 0], WHITE);\n  if (showCorner) mk('9', [O[0] + s + t / 2, O[1] - s - t / 2, 0], BLACK, 30);\n  const lhs = xv * xv + 6 * xv;\n  const full = (xv + 3) * (xv + 3);\n  mk('x = ' + xv + ':  ' + (xv * xv) + ' + ' + (6 * xv) + ' = ' + lhs + ' = ' + full + ' − 9', [3, -2.8, 0], YELLOW, 26);\n}\n\nfunction update() {\n  const s = xv * u, t = 3 * u;\n  sq.setVertices(rectV(O[0], O[1], s, s));\n  rR.setVertices(rectV(O[0] + s, O[1], t, s));\n  rB.setVertices(rectV(O[0], O[1] - s, s, t));\n  corner.setVertices(rectV(O[0] + s, O[1] - s, t, t));\n  scene.remove(corner);\n  if (showCorner) scene.add(corner);\n  makeLabels();\n}\n\n// Equations\nconst e1 = new MathTex({ latex: 'x^2 + 6x' });\nconst e2 = new MathTex({ latex: '= x^2 + 3x + 3x' });\nconst e3 = new MathTex({ latex: '= (x^2 + 3x + 3x + 9) - 9' });\nconst e4 = new MathTex({ latex: '= (x+3)^2 - 9', color: GOLD });\nfor (const e of [e1, e2, e3, e4]) await e.waitForRender();\ne1.moveTo([3, 2.6, 0]);\ne2.moveTo([3, 1.6, 0]);\ne3.moveTo([3, 0.6, 0]);\ne4.moveTo([3, -0.6, 0]);\n[e1, e2, e3, e4].forEach(e => e.scale(0.85));\n\nawait scene.play(new Write(e1));\nawait scene.play(new DrawBorderThenFill(sq));\nawait scene.play(new Write(e2));\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(rR), new DrawBorderThenFill(rB)]));\nmakeLabels();\nawait scene.wait(0.5);\nshowCorner = true;\nawait scene.play(new FadeIn(corner));\nmakeLabels();\nawait scene.play(new Write(e3));\nawait scene.play(new Write(e4));\n\nconst controls = new Controls(scene, { position: 'bottom-left' });\ncontrols.addSlider({ label: 'x', min: 1, max: 6, value: 4, step: 1, onChange: (v) => { xv = v; update(); } });\ncontrols.addCheckbox({ label: 'Complete the square (+9)', checked: true, onChange: (c) => { showCorner = c; update(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 15456,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 7,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 1
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/alg-completing-square.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/alg-completing-square.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:13.966Z"
+}

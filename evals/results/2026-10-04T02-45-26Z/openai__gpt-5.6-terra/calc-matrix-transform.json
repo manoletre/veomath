@@ -1,0 +1,80 @@
+{
+  "itemId": "calc-matrix-transform",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 0.8,
+  "firstAttemptScore": 0.8,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.8,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.78% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Polygon [x 1.56..7.32, y 1.09..1.09] exceeds frame ±7.11 × ±4.00\nPolygon [x 4.44..7.32, y -1.79..1.09] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=2"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.00% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 42239,
+        "inputTokens": 11754,
+        "cachedInputTokens": 11008,
+        "outputTokens": 2102,
+        "costUsd": 0.028917599999999998,
+        "rawResponse": "{\"explanation\":\"The matrix sends \\u001b[1m(x,y)\\u001b[0m to \\u001b[1m(2x+y,y)\\u001b[0m: it doubles the horizontal component and shears by the vertical component. The unit square becomes a parallelogram with area 2, exactly the determinant \\u001b[1mdet(A)=2\\u001b[0m. Drag the yellow point to see a vector and its image move together.\",\"manimCode\":\"const s = 0.72;\\nconst leftC = [-3.1, -0.35, 0];\\nconst rightC = [3.0, -0.35, 0];\\n\\nconst title = new MathTex({ latex: 'A=\\\\\\\\begin{pmatrix}2&1\\\\\\\\\\\\\\\\0&1\\\\\\\\end{pmatrix},\\\\\\\\qquad \\\\\\\\det(A)=2' });\\nawait title.waitForRender();\\ntitle.moveTo([0, 3.15, 0]);\\n\\nconst leftLabel = new Text({ text: 'Original plane', color: BLUE_B, fontSize: 25 });\\nleftLabel.moveTo([-3.1, 2.25, 0]);\\nconst rightLabel = new Text({ text: 'Transformed plane', color: GREEN_B, fontSize: 25 });\\nrightLabel.moveTo([3.0, 2.25, 0]);\\n\\nfunction segment(a, b, color, width) {\\n  const seg = new Polygon({ vertices: [a, b], color: color });\\n  seg.setFillOpacity(0);\\n  seg.setStrokeWidth(width || 1);\\n  return seg;\\n}\\n\\nconst grid = [];\\nfor (let k = -2; k <= 2; k++) {\\n  grid.push(segment([leftC[0] - 2*s, leftC[1] + k*s, 0], [leftC[0] + 2*s, leftC[1] + k*s, 0], GRAY, 1));\\n  grid.push(segment([leftC[0] + k*s, leftC[1] - 2*s, 0], [leftC[0] + k*s, leftC[1] + 2*s, 0], GRAY, 1));\\n  // Images of horizontal and vertical grid lines under A\\n  grid.push(segment([rightC[0] + (-4 + k)*s, rightC[1] + k*s, 0], [rightC[0] + (4 + k)*s, rightC[1] + k*s, 0], GRAY, 1));\\n  grid.push(segment([rightC[0] + (2*k - 2)*s, rightC[1] - 2*s, 0], [rightC[0] + (2*k + 2)*s, rightC[1] + 2*s, 0], GRAY, 1));\\n}\\n\\nconst xAxisL = segment([leftC[0] - 2.1*s, leftC[1], 0], [leftC[0] + 2.1*s, leftC[1], 0], WHITE, 2);\\nconst yAxisL = segment([leftC[0], leftC[1] - 2.1*s, 0], [leftC[0], leftC[1] + 2.1*s, 0], WHITE, 2);\\nconst xAxisR = segment([rightC[0] - 4.3*s, rightC[1], 0], [rightC[0] + 4.3*s, rightC[1], 0], WHITE, 2);\\nconst yAxisR = segment([rightC[0] - 2.1*s, rightC[1] - 2.1*s, 0], [rightC[0] + 2.1*s, rightC[1] + 2.1*s, 0], WHITE, 2);\\n\\nconst unitSquare = new Polygon({ vertices: [leftC, [leftC[0]+s,leftC[1],0], [leftC[0]+s,leftC[1]+s,0], [leftC[0],leftC[1]+s,0]], color: BLUE });\\nunitSquare.setFill(BLUE, 0.38).setStrokeWidth(3);\\nconst imageSquare = new Polygon({ vertices: [rightC, [rightC[0]+2*s,rightC[1],0], [rightC[0]+3*s,rightC[1]+s,0], [rightC[0]+s,rightC[1]+s,0]], color: GREEN });\\nimageSquare.setFill(GREEN, 0.38).setStrokeWidth(3);\\n\\nconst areaLeft = new MathTex({ latex: '\\\\\\\\text{area}=1' });\\nawait areaLeft.waitForRender();\\nareaLeft.moveTo([-3.1, -2.65, 0]);\\nconst areaRight = new MathTex({ latex: '\\\\\\\\text{area}=2=|\\\\\\\\det(A)|' });\\nawait areaRight.waitForRender();\\nareaRight.moveTo([3.0, -2.65, 0]);\\n\\nconst inputDot = new Dot({ point: [leftC[0] + 0.55*s, leftC[1] + 0.75*s, 0], color: YELLOW });\\nconst outputDot = new Dot({ point: [rightC[0] + 1.85*s, rightC[1] + 0.75*s, 0], color: YELLOW });\\nconst inputVec = segment(leftC, inputDot.getCenter(), YELLOW, 3);\\nconst outputVec = segment(rightC, outputDot.getCenter(), YELLOW, 3);\\n\\nfunction updateImage() {\\n  const p = inputDot.getCenter();\\n  const x = (p[0] - leftC[0]) / s;\\n  const y = (p[1] - leftC[1]) / s;\\n  outputDot.moveTo([rightC[0] + (2*x + y)*s, rightC[1] + y*s, 0]);\\n  inputVec.setVertices([leftC, inputDot.getCenter()]);\\n  outputVec.setVertices([rightC, outputDot.getCenter()]);\\n}\\n\\nscene.add(...grid, xAxisL, yAxisL, xAxisR, yAxisR, title, leftLabel, rightLabel, unitSquare, imageSquare, areaLeft, areaRight, inputVec, outputVec, inputDot, outputDot);\\nmakeDraggable(inputDot, scene, { constrainX: [-3.9, -2.3], constrainY: [-1.55, 0.85], onDrag: updateImage });\\nmakeHoverable(unitSquare, scene, { hoverOpacity: 0.6 });\\nmakeHoverable(imageSquare, scene, { hoverOpacity: 0.6 });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The matrix sends \u001b[1m(x,y)\u001b[0m to \u001b[1m(2x+y,y)\u001b[0m: it doubles the horizontal component and shears by the vertical component. The unit square becomes a parallelogram with area 2, exactly the determinant \u001b[1mdet(A)=2\u001b[0m. Drag the yellow point to see a vector and its image move together."
+      },
+      "code": "const s = 0.72;\nconst leftC = [-3.1, -0.35, 0];\nconst rightC = [3.0, -0.35, 0];\n\nconst title = new MathTex({ latex: 'A=\\\\begin{pmatrix}2&1\\\\\\\\0&1\\\\end{pmatrix},\\\\qquad \\\\det(A)=2' });\nawait title.waitForRender();\ntitle.moveTo([0, 3.15, 0]);\n\nconst leftLabel = new Text({ text: 'Original plane', color: BLUE_B, fontSize: 25 });\nleftLabel.moveTo([-3.1, 2.25, 0]);\nconst rightLabel = new Text({ text: 'Transformed plane', color: GREEN_B, fontSize: 25 });\nrightLabel.moveTo([3.0, 2.25, 0]);\n\nfunction segment(a, b, color, width) {\n  const seg = new Polygon({ vertices: [a, b], color: color });\n  seg.setFillOpacity(0);\n  seg.setStrokeWidth(width || 1);\n  return seg;\n}\n\nconst grid = [];\nfor (let k = -2; k <= 2; k++) {\n  grid.push(segment([leftC[0] - 2*s, leftC[1] + k*s, 0], [leftC[0] + 2*s, leftC[1] + k*s, 0], GRAY, 1));\n  grid.push(segment([leftC[0] + k*s, leftC[1] - 2*s, 0], [leftC[0] + k*s, leftC[1] + 2*s, 0], GRAY, 1));\n  // Images of horizontal and vertical grid lines under A\n  grid.push(segment([rightC[0] + (-4 + k)*s, rightC[1] + k*s, 0], [rightC[0] + (4 + k)*s, rightC[1] + k*s, 0], GRAY, 1));\n  grid.push(segment([rightC[0] + (2*k - 2)*s, rightC[1] - 2*s, 0], [rightC[0] + (2*k + 2)*s, rightC[1] + 2*s, 0], GRAY, 1));\n}\n\nconst xAxisL = segment([leftC[0] - 2.1*s, leftC[1], 0], [leftC[0] + 2.1*s, leftC[1], 0], WHITE, 2);\nconst yAxisL = segment([leftC[0], leftC[1] - 2.1*s, 0], [leftC[0], leftC[1] + 2.1*s, 0], WHITE, 2);\nconst xAxisR = segment([rightC[0] - 4.3*s, rightC[1], 0], [rightC[0] + 4.3*s, rightC[1], 0], WHITE, 2);\nconst yAxisR = segment([rightC[0] - 2.1*s, rightC[1] - 2.1*s, 0], [rightC[0] + 2.1*s, rightC[1] + 2.1*s, 0], WHITE, 2);\n\nconst unitSquare = new Polygon({ vertices: [leftC, [leftC[0]+s,leftC[1],0], [leftC[0]+s,leftC[1]+s,0], [leftC[0],leftC[1]+s,0]], color: BLUE });\nunitSquare.setFill(BLUE, 0.38).setStrokeWidth(3);\nconst imageSquare = new Polygon({ vertices: [rightC, [rightC[0]+2*s,rightC[1],0], [rightC[0]+3*s,rightC[1]+s,0], [rightC[0]+s,rightC[1]+s,0]], color: GREEN });\nimageSquare.setFill(GREEN, 0.38).setStrokeWidth(3);\n\nconst areaLeft = new MathTex({ latex: '\\\\text{area}=1' });\nawait areaLeft.waitForRender();\nareaLeft.moveTo([-3.1, -2.65, 0]);\nconst areaRight = new MathTex({ latex: '\\\\text{area}=2=|\\\\det(A)|' });\nawait areaRight.waitForRender();\nareaRight.moveTo([3.0, -2.65, 0]);\n\nconst inputDot = new Dot({ point: [leftC[0] + 0.55*s, leftC[1] + 0.75*s, 0], color: YELLOW });\nconst outputDot = new Dot({ point: [rightC[0] + 1.85*s, rightC[1] + 0.75*s, 0], color: YELLOW });\nconst inputVec = segment(leftC, inputDot.getCenter(), YELLOW, 3);\nconst outputVec = segment(rightC, outputDot.getCenter(), YELLOW, 3);\n\nfunction updateImage() {\n  const p = inputDot.getCenter();\n  const x = (p[0] - leftC[0]) / s;\n  const y = (p[1] - leftC[1]) / s;\n  outputDot.moveTo([rightC[0] + (2*x + y)*s, rightC[1] + y*s, 0]);\n  inputVec.setVertices([leftC, inputDot.getCenter()]);\n  outputVec.setVertices([rightC, outputDot.getCenter()]);\n}\n\nscene.add(...grid, xAxisL, yAxisL, xAxisR, yAxisR, title, leftLabel, rightLabel, unitSquare, imageSquare, areaLeft, areaRight, inputVec, outputVec, inputDot, outputDot);\nmakeDraggable(inputDot, scene, { constrainX: [-3.9, -2.3], constrainY: [-1.55, 0.85], onDrag: updateImage });\nmakeHoverable(unitSquare, scene, { hoverOpacity: 0.6 });\nmakeHoverable(imageSquare, scene, { hoverOpacity: 0.6 });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3444,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 2
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/calc-matrix-transform.0.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/calc-matrix-transform.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T03:00:59.801Z"
+}

@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-sinusoid-params",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.92% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=4 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.29% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 25557,
+        "inputTokens": 4612,
+        "cachedInputTokens": 4581,
+        "outputTokens": 1369,
+        "costUsd": 0.014210100000000002,
+        "rawResponse": "{\"explanation\":\"Use the sliders to change all four parameters and watch the wave respond. |A| controls amplitude (negative A flips the wave), B controls the period 2π/B, C shifts it horizontally, and D shifts it vertically. The gray line shows the midline y = D, and the yellow point marks (C, D).\",\"manimCode\":\"const heading = new Text({ text: 'Shape a sine wave', color: WHITE, fontSize: 32 });\\nheading.moveTo([-1, 3.15, 0]);\\nconst formula = new MathTex({ latex: 'y=A\\\\\\\\sin\\\\\\\\bigl(B(x-C)\\\\\\\\bigr)+D' });\\nawait formula.waitForRender();\\nformula.moveTo([-1, 2.5, 0]);\\nformula.scale(0.85);\\n\\nconst ax = new Axes({\\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\\n  yRange: [-5.5, 5.5, 1],\\n  xLength: 8,\\n  yLength: 4.4,\\n  tips: false\\n});\\nax.moveTo([-1, -0.25, 0]);\\n\\nlet amplitude = 1;\\nlet frequency = 1;\\nlet horizontal = 0;\\nlet vertical = 0;\\nconst waveValue = x => amplitude * Math.sin(frequency * (x - horizontal)) + vertical;\\nlet wave = ax.plot(waveValue, { color: BLUE, numSamples: 650 });\\nwave.setStrokeWidth(3);\\nlet midline = ax.plot(() => vertical, { color: GRAY });\\nmidline.setStrokeWidth(1.5);\\nconst anchor = new Dot({ point: ax.c2p(horizontal, vertical), color: YELLOW });\\n\\nlet readout;\\nfunction refreshReadout() {\\n  if (readout) scene.remove(readout);\\n  readout = new Text({\\n    text: 'Amplitude: ' + Math.abs(amplitude).toFixed(2) + '     Period: ' + (2 * Math.PI / frequency).toFixed(2) + '\\\\nHorizontal shift: ' + horizontal.toFixed(2) + '     Midline: ' + vertical.toFixed(2),\\n    color: WHITE,\\n    fontSize: 20\\n  });\\n  readout.moveTo([-1, -3.05, 0]);\\n  scene.add(readout);\\n}\\n\\nfunction refreshWave() {\\n  scene.remove(wave, midline);\\n  midline = ax.plot(() => vertical, { color: GRAY });\\n  midline.setStrokeWidth(1.5);\\n  wave = ax.plot(waveValue, { color: BLUE, numSamples: 650 });\\n  wave.setStrokeWidth(3);\\n  scene.add(midline, wave);\\n  anchor.moveTo(ax.c2p(horizontal, vertical));\\n  scene.remove(anchor);\\n  scene.add(anchor);\\n  refreshReadout();\\n}\\n\\nscene.add(heading, formula, ax, midline);\\nawait scene.play(new Create(wave));\\nscene.add(anchor);\\nrefreshReadout();\\nmakeHoverable(anchor, scene, { hoverScale: 1.5, hoverColor: ORANGE });\\n\\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 240 });\\ncontrols.addSlider({\\n  label: 'A — amplitude / flip', min: -3, max: 3, value: 1, step: 0.05,\\n  onChange: value => { amplitude = value; refreshWave(); }\\n});\\ncontrols.addSlider({\\n  label: 'B — frequency', min: 0.25, max: 3, value: 1, step: 0.05,\\n  onChange: value => { frequency = value; refreshWave(); }\\n});\\ncontrols.addSlider({\\n  label: 'C — horizontal shift', min: -Math.PI, max: Math.PI, value: 0, step: 0.05,\\n  onChange: value => { horizontal = value; refreshWave(); }\\n});\\ncontrols.addSlider({\\n  label: 'D — vertical shift', min: -2, max: 2, value: 0, step: 0.05,\\n  onChange: value => { vertical = value; refreshWave(); }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Use the sliders to change all four parameters and watch the wave respond. |A| controls amplitude (negative A flips the wave), B controls the period 2π/B, C shifts it horizontally, and D shifts it vertically. The gray line shows the midline y = D, and the yellow point marks (C, D)."
+      },
+      "code": "const heading = new Text({ text: 'Shape a sine wave', color: WHITE, fontSize: 32 });\nheading.moveTo([-1, 3.15, 0]);\nconst formula = new MathTex({ latex: 'y=A\\\\sin\\\\bigl(B(x-C)\\\\bigr)+D' });\nawait formula.waitForRender();\nformula.moveTo([-1, 2.5, 0]);\nformula.scale(0.85);\n\nconst ax = new Axes({\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\n  yRange: [-5.5, 5.5, 1],\n  xLength: 8,\n  yLength: 4.4,\n  tips: false\n});\nax.moveTo([-1, -0.25, 0]);\n\nlet amplitude = 1;\nlet frequency = 1;\nlet horizontal = 0;\nlet vertical = 0;\nconst waveValue = x => amplitude * Math.sin(frequency * (x - horizontal)) + vertical;\nlet wave = ax.plot(waveValue, { color: BLUE, numSamples: 650 });\nwave.setStrokeWidth(3);\nlet midline = ax.plot(() => vertical, { color: GRAY });\nmidline.setStrokeWidth(1.5);\nconst anchor = new Dot({ point: ax.c2p(horizontal, vertical), color: YELLOW });\n\nlet readout;\nfunction refreshReadout() {\n  if (readout) scene.remove(readout);\n  readout = new Text({\n    text: 'Amplitude: ' + Math.abs(amplitude).toFixed(2) + '     Period: ' + (2 * Math.PI / frequency).toFixed(2) + '\\nHorizontal shift: ' + horizontal.toFixed(2) + '     Midline: ' + vertical.toFixed(2),\n    color: WHITE,\n    fontSize: 20\n  });\n  readout.moveTo([-1, -3.05, 0]);\n  scene.add(readout);\n}\n\nfunction refreshWave() {\n  scene.remove(wave, midline);\n  midline = ax.plot(() => vertical, { color: GRAY });\n  midline.setStrokeWidth(1.5);\n  wave = ax.plot(waveValue, { color: BLUE, numSamples: 650 });\n  wave.setStrokeWidth(3);\n  scene.add(midline, wave);\n  anchor.moveTo(ax.c2p(horizontal, vertical));\n  scene.remove(anchor);\n  scene.add(anchor);\n  refreshReadout();\n}\n\nscene.add(heading, formula, ax, midline);\nawait scene.play(new Create(wave));\nscene.add(anchor);\nrefreshReadout();\nmakeHoverable(anchor, scene, { hoverScale: 1.5, hoverColor: ORANGE });\n\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 240 });\ncontrols.addSlider({\n  label: 'A — amplitude / flip', min: -3, max: 3, value: 1, step: 0.05,\n  onChange: value => { amplitude = value; refreshWave(); }\n});\ncontrols.addSlider({\n  label: 'B — frequency', min: 0.25, max: 3, value: 1, step: 0.05,\n  onChange: value => { frequency = value; refreshWave(); }\n});\ncontrols.addSlider({\n  label: 'C — horizontal shift', min: -Math.PI, max: Math.PI, value: 0, step: 0.05,\n  onChange: value => { horizontal = value; refreshWave(); }\n});\ncontrols.addSlider({\n  label: 'D — vertical shift', min: -2, max: 2, value: 0, step: 0.05,\n  onChange: value => { vertical = value; refreshWave(); }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 6458,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 4,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/trig-sinusoid-params.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/trig-sinusoid-params.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:55.904Z"
+}

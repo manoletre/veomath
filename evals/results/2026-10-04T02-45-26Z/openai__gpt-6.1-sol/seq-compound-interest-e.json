@@ -1,0 +1,80 @@
+{
+  "itemId": "seq-compound-interest-e",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "5.34% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "Text \"52\" is hidden under the controls panel (92%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=3 checkboxes=0 draggables=0 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.41% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 48046,
+        "inputTokens": 4612,
+        "cachedInputTokens": 4581,
+        "outputTokens": 2103,
+        "costUsd": 0.0215501,
+        "rawResponse": "{\"explanation\":\"Compounding n times per year gives you $(1 + 1/n)^n after one year: $2 with annual compounding, about $2.61 with monthly compounding, and about $2.71 with daily compounding. More frequent compounding increases your balance, but the extra gains get smaller. In the limit of continuous compounding, your $1 grows to e dollars—approximately $2.71828, not an unlimited amount.\",\"manimCode\":\"const heading = new Text({ text: 'More compounding, smaller extra gains', fontSize: 30, color: WHITE });\\nheading.moveTo([0, 3.2, 0]);\\nconst formula = new MathTex({ latex: 'B_n=\\\\\\\\left(1+\\\\\\\\frac{1}{n}\\\\\\\\right)^n \\\\\\\\quad\\\\\\\\longrightarrow\\\\\\\\quad e\\\\\\\\approx 2.71828' });\\nawait formula.waitForRender();\\nformula.scale(0.8);\\nformula.moveTo([0, 2.35, 0]);\\n\\nconst ax = new Axes({ xRange: [0, 52, 13], yRange: [0, 3, 1], xLength: 9, yLength: 3.5, tips: false });\\nax.moveTo([-0.6, -0.45, 0]);\\nconst balance = n => Math.exp(n * Math.log1p(1 / n));\\nconst curve = ax.plot(balance, { xRange: [1, 52], color: BLUE, numSamples: 600 });\\nconst ceiling = ax.plot(() => Math.E, { xRange: [0, 52], color: YELLOW });\\nceiling.setStrokeWidth(2);\\nconst limitLabel = new Text({ text: 'e dollars', fontSize: 20, color: YELLOW });\\nlimitLabel.moveTo(ax.c2p(45, 2.94));\\nconst axisCaption = new Text({ text: 'Compounding periods per year (n)', fontSize: 21, color: GRAY });\\naxisCaption.moveTo([-0.8, -2.65, 0]);\\nconst dollarCaption = new Text({ text: 'Balance ($)', fontSize: 20, color: GRAY });\\ndollarCaption.moveTo([-4.55, 1.6, 0]);\\n\\nconst tickLabels = [];\\nfor (const value of [0, 13, 26, 39, 52]) {\\n  const tick = new Text({ text: String(value), fontSize: 17, color: GRAY });\\n  tick.moveTo(ax.c2p(value, -0.17));\\n  tickLabels.push(tick);\\n}\\nfor (const value of [1, 2, 3]) {\\n  const tick = new Text({ text: String(value), fontSize: 17, color: GRAY });\\n  tick.moveTo(ax.c2p(-2.1, value));\\n  tickLabels.push(tick);\\n}\\n\\nconst marker = new Dot({ point: ax.c2p(1, balance(1)), color: BLUE });\\nlet readout = new Text({ text: '1 time/year  →  $2.000000', fontSize: 26, color: BLUE });\\nreadout.moveTo([-1.7, -3.25, 0]);\\nfunction selectPeriods(value) {\\n  const n = Math.max(1, Math.min(52, Math.round(value)));\\n  marker.moveTo(ax.c2p(n, balance(n)));\\n  scene.remove(readout);\\n  readout = new Text({ text: n + (n === 1 ? ' time/year' : ' times/year') + '  →  $' + balance(n).toFixed(6), fontSize: 26, color: BLUE });\\n  readout.moveTo([-1.7, -3.25, 0]);\\n  scene.add(readout);\\n}\\n\\nawait scene.play(new Write(heading), new FadeIn(formula));\\nscene.add(ax, axisCaption, dollarCaption, ...tickLabels);\\nawait scene.play(new AnimationGroup([new Create(curve), new Create(ceiling)]));\\nscene.add(limitLabel, marker, readout);\\nawait scene.wait(1);\\nselectPeriods(2);\\nawait scene.wait(1);\\nselectPeriods(12);\\nawait scene.wait(1);\\nselectPeriods(52);\\n\\nmakeHoverable(marker, scene, { hoverScale: 1.5, hoverColor: WHITE });\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 230 });\\ncontrols.addSlider({ label: 'Periods per year', min: 1, max: 52, value: 52, step: 1, onChange: selectPeriods });\\ncontrols.addButton({ label: 'Annual: n = 1', onClick: () => selectPeriods(1) });\\ncontrols.addButton({ label: 'Monthly: n = 12', onClick: () => selectPeriods(12) });\\ncontrols.addButton({ label: 'Weekly: n = 52', onClick: () => selectPeriods(52) });\\nawait scene.wait(999999);\"}",
+        "explanation": "Compounding n times per year gives you $(1 + 1/n)^n after one year: $2 with annual compounding, about $2.61 with monthly compounding, and about $2.71 with daily compounding. More frequent compounding increases your balance, but the extra gains get smaller. In the limit of continuous compounding, your $1 grows to e dollars—approximately $2.71828, not an unlimited amount."
+      },
+      "code": "const heading = new Text({ text: 'More compounding, smaller extra gains', fontSize: 30, color: WHITE });\nheading.moveTo([0, 3.2, 0]);\nconst formula = new MathTex({ latex: 'B_n=\\\\left(1+\\\\frac{1}{n}\\\\right)^n \\\\quad\\\\longrightarrow\\\\quad e\\\\approx 2.71828' });\nawait formula.waitForRender();\nformula.scale(0.8);\nformula.moveTo([0, 2.35, 0]);\n\nconst ax = new Axes({ xRange: [0, 52, 13], yRange: [0, 3, 1], xLength: 9, yLength: 3.5, tips: false });\nax.moveTo([-0.6, -0.45, 0]);\nconst balance = n => Math.exp(n * Math.log1p(1 / n));\nconst curve = ax.plot(balance, { xRange: [1, 52], color: BLUE, numSamples: 600 });\nconst ceiling = ax.plot(() => Math.E, { xRange: [0, 52], color: YELLOW });\nceiling.setStrokeWidth(2);\nconst limitLabel = new Text({ text: 'e dollars', fontSize: 20, color: YELLOW });\nlimitLabel.moveTo(ax.c2p(45, 2.94));\nconst axisCaption = new Text({ text: 'Compounding periods per year (n)', fontSize: 21, color: GRAY });\naxisCaption.moveTo([-0.8, -2.65, 0]);\nconst dollarCaption = new Text({ text: 'Balance ($)', fontSize: 20, color: GRAY });\ndollarCaption.moveTo([-4.55, 1.6, 0]);\n\nconst tickLabels = [];\nfor (const value of [0, 13, 26, 39, 52]) {\n  const tick = new Text({ text: String(value), fontSize: 17, color: GRAY });\n  tick.moveTo(ax.c2p(value, -0.17));\n  tickLabels.push(tick);\n}\nfor (const value of [1, 2, 3]) {\n  const tick = new Text({ text: String(value), fontSize: 17, color: GRAY });\n  tick.moveTo(ax.c2p(-2.1, value));\n  tickLabels.push(tick);\n}\n\nconst marker = new Dot({ point: ax.c2p(1, balance(1)), color: BLUE });\nlet readout = new Text({ text: '1 time/year  →  $2.000000', fontSize: 26, color: BLUE });\nreadout.moveTo([-1.7, -3.25, 0]);\nfunction selectPeriods(value) {\n  const n = Math.max(1, Math.min(52, Math.round(value)));\n  marker.moveTo(ax.c2p(n, balance(n)));\n  scene.remove(readout);\n  readout = new Text({ text: n + (n === 1 ? ' time/year' : ' times/year') + '  →  $' + balance(n).toFixed(6), fontSize: 26, color: BLUE });\n  readout.moveTo([-1.7, -3.25, 0]);\n  scene.add(readout);\n}\n\nawait scene.play(new Write(heading), new FadeIn(formula));\nscene.add(ax, axisCaption, dollarCaption, ...tickLabels);\nawait scene.play(new AnimationGroup([new Create(curve), new Create(ceiling)]));\nscene.add(limitLabel, marker, readout);\nawait scene.wait(1);\nselectPeriods(2);\nawait scene.wait(1);\nselectPeriods(12);\nawait scene.wait(1);\nselectPeriods(52);\n\nmakeHoverable(marker, scene, { hoverScale: 1.5, hoverColor: WHITE });\nconst controls = new Controls(scene, { position: 'bottom-right', width: 230 });\ncontrols.addSlider({ label: 'Periods per year', min: 1, max: 52, value: 52, step: 1, onChange: selectPeriods });\ncontrols.addButton({ label: 'Annual: n = 1', onClick: () => selectPeriods(1) });\ncontrols.addButton({ label: 'Monthly: n = 12', onClick: () => selectPeriods(12) });\ncontrols.addButton({ label: 'Weekly: n = 52', onClick: () => selectPeriods(52) });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 12106,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 2,
+        "controls": {
+          "sliders": 1,
+          "buttons": 3,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/seq-compound-interest-e.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/seq-compound-interest-e.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:58.129Z"
+}

@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-radian",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.73% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=1 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.61% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 152361,
+        "inputTokens": 5040,
+        "cachedInputTokens": 128,
+        "outputTokens": 12146,
+        "costUsd": 0.08273839999999999,
+        "rawResponse": "{\n  \"explanation\": \"A radian is the angle at the center of a circle created by an arc whose length equals the circle's radius. If you wrap the radius along the circumference, the central angle you get is exactly 1 radian. A full circle is 2π radians (about 6.28), which is why π appears throughout formulas involving angles and circles.\",\n  \"manimCode\": \"const cx = -2.0;\\nconst cy = 0.15;\\nconst R = 2.25;\\n\\nfunction arcVerts(radius, a0, a1, density) {\\n  const verts = [];\\n  const frac = Math.abs(a1 - a0) / (2 * Math.PI);\\n  const num = Math.max(4, Math.ceil((density || 64) * Math.max(frac, 0.01)));\\n  for (let i = 0; i <= num; i++) {\\n    const a = a0 + (a1 - a0) * (i / num);\\n    verts.push([cx + radius * Math.cos(a), cy + radius * Math.sin(a), 0]);\\n  }\\n  return verts;\\n}\\n\\nconst circle = new Circle({ radius: R, color: BLUE_B });\\ncircle.moveTo([cx, cy, 0]);\\ncircle.setStrokeWidth(2.5);\\n\\nconst centerDot = new Dot({ point: [cx, cy, 0], color: WHITE });\\nconst oLabel = new Text({ text: 'O', color: GRAY, fontSize: 20 });\\noLabel.moveTo([cx - 0.28, cy - 0.28, 0]);\\n\\nconst radius1 = new Polygon({\\n  vertices: [[cx, cy, 0], [cx + R, cy, 0]],\\n  color: YELLOW\\n});\\nradius1.setStrokeWidth(3).setFillOpacity(0);\\n\\nconst radius2 = new Polygon({\\n  vertices: [[cx, cy, 0], [cx + R, cy, 0]],\\n  color: YELLOW\\n});\\nradius2.setStrokeWidth(3).setFillOpacity(0);\\n\\nconst arc = new Polygon({\\n  vertices: arcVerts(R, 0, 0.01),\\n  color: GREEN\\n});\\narc.setStrokeWidth(6).setFillOpacity(0);\\narc.setOpacity(0);\\n\\nconst angleMarker = new Polygon({\\n  vertices: arcVerts(0.5, 0, 0.01, 32),\\n  color: ORANGE\\n});\\nangleMarker.setStrokeWidth(2.5).setFillOpacity(0);\\nangleMarker.setOpacity(0);\\n\\nconst endDotA = new Dot({ point: [cx + R, cy, 0], color: YELLOW });\\nconst endDotB = new Dot({ point: [cx + R, cy, 0], color: YELLOW });\\n\\nconst rLabel = new Text({ text: 'r', color: YELLOW, fontSize: 28 });\\nrLabel.moveTo([cx + R * 0.5, cy - 0.4, 0]);\\n\\nlet arcLabel = new Text({ text: 'r', color: GREEN, fontSize: 28 });\\narcLabel.moveTo([cx + (R + 0.4) * Math.cos(0.5), cy + (R + 0.4) * Math.sin(0.5), 0]);\\narcLabel.setOpacity(0);\\n\\nconst title = new Text({ text: 'What is a Radian?', color: WHITE, fontSize: 36 });\\ntitle.moveTo([0, 3.45, 0]);\\n\\nconst formula = new MathTex({ latex: '\\\\\\\\theta = \\\\\\\\frac{s}{r} = \\\\\\\\frac{\\\\\\\\text{arc length}}{\\\\\\\\text{radius}}' });\\nawait formula.waitForRender();\\nformula.scale(0.7);\\nformula.moveTo([3.35, 1.85, 0]);\\n\\nlet thetaReadout = new Text({ text: 'θ = 0.00 rad', color: ORANGE, fontSize: 26 });\\nthetaReadout.moveTo([3.35, 0.95, 0]);\\n\\nlet degReadout = new Text({ text: '= 0°', color: GRAY, fontSize: 22 });\\ndegReadout.moveTo([3.35, 0.45, 0]);\\n\\nlet msg = new Text({ text: 'Drag the point or use the slider', color: GRAY, fontSize: 18 });\\nmsg.moveTo([3.35, -0.15, 0]);\\n\\nconst note = new Text({ text: 'One radian: the angle where arc length equals radius', color: WHITE, fontSize: 20 });\\nnote.moveTo([0, -3.15, 0]);\\n\\nconst note2 = new Text({ text: 'Full turn = 2π rad ≈ 6.28 rad = 360°', color: GRAY, fontSize: 18 });\\nnote2.moveTo([0, -3.55, 0]);\\n\\nconst vt = new ValueTracker(0);\\n\\nfunction updateGeometry(a) {\\n  const c = Math.cos(a);\\n  const s = Math.sin(a);\\n  const tip = [cx + R * c, cy + R * s, 0];\\n  radius2.setVertices([[cx, cy, 0], tip]);\\n  endDotB.moveTo(tip);\\n  if (a < 0.001) {\\n    arc.setVertices(arcVerts(R, 0, 0.001));\\n    angleMarker.setVertices(arcVerts(0.5, 0, 0.001, 32));\\n    arc.setOpacity(0);\\n    angleMarker.setOpacity(0);\\n  } else {\\n    arc.setVertices(arcVerts(R, 0, a));\\n    angleMarker.setVertices(arcVerts(0.5, 0, a, 32));\\n    arc.setOpacity(1);\\n    angleMarker.setOpacity(1);\\n  }\\n}\\n\\nfunction updateLabels(a) {\\n  const posT = thetaReadout.getCenter();\\n  scene.remove(thetaReadout);\\n  thetaReadout = new Text({ text: 'θ = ' + a.toFixed(2) + ' rad', color: ORANGE, fontSize: 26 });\\n  thetaReadout.moveTo(posT);\\n  scene.add(thetaReadout);\\n\\n  const posD = degReadout.getCenter();\\n  scene.remove(degReadout);\\n  const deg = a * 180 / Math.PI;\\n  degReadout = new Text({ text: '= ' + deg.toFixed(1) + '°', color: GRAY, fontSize: 22 });\\n  degReadout.moveTo(posD);\\n  scene.add(degReadout);\\n\\n  const mid = a / 2;\\n  const lr = R + 0.4;\\n  scene.remove(arcLabel);\\n  if (Math.abs(a - 1) < 0.04) {\\n    arcLabel = new Text({ text: 'r', color: GREEN, fontSize: 28 });\\n  } else if (a < 0.05) {\\n    arcLabel = new Text({ text: '', color: GREEN, fontSize: 28 });\\n  } else {\\n    arcLabel = new Text({ text: 's = θ·r', color: GREEN, fontSize: 22 });\\n  }\\n  arcLabel.moveTo([cx + lr * Math.cos(mid), cy + lr * Math.sin(mid), 0]);\\n  scene.add(arcLabel);\\n\\n  const posM = msg.getCenter();\\n  scene.remove(msg);\\n  if (Math.abs(a - 1) < 0.04) {\\n    msg = new Text({ text: '★ arc length = radius!', color: GREEN, fontSize: 20 });\\n  } else {\\n    msg = new Text({ text: 'Drag the point or use the slider', color: GRAY, fontSize: 18 });\\n  }\\n  msg.moveTo(posM);\\n  scene.add(msg);\\n}\\n\\nradius2.addUpdater(() => {\\n  updateGeometry(vt.getValue());\\n});\\n\\nscene.add(title, note, note2);\\nawait scene.play(new AnimationGroup([new Create(circle), new FadeIn(centerDot), new FadeIn(oLabel)]));\\nawait scene.play(new AnimationGroup([new Create(radius1), new FadeIn(endDotA), new FadeIn(rLabel)]));\\nscene.add(radius2, endDotB, arc, angleMarker, arcLabel);\\nscene.add(formula, thetaReadout, degReadout, msg);\\n\\nawait scene.play(vt.animateTo(1));\\nupdateLabels(1);\\n\\nmakeHoverable(endDotB, scene, { hoverScale: 1.4, hoverColor: WHITE });\\nmakeDraggable(endDotB, scene, {\\n  onDrag: (mob) => {\\n    const p = mob.getCenter();\\n    let a = Math.atan2(p[1] - cy, p[0] - cx);\\n    if (a < 0) a += 2 * Math.PI;\\n    vt.setValue(a);\\n    updateLabels(a);\\n  }\\n});\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\\ncontrols.addSlider({\\n  label: 'θ (radians)',\\n  min: 0,\\n  max: 2 * Math.PI,\\n  value: 1,\\n  step: 0.01,\\n  onChange: (val) => {\\n    vt.setValue(val);\\n    updateLabels(val);\\n  }\\n});\\ncontrols.addButton({\\n  label: 'Reset to 1 rad',\\n  onClick: () => {\\n    vt.setValue(1);\\n    updateLabels(1);\\n  }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "A radian is the angle at the center of a circle created by an arc whose length equals the circle's radius. If you wrap the radius along the circumference, the central angle you get is exactly 1 radian. A full circle is 2π radians (about 6.28), which is why π appears throughout formulas involving angles and circles."
+      },
+      "code": "const cx = -2.0;\nconst cy = 0.15;\nconst R = 2.25;\n\nfunction arcVerts(radius, a0, a1, density) {\n  const verts = [];\n  const frac = Math.abs(a1 - a0) / (2 * Math.PI);\n  const num = Math.max(4, Math.ceil((density || 64) * Math.max(frac, 0.01)));\n  for (let i = 0; i <= num; i++) {\n    const a = a0 + (a1 - a0) * (i / num);\n    verts.push([cx + radius * Math.cos(a), cy + radius * Math.sin(a), 0]);\n  }\n  return verts;\n}\n\nconst circle = new Circle({ radius: R, color: BLUE_B });\ncircle.moveTo([cx, cy, 0]);\ncircle.setStrokeWidth(2.5);\n\nconst centerDot = new Dot({ point: [cx, cy, 0], color: WHITE });\nconst oLabel = new Text({ text: 'O', color: GRAY, fontSize: 20 });\noLabel.moveTo([cx - 0.28, cy - 0.28, 0]);\n\nconst radius1 = new Polygon({\n  vertices: [[cx, cy, 0], [cx + R, cy, 0]],\n  color: YELLOW\n});\nradius1.setStrokeWidth(3).setFillOpacity(0);\n\nconst radius2 = new Polygon({\n  vertices: [[cx, cy, 0], [cx + R, cy, 0]],\n  color: YELLOW\n});\nradius2.setStrokeWidth(3).setFillOpacity(0);\n\nconst arc = new Polygon({\n  vertices: arcVerts(R, 0, 0.01),\n  color: GREEN\n});\narc.setStrokeWidth(6).setFillOpacity(0);\narc.setOpacity(0);\n\nconst angleMarker = new Polygon({\n  vertices: arcVerts(0.5, 0, 0.01, 32),\n  color: ORANGE\n});\nangleMarker.setStrokeWidth(2.5).setFillOpacity(0);\nangleMarker.setOpacity(0);\n\nconst endDotA = new Dot({ point: [cx + R, cy, 0], color: YELLOW });\nconst endDotB = new Dot({ point: [cx + R, cy, 0], color: YELLOW });\n\nconst rLabel = new Text({ text: 'r', color: YELLOW, fontSize: 28 });\nrLabel.moveTo([cx + R * 0.5, cy - 0.4, 0]);\n\nlet arcLabel = new Text({ text: 'r', color: GREEN, fontSize: 28 });\narcLabel.moveTo([cx + (R + 0.4) * Math.cos(0.5), cy + (R + 0.4) * Math.sin(0.5), 0]);\narcLabel.setOpacity(0);\n\nconst title = new Text({ text: 'What is a Radian?', color: WHITE, fontSize: 36 });\ntitle.moveTo([0, 3.45, 0]);\n\nconst formula = new MathTex({ latex: '\\\\theta = \\\\frac{s}{r} = \\\\frac{\\\\text{arc length}}{\\\\text{radius}}' });\nawait formula.waitForRender();\nformula.scale(0.7);\nformula.moveTo([3.35, 1.85, 0]);\n\nlet thetaReadout = new Text({ text: 'θ = 0.00 rad', color: ORANGE, fontSize: 26 });\nthetaReadout.moveTo([3.35, 0.95, 0]);\n\nlet degReadout = new Text({ text: '= 0°', color: GRAY, fontSize: 22 });\ndegReadout.moveTo([3.35, 0.45, 0]);\n\nlet msg = new Text({ text: 'Drag the point or use the slider', color: GRAY, fontSize: 18 });\nmsg.moveTo([3.35, -0.15, 0]);\n\nconst note = new Text({ text: 'One radian: the angle where arc length equals radius', color: WHITE, fontSize: 20 });\nnote.moveTo([0, -3.15, 0]);\n\nconst note2 = new Text({ text: 'Full turn = 2π rad ≈ 6.28 rad = 360°', color: GRAY, fontSize: 18 });\nnote2.moveTo([0, -3.55, 0]);\n\nconst vt = new ValueTracker(0);\n\nfunction updateGeometry(a) {\n  const c = Math.cos(a);\n  const s = Math.sin(a);\n  const tip = [cx + R * c, cy + R * s, 0];\n  radius2.setVertices([[cx, cy, 0], tip]);\n  endDotB.moveTo(tip);\n  if (a < 0.001) {\n    arc.setVertices(arcVerts(R, 0, 0.001));\n    angleMarker.setVertices(arcVerts(0.5, 0, 0.001, 32));\n    arc.setOpacity(0);\n    angleMarker.setOpacity(0);\n  } else {\n    arc.setVertices(arcVerts(R, 0, a));\n    angleMarker.setVertices(arcVerts(0.5, 0, a, 32));\n    arc.setOpacity(1);\n    angleMarker.setOpacity(1);\n  }\n}\n\nfunction updateLabels(a) {\n  const posT = thetaReadout.getCenter();\n  scene.remove(thetaReadout);\n  thetaReadout = new Text({ text: 'θ = ' + a.toFixed(2) + ' rad', color: ORANGE, fontSize: 26 });\n  thetaReadout.moveTo(posT);\n  scene.add(thetaReadout);\n\n  const posD = degReadout.getCenter();\n  scene.remove(degReadout);\n  const deg = a * 180 / Math.PI;\n  degReadout = new Text({ text: '= ' + deg.toFixed(1) + '°', color: GRAY, fontSize: 22 });\n  degReadout.moveTo(posD);\n  scene.add(degReadout);\n\n  const mid = a / 2;\n  const lr = R + 0.4;\n  scene.remove(arcLabel);\n  if (Math.abs(a - 1) < 0.04) {\n    arcLabel = new Text({ text: 'r', color: GREEN, fontSize: 28 });\n  } else if (a < 0.05) {\n    arcLabel = new Text({ text: '', color: GREEN, fontSize: 28 });\n  } else {\n    arcLabel = new Text({ text: 's = θ·r', color: GREEN, fontSize: 22 });\n  }\n  arcLabel.moveTo([cx + lr * Math.cos(mid), cy + lr * Math.sin(mid), 0]);\n  scene.add(arcLabel);\n\n  const posM = msg.getCenter();\n  scene.remove(msg);\n  if (Math.abs(a - 1) < 0.04) {\n    msg = new Text({ text: '★ arc length = radius!', color: GREEN, fontSize: 20 });\n  } else {\n    msg = new Text({ text: 'Drag the point or use the slider', color: GRAY, fontSize: 18 });\n  }\n  msg.moveTo(posM);\n  scene.add(msg);\n}\n\nradius2.addUpdater(() => {\n  updateGeometry(vt.getValue());\n});\n\nscene.add(title, note, note2);\nawait scene.play(new AnimationGroup([new Create(circle), new FadeIn(centerDot), new FadeIn(oLabel)]));\nawait scene.play(new AnimationGroup([new Create(radius1), new FadeIn(endDotA), new FadeIn(rLabel)]));\nscene.add(radius2, endDotB, arc, angleMarker, arcLabel);\nscene.add(formula, thetaReadout, degReadout, msg);\n\nawait scene.play(vt.animateTo(1));\nupdateLabels(1);\n\nmakeHoverable(endDotB, scene, { hoverScale: 1.4, hoverColor: WHITE });\nmakeDraggable(endDotB, scene, {\n  onDrag: (mob) => {\n    const p = mob.getCenter();\n    let a = Math.atan2(p[1] - cy, p[0] - cx);\n    if (a < 0) a += 2 * Math.PI;\n    vt.setValue(a);\n    updateLabels(a);\n  }\n});\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\ncontrols.addSlider({\n  label: 'θ (radians)',\n  min: 0,\n  max: 2 * Math.PI,\n  value: 1,\n  step: 0.01,\n  onChange: (val) => {\n    vt.setValue(val);\n    updateLabels(val);\n  }\n});\ncontrols.addButton({\n  label: 'Reset to 1 rad',\n  onClick: () => {\n    vt.setValue(1);\n    updateLabels(1);\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 8371,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 3,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/trig-radian.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/trig-radian.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:50:18.990Z"
+}

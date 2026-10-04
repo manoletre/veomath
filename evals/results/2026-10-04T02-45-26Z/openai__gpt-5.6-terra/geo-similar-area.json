@@ -1,0 +1,80 @@
+{
+  "itemId": "geo-similar-area",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 0.8,
+  "firstAttemptScore": 0.8,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.8,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "6.84% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "MathTex \"A=\\frac12bh\\quad\\longrightarrow\\quad A'=\" overlaps Text \"Use the slider: every horizontal and ver\" (50%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=2"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.08% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 31794,
+        "inputTokens": 11745,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1560,
+        "costUsd": 0.0223956,
+        "rawResponse": "{\"explanation\":\"Scaling by \\\\(k\\\\) multiplies every length in the triangle—such as its base and height—by \\\\(k\\\\). Since \\\\(A=\\\\tfrac12 bh\\\\), both factors contribute: \\\\(A'=\\\\tfrac12(kb)(kh)=k^2A\\\\). Move the slider to compare the original triangle with its scaled copy.\",\"manimCode\":\"const title = new Text({ text: 'Why area scales as k²', color: WHITE, fontSize: 34 });\\ntitle.moveTo([0, 3.25, 0]);\\n\\nconst formula = new MathTex({ latex: 'A=\\\\\\\\frac12bh\\\\\\\\quad\\\\\\\\longrightarrow\\\\\\\\quad A\\\\u0027=\\\\\\\\frac12(kb)(kh)=k^2A' });\\nawait formula.waitForRender();\\nformula.moveTo([0, 2.45, 0]);\\n\\nconst hint = new Text({ text: 'Use the slider: every horizontal and vertical length is multiplied by k.', color: GRAY, fontSize: 19 });\\nhint.moveTo([0, 1.85, 0]);\\n\\nconst localVerts = [[-1.1, -0.7, 0], [1.1, -0.7, 0], [-0.5, 1.1, 0]];\\nconst leftCenter = [-3.0, -0.45, 0];\\nconst rightCenter = [2.7, -0.45, 0];\\n\\nfunction translatedVerts(center, factor) {\\n  return localVerts.map(p => [center[0] + factor * p[0], center[1] + factor * p[1], 0]);\\n}\\n\\nconst original = new Polygon({ vertices: translatedVerts(leftCenter, 1), color: BLUE });\\noriginal.setFill(BLUE_E, 0.48).setStrokeWidth(3);\\nconst scaled = new Polygon({ vertices: translatedVerts(rightCenter, 1), color: YELLOW });\\nscaled.setFill(YELLOW, 0.38).setStrokeWidth(3);\\n\\nconst originalLabel = new Text({ text: 'original: base b, height h', color: BLUE_B, fontSize: 20 });\\noriginalLabel.moveTo([-3.0, -2.35, 0]);\\nconst scaledLabel = new Text({ text: 'scaled copy: kb, kh', color: YELLOW, fontSize: 20 });\\nscaledLabel.moveTo([2.7, -2.35, 0]);\\n\\nconst arrow = new Arrow({ start: [-1.25, -0.35, 0], end: [0.95, -0.35, 0], color: WHITE });\\nconst arrowLabel = new MathTex({ latex: '\\\\\\\\times k' });\\nawait arrowLabel.waitForRender();\\narrowLabel.moveTo([-0.15, 0.1, 0]);\\n\\nscene.add(title, formula, hint, original, scaled, originalLabel, scaledLabel, arrow, arrowLabel);\\n\\nlet factor = 1;\\nconst controls = new Controls(scene, { position: 'bottom-right', theme: 'dark', width: 255 });\\ncontrols.addSlider({\\n  label: 'Scale factor k', min: 0.4, max: 1.7, value: 1, step: 0.1,\\n  onChange: (value) => {\\n    factor = value;\\n    scaled.setVertices(translatedVerts(rightCenter, factor));\\n  }\\n});\\ncontrols.addButton({ label: 'Reset k = 1', onClick: () => {\\n  factor = 1;\\n  scaled.setVertices(translatedVerts(rightCenter, factor));\\n}});\\n\\nmakeHoverable(original, scene, { hoverOpacity: 0.7 });\\nmakeHoverable(scaled, scene, { hoverOpacity: 0.65 });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Scaling by \\(k\\) multiplies every length in the triangle—such as its base and height—by \\(k\\). Since \\(A=\\tfrac12 bh\\), both factors contribute: \\(A'=\\tfrac12(kb)(kh)=k^2A\\). Move the slider to compare the original triangle with its scaled copy."
+      },
+      "code": "const title = new Text({ text: 'Why area scales as k²', color: WHITE, fontSize: 34 });\ntitle.moveTo([0, 3.25, 0]);\n\nconst formula = new MathTex({ latex: 'A=\\\\frac12bh\\\\quad\\\\longrightarrow\\\\quad A\\u0027=\\\\frac12(kb)(kh)=k^2A' });\nawait formula.waitForRender();\nformula.moveTo([0, 2.45, 0]);\n\nconst hint = new Text({ text: 'Use the slider: every horizontal and vertical length is multiplied by k.', color: GRAY, fontSize: 19 });\nhint.moveTo([0, 1.85, 0]);\n\nconst localVerts = [[-1.1, -0.7, 0], [1.1, -0.7, 0], [-0.5, 1.1, 0]];\nconst leftCenter = [-3.0, -0.45, 0];\nconst rightCenter = [2.7, -0.45, 0];\n\nfunction translatedVerts(center, factor) {\n  return localVerts.map(p => [center[0] + factor * p[0], center[1] + factor * p[1], 0]);\n}\n\nconst original = new Polygon({ vertices: translatedVerts(leftCenter, 1), color: BLUE });\noriginal.setFill(BLUE_E, 0.48).setStrokeWidth(3);\nconst scaled = new Polygon({ vertices: translatedVerts(rightCenter, 1), color: YELLOW });\nscaled.setFill(YELLOW, 0.38).setStrokeWidth(3);\n\nconst originalLabel = new Text({ text: 'original: base b, height h', color: BLUE_B, fontSize: 20 });\noriginalLabel.moveTo([-3.0, -2.35, 0]);\nconst scaledLabel = new Text({ text: 'scaled copy: kb, kh', color: YELLOW, fontSize: 20 });\nscaledLabel.moveTo([2.7, -2.35, 0]);\n\nconst arrow = new Arrow({ start: [-1.25, -0.35, 0], end: [0.95, -0.35, 0], color: WHITE });\nconst arrowLabel = new MathTex({ latex: '\\\\times k' });\nawait arrowLabel.waitForRender();\narrowLabel.moveTo([-0.15, 0.1, 0]);\n\nscene.add(title, formula, hint, original, scaled, originalLabel, scaledLabel, arrow, arrowLabel);\n\nlet factor = 1;\nconst controls = new Controls(scene, { position: 'bottom-right', theme: 'dark', width: 255 });\ncontrols.addSlider({\n  label: 'Scale factor k', min: 0.4, max: 1.7, value: 1, step: 0.1,\n  onChange: (value) => {\n    factor = value;\n    scaled.setVertices(translatedVerts(rightCenter, factor));\n  }\n});\ncontrols.addButton({ label: 'Reset k = 1', onClick: () => {\n  factor = 1;\n  scaled.setVertices(translatedVerts(rightCenter, factor));\n}});\n\nmakeHoverable(original, scene, { hoverOpacity: 0.7 });\nmakeHoverable(scaled, scene, { hoverOpacity: 0.65 });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3719,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 2
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/geo-similar-area.0.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/geo-similar-area.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:57:56.319Z"
+}

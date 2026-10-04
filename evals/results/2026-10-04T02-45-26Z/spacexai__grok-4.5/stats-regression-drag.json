@@ -1,0 +1,80 @@
+{
+  "itemId": "stats-regression-drag",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.69% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Text \"x\" [x 2.85..2.97, y -4.27..-4.16] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=1 checkboxes=0 draggables=7 clickables=0 hoverables=7"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.31% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 45204,
+        "inputTokens": 5050,
+        "cachedInputTokens": 4992,
+        "outputTokens": 3324,
+        "costUsd": 0.0215576,
+        "rawResponse": "{\"explanation\":\"A line of best fit (ordinary least squares regression) finds the unique straight line y = mx + b that minimizes the sum of squared vertical residuals between the line and the data points. Drag any yellow point to move it; the slope m, intercept b, and the red fit line update instantly from the closed-form formulas m = (nΣxy − ΣxΣy)/(nΣx² − (Σx)²) and b = (Σy − mΣx)/n.\",\"manimCode\":\"const axes = new Axes({\\n  xRange: [0, 10, 2],\\n  yRange: [0, 10, 2],\\n  xLength: 9,\\n  yLength: 5.5,\\n  tips: true\\n});\\naxes.shift(scaleVec(0.2, DOWN));\\n\\nconst xLabel = new Text({ text: 'x', fontSize: 22, color: GRAY });\\nconst yLabel = new Text({ text: 'y', fontSize: 22, color: GRAY });\\nxLabel.nextTo(axes, DOWN);\\nxLabel.shift(scaleVec(4, RIGHT));\\nyLabel.nextTo(axes, LEFT);\\nyLabel.shift(scaleVec(2.2, UP));\\n\\nconst title = new Text({ text: 'Line of Best Fit — drag the points', fontSize: 28, color: WHITE });\\ntitle.moveTo([0, 3.5, 0]);\\n\\nconst data = [\\n  { x: 1.2, y: 2.0 },\\n  { x: 2.5, y: 3.4 },\\n  { x: 3.8, y: 3.1 },\\n  { x: 5.0, y: 5.6 },\\n  { x: 6.2, y: 5.2 },\\n  { x: 7.5, y: 7.8 },\\n  { x: 8.8, y: 8.1 }\\n];\\n\\nfunction worldToAxes(pt) {\\n  const o = axes.c2p(0, 0);\\n  const ux = axes.c2p(1, 0);\\n  const uy = axes.c2p(0, 1);\\n  const dx = ux[0] - o[0];\\n  const dy = uy[1] - o[1];\\n  return [(pt[0] - o[0]) / dx, (pt[1] - o[1]) / dy];\\n}\\n\\nfunction leastSquares(pts) {\\n  const n = pts.length;\\n  let sx = 0, sy = 0, sxy = 0, sxx = 0;\\n  for (const p of pts) {\\n    sx += p.x; sy += p.y; sxy += p.x * p.y; sxx += p.x * p.x;\\n  }\\n  const den = n * sxx - sx * sx;\\n  if (Math.abs(den) < 1e-9) return { m: 0, b: sy / n };\\n  const m = (n * sxy - sx * sy) / den;\\n  const b = (sy - m * sx) / n;\\n  return { m, b };\\n}\\n\\nfunction lineEndpoints(m, b) {\\n  const x0 = 0, x1 = 10;\\n  let y0 = m * x0 + b;\\n  let y1 = m * x1 + b;\\n  // clip roughly to visible y-range for a clean look\\n  y0 = Math.max(-0.5, Math.min(10.5, y0));\\n  y1 = Math.max(-0.5, Math.min(10.5, y1));\\n  return [axes.c2p(x0, y0), axes.c2p(x1, y1)];\\n}\\n\\nlet { m, b } = leastSquares(data);\\nconst fitLine = new Polygon({\\n  vertices: lineEndpoints(m, b),\\n  color: RED\\n});\\nfitLine.setStrokeWidth(4).setFillOpacity(0);\\n\\nconst dots = data.map((p) => {\\n  const d = new Dot({ point: axes.c2p(p.x, p.y), color: YELLOW });\\n  d.setFill(YELLOW, 1);\\n  return d;\\n});\\n\\nfunction formatEq(mVal, bVal) {\\n  const ms = (mVal >= 0 ? '' : '-') + Math.abs(mVal).toFixed(2);\\n  const bs = (bVal >= 0 ? ' + ' : ' - ') + Math.abs(bVal).toFixed(2);\\n  return 'y = ' + ms + 'x' + bs;\\n}\\n\\nlet eqLabel = new Text({ text: formatEq(m, b), fontSize: 26, color: RED_A });\\neqLabel.moveTo([0, -3.4, 0]);\\n\\nfunction updateFit() {\\n  const res = leastSquares(data);\\n  m = res.m;\\n  b = res.b;\\n  fitLine.setVertices(lineEndpoints(m, b));\\n  const pos = eqLabel.getCenter();\\n  scene.remove(eqLabel);\\n  eqLabel = new Text({ text: formatEq(m, b), fontSize: 26, color: RED_A });\\n  eqLabel.moveTo(pos);\\n  scene.add(eqLabel);\\n}\\n\\nscene.add(axes, xLabel, yLabel, title, fitLine, eqLabel);\\nfor (const d of dots) scene.add(d);\\n\\nawait scene.play(new AnimationGroup([\\n  new Create(axes),\\n  new FadeIn(title),\\n  new FadeIn(xLabel),\\n  new FadeIn(yLabel)\\n]));\\nawait scene.play(new AnimationGroup(dots.map((d) => new FadeIn(d))));\\nawait scene.play(new Create(fitLine));\\nawait scene.play(new FadeIn(eqLabel));\\n\\ndots.forEach((d, i) => {\\n  makeHoverable(d, scene, { hoverScale: 1.35, hoverColor: ORANGE });\\n  makeDraggable(d, scene, {\\n    onDrag: (mob) => {\\n      let [ax, ay] = worldToAxes(mob.getCenter());\\n      ax = Math.max(0, Math.min(10, ax));\\n      ay = Math.max(0, Math.min(10, ay));\\n      data[i].x = ax;\\n      data[i].y = ay;\\n      mob.moveTo(axes.c2p(ax, ay));\\n      updateFit();\\n    }\\n  });\\n});\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 200 });\\ncontrols.addButton({\\n  label: 'Reset points',\\n  onClick: () => {\\n    const initial = [\\n      [1.2, 2.0], [2.5, 3.4], [3.8, 3.1], [5.0, 5.6],\\n      [6.2, 5.2], [7.5, 7.8], [8.8, 8.1]\\n    ];\\n    initial.forEach((xy, i) => {\\n      data[i].x = xy[0];\\n      data[i].y = xy[1];\\n      dots[i].moveTo(axes.c2p(xy[0], xy[1]));\\n    });\\n    updateFit();\\n  }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A line of best fit (ordinary least squares regression) finds the unique straight line y = mx + b that minimizes the sum of squared vertical residuals between the line and the data points. Drag any yellow point to move it; the slope m, intercept b, and the red fit line update instantly from the closed-form formulas m = (nΣxy − ΣxΣy)/(nΣx² − (Σx)²) and b = (Σy − mΣx)/n."
+      },
+      "code": "const axes = new Axes({\n  xRange: [0, 10, 2],\n  yRange: [0, 10, 2],\n  xLength: 9,\n  yLength: 5.5,\n  tips: true\n});\naxes.shift(scaleVec(0.2, DOWN));\n\nconst xLabel = new Text({ text: 'x', fontSize: 22, color: GRAY });\nconst yLabel = new Text({ text: 'y', fontSize: 22, color: GRAY });\nxLabel.nextTo(axes, DOWN);\nxLabel.shift(scaleVec(4, RIGHT));\nyLabel.nextTo(axes, LEFT);\nyLabel.shift(scaleVec(2.2, UP));\n\nconst title = new Text({ text: 'Line of Best Fit — drag the points', fontSize: 28, color: WHITE });\ntitle.moveTo([0, 3.5, 0]);\n\nconst data = [\n  { x: 1.2, y: 2.0 },\n  { x: 2.5, y: 3.4 },\n  { x: 3.8, y: 3.1 },\n  { x: 5.0, y: 5.6 },\n  { x: 6.2, y: 5.2 },\n  { x: 7.5, y: 7.8 },\n  { x: 8.8, y: 8.1 }\n];\n\nfunction worldToAxes(pt) {\n  const o = axes.c2p(0, 0);\n  const ux = axes.c2p(1, 0);\n  const uy = axes.c2p(0, 1);\n  const dx = ux[0] - o[0];\n  const dy = uy[1] - o[1];\n  return [(pt[0] - o[0]) / dx, (pt[1] - o[1]) / dy];\n}\n\nfunction leastSquares(pts) {\n  const n = pts.length;\n  let sx = 0, sy = 0, sxy = 0, sxx = 0;\n  for (const p of pts) {\n    sx += p.x; sy += p.y; sxy += p.x * p.y; sxx += p.x * p.x;\n  }\n  const den = n * sxx - sx * sx;\n  if (Math.abs(den) < 1e-9) return { m: 0, b: sy / n };\n  const m = (n * sxy - sx * sy) / den;\n  const b = (sy - m * sx) / n;\n  return { m, b };\n}\n\nfunction lineEndpoints(m, b) {\n  const x0 = 0, x1 = 10;\n  let y0 = m * x0 + b;\n  let y1 = m * x1 + b;\n  // clip roughly to visible y-range for a clean look\n  y0 = Math.max(-0.5, Math.min(10.5, y0));\n  y1 = Math.max(-0.5, Math.min(10.5, y1));\n  return [axes.c2p(x0, y0), axes.c2p(x1, y1)];\n}\n\nlet { m, b } = leastSquares(data);\nconst fitLine = new Polygon({\n  vertices: lineEndpoints(m, b),\n  color: RED\n});\nfitLine.setStrokeWidth(4).setFillOpacity(0);\n\nconst dots = data.map((p) => {\n  const d = new Dot({ point: axes.c2p(p.x, p.y), color: YELLOW });\n  d.setFill(YELLOW, 1);\n  return d;\n});\n\nfunction formatEq(mVal, bVal) {\n  const ms = (mVal >= 0 ? '' : '-') + Math.abs(mVal).toFixed(2);\n  const bs = (bVal >= 0 ? ' + ' : ' - ') + Math.abs(bVal).toFixed(2);\n  return 'y = ' + ms + 'x' + bs;\n}\n\nlet eqLabel = new Text({ text: formatEq(m, b), fontSize: 26, color: RED_A });\neqLabel.moveTo([0, -3.4, 0]);\n\nfunction updateFit() {\n  const res = leastSquares(data);\n  m = res.m;\n  b = res.b;\n  fitLine.setVertices(lineEndpoints(m, b));\n  const pos = eqLabel.getCenter();\n  scene.remove(eqLabel);\n  eqLabel = new Text({ text: formatEq(m, b), fontSize: 26, color: RED_A });\n  eqLabel.moveTo(pos);\n  scene.add(eqLabel);\n}\n\nscene.add(axes, xLabel, yLabel, title, fitLine, eqLabel);\nfor (const d of dots) scene.add(d);\n\nawait scene.play(new AnimationGroup([\n  new Create(axes),\n  new FadeIn(title),\n  new FadeIn(xLabel),\n  new FadeIn(yLabel)\n]));\nawait scene.play(new AnimationGroup(dots.map((d) => new FadeIn(d))));\nawait scene.play(new Create(fitLine));\nawait scene.play(new FadeIn(eqLabel));\n\ndots.forEach((d, i) => {\n  makeHoverable(d, scene, { hoverScale: 1.35, hoverColor: ORANGE });\n  makeDraggable(d, scene, {\n    onDrag: (mob) => {\n      let [ax, ay] = worldToAxes(mob.getCenter());\n      ax = Math.max(0, Math.min(10, ax));\n      ay = Math.max(0, Math.min(10, ay));\n      data[i].x = ax;\n      data[i].y = ay;\n      mob.moveTo(axes.c2p(ax, ay));\n      updateFit();\n    }\n  });\n});\n\nconst controls = new Controls(scene, { position: 'top-right', width: 200 });\ncontrols.addButton({\n  label: 'Reset points',\n  onClick: () => {\n    const initial = [\n      [1.2, 2.0], [2.5, 3.4], [3.8, 3.1], [5.0, 5.6],\n      [6.2, 5.2], [7.5, 7.8], [8.8, 8.1]\n    ];\n    initial.forEach((xy, i) => {\n      data[i].x = xy[0];\n      data[i].y = xy[1];\n      dots[i].moveTo(axes.c2p(xy[0], xy[1]));\n    });\n    updateFit();\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9987,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 4,
+        "controls": {
+          "sliders": 0,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 7,
+        "clickables": 0,
+        "hoverables": 7
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/stats-regression-drag.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/stats-regression-drag.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:47.834Z"
+}

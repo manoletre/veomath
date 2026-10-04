@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-cone-cylinder",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "19.52% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=2 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "6.09% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 47999,
+        "inputTokens": 8051,
+        "cachedInputTokens": 7569,
+        "outputTokens": 5211,
+        "costUsd": 0.1095818,
+        "rawResponse": "{\"explanation\":\"Slice both solids into thin horizontal layers. Every layer of the cylinder is a full disc of area πr². A cone layer at height y has a radius that shrinks in a straight line, r(1 − y/h), so its area is πr²(1 − y/h)². Since the radius shrinks linearly, the area shrinks as a square. Adding up the layers gives V_cone/V_cyl = ∫₀¹(1−u)² du = 1/3. Use the \\\"Slices\\\" slider to see the stacked slabs get closer to exactly one third, and the \\\"Cut height\\\" slider to compare matching cross-sections of the two solids.\",\"manimCode\":\"const R = 1.2, H = 4, BASE = -2.6, EY = 0.25;\\nconst cylX = -5, coneX = -2;\\n\\nfunction ellipsePts(cx, cy, rx, ry) {\\n  const pts = [];\\n  for (let i = 0; i < 48; i++) {\\n    const a = (2 * Math.PI * i) / 48;\\n    pts.push([cx + rx * Math.cos(a), cy + ry * Math.sin(a), 0]);\\n  }\\n  return pts;\\n}\\nfunction seg(p, q, color) {\\n  const s = new Polygon({ vertices: [p, q], color: color });\\n  s.setStrokeWidth(3); s.setFillOpacity(0);\\n  return s;\\n}\\nfunction ell(cx, cy, rx, color) {\\n  const e = new Polygon({ vertices: ellipsePts(cx, cy, rx, rx * EY), color: color });\\n  e.setStrokeWidth(3); e.setFillOpacity(0);\\n  return e;\\n}\\n\\n// Outlines\\nconst cylOutline = [\\n  ell(cylX, BASE, R, BLUE), ell(cylX, BASE + H, R, BLUE),\\n  seg([cylX - R, BASE, 0], [cylX - R, BASE + H, 0], BLUE),\\n  seg([cylX + R, BASE, 0], [cylX + R, BASE + H, 0], BLUE)\\n];\\nconst coneOutline = [\\n  ell(coneX, BASE, R, ORANGE),\\n  seg([coneX - R, BASE, 0], [coneX, BASE + H, 0], ORANGE),\\n  seg([coneX + R, BASE, 0], [coneX, BASE + H, 0], ORANGE)\\n];\\n\\nconst title = new MathTex({ latex: 'V_{\\\\\\\\text{cone}} = \\\\\\\\tfrac{1}{3}\\\\\\\\,V_{\\\\\\\\text{cyl}} = \\\\\\\\tfrac{1}{3}\\\\\\\\pi r^2 h' });\\nawait title.waitForRender();\\ntitle.scale(0.8);\\ntitle.moveTo([-3.5, 3.3, 0]);\\n\\nconst cylLbl = new Text({ text: 'Cylinder', color: BLUE, fontSize: 24 });\\ncylLbl.moveTo([cylX, -3.3, 0]);\\nconst coneLbl = new Text({ text: 'Cone', color: ORANGE, fontSize: 24 });\\nconeLbl.moveTo([coneX, -3.3, 0]);\\n\\nawait scene.play(new AnimationGroup([...cylOutline, ...coneOutline].map(m => new Create(m))));\\nawait scene.play(new AnimationGroup([new FadeIn(cylLbl), new FadeIn(coneLbl), new Write(title)]));\\n\\n// Graph of cross-section ratio\\nconst ax = new Axes({ xRange: [0, 1, 0.25], yRange: [0, 1, 0.25], xLength: 4.2, yLength: 3.4, tips: false });\\nax.moveTo([3.1, -0.6, 0]);\\nconst curve = ax.plot(u => (1 - u) * (1 - u), { color: ORANGE });\\nconst area = ax.getArea(curve, [0, 1], { color: ORANGE, opacity: 0.15 });\\nconst fLbl = new MathTex({ latex: '\\\\\\\\frac{A_{\\\\\\\\text{cone}}(y)}{A_{\\\\\\\\text{cyl}}} = \\\\\\\\left(1-\\\\\\\\tfrac{y}{h}\\\\\\\\right)^2' });\\nawait fLbl.waitForRender();\\nfLbl.scale(0.6);\\nfLbl.moveTo([2.6, 1.75, 0]);\\nconst uLbl = new MathTex({ latex: 'y/h' });\\nawait uLbl.waitForRender();\\nuLbl.scale(0.6);\\nuLbl.moveTo(ax.c2p(1.08, -0.08));\\nawait scene.play(new AnimationGroup([new Create(ax), new Create(curve), new FadeIn(area), new Write(fLbl), new FadeIn(uLbl)]));\\n\\n// Slabs + Riemann rectangles\\nlet n = 6;\\nlet pieces = [];\\nlet ratioTex = null;\\nlet token = 0;\\n\\nasync function rebuild() {\\n  const my = ++token;\\n  pieces.forEach(p => scene.remove(p));\\n  pieces = [];\\n  const dh = H / n;\\n  let sum = 0;\\n  for (let k = 0; k < n; k++) {\\n    const y0 = BASE + k * dh, y1 = y0 + dh;\\n    const rc = R * (1 - k / n);\\n    const cyl = new Polygon({ vertices: [[cylX - R, y0, 0], [cylX + R, y0, 0], [cylX + R, y1, 0], [cylX - R, y1, 0]], color: BLUE_D });\\n    cyl.setFill(BLUE, 0.3); cyl.setStrokeWidth(1);\\n    const cn = new Polygon({ vertices: [[coneX - rc, y0, 0], [coneX + rc, y0, 0], [coneX + rc, y1, 0], [coneX - rc, y1, 0]], color: ORANGE });\\n    cn.setFill(ORANGE, 0.35); cn.setStrokeWidth(1);\\n    const u0 = k / n, u1 = (k + 1) / n, f = (1 - u0) * (1 - u0);\\n    sum += f / n;\\n    const rr = new Polygon({ vertices: [ax.c2p(u0, 0), ax.c2p(u1, 0), ax.c2p(u1, f), ax.c2p(u0, f)], color: YELLOW });\\n    rr.setFill(YELLOW, 0.25); rr.setStrokeWidth(1);\\n    pieces.push(cyl, cn, rr);\\n  }\\n  pieces.forEach(p => scene.add(p));\\n  const t = new MathTex({ latex: '\\\\\\\\frac{V_{\\\\\\\\text{cone slabs}}}{V_{\\\\\\\\text{cyl}}} = ' + sum.toFixed(4) + '\\\\\\\\;\\\\\\\\to\\\\\\\\;\\\\\\\\tfrac{1}{3}' });\\n  await t.waitForRender();\\n  if (my !== token) return;\\n  t.scale(0.65);\\n  t.moveTo([3.1, -3.2, 0]);\\n  if (ratioTex) scene.remove(ratioTex);\\n  ratioTex = t;\\n  scene.add(ratioTex);\\n  // keep cut-plane on top\\n  scene.remove(cutCyl, cutCone, cutDot, cutLine); scene.add(cutCyl, cutCone, cutLine, cutDot);\\n}\\n\\n// Cut plane\\nlet cutU = 0.4;\\nconst cutCyl = new Polygon({ vertices: ellipsePts(cylX, BASE, R, R * EY), color: WHITE });\\ncutCyl.setFill(BLUE_B, 0.6); cutCyl.setStrokeWidth(2);\\nconst cutCone = new Polygon({ vertices: ellipsePts(coneX, BASE, R, R * EY), color: WHITE });\\ncutCone.setFill(YELLOW, 0.7); cutCone.setStrokeWidth(2);\\nconst cutDot = new Dot({ point: ax.c2p(0, 1), color: WHITE });\\nconst cutLine = seg(ax.c2p(0, 0), ax.c2p(0, 1), WHITE);\\nfunction updateCut() {\\n  const y = BASE + cutU * H, rc = R * (1 - cutU) + 0.001;\\n  cutCyl.setVertices(ellipsePts(cylX, y, R, R * EY));\\n  cutCone.setVertices(ellipsePts(coneX, y, rc, rc * EY));\\n  const f = (1 - cutU) * (1 - cutU);\\n  cutDot.moveTo(ax.c2p(cutU, f));\\n  cutLine.setVertices([ax.c2p(cutU, 0), ax.c2p(cutU, f)]);\\n}\\nupdateCut();\\nscene.add(cutCyl, cutCone, cutLine, cutDot);\\nawait rebuild();\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'Slices', min: 1, max: 60, value: 6, step: 1, onChange: (v) => { n = Math.round(v); rebuild(); } });\\ncontrols.addSlider({ label: 'Cut height y/h', min: 0, max: 1, value: 0.4, step: 0.01, onChange: (v) => { cutU = v; updateCut(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Slice both solids into thin horizontal layers. Every layer of the cylinder is a full disc of area πr². A cone layer at height y has a radius that shrinks in a straight line, r(1 − y/h), so its area is πr²(1 − y/h)². Since the radius shrinks linearly, the area shrinks as a square. Adding up the layers gives V_cone/V_cyl = ∫₀¹(1−u)² du = 1/3. Use the \"Slices\" slider to see the stacked slabs get closer to exactly one third, and the \"Cut height\" slider to compare matching cross-sections of the two solids."
+      },
+      "code": "const R = 1.2, H = 4, BASE = -2.6, EY = 0.25;\nconst cylX = -5, coneX = -2;\n\nfunction ellipsePts(cx, cy, rx, ry) {\n  const pts = [];\n  for (let i = 0; i < 48; i++) {\n    const a = (2 * Math.PI * i) / 48;\n    pts.push([cx + rx * Math.cos(a), cy + ry * Math.sin(a), 0]);\n  }\n  return pts;\n}\nfunction seg(p, q, color) {\n  const s = new Polygon({ vertices: [p, q], color: color });\n  s.setStrokeWidth(3); s.setFillOpacity(0);\n  return s;\n}\nfunction ell(cx, cy, rx, color) {\n  const e = new Polygon({ vertices: ellipsePts(cx, cy, rx, rx * EY), color: color });\n  e.setStrokeWidth(3); e.setFillOpacity(0);\n  return e;\n}\n\n// Outlines\nconst cylOutline = [\n  ell(cylX, BASE, R, BLUE), ell(cylX, BASE + H, R, BLUE),\n  seg([cylX - R, BASE, 0], [cylX - R, BASE + H, 0], BLUE),\n  seg([cylX + R, BASE, 0], [cylX + R, BASE + H, 0], BLUE)\n];\nconst coneOutline = [\n  ell(coneX, BASE, R, ORANGE),\n  seg([coneX - R, BASE, 0], [coneX, BASE + H, 0], ORANGE),\n  seg([coneX + R, BASE, 0], [coneX, BASE + H, 0], ORANGE)\n];\n\nconst title = new MathTex({ latex: 'V_{\\\\text{cone}} = \\\\tfrac{1}{3}\\\\,V_{\\\\text{cyl}} = \\\\tfrac{1}{3}\\\\pi r^2 h' });\nawait title.waitForRender();\ntitle.scale(0.8);\ntitle.moveTo([-3.5, 3.3, 0]);\n\nconst cylLbl = new Text({ text: 'Cylinder', color: BLUE, fontSize: 24 });\ncylLbl.moveTo([cylX, -3.3, 0]);\nconst coneLbl = new Text({ text: 'Cone', color: ORANGE, fontSize: 24 });\nconeLbl.moveTo([coneX, -3.3, 0]);\n\nawait scene.play(new AnimationGroup([...cylOutline, ...coneOutline].map(m => new Create(m))));\nawait scene.play(new AnimationGroup([new FadeIn(cylLbl), new FadeIn(coneLbl), new Write(title)]));\n\n// Graph of cross-section ratio\nconst ax = new Axes({ xRange: [0, 1, 0.25], yRange: [0, 1, 0.25], xLength: 4.2, yLength: 3.4, tips: false });\nax.moveTo([3.1, -0.6, 0]);\nconst curve = ax.plot(u => (1 - u) * (1 - u), { color: ORANGE });\nconst area = ax.getArea(curve, [0, 1], { color: ORANGE, opacity: 0.15 });\nconst fLbl = new MathTex({ latex: '\\\\frac{A_{\\\\text{cone}}(y)}{A_{\\\\text{cyl}}} = \\\\left(1-\\\\tfrac{y}{h}\\\\right)^2' });\nawait fLbl.waitForRender();\nfLbl.scale(0.6);\nfLbl.moveTo([2.6, 1.75, 0]);\nconst uLbl = new MathTex({ latex: 'y/h' });\nawait uLbl.waitForRender();\nuLbl.scale(0.6);\nuLbl.moveTo(ax.c2p(1.08, -0.08));\nawait scene.play(new AnimationGroup([new Create(ax), new Create(curve), new FadeIn(area), new Write(fLbl), new FadeIn(uLbl)]));\n\n// Slabs + Riemann rectangles\nlet n = 6;\nlet pieces = [];\nlet ratioTex = null;\nlet token = 0;\n\nasync function rebuild() {\n  const my = ++token;\n  pieces.forEach(p => scene.remove(p));\n  pieces = [];\n  const dh = H / n;\n  let sum = 0;\n  for (let k = 0; k < n; k++) {\n    const y0 = BASE + k * dh, y1 = y0 + dh;\n    const rc = R * (1 - k / n);\n    const cyl = new Polygon({ vertices: [[cylX - R, y0, 0], [cylX + R, y0, 0], [cylX + R, y1, 0], [cylX - R, y1, 0]], color: BLUE_D });\n    cyl.setFill(BLUE, 0.3); cyl.setStrokeWidth(1);\n    const cn = new Polygon({ vertices: [[coneX - rc, y0, 0], [coneX + rc, y0, 0], [coneX + rc, y1, 0], [coneX - rc, y1, 0]], color: ORANGE });\n    cn.setFill(ORANGE, 0.35); cn.setStrokeWidth(1);\n    const u0 = k / n, u1 = (k + 1) / n, f = (1 - u0) * (1 - u0);\n    sum += f / n;\n    const rr = new Polygon({ vertices: [ax.c2p(u0, 0), ax.c2p(u1, 0), ax.c2p(u1, f), ax.c2p(u0, f)], color: YELLOW });\n    rr.setFill(YELLOW, 0.25); rr.setStrokeWidth(1);\n    pieces.push(cyl, cn, rr);\n  }\n  pieces.forEach(p => scene.add(p));\n  const t = new MathTex({ latex: '\\\\frac{V_{\\\\text{cone slabs}}}{V_{\\\\text{cyl}}} = ' + sum.toFixed(4) + '\\\\;\\\\to\\\\;\\\\tfrac{1}{3}' });\n  await t.waitForRender();\n  if (my !== token) return;\n  t.scale(0.65);\n  t.moveTo([3.1, -3.2, 0]);\n  if (ratioTex) scene.remove(ratioTex);\n  ratioTex = t;\n  scene.add(ratioTex);\n  // keep cut-plane on top\n  scene.remove(cutCyl, cutCone, cutDot, cutLine); scene.add(cutCyl, cutCone, cutLine, cutDot);\n}\n\n// Cut plane\nlet cutU = 0.4;\nconst cutCyl = new Polygon({ vertices: ellipsePts(cylX, BASE, R, R * EY), color: WHITE });\ncutCyl.setFill(BLUE_B, 0.6); cutCyl.setStrokeWidth(2);\nconst cutCone = new Polygon({ vertices: ellipsePts(coneX, BASE, R, R * EY), color: WHITE });\ncutCone.setFill(YELLOW, 0.7); cutCone.setStrokeWidth(2);\nconst cutDot = new Dot({ point: ax.c2p(0, 1), color: WHITE });\nconst cutLine = seg(ax.c2p(0, 0), ax.c2p(0, 1), WHITE);\nfunction updateCut() {\n  const y = BASE + cutU * H, rc = R * (1 - cutU) + 0.001;\n  cutCyl.setVertices(ellipsePts(cylX, y, R, R * EY));\n  cutCone.setVertices(ellipsePts(coneX, y, rc, rc * EY));\n  const f = (1 - cutU) * (1 - cutU);\n  cutDot.moveTo(ax.c2p(cutU, f));\n  cutLine.setVertices([ax.c2p(cutU, 0), ax.c2p(cutU, f)]);\n}\nupdateCut();\nscene.add(cutCyl, cutCone, cutLine, cutDot);\nawait rebuild();\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'Slices', min: 1, max: 60, value: 6, step: 1, onChange: (v) => { n = Math.round(v); rebuild(); } });\ncontrols.addSlider({ label: 'Cut height y/h', min: 0, max: 1, value: 0.4, step: 0.01, onChange: (v) => { cutU = v; updateCut(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 13869,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 3,
+        "controls": {
+          "sliders": 2,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/geo-cone-cylinder.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/geo-cone-cylinder.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:48:40.043Z"
+}

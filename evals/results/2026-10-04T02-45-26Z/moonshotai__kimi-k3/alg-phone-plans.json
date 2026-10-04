@@ -1,0 +1,80 @@
+{
+  "itemId": "alg-phone-plans",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.34% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "MathTex \"20 + 0.10x = 35 + 0.05x\" [x 2.68..7.51, y -1.36..-1.01] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.97% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 89654,
+        "inputTokens": 4730,
+        "cachedInputTokens": 64,
+        "outputTokens": 10909,
+        "costUsd": 0.1776522,
+        "rawResponse": "{\n  \"explanation\": \"Set the two cost formulas equal: 20 + 0.10x = 35 + 0.05x. Subtracting gives 0.05x = 15, so x = 300 minutes — at that point both plans cost exactly $50. Below 300 minutes Plan A is cheaper (lower flat fee); above 300 minutes Plan B wins (lower per-minute rate). Drag the Minutes slider to compare the plans at any usage level and watch the dots meet at the break-even point.\",\n  \"manimCode\": \"// Cost functions\\nconst planA = m => 20 + 0.10 * m;\\nconst planB = m => 35 + 0.05 * m;\\n\\n// Axes: x = minutes (0-600), y = cost in dollars (0-80)\\nconst ax = new Axes({\\n  xRange: [0, 600, 100],\\n  yRange: [0, 80, 10],\\n  xLength: 9.5,\\n  yLength: 6,\\n  tips: true\\n});\\nax.moveTo([-1.2, -0.3, 0]);\\n\\nconst title = new Text({ text: 'Phone Plan Break-Even', color: WHITE, fontSize: 30 });\\ntitle.moveTo([-1.2, 3.55, 0]);\\nscene.add(title);\\n\\nawait scene.play(new Create(ax));\\n\\n// Plot both plans on the SAME axes so they align\\nconst lineA = ax.plot(planA, { color: BLUE, xRange: [0, 600] });\\nconst lineB = ax.plot(planB, { color: ORANGE, xRange: [0, 600] });\\nawait scene.play(new AnimationGroup([new Create(lineA), new Create(lineB)]));\\n\\n// Legend\\nconst legendA = new MathTex({ latex: 'A(x) = 20 + 0.10x' });\\nawait legendA.waitForRender();\\nlegendA.setColor(BLUE);\\nlegendA.moveTo([-3.2, 2.6, 0]);\\nconst legendB = new MathTex({ latex: 'B(x) = 35 + 0.05x' });\\nawait legendB.waitForRender();\\nlegendB.setColor(ORANGE);\\nlegendB.moveTo([-3.2, 2.0, 0]);\\nawait scene.play(new AnimationGroup([new FadeIn(legendA), new FadeIn(legendB)]));\\n\\n// Break-even point (300, 50) with guide lines\\nconst breakDot = new Dot({ point: ax.c2p(300, 50), color: YELLOW });\\nconst guideV = new Line({ start: ax.c2p(300, 0), end: ax.c2p(300, 50), color: GRAY });\\nguideV.setStrokeWidth(1.5).setOpacity(0.5);\\nconst guideH = new Line({ start: ax.c2p(0, 50), end: ax.c2p(300, 50), color: GRAY });\\nguideH.setStrokeWidth(1.5).setOpacity(0.5);\\nconst breakLabel = new Text({ text: 'Break-even: 300 min, $50', color: GOLD, fontSize: 24 });\\nbreakLabel.moveTo([-1.2, 1.15, 0]);\\nawait scene.play(new AnimationGroup([new Create(guideV), new Create(guideH), new FadeIn(breakDot), new FadeIn(breakLabel)]));\\n\\n// Algebraic solution on the right panel\\nconst solEq = new MathTex({ latex: '20 + 0.10x = 35 + 0.05x' });\\nawait solEq.waitForRender();\\nsolEq.scale(0.8);\\nsolEq.moveTo([5.1, -1.2, 0]);\\nconst solEq2 = new MathTex({ latex: '0.05x = 15' });\\nawait solEq2.waitForRender();\\nsolEq2.scale(0.8);\\nsolEq2.moveTo([5.1, -1.95, 0]);\\nconst solEq3 = new MathTex({ latex: 'x = 300' });\\nawait solEq3.waitForRender();\\nsolEq3.setColor(GOLD);\\nsolEq3.scale(0.9);\\nsolEq3.moveTo([5.1, -2.7, 0]);\\nawait scene.play(new AnimationGroup([new FadeIn(solEq), new FadeIn(solEq2), new FadeIn(solEq3)]));\\n\\n// Axis name labels\\nconst xLab = new Text({ text: 'minutes', color: GRAY, fontSize: 20 });\\nxLab.moveTo([4.1, -3.3, 0]);\\nconst yLab = new Text({ text: 'cost ($)', color: GRAY, fontSize: 20 });\\nyLab.moveTo([-5.3, 3.05, 0]);\\nscene.add(xLab, yLab);\\n\\n// Interactive minute tracker\\nlet mins = 150;\\n\\nconst dotA = new Dot({ point: ax.c2p(mins, planA(mins)), color: BLUE });\\nconst dotB = new Dot({ point: ax.c2p(mins, planB(mins)), color: ORANGE });\\nconst vLine = new Polygon({ vertices: [ax.c2p(mins, 0), ax.c2p(mins, Math.max(planA(mins), planB(mins)))], color: GOLD });\\nvLine.setStrokeWidth(2).setFillOpacity(0).setOpacity(0.8);\\n\\ndotA.addUpdater(() => dotA.moveTo(ax.c2p(mins, planA(mins))));\\ndotB.addUpdater(() => dotB.moveTo(ax.c2p(mins, planB(mins))));\\nvLine.addUpdater(() => vLine.setVertices([ax.c2p(mins, 0), ax.c2p(mins, Math.max(planA(mins), planB(mins)))]));\\n\\nscene.add(vLine, dotA, dotB);\\n\\n// Dynamic readout (Text is immutable: remove + recreate on change)\\nlet minText = null, costAText = null, costBText = null, verdictText = null;\\n\\nfunction drawReadout() {\\n  minText = new Text({ text: 'Minutes: ' + mins, color: WHITE, fontSize: 26 });\\n  minText.moveTo([5.1, 1.9, 0]);\\n  costAText = new Text({ text: 'Plan A: $' + planA(mins).toFixed(2), color: BLUE, fontSize: 26 });\\n  costAText.moveTo([5.1, 1.25, 0]);\\n  costBText = new Text({ text: 'Plan B: $' + planB(mins).toFixed(2), color: ORANGE, fontSize: 26 });\\n  costBText.moveTo([5.1, 0.6, 0]);\\n  const diff = planA(mins) - planB(mins);\\n  let vStr, vColor;\\n  if (Math.abs(diff) < 1e-9) { vStr = 'Same cost!'; vColor = GOLD; }\\n  else if (diff < 0) { vStr = 'Plan A is cheaper'; vColor = BLUE; }\\n  else { vStr = 'Plan B is cheaper'; vColor = ORANGE; }\\n  verdictText = new Text({ text: vStr, color: vColor, fontSize: 26 });\\n  verdictText.moveTo([5.1, -0.2, 0]);\\n  scene.add(minText, costAText, costBText, verdictText);\\n}\\ndrawReadout();\\n\\nfunction refreshReadout() {\\n  scene.remove(minText);\\n  scene.remove(costAText);\\n  scene.remove(costBText);\\n  scene.remove(verdictText);\\n  drawReadout();\\n}\\n\\n// Slider to explore usage levels\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({\\n  label: 'Minutes',\\n  min: 0,\\n  max: 600,\\n  value: 150,\\n  step: 10,\\n  onChange: (val) => { mins = val; refreshReadout(); }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "Set the two cost formulas equal: 20 + 0.10x = 35 + 0.05x. Subtracting gives 0.05x = 15, so x = 300 minutes — at that point both plans cost exactly $50. Below 300 minutes Plan A is cheaper (lower flat fee); above 300 minutes Plan B wins (lower per-minute rate). Drag the Minutes slider to compare the plans at any usage level and watch the dots meet at the break-even point."
+      },
+      "code": "// Cost functions\nconst planA = m => 20 + 0.10 * m;\nconst planB = m => 35 + 0.05 * m;\n\n// Axes: x = minutes (0-600), y = cost in dollars (0-80)\nconst ax = new Axes({\n  xRange: [0, 600, 100],\n  yRange: [0, 80, 10],\n  xLength: 9.5,\n  yLength: 6,\n  tips: true\n});\nax.moveTo([-1.2, -0.3, 0]);\n\nconst title = new Text({ text: 'Phone Plan Break-Even', color: WHITE, fontSize: 30 });\ntitle.moveTo([-1.2, 3.55, 0]);\nscene.add(title);\n\nawait scene.play(new Create(ax));\n\n// Plot both plans on the SAME axes so they align\nconst lineA = ax.plot(planA, { color: BLUE, xRange: [0, 600] });\nconst lineB = ax.plot(planB, { color: ORANGE, xRange: [0, 600] });\nawait scene.play(new AnimationGroup([new Create(lineA), new Create(lineB)]));\n\n// Legend\nconst legendA = new MathTex({ latex: 'A(x) = 20 + 0.10x' });\nawait legendA.waitForRender();\nlegendA.setColor(BLUE);\nlegendA.moveTo([-3.2, 2.6, 0]);\nconst legendB = new MathTex({ latex: 'B(x) = 35 + 0.05x' });\nawait legendB.waitForRender();\nlegendB.setColor(ORANGE);\nlegendB.moveTo([-3.2, 2.0, 0]);\nawait scene.play(new AnimationGroup([new FadeIn(legendA), new FadeIn(legendB)]));\n\n// Break-even point (300, 50) with guide lines\nconst breakDot = new Dot({ point: ax.c2p(300, 50), color: YELLOW });\nconst guideV = new Line({ start: ax.c2p(300, 0), end: ax.c2p(300, 50), color: GRAY });\nguideV.setStrokeWidth(1.5).setOpacity(0.5);\nconst guideH = new Line({ start: ax.c2p(0, 50), end: ax.c2p(300, 50), color: GRAY });\nguideH.setStrokeWidth(1.5).setOpacity(0.5);\nconst breakLabel = new Text({ text: 'Break-even: 300 min, $50', color: GOLD, fontSize: 24 });\nbreakLabel.moveTo([-1.2, 1.15, 0]);\nawait scene.play(new AnimationGroup([new Create(guideV), new Create(guideH), new FadeIn(breakDot), new FadeIn(breakLabel)]));\n\n// Algebraic solution on the right panel\nconst solEq = new MathTex({ latex: '20 + 0.10x = 35 + 0.05x' });\nawait solEq.waitForRender();\nsolEq.scale(0.8);\nsolEq.moveTo([5.1, -1.2, 0]);\nconst solEq2 = new MathTex({ latex: '0.05x = 15' });\nawait solEq2.waitForRender();\nsolEq2.scale(0.8);\nsolEq2.moveTo([5.1, -1.95, 0]);\nconst solEq3 = new MathTex({ latex: 'x = 300' });\nawait solEq3.waitForRender();\nsolEq3.setColor(GOLD);\nsolEq3.scale(0.9);\nsolEq3.moveTo([5.1, -2.7, 0]);\nawait scene.play(new AnimationGroup([new FadeIn(solEq), new FadeIn(solEq2), new FadeIn(solEq3)]));\n\n// Axis name labels\nconst xLab = new Text({ text: 'minutes', color: GRAY, fontSize: 20 });\nxLab.moveTo([4.1, -3.3, 0]);\nconst yLab = new Text({ text: 'cost ($)', color: GRAY, fontSize: 20 });\nyLab.moveTo([-5.3, 3.05, 0]);\nscene.add(xLab, yLab);\n\n// Interactive minute tracker\nlet mins = 150;\n\nconst dotA = new Dot({ point: ax.c2p(mins, planA(mins)), color: BLUE });\nconst dotB = new Dot({ point: ax.c2p(mins, planB(mins)), color: ORANGE });\nconst vLine = new Polygon({ vertices: [ax.c2p(mins, 0), ax.c2p(mins, Math.max(planA(mins), planB(mins)))], color: GOLD });\nvLine.setStrokeWidth(2).setFillOpacity(0).setOpacity(0.8);\n\ndotA.addUpdater(() => dotA.moveTo(ax.c2p(mins, planA(mins))));\ndotB.addUpdater(() => dotB.moveTo(ax.c2p(mins, planB(mins))));\nvLine.addUpdater(() => vLine.setVertices([ax.c2p(mins, 0), ax.c2p(mins, Math.max(planA(mins), planB(mins)))]));\n\nscene.add(vLine, dotA, dotB);\n\n// Dynamic readout (Text is immutable: remove + recreate on change)\nlet minText = null, costAText = null, costBText = null, verdictText = null;\n\nfunction drawReadout() {\n  minText = new Text({ text: 'Minutes: ' + mins, color: WHITE, fontSize: 26 });\n  minText.moveTo([5.1, 1.9, 0]);\n  costAText = new Text({ text: 'Plan A: $' + planA(mins).toFixed(2), color: BLUE, fontSize: 26 });\n  costAText.moveTo([5.1, 1.25, 0]);\n  costBText = new Text({ text: 'Plan B: $' + planB(mins).toFixed(2), color: ORANGE, fontSize: 26 });\n  costBText.moveTo([5.1, 0.6, 0]);\n  const diff = planA(mins) - planB(mins);\n  let vStr, vColor;\n  if (Math.abs(diff) < 1e-9) { vStr = 'Same cost!'; vColor = GOLD; }\n  else if (diff < 0) { vStr = 'Plan A is cheaper'; vColor = BLUE; }\n  else { vStr = 'Plan B is cheaper'; vColor = ORANGE; }\n  verdictText = new Text({ text: vStr, color: vColor, fontSize: 26 });\n  verdictText.moveTo([5.1, -0.2, 0]);\n  scene.add(minText, costAText, costBText, verdictText);\n}\ndrawReadout();\n\nfunction refreshReadout() {\n  scene.remove(minText);\n  scene.remove(costAText);\n  scene.remove(costBText);\n  scene.remove(verdictText);\n  drawReadout();\n}\n\n// Slider to explore usage levels\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({\n  label: 'Minutes',\n  min: 0,\n  max: 600,\n  value: 150,\n  step: 10,\n  onChange: (val) => { mins = val; refreshReadout(); }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 12521,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 5,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/alg-phone-plans.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/alg-phone-plans.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:53:08.365Z"
+}

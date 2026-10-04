@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-normal-empirical",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "15.00% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=3 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "3.41% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 28174,
+        "inputTokens": 8047,
+        "cachedInputTokens": 7569,
+        "outputTokens": 3313,
+        "costUsd": 0.0715898,
+        "rawResponse": "{\"explanation\":\"For a normal distribution, about 68% of the data falls within 1 standard deviation (σ) of the mean μ, about 95% within 2σ, and about 99.7% within 3σ. The animation shades these three nested bands one at a time and labels the percentage in each slice. The two slices just outside ±1σ hold about 13.6% each, and the slices between 2σ and 3σ hold about 2.1% each. Afterward, drag the slider to pick any number of standard deviations k and see the exact share of data within μ ± kσ.\",\"manimCode\":\"const ax = new Axes({ xRange: [-4, 4, 1], yRange: [0, 0.5, 0.1], xLength: 10, yLength: 4.5, tips: false });\\nax.moveTo([0, -0.9, 0]);\\nconst pdf = x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);\\nconst curve = ax.plot(pdf, { color: WHITE, xRange: [-4, 4], numSamples: 300 });\\n\\nfunction erf(x) {\\n  const s = x < 0 ? -1 : 1; x = Math.abs(x);\\n  const t = 1 / (1 + 0.3275911 * x);\\n  const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);\\n  return s * y;\\n}\\n\\nconst title = new Text({ text: 'The 68-95-99.7 Rule', color: WHITE, fontSize: 36 });\\ntitle.moveTo([0, 3.4, 0]);\\nscene.add(title);\\nawait scene.play(new Create(ax));\\n\\n// sigma tick labels\\nconst ticks = [];\\nfor (let k = -3; k <= 3; k++) {\\n  const lbl = k === 0 ? '\\\\\\\\mu' : '\\\\\\\\mu' + (k > 0 ? '+' : '-') + (Math.abs(k) === 1 ? '' : Math.abs(k)) + '\\\\\\\\sigma';\\n  const t = new MathTex({ latex: lbl, color: GRAY_A });\\n  await t.waitForRender();\\n  t.scale(0.55);\\n  const p = ax.c2p(k, 0);\\n  t.moveTo([p[0], p[1] - 0.35, 0]);\\n  ticks.push(t);\\n}\\nawait scene.play(new AnimationGroup([new Create(curve), ...ticks.map(t => new FadeIn(t))]));\\n\\nconst a3 = ax.getArea(curve, [-3, 3], { color: BLUE_E, opacity: 0.5 });\\nconst a2 = ax.getArea(curve, [-2, 2], { color: BLUE_C, opacity: 0.5 });\\nconst a1 = ax.getArea(curve, [-1, 1], { color: TEAL, opacity: 0.6 });\\n\\nasync function mk(latex, color, pos) {\\n  const m = new MathTex({ latex, color });\\n  await m.waitForRender();\\n  m.scale(0.7);\\n  m.moveTo(pos);\\n  return m;\\n}\\nconst L1 = await mk('\\\\\\\\mu \\\\\\\\pm 1\\\\\\\\sigma:\\\\\\\\ 68\\\\\\\\%', TEAL, [-4, 2.6, 0]);\\nconst L2 = await mk('\\\\\\\\mu \\\\\\\\pm 2\\\\\\\\sigma:\\\\\\\\ 95\\\\\\\\%', BLUE_C, [0, 2.6, 0]);\\nconst L3 = await mk('\\\\\\\\mu \\\\\\\\pm 3\\\\\\\\sigma:\\\\\\\\ 99.7\\\\\\\\%', BLUE_B, [4, 2.6, 0]);\\n\\nfunction pct(str, x, y, fs) {\\n  const t = new Text({ text: str, color: WHITE, fontSize: fs || 20 });\\n  t.moveTo(ax.c2p(x, y));\\n  return t;\\n}\\nconst p1 = [pct('34.1%', -0.5, 0.15), pct('34.1%', 0.5, 0.15)];\\nconst p2 = [pct('13.6%', -1.5, 0.05, 16), pct('13.6%', 1.5, 0.05, 16)];\\nconst p3 = [pct('2.1%', -2.5, 0.07, 16), pct('2.1%', 2.5, 0.07, 16)];\\n\\nawait scene.play(new FadeIn(a1));\\nawait scene.play(new AnimationGroup([new Write(L1), ...p1.map(p => new FadeIn(p))]));\\nawait scene.wait(0.6);\\nawait scene.play(new FadeIn(a2));\\nawait scene.play(new AnimationGroup([new Write(L2), ...p2.map(p => new FadeIn(p))]));\\nawait scene.wait(0.6);\\nawait scene.play(new FadeIn(a3));\\nawait scene.play(new AnimationGroup([new Write(L3), ...p3.map(p => new FadeIn(p))]));\\nawait scene.wait(1);\\n\\n// Interactive part: slider for k\\nlet k = 1;\\nlet kArea = null;\\nlet kLabel = null;\\nconst leftLine = new Polygon({ vertices: [ax.c2p(-1, 0), ax.c2p(-1, pdf(1))], color: YELLOW });\\nleftLine.setStrokeWidth(4); leftLine.setFillOpacity(0);\\nconst rightLine = new Polygon({ vertices: [ax.c2p(1, 0), ax.c2p(1, pdf(1))], color: YELLOW });\\nrightLine.setStrokeWidth(4); rightLine.setFillOpacity(0);\\n\\nfunction refresh() {\\n  if (kArea) scene.remove(kArea);\\n  if (kLabel) scene.remove(kLabel);\\n  kArea = ax.getArea(curve, [-k, k], { color: YELLOW, opacity: 0.25 });\\n  leftLine.setVertices([ax.c2p(-k, 0), ax.c2p(-k, pdf(k))]);\\n  rightLine.setVertices([ax.c2p(k, 0), ax.c2p(k, pdf(k))]);\\n  const p = (erf(k / Math.SQRT2) * 100).toFixed(2);\\n  kLabel = new Text({ text: 'Within μ ± ' + k.toFixed(2) + 'σ:  ' + p + '%', color: YELLOW, fontSize: 26 });\\n  kLabel.moveTo([0, 1.9, 0]);\\n  scene.add(kArea, kLabel);\\n}\\nscene.add(leftLine, rightLine);\\nrefresh();\\n\\nconst controls = new Controls(scene, { position: 'bottom-right' });\\ncontrols.addSlider({ label: 'k (std devs)', min: 0.05, max: 4, value: 1, step: 0.05, onChange: v => { k = v; refresh(); } });\\ncontrols.addButton({ label: '1σ', onClick: () => { k = 1; refresh(); } });\\ncontrols.addButton({ label: '2σ', onClick: () => { k = 2; refresh(); } });\\ncontrols.addButton({ label: '3σ', onClick: () => { k = 3; refresh(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "For a normal distribution, about 68% of the data falls within 1 standard deviation (σ) of the mean μ, about 95% within 2σ, and about 99.7% within 3σ. The animation shades these three nested bands one at a time and labels the percentage in each slice. The two slices just outside ±1σ hold about 13.6% each, and the slices between 2σ and 3σ hold about 2.1% each. Afterward, drag the slider to pick any number of standard deviations k and see the exact share of data within μ ± kσ."
+      },
+      "code": "const ax = new Axes({ xRange: [-4, 4, 1], yRange: [0, 0.5, 0.1], xLength: 10, yLength: 4.5, tips: false });\nax.moveTo([0, -0.9, 0]);\nconst pdf = x => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);\nconst curve = ax.plot(pdf, { color: WHITE, xRange: [-4, 4], numSamples: 300 });\n\nfunction erf(x) {\n  const s = x < 0 ? -1 : 1; x = Math.abs(x);\n  const t = 1 / (1 + 0.3275911 * x);\n  const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);\n  return s * y;\n}\n\nconst title = new Text({ text: 'The 68-95-99.7 Rule', color: WHITE, fontSize: 36 });\ntitle.moveTo([0, 3.4, 0]);\nscene.add(title);\nawait scene.play(new Create(ax));\n\n// sigma tick labels\nconst ticks = [];\nfor (let k = -3; k <= 3; k++) {\n  const lbl = k === 0 ? '\\\\mu' : '\\\\mu' + (k > 0 ? '+' : '-') + (Math.abs(k) === 1 ? '' : Math.abs(k)) + '\\\\sigma';\n  const t = new MathTex({ latex: lbl, color: GRAY_A });\n  await t.waitForRender();\n  t.scale(0.55);\n  const p = ax.c2p(k, 0);\n  t.moveTo([p[0], p[1] - 0.35, 0]);\n  ticks.push(t);\n}\nawait scene.play(new AnimationGroup([new Create(curve), ...ticks.map(t => new FadeIn(t))]));\n\nconst a3 = ax.getArea(curve, [-3, 3], { color: BLUE_E, opacity: 0.5 });\nconst a2 = ax.getArea(curve, [-2, 2], { color: BLUE_C, opacity: 0.5 });\nconst a1 = ax.getArea(curve, [-1, 1], { color: TEAL, opacity: 0.6 });\n\nasync function mk(latex, color, pos) {\n  const m = new MathTex({ latex, color });\n  await m.waitForRender();\n  m.scale(0.7);\n  m.moveTo(pos);\n  return m;\n}\nconst L1 = await mk('\\\\mu \\\\pm 1\\\\sigma:\\\\ 68\\\\%', TEAL, [-4, 2.6, 0]);\nconst L2 = await mk('\\\\mu \\\\pm 2\\\\sigma:\\\\ 95\\\\%', BLUE_C, [0, 2.6, 0]);\nconst L3 = await mk('\\\\mu \\\\pm 3\\\\sigma:\\\\ 99.7\\\\%', BLUE_B, [4, 2.6, 0]);\n\nfunction pct(str, x, y, fs) {\n  const t = new Text({ text: str, color: WHITE, fontSize: fs || 20 });\n  t.moveTo(ax.c2p(x, y));\n  return t;\n}\nconst p1 = [pct('34.1%', -0.5, 0.15), pct('34.1%', 0.5, 0.15)];\nconst p2 = [pct('13.6%', -1.5, 0.05, 16), pct('13.6%', 1.5, 0.05, 16)];\nconst p3 = [pct('2.1%', -2.5, 0.07, 16), pct('2.1%', 2.5, 0.07, 16)];\n\nawait scene.play(new FadeIn(a1));\nawait scene.play(new AnimationGroup([new Write(L1), ...p1.map(p => new FadeIn(p))]));\nawait scene.wait(0.6);\nawait scene.play(new FadeIn(a2));\nawait scene.play(new AnimationGroup([new Write(L2), ...p2.map(p => new FadeIn(p))]));\nawait scene.wait(0.6);\nawait scene.play(new FadeIn(a3));\nawait scene.play(new AnimationGroup([new Write(L3), ...p3.map(p => new FadeIn(p))]));\nawait scene.wait(1);\n\n// Interactive part: slider for k\nlet k = 1;\nlet kArea = null;\nlet kLabel = null;\nconst leftLine = new Polygon({ vertices: [ax.c2p(-1, 0), ax.c2p(-1, pdf(1))], color: YELLOW });\nleftLine.setStrokeWidth(4); leftLine.setFillOpacity(0);\nconst rightLine = new Polygon({ vertices: [ax.c2p(1, 0), ax.c2p(1, pdf(1))], color: YELLOW });\nrightLine.setStrokeWidth(4); rightLine.setFillOpacity(0);\n\nfunction refresh() {\n  if (kArea) scene.remove(kArea);\n  if (kLabel) scene.remove(kLabel);\n  kArea = ax.getArea(curve, [-k, k], { color: YELLOW, opacity: 0.25 });\n  leftLine.setVertices([ax.c2p(-k, 0), ax.c2p(-k, pdf(k))]);\n  rightLine.setVertices([ax.c2p(k, 0), ax.c2p(k, pdf(k))]);\n  const p = (erf(k / Math.SQRT2) * 100).toFixed(2);\n  kLabel = new Text({ text: 'Within μ ± ' + k.toFixed(2) + 'σ:  ' + p + '%', color: YELLOW, fontSize: 26 });\n  kLabel.moveTo([0, 1.9, 0]);\n  scene.add(kArea, kLabel);\n}\nscene.add(leftLine, rightLine);\nrefresh();\n\nconst controls = new Controls(scene, { position: 'bottom-right' });\ncontrols.addSlider({ label: 'k (std devs)', min: 0.05, max: 4, value: 1, step: 0.05, onChange: v => { k = v; refresh(); } });\ncontrols.addButton({ label: '1σ', onClick: () => { k = 1; refresh(); } });\ncontrols.addButton({ label: '2σ', onClick: () => { k = 2; refresh(); } });\ncontrols.addButton({ label: '3σ', onClick: () => { k = 3; refresh(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 15906,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 8,
+        "controls": {
+          "sliders": 1,
+          "buttons": 3,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/stats-normal-empirical.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/stats-normal-empirical.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:27.671Z"
+}

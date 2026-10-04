@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-radian",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.48% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.11% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 38704,
+        "inputTokens": 12265,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1450,
+        "costUsd": 0.0192156,
+        "rawResponse": "{\"explanation\":\"A radian measures an angle by comparing the length of its arc to the circle’s radius: θ = s/r. One radian is the angle that cuts off an arc exactly one radius long. Drag the slider to see how the arc length changes with the angle.\",\"manimCode\":\"const cx = -2;\\nconst cy = -0.3;\\nconst r = 2.1;\\nlet theta = 1;\\nconst center = [cx, cy, 0];\\nconst pointAt = a => [cx + r * Math.cos(a), cy + r * Math.sin(a), 0];\\nconst arcPoints = a => Array.from({ length: 65 }, (_, i) => pointAt(a * i / 64));\\n\\nconst title = new Text({ text: 'What is a radian?', color: WHITE, fontSize: 38 });\\ntitle.moveTo([0, 3.25, 0]);\\nconst circle = new Circle({ radius: r, color: BLUE });\\ncircle.moveTo(center);\\nconst radius1 = new Polygon({ vertices: [center, pointAt(0)], color: GREEN });\\nradius1.setStrokeWidth(4).setFillOpacity(0);\\nconst radius2 = new Polygon({ vertices: [center, pointAt(theta)], color: GREEN });\\nradius2.setStrokeWidth(4).setFillOpacity(0);\\nconst arc = new Polygon({ vertices: arcPoints(theta), color: YELLOW });\\narc.setStrokeWidth(7).setFillOpacity(0);\\nconst centerDot = new Dot({ point: center, color: WHITE });\\nconst endDot = new Dot({ point: pointAt(theta), color: YELLOW });\\n\\nconst formula = new Text({ text: 'angle = arc length / radius', color: WHITE, fontSize: 26 });\\nformula.moveTo([3.5, 1.4, 0]);\\nconst oneRadian = new Text({ text: '1 radian: arc length = radius', color: YELLOW, fontSize: 24 });\\noneRadian.moveTo([3.5, 0.6, 0]);\\nlet readout = new Text({ text: 'θ = 1.00 rad     s/r = 1.00', color: TEAL, fontSize: 26 });\\nreadout.moveTo([3.5, -0.5, 0]);\\nconst hint = new Text({ text: 'Move the angle slider', color: GRAY, fontSize: 22 });\\nhint.moveTo([3.5, -1.25, 0]);\\nconst rLabel = new Text({ text: 'r', color: GREEN, fontSize: 28 });\\nrLabel.moveTo([cx + r / 2, cy - 0.3, 0]);\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new Create(circle));\\nawait scene.play(new AnimationGroup([new Create(radius1), new Create(radius2), new Create(arc)]));\\nscene.add(centerDot, endDot, rLabel);\\nawait scene.play(new AnimationGroup([new FadeIn(formula), new FadeIn(oneRadian), new FadeIn(readout), new FadeIn(hint)]));\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 280 });\\ncontrols.addSlider({\\n  label: 'Angle (radians)', min: 0.05, max: 3.14, value: 1, step: 0.01,\\n  onChange: value => {\\n    theta = value;\\n    radius2.setVertices([center, pointAt(theta)]);\\n    arc.setVertices(arcPoints(theta));\\n    endDot.moveTo(pointAt(theta));\\n    scene.remove(readout);\\n    readout = new Text({ text: `θ = ${theta.toFixed(2)} rad     s/r = ${theta.toFixed(2)}`, color: TEAL, fontSize: 26 });\\n    readout.moveTo([3.5, -0.5, 0]);\\n    scene.add(readout);\\n  }\\n});\\nawait scene.wait(999999);\"}",
+        "explanation": "A radian measures an angle by comparing the length of its arc to the circle’s radius: θ = s/r. One radian is the angle that cuts off an arc exactly one radius long. Drag the slider to see how the arc length changes with the angle."
+      },
+      "code": "const cx = -2;\nconst cy = -0.3;\nconst r = 2.1;\nlet theta = 1;\nconst center = [cx, cy, 0];\nconst pointAt = a => [cx + r * Math.cos(a), cy + r * Math.sin(a), 0];\nconst arcPoints = a => Array.from({ length: 65 }, (_, i) => pointAt(a * i / 64));\n\nconst title = new Text({ text: 'What is a radian?', color: WHITE, fontSize: 38 });\ntitle.moveTo([0, 3.25, 0]);\nconst circle = new Circle({ radius: r, color: BLUE });\ncircle.moveTo(center);\nconst radius1 = new Polygon({ vertices: [center, pointAt(0)], color: GREEN });\nradius1.setStrokeWidth(4).setFillOpacity(0);\nconst radius2 = new Polygon({ vertices: [center, pointAt(theta)], color: GREEN });\nradius2.setStrokeWidth(4).setFillOpacity(0);\nconst arc = new Polygon({ vertices: arcPoints(theta), color: YELLOW });\narc.setStrokeWidth(7).setFillOpacity(0);\nconst centerDot = new Dot({ point: center, color: WHITE });\nconst endDot = new Dot({ point: pointAt(theta), color: YELLOW });\n\nconst formula = new Text({ text: 'angle = arc length / radius', color: WHITE, fontSize: 26 });\nformula.moveTo([3.5, 1.4, 0]);\nconst oneRadian = new Text({ text: '1 radian: arc length = radius', color: YELLOW, fontSize: 24 });\noneRadian.moveTo([3.5, 0.6, 0]);\nlet readout = new Text({ text: 'θ = 1.00 rad     s/r = 1.00', color: TEAL, fontSize: 26 });\nreadout.moveTo([3.5, -0.5, 0]);\nconst hint = new Text({ text: 'Move the angle slider', color: GRAY, fontSize: 22 });\nhint.moveTo([3.5, -1.25, 0]);\nconst rLabel = new Text({ text: 'r', color: GREEN, fontSize: 28 });\nrLabel.moveTo([cx + r / 2, cy - 0.3, 0]);\n\nawait scene.play(new Write(title));\nawait scene.play(new Create(circle));\nawait scene.play(new AnimationGroup([new Create(radius1), new Create(radius2), new Create(arc)]));\nscene.add(centerDot, endDot, rLabel);\nawait scene.play(new AnimationGroup([new FadeIn(formula), new FadeIn(oneRadian), new FadeIn(readout), new FadeIn(hint)]));\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 280 });\ncontrols.addSlider({\n  label: 'Angle (radians)', min: 0.05, max: 3.14, value: 1, step: 0.01,\n  onChange: value => {\n    theta = value;\n    radius2.setVertices([center, pointAt(theta)]);\n    arc.setVertices(arcPoints(theta));\n    endDot.moveTo(pointAt(theta));\n    scene.remove(readout);\n    readout = new Text({ text: `θ = ${theta.toFixed(2)} rad     s/r = ${theta.toFixed(2)}`, color: TEAL, fontSize: 26 });\n    readout.moveTo([3.5, -0.5, 0]);\n    scene.add(readout);\n  }\n});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9992,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 4,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/trig-radian.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/trig-radian.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:47.922Z"
+}

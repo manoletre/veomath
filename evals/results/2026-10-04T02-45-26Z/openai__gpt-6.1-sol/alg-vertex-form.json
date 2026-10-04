@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-vertex-form",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.69% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.27% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 28208,
+        "inputTokens": 4612,
+        "cachedInputTokens": 4581,
+        "outputTokens": 1441,
+        "costUsd": 0.014930100000000002,
+        "rawResponse": "{\"explanation\":\"In y = a(x − h)² + k, h moves the parabola left or right, and k moves it up or down, placing the vertex at (h, k) when a ≠ 0. The coefficient a controls its shape: positive opens upward, negative opens downward, and larger |a| makes it narrower. Explore the sliders; when a = 0, the graph becomes the horizontal line y = k.\",\"manimCode\":\"const heading = new Text({ text: 'Shape and position of a parabola', fontSize: 30, color: WHITE });\\nheading.moveTo([0, 3.25, 0]);\\nconst equation = new MathTex({ latex: 'y = a(x-h)^2 + k', color: WHITE });\\nawait equation.waitForRender();\\nequation.moveTo([-0.9, 2.55, 0]);\\n\\nconst ax = new Axes({\\n  xRange: [-6, 6, 2],\\n  yRange: [-6, 6, 2],\\n  xLength: 9,\\n  yLength: 4.6,\\n  tips: false\\n});\\nax.moveTo([-0.9, -0.25, 0]);\\n\\nlet coefficient = 1;\\nlet horizontal = 0;\\nlet vertical = 0;\\nlet curve;\\nlet status;\\nconst vertex = new Dot({ point: ax.c2p(0, 0), color: YELLOW });\\n\\nfunction buildCurve() {\\n  let leftEdge = -6;\\n  let rightEdge = 6;\\n  if (Math.abs(coefficient) > 0.000001) {\\n    const availableHeight = coefficient > 0 ? 6 - vertical : vertical + 6;\\n    const reach = Math.sqrt(availableHeight / Math.abs(coefficient));\\n    leftEdge = Math.max(-6, horizontal - reach);\\n    rightEdge = Math.min(6, horizontal + reach);\\n  }\\n  return ax.plot(x => coefficient * (x - horizontal) ** 2 + vertical, {\\n    xRange: [leftEdge, rightEdge],\\n    numSamples: 350,\\n    color: BLUE,\\n    strokeWidth: 4\\n  });\\n}\\n\\nfunction updateStatus() {\\n  if (status) scene.remove(status);\\n  let description;\\n  if (Math.abs(coefficient) < 0.000001) {\\n    description = 'a = 0: horizontal line y = ' + vertical.toFixed(1) + ' (no unique vertex)';\\n  } else {\\n    const opening = coefficient > 0 ? 'opens up' : 'opens down';\\n    const magnitude = Math.abs(coefficient);\\n    const widthDescription = magnitude > 1.001 ? 'narrower' : magnitude < 0.999 ? 'wider' : 'standard width';\\n    description = 'Vertex (' + horizontal.toFixed(1) + ', ' + vertical.toFixed(1) + ')  |  ' + opening + '  |  ' + widthDescription;\\n  }\\n  status = new Text({ text: description, fontSize: 22, color: YELLOW });\\n  status.moveTo([-0.5, -3.15, 0]);\\n  scene.add(status);\\n}\\n\\nfunction refresh() {\\n  scene.remove(curve);\\n  curve = buildCurve();\\n  scene.add(curve);\\n  vertex.moveTo(ax.c2p(horizontal, vertical));\\n  vertex.setOpacity(Math.abs(coefficient) < 0.000001 ? 0 : 1);\\n  scene.remove(vertex);\\n  scene.add(vertex);\\n  updateStatus();\\n}\\n\\nawait scene.play(new AnimationGroup([new Write(heading), new FadeIn(equation), new Create(ax)]));\\ncurve = buildCurve();\\nawait scene.play(new Create(curve));\\nscene.add(vertex);\\nupdateStatus();\\nmakeHoverable(vertex, scene, { hoverScale: 1.5, hoverColor: ORANGE });\\n\\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 250 });\\ncontrols.addSlider({\\n  label: 'a: opening and width', min: -2, max: 2, step: 0.1, value: 1,\\n  onChange: value => { coefficient = value; refresh(); }\\n});\\ncontrols.addSlider({\\n  label: 'h: horizontal shift', min: -3, max: 3, step: 0.1, value: 0,\\n  onChange: value => { horizontal = value; refresh(); }\\n});\\ncontrols.addSlider({\\n  label: 'k: vertical shift', min: -3, max: 3, step: 0.1, value: 0,\\n  onChange: value => { vertical = value; refresh(); }\\n});\\nawait scene.wait(999999);\"}",
+        "explanation": "In y = a(x − h)² + k, h moves the parabola left or right, and k moves it up or down, placing the vertex at (h, k) when a ≠ 0. The coefficient a controls its shape: positive opens upward, negative opens downward, and larger |a| makes it narrower. Explore the sliders; when a = 0, the graph becomes the horizontal line y = k."
+      },
+      "code": "const heading = new Text({ text: 'Shape and position of a parabola', fontSize: 30, color: WHITE });\nheading.moveTo([0, 3.25, 0]);\nconst equation = new MathTex({ latex: 'y = a(x-h)^2 + k', color: WHITE });\nawait equation.waitForRender();\nequation.moveTo([-0.9, 2.55, 0]);\n\nconst ax = new Axes({\n  xRange: [-6, 6, 2],\n  yRange: [-6, 6, 2],\n  xLength: 9,\n  yLength: 4.6,\n  tips: false\n});\nax.moveTo([-0.9, -0.25, 0]);\n\nlet coefficient = 1;\nlet horizontal = 0;\nlet vertical = 0;\nlet curve;\nlet status;\nconst vertex = new Dot({ point: ax.c2p(0, 0), color: YELLOW });\n\nfunction buildCurve() {\n  let leftEdge = -6;\n  let rightEdge = 6;\n  if (Math.abs(coefficient) > 0.000001) {\n    const availableHeight = coefficient > 0 ? 6 - vertical : vertical + 6;\n    const reach = Math.sqrt(availableHeight / Math.abs(coefficient));\n    leftEdge = Math.max(-6, horizontal - reach);\n    rightEdge = Math.min(6, horizontal + reach);\n  }\n  return ax.plot(x => coefficient * (x - horizontal) ** 2 + vertical, {\n    xRange: [leftEdge, rightEdge],\n    numSamples: 350,\n    color: BLUE,\n    strokeWidth: 4\n  });\n}\n\nfunction updateStatus() {\n  if (status) scene.remove(status);\n  let description;\n  if (Math.abs(coefficient) < 0.000001) {\n    description = 'a = 0: horizontal line y = ' + vertical.toFixed(1) + ' (no unique vertex)';\n  } else {\n    const opening = coefficient > 0 ? 'opens up' : 'opens down';\n    const magnitude = Math.abs(coefficient);\n    const widthDescription = magnitude > 1.001 ? 'narrower' : magnitude < 0.999 ? 'wider' : 'standard width';\n    description = 'Vertex (' + horizontal.toFixed(1) + ', ' + vertical.toFixed(1) + ')  |  ' + opening + '  |  ' + widthDescription;\n  }\n  status = new Text({ text: description, fontSize: 22, color: YELLOW });\n  status.moveTo([-0.5, -3.15, 0]);\n  scene.add(status);\n}\n\nfunction refresh() {\n  scene.remove(curve);\n  curve = buildCurve();\n  scene.add(curve);\n  vertex.moveTo(ax.c2p(horizontal, vertical));\n  vertex.setOpacity(Math.abs(coefficient) < 0.000001 ? 0 : 1);\n  scene.remove(vertex);\n  scene.add(vertex);\n  updateStatus();\n}\n\nawait scene.play(new AnimationGroup([new Write(heading), new FadeIn(equation), new Create(ax)]));\ncurve = buildCurve();\nawait scene.play(new Create(curve));\nscene.add(vertex);\nupdateStatus();\nmakeHoverable(vertex, scene, { hoverScale: 1.5, hoverColor: ORANGE });\n\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 250 });\ncontrols.addSlider({\n  label: 'a: opening and width', min: -2, max: 2, step: 0.1, value: 1,\n  onChange: value => { coefficient = value; refresh(); }\n});\ncontrols.addSlider({\n  label: 'h: horizontal shift', min: -3, max: 3, step: 0.1, value: 0,\n  onChange: value => { horizontal = value; refresh(); }\n});\ncontrols.addSlider({\n  label: 'k: vertical shift', min: -3, max: 3, step: 0.1, value: 0,\n  onChange: value => { vertical = value; refresh(); }\n});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 8867,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 2,
+        "controls": {
+          "sliders": 3,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/alg-vertex-form.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/alg-vertex-form.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:11.107Z"
+}

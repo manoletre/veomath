@@ -1,0 +1,79 @@
+{
+  "itemId": "calc-secant-tangent",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.06% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=1 draggables=1 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.16% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 121205,
+        "inputTokens": 4709,
+        "cachedInputTokens": 4480,
+        "outputTokens": 14543,
+        "costUsd": 0.220176,
+        "rawResponse": "{\"explanation\":\"A secant line cuts a curve at two points, P at x = a and Q at x = a + h, and its slope is the difference quotient (f(a+h) − f(a))/h. As h shrinks toward 0, Q slides along the curve toward P and the secant line rotates into the tangent line — the line that just kisses the curve at P. The limiting slope is the derivative f′(a) = lim(h→0) [f(a+h) − f(a)]/h. Drag the yellow point anywhere along the parabola, shrink h with the slider (or press the animate button), and watch the orange secant settle onto the green true tangent as their slopes merge.\",\"manimCode\":\"const f = function(x) { return 0.3 * x * x; };\\nconst df = function(x) { return 0.6 * x; };\\n\\nconst axes = new Axes({ xRange: [-4, 4, 1], yRange: [-1, 5, 1], xLength: 8, yLength: 5, tips: false });\\naxes.moveTo([-2.6, -0.4, 0]);\\n\\nconst curve = axes.plot(f, { color: BLUE, xRange: [-3.9, 3.9], numSamples: 200 });\\n\\nconst curveLabel = new MathTex({ latex: 'f(x) = 0.3x^2', color: BLUE });\\nawait curveLabel.waitForRender();\\ncurveLabel.scale(0.8);\\ncurveLabel.moveTo([-4.6, 1.75, 0]);\\n\\nconst title = new MathTex({ latex: \\\"f'(a) = \\\\\\\\lim_{h \\\\\\\\to 0} \\\\\\\\frac{f(a+h) - f(a)}{h}\\\" });\\nawait title.waitForRender();\\ntitle.scale(0.85);\\ntitle.moveTo([4.2, 3.0, 0]);\\n\\nlet a = 1;\\nlet h = 2;\\nlet showTangent = false;\\nfunction hEff() { return Math.min(h, 3.8 - a); }\\n\\nconst dotP = new Dot({ point: axes.c2p(a, f(a)), color: YELLOW });\\nconst dotQ = new Dot({ point: axes.c2p(a + hEff(), f(a + hEff())), color: RED });\\n\\nconst secant = new Polygon({ vertices: [[0, 0, 0], [1, 0, 0]], color: ORANGE });\\nsecant.setStrokeWidth(4).setFillOpacity(0);\\nconst tangent = new Polygon({ vertices: [[0, 0, 0], [1, 0, 0]], color: GREEN });\\ntangent.setStrokeWidth(4).setFillOpacity(0);\\nconst runSeg = new Polygon({ vertices: [[0, 0, 0], [1, 0, 0]], color: YELLOW });\\nrunSeg.setStrokeWidth(2).setFillOpacity(0);\\nconst riseSeg = new Polygon({ vertices: [[0, 0, 0], [1, 0, 0]], color: RED });\\nriseSeg.setStrokeWidth(2).setFillOpacity(0);\\n\\nconst YMIN = -0.9;\\nconst YMAX = 4.9;\\nfunction clippedLine(x0, y0, m) {\\n  const xA = -3.95, xB = 3.95;\\n  const cand = [[xA, y0 + m * (xA - x0)], [xB, y0 + m * (xB - x0)]];\\n  if (Math.abs(m) > 1e-9) {\\n    cand.push([x0 + (YMIN - y0) / m, YMIN]);\\n    cand.push([x0 + (YMAX - y0) / m, YMAX]);\\n  }\\n  const inside = cand.filter(function(p) {\\n    return p[0] >= xA - 1e-9 && p[0] <= xB + 1e-9 && p[1] >= YMIN - 1e-6 && p[1] <= YMAX + 1e-6;\\n  });\\n  inside.sort(function(p, q) { return p[0] - q[0]; });\\n  return [inside[0], inside[inside.length - 1]];\\n}\\n\\nfunction updateGeometry() {\\n  const he = hEff();\\n  const m = (f(a + he) - f(a)) / he;\\n  dotQ.moveTo(axes.c2p(a + he, f(a + he)));\\n  const s = clippedLine(a, f(a), m);\\n  secant.setVertices([axes.c2p(s[0][0], s[0][1]), axes.c2p(s[1][0], s[1][1])]);\\n  runSeg.setVertices([axes.c2p(a, f(a)), axes.c2p(a + he, f(a))]);\\n  riseSeg.setVertices([axes.c2p(a + he, f(a)), axes.c2p(a + he, f(a + he))]);\\n  const t = clippedLine(a, f(a), df(a));\\n  tangent.setVertices([axes.c2p(t[0][0], t[0][1]), axes.c2p(t[1][0], t[1][1])]);\\n}\\ndotQ.addUpdater(updateGeometry);\\n\\nlet hText = null, slopeText = null, trueText = null;\\nfunction updateReadout() {\\n  const he = hEff();\\n  const m = (f(a + he) - f(a)) / he;\\n  if (hText) scene.remove(hText);\\n  hText = new Text({ text: 'h = ' + he.toFixed(2), color: WHITE, fontSize: 26 });\\n  hText.moveTo([4.2, 2.2, 0]);\\n  scene.add(hText);\\n  if (slopeText) scene.remove(slopeText);\\n  slopeText = new Text({ text: 'secant slope = ' + m.toFixed(3), color: he < 0.06 ? GREEN : ORANGE, fontSize: 26 });\\n  slopeText.moveTo([4.2, 1.65, 0]);\\n  scene.add(slopeText);\\n  if (trueText) { scene.remove(trueText); trueText = null; }\\n  if (showTangent) {\\n    trueText = new Text({ text: \\\"true f'(a) = \\\" + df(a).toFixed(3), color: GREEN, fontSize: 26 });\\n    trueText.moveTo([4.2, 1.1, 0]);\\n    scene.add(trueText);\\n  }\\n}\\n\\nconst hint = new Text({ text: 'Drag the yellow point along the curve', color: GRAY, fontSize: 20 });\\nhint.moveTo([4.2, 0.5, 0]);\\n\\nawait scene.play(new Create(axes));\\nawait scene.play(new AnimationGroup([new Create(curve), new Write(curveLabel)]));\\nawait scene.play(new Write(title));\\nscene.add(hint);\\nupdateGeometry();\\nawait scene.play(new AnimationGroup([\\n  new FadeIn(dotP),\\n  new FadeIn(dotQ),\\n  new Create(secant),\\n  new Create(runSeg),\\n  new Create(riseSeg)\\n]));\\nupdateReadout();\\n\\nmakeDraggable(dotP, scene, {\\n  constrainX: [-6.0, 0.8],\\n  onDrag: function(mob, pos) {\\n    a = Math.max(-3.4, Math.min(3.4, pos[0] + 2.6));\\n    mob.moveTo(axes.c2p(a, f(a)));\\n    updateReadout();\\n  }\\n});\\nmakeHoverable(dotP, scene, { hoverScale: 1.5 });\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\\ncontrols.addSlider({ label: 'h', min: 0.02, max: 2.5, value: 2, step: 0.01, onChange: function(v) { h = v; updateReadout(); } });\\ncontrols.addCheckbox({ label: 'Show true tangent', checked: false, onChange: function(c) {\\n  showTangent = c;\\n  if (c) { scene.add(tangent); } else { scene.remove(tangent); }\\n  updateReadout();\\n}});\\ncontrols.addButton({ label: 'Animate h → 0', onClick: async function() {\\n  let v = h;\\n  while (v > 0.025) {\\n    v = Math.max(0.02, v * 0.8);\\n    h = v;\\n    updateReadout();\\n    await scene.wait(0.07);\\n  }\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A secant line cuts a curve at two points, P at x = a and Q at x = a + h, and its slope is the difference quotient (f(a+h) − f(a))/h. As h shrinks toward 0, Q slides along the curve toward P and the secant line rotates into the tangent line — the line that just kisses the curve at P. The limiting slope is the derivative f′(a) = lim(h→0) [f(a+h) − f(a)]/h. Drag the yellow point anywhere along the parabola, shrink h with the slider (or press the animate button), and watch the orange secant settle onto the green true tangent as their slopes merge."
+      },
+      "code": "const f = function(x) { return 0.3 * x * x; };\nconst df = function(x) { return 0.6 * x; };\n\nconst axes = new Axes({ xRange: [-4, 4, 1], yRange: [-1, 5, 1], xLength: 8, yLength: 5, tips: false });\naxes.moveTo([-2.6, -0.4, 0]);\n\nconst curve = axes.plot(f, { color: BLUE, xRange: [-3.9, 3.9], numSamples: 200 });\n\nconst curveLabel = new MathTex({ latex: 'f(x) = 0.3x^2', color: BLUE });\nawait curveLabel.waitForRender();\ncurveLabel.scale(0.8);\ncurveLabel.moveTo([-4.6, 1.75, 0]);\n\nconst title = new MathTex({ latex: \"f'(a) = \\\\lim_{h \\\\to 0} \\\\frac{f(a+h) - f(a)}{h}\" });\nawait title.waitForRender();\ntitle.scale(0.85);\ntitle.moveTo([4.2, 3.0, 0]);\n\nlet a = 1;\nlet h = 2;\nlet showTangent = false;\nfunction hEff() { return Math.min(h, 3.8 - a); }\n\nconst dotP = new Dot({ point: axes.c2p(a, f(a)), color: YELLOW });\nconst dotQ = new Dot({ point: axes.c2p(a + hEff(), f(a + hEff())), color: RED });\n\nconst secant = new Polygon({ vertices: [[0, 0, 0], [1, 0, 0]], color: ORANGE });\nsecant.setStrokeWidth(4).setFillOpacity(0);\nconst tangent = new Polygon({ vertices: [[0, 0, 0], [1, 0, 0]], color: GREEN });\ntangent.setStrokeWidth(4).setFillOpacity(0);\nconst runSeg = new Polygon({ vertices: [[0, 0, 0], [1, 0, 0]], color: YELLOW });\nrunSeg.setStrokeWidth(2).setFillOpacity(0);\nconst riseSeg = new Polygon({ vertices: [[0, 0, 0], [1, 0, 0]], color: RED });\nriseSeg.setStrokeWidth(2).setFillOpacity(0);\n\nconst YMIN = -0.9;\nconst YMAX = 4.9;\nfunction clippedLine(x0, y0, m) {\n  const xA = -3.95, xB = 3.95;\n  const cand = [[xA, y0 + m * (xA - x0)], [xB, y0 + m * (xB - x0)]];\n  if (Math.abs(m) > 1e-9) {\n    cand.push([x0 + (YMIN - y0) / m, YMIN]);\n    cand.push([x0 + (YMAX - y0) / m, YMAX]);\n  }\n  const inside = cand.filter(function(p) {\n    return p[0] >= xA - 1e-9 && p[0] <= xB + 1e-9 && p[1] >= YMIN - 1e-6 && p[1] <= YMAX + 1e-6;\n  });\n  inside.sort(function(p, q) { return p[0] - q[0]; });\n  return [inside[0], inside[inside.length - 1]];\n}\n\nfunction updateGeometry() {\n  const he = hEff();\n  const m = (f(a + he) - f(a)) / he;\n  dotQ.moveTo(axes.c2p(a + he, f(a + he)));\n  const s = clippedLine(a, f(a), m);\n  secant.setVertices([axes.c2p(s[0][0], s[0][1]), axes.c2p(s[1][0], s[1][1])]);\n  runSeg.setVertices([axes.c2p(a, f(a)), axes.c2p(a + he, f(a))]);\n  riseSeg.setVertices([axes.c2p(a + he, f(a)), axes.c2p(a + he, f(a + he))]);\n  const t = clippedLine(a, f(a), df(a));\n  tangent.setVertices([axes.c2p(t[0][0], t[0][1]), axes.c2p(t[1][0], t[1][1])]);\n}\ndotQ.addUpdater(updateGeometry);\n\nlet hText = null, slopeText = null, trueText = null;\nfunction updateReadout() {\n  const he = hEff();\n  const m = (f(a + he) - f(a)) / he;\n  if (hText) scene.remove(hText);\n  hText = new Text({ text: 'h = ' + he.toFixed(2), color: WHITE, fontSize: 26 });\n  hText.moveTo([4.2, 2.2, 0]);\n  scene.add(hText);\n  if (slopeText) scene.remove(slopeText);\n  slopeText = new Text({ text: 'secant slope = ' + m.toFixed(3), color: he < 0.06 ? GREEN : ORANGE, fontSize: 26 });\n  slopeText.moveTo([4.2, 1.65, 0]);\n  scene.add(slopeText);\n  if (trueText) { scene.remove(trueText); trueText = null; }\n  if (showTangent) {\n    trueText = new Text({ text: \"true f'(a) = \" + df(a).toFixed(3), color: GREEN, fontSize: 26 });\n    trueText.moveTo([4.2, 1.1, 0]);\n    scene.add(trueText);\n  }\n}\n\nconst hint = new Text({ text: 'Drag the yellow point along the curve', color: GRAY, fontSize: 20 });\nhint.moveTo([4.2, 0.5, 0]);\n\nawait scene.play(new Create(axes));\nawait scene.play(new AnimationGroup([new Create(curve), new Write(curveLabel)]));\nawait scene.play(new Write(title));\nscene.add(hint);\nupdateGeometry();\nawait scene.play(new AnimationGroup([\n  new FadeIn(dotP),\n  new FadeIn(dotQ),\n  new Create(secant),\n  new Create(runSeg),\n  new Create(riseSeg)\n]));\nupdateReadout();\n\nmakeDraggable(dotP, scene, {\n  constrainX: [-6.0, 0.8],\n  onDrag: function(mob, pos) {\n    a = Math.max(-3.4, Math.min(3.4, pos[0] + 2.6));\n    mob.moveTo(axes.c2p(a, f(a)));\n    updateReadout();\n  }\n});\nmakeHoverable(dotP, scene, { hoverScale: 1.5 });\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\ncontrols.addSlider({ label: 'h', min: 0.02, max: 2.5, value: 2, step: 0.01, onChange: function(v) { h = v; updateReadout(); } });\ncontrols.addCheckbox({ label: 'Show true tangent', checked: false, onChange: function(c) {\n  showTangent = c;\n  if (c) { scene.add(tangent); } else { scene.remove(tangent); }\n  updateReadout();\n}});\ncontrols.addButton({ label: 'Animate h → 0', onClick: async function() {\n  let v = h;\n  while (v > 0.025) {\n    v = Math.max(0.02, v * 0.8);\n    h = v;\n    updateReadout();\n    await scene.wait(0.07);\n  }\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 10853,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 4,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 1
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/calc-secant-tangent.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/calc-secant-tangent.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:58:39.603Z"
+}

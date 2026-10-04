@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-law-of-cosines",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "5.14% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.77% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 10007,
+        "inputTokens": 7963,
+        "cachedInputTokens": 7476,
+        "outputTokens": 1281,
+        "costUsd": 0.016249200000000002,
+        "rawResponse": "{\"explanation\":\"The law of cosines says c² = a² + b² − 2ab·cos(C). The first part, a² + b², is exactly the Pythagorean theorem. The extra term −2ab·cos(C) is the correction for the angle not being 90°. When C = 90°, cos C = 0 and the correction vanishes. When C is acute, the correction is positive, so c is shorter than the right-triangle value. When C is obtuse, the correction is negative, so c is longer. Drag the vertex or use the slider to change C and watch the correction term and the sides change.\",\"manimCode\":\"const a = 2.2, b = 2.8;\\nconst origin = [-2.5, -1.5, 0];\\nlet C = Math.PI / 2;\\n\\nconst title = new MathTex({ latex: 'c^2 = a^2 + b^2 - 2ab\\\\\\\\cos C' });\\nawait title.waitForRender();\\ntitle.moveTo([0, 3.2, 0]);\\nscene.add(title);\\n\\n// Vertex C at origin, side b along x axis, side a at angle C\\nconst ptC = origin;\\nconst ptB = [origin[0] + b, origin[1], 0];\\nfunction ptA(ang) { return [origin[0] + a * Math.cos(ang), origin[1] + a * Math.sin(ang), 0]; }\\n\\nconst tri = new Polygon({ vertices: [ptC, ptB, ptA(C)], color: WHITE });\\ntri.setFill(BLUE_E, 0.4);\\nconst dotA = new Dot({ point: ptA(C), color: YELLOW });\\nscene.add(tri, dotA);\\n\\nlet info = null;\\nfunction updateInfo() {\\n  if (info) scene.remove(info);\\n  const deg = C * 180 / Math.PI;\\n  const pyth = a * a + b * b;\\n  const corr = -2 * a * b * Math.cos(C);\\n  const c2 = pyth + corr;\\n  const lines = [\\n    'C = ' + deg.toFixed(0) + ' deg',\\n    'a^2 + b^2 = ' + pyth.toFixed(2),\\n    'correction = ' + corr.toFixed(2),\\n    'c^2 = ' + c2.toFixed(2)\\n  ].join('\\\\n');\\n  info = new Text({ text: lines, color: corr > 0.01 ? RED : (corr < -0.01 ? GREEN : YELLOW), fontSize: 26 });\\n  info.moveTo([3.5, 0, 0]);\\n  scene.add(info);\\n}\\n\\nfunction setAngle(ang) {\\n  C = ang;\\n  const p = ptA(C);\\n  dotA.moveTo(p);\\n  tri.setVertices([ptC, ptB, p]);\\n  updateInfo();\\n}\\nupdateInfo();\\n\\nmakeDraggable(dotA, scene, {\\n  onDrag: () => {\\n    const [x, y] = dotA.getCenter();\\n    let ang = Math.atan2(y - origin[1], x - origin[0]);\\n    ang = Math.max(0.1, Math.min(Math.PI - 0.1, ang));\\n    C = ang;\\n    const p = ptA(C);\\n    dotA.moveTo(p);\\n    tri.setVertices([ptC, ptB, p]);\\n    updateInfo();\\n  }\\n});\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'Angle C (rad)', min: 0.1, max: 3.04, value: Math.PI / 2, step: 0.02, onChange: (v) => setAngle(v) });\\ncontrols.addButton({ label: 'Set C = 90 deg', onClick: () => setAngle(Math.PI / 2) });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The law of cosines says c² = a² + b² − 2ab·cos(C). The first part, a² + b², is exactly the Pythagorean theorem. The extra term −2ab·cos(C) is the correction for the angle not being 90°. When C = 90°, cos C = 0 and the correction vanishes. When C is acute, the correction is positive, so c is shorter than the right-triangle value. When C is obtuse, the correction is negative, so c is longer. Drag the vertex or use the slider to change C and watch the correction term and the sides change."
+      },
+      "code": "const a = 2.2, b = 2.8;\nconst origin = [-2.5, -1.5, 0];\nlet C = Math.PI / 2;\n\nconst title = new MathTex({ latex: 'c^2 = a^2 + b^2 - 2ab\\\\cos C' });\nawait title.waitForRender();\ntitle.moveTo([0, 3.2, 0]);\nscene.add(title);\n\n// Vertex C at origin, side b along x axis, side a at angle C\nconst ptC = origin;\nconst ptB = [origin[0] + b, origin[1], 0];\nfunction ptA(ang) { return [origin[0] + a * Math.cos(ang), origin[1] + a * Math.sin(ang), 0]; }\n\nconst tri = new Polygon({ vertices: [ptC, ptB, ptA(C)], color: WHITE });\ntri.setFill(BLUE_E, 0.4);\nconst dotA = new Dot({ point: ptA(C), color: YELLOW });\nscene.add(tri, dotA);\n\nlet info = null;\nfunction updateInfo() {\n  if (info) scene.remove(info);\n  const deg = C * 180 / Math.PI;\n  const pyth = a * a + b * b;\n  const corr = -2 * a * b * Math.cos(C);\n  const c2 = pyth + corr;\n  const lines = [\n    'C = ' + deg.toFixed(0) + ' deg',\n    'a^2 + b^2 = ' + pyth.toFixed(2),\n    'correction = ' + corr.toFixed(2),\n    'c^2 = ' + c2.toFixed(2)\n  ].join('\\n');\n  info = new Text({ text: lines, color: corr > 0.01 ? RED : (corr < -0.01 ? GREEN : YELLOW), fontSize: 26 });\n  info.moveTo([3.5, 0, 0]);\n  scene.add(info);\n}\n\nfunction setAngle(ang) {\n  C = ang;\n  const p = ptA(C);\n  dotA.moveTo(p);\n  tri.setVertices([ptC, ptB, p]);\n  updateInfo();\n}\nupdateInfo();\n\nmakeDraggable(dotA, scene, {\n  onDrag: () => {\n    const [x, y] = dotA.getCenter();\n    let ang = Math.atan2(y - origin[1], x - origin[0]);\n    ang = Math.max(0.1, Math.min(Math.PI - 0.1, ang));\n    C = ang;\n    const p = ptA(C);\n    dotA.moveTo(p);\n    tri.setVertices([ptC, ptB, p]);\n    updateInfo();\n  }\n});\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'Angle C (rad)', min: 0.1, max: 3.04, value: Math.PI / 2, step: 0.02, onChange: (v) => setAngle(v) });\ncontrols.addButton({ label: 'Set C = 90 deg', onClick: () => setAngle(Math.PI / 2) });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 5187,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/trig-law-of-cosines.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/trig-law-of-cosines.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:34:49.194Z"
+}

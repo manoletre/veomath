@@ -1,0 +1,80 @@
+{
+  "itemId": "alg-discriminant",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.71% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "FunctionGraph [x -4.50..4.50, y -1.50..12.00] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.48% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 8258,
+        "inputTokens": 7977,
+        "cachedInputTokens": 7476,
+        "outputTokens": 1274,
+        "costUsd": 0.0162352,
+        "rawResponse": "{\"explanation\":\"For y = ax² + bx + c, the discriminant D = b² − 4ac sits under the square root in the quadratic formula. If D > 0 the parabola crosses the x-axis twice (2 real roots). If D = 0 it just touches the axis at its vertex (1 root). If D < 0 it floats above or below the axis (0 real roots). Drag the sliders for a, b and c to see the roots and the sign of D update live.\",\"manimCode\":\"const axes = new Axes({ xRange: [-6, 6, 1], yRange: [-6, 10, 2], xLength: 9, yLength: 6, tips: false });\\naxes.moveTo([-1.5, -0.2, 0]);\\nscene.add(axes);\\n\\nlet a = 1, b = 0, c = -2;\\nlet curve = null, info = null, d1 = null, d2 = null;\\n\\nfunction fmt(v) { return (Math.round(v * 100) / 100).toString(); }\\n\\nfunction redraw() {\\n  if (curve) scene.remove(curve);\\n  if (info) scene.remove(info);\\n  if (d1) scene.remove(d1);\\n  if (d2) scene.remove(d2);\\n  d1 = null; d2 = null;\\n  const D = b * b - 4 * a * c;\\n  const col = D > 1e-6 ? GREEN : (Math.abs(D) <= 1e-6 ? YELLOW : RED);\\n  curve = axes.plot(x => a * x * x + b * x + c, { color: col, xRange: [-6, 6], numSamples: 200 });\\n  scene.add(curve);\\n  let msg;\\n  if (D > 1e-6) {\\n    const s = Math.sqrt(D);\\n    const r1 = (-b - s) / (2 * a), r2 = (-b + s) / (2 * a);\\n    d1 = new Dot({ point: axes.c2p(r1, 0), color: WHITE });\\n    d2 = new Dot({ point: axes.c2p(r2, 0), color: WHITE });\\n    scene.add(d1, d2);\\n    msg = 'D = ' + fmt(D) + ' > 0: 2 real roots';\\n  } else if (Math.abs(D) <= 1e-6) {\\n    d1 = new Dot({ point: axes.c2p(-b / (2 * a), 0), color: WHITE });\\n    scene.add(d1);\\n    msg = 'D = 0: 1 real root';\\n  } else {\\n    msg = 'D = ' + fmt(D) + ' < 0: 0 real roots';\\n  }\\n  info = new Text({ text: msg, color: col, fontSize: 30 });\\n  info.moveTo([0, 3.5, 0]);\\n  scene.add(info);\\n}\\n\\nredraw();\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'a', min: -2, max: 2, value: 1, step: 0.1, onChange: (v) => { a = Math.abs(v) < 0.1 ? 0.1 : v; redraw(); } });\\ncontrols.addSlider({ label: 'b', min: -5, max: 5, value: 0, step: 0.1, onChange: (v) => { b = v; redraw(); } });\\ncontrols.addSlider({ label: 'c', min: -5, max: 5, value: -2, step: 0.1, onChange: (v) => { c = v; redraw(); } });\\n\\nconst formula = new MathTex({ latex: 'D = b^2 - 4ac' });\\nawait formula.waitForRender();\\nformula.moveTo([-4.5, -3.6, 0]);\\nformula.scale(0.8);\\nscene.add(formula);\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "For y = ax² + bx + c, the discriminant D = b² − 4ac sits under the square root in the quadratic formula. If D > 0 the parabola crosses the x-axis twice (2 real roots). If D = 0 it just touches the axis at its vertex (1 root). If D < 0 it floats above or below the axis (0 real roots). Drag the sliders for a, b and c to see the roots and the sign of D update live."
+      },
+      "code": "const axes = new Axes({ xRange: [-6, 6, 1], yRange: [-6, 10, 2], xLength: 9, yLength: 6, tips: false });\naxes.moveTo([-1.5, -0.2, 0]);\nscene.add(axes);\n\nlet a = 1, b = 0, c = -2;\nlet curve = null, info = null, d1 = null, d2 = null;\n\nfunction fmt(v) { return (Math.round(v * 100) / 100).toString(); }\n\nfunction redraw() {\n  if (curve) scene.remove(curve);\n  if (info) scene.remove(info);\n  if (d1) scene.remove(d1);\n  if (d2) scene.remove(d2);\n  d1 = null; d2 = null;\n  const D = b * b - 4 * a * c;\n  const col = D > 1e-6 ? GREEN : (Math.abs(D) <= 1e-6 ? YELLOW : RED);\n  curve = axes.plot(x => a * x * x + b * x + c, { color: col, xRange: [-6, 6], numSamples: 200 });\n  scene.add(curve);\n  let msg;\n  if (D > 1e-6) {\n    const s = Math.sqrt(D);\n    const r1 = (-b - s) / (2 * a), r2 = (-b + s) / (2 * a);\n    d1 = new Dot({ point: axes.c2p(r1, 0), color: WHITE });\n    d2 = new Dot({ point: axes.c2p(r2, 0), color: WHITE });\n    scene.add(d1, d2);\n    msg = 'D = ' + fmt(D) + ' > 0: 2 real roots';\n  } else if (Math.abs(D) <= 1e-6) {\n    d1 = new Dot({ point: axes.c2p(-b / (2 * a), 0), color: WHITE });\n    scene.add(d1);\n    msg = 'D = 0: 1 real root';\n  } else {\n    msg = 'D = ' + fmt(D) + ' < 0: 0 real roots';\n  }\n  info = new Text({ text: msg, color: col, fontSize: 30 });\n  info.moveTo([0, 3.5, 0]);\n  scene.add(info);\n}\n\nredraw();\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'a', min: -2, max: 2, value: 1, step: 0.1, onChange: (v) => { a = Math.abs(v) < 0.1 ? 0.1 : v; redraw(); } });\ncontrols.addSlider({ label: 'b', min: -5, max: 5, value: 0, step: 0.1, onChange: (v) => { b = v; redraw(); } });\ncontrols.addSlider({ label: 'c', min: -5, max: 5, value: -2, step: 0.1, onChange: (v) => { c = v; redraw(); } });\n\nconst formula = new MathTex({ latex: 'D = b^2 - 4ac' });\nawait formula.waitForRender();\nformula.moveTo([-4.5, -3.6, 0]);\nformula.scale(0.8);\nscene.add(formula);\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 6964,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 3,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/alg-discriminant.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/alg-discriminant.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:34:04.371Z"
+}

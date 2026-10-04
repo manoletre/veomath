@@ -1,0 +1,61 @@
+{
+  "itemId": "stats-regression-drag",
+  "model": "zai/glm-5.3",
+  "via": "gateway",
+  "score": 0,
+  "firstAttemptScore": 0,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0,
+      "checks": {
+        "generated": {
+          "pass": false,
+          "detail": "Request failed or the response was not valid JSON with manimCode"
+        },
+        "runs": {
+          "pass": false
+        },
+        "completes": {
+          "pass": false
+        },
+        "nonBlank": {
+          "pass": false
+        },
+        "inFrame": {
+          "pass": false
+        },
+        "noTextOverlap": {
+          "pass": false
+        },
+        "noRawLatex": {
+          "pass": false
+        },
+        "interactive": {
+          "pass": false
+        },
+        "respondsToInteraction": {
+          "pass": null
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 34241,
+        "inputTokens": null,
+        "cachedInputTokens": null,
+        "outputTokens": null,
+        "costUsd": null,
+        "rawResponse": "{\"explanation\": \"This is **linear regression (least squares)**. Given points $(x_i, y_i)$, the best-fit line $\\\\hat{y} = mx + b$ minimizes the sum of squared vertical errors (residuals). The slope and intercept are:\\n\\n$$m = \\\\frac{\\\\sum (x_i - \\\\bar{x})(y_i - \\\\bar{y})}{\\\\sum (x_i - \\\\bar{x})^2}, \\\\qquad b = \\\\bar{y} - m\\\\bar{x}$$\\n\\nThe animation below shows a scatter plot where every point is **draggable** — drag any blue dot and the yellow least-squares line, its faint residual segments, and the equation (with $r^2$) update instantly. There's also a **Reset** button to restore the original data.\",\"manimCode\": \"// ---------- Axes (data range 0..10 in both directions) ----------\\nconst ax = new Axes({\\n  xRange: [0, 10, 1],\\n  yRange: [0, 10, 1],\\n  xLength: 8.5,\\n  yLength: 5,\\n  tips: true\\n});\\nconst axisLabels = ax.getAxisLabels();\\n\\n// World-coordinate bounds of the plot area (for constraining drags)\\nconst originW = ax.c2p(0, 0);\\nconst cornerW = ax.c2p(10, 10);\\n\\n// ---------- Initial data ----------\\nconst data = [\\n  [1.0, 2.4],\\n  [2.2, 3.9],\\n  [3.6, 3.2],\\n  [4.8, 6.1],\\n  [6.2, 5.4],\\n  [7.5, 8.2],\\n  [8.8, 7.9]\\n];\\n\\n// ---------- Residual segments (thin dashed-looking lines) ----------\\nconst residuals = data.map(() => {\\n  const seg = new Polygon({ vertices: [[0, 0, 0], [0, 0, 0]], color: RED_D, strokeWidth: 2 });\\n  seg.setFillOpacity(0);\\n  seg.setOpacity(0.55);\\n  scene.add(seg);\\n  return seg;\\n});\\n\\n// ---------- Best-fit line (2-vertex polygon, updated in place) ----------\\nconst fitLine = new Polygon({ vertices: [[0, 0, 0], [1, 0, 0]], color: YELLOW, strokeWidth: 4 });\\nfitLine.setFillOpacity(0);\\nscene.add(fitLine);\\n\\n// ---------- Draggable data points ----------\\nconst dots = data.map(([x, y]) => {\\n  const d = new Dot({ point: ax.c2p(x, y), color: BLUE, radius: 0.13 });\\n  scene.add(d);\\n  makeDraggable(d, scene, {\\n    constrainX: [originW[0], cornerW[0]],\\n    constrainY: [originW[1], cornerW[1]],\\n    onDrag: () => refresh()\\n  });\\n  return d;\\n});\\n\\nscene.add(ax, axisLabels);\\n\\n// ---------- Equation label (Text is immutable -> remove & recreate) ----------\\nlet eqLabel = null;\\nfunction updateEquation(str) {\\n  const pos = eqLabel ? eqLabel.getCenter() : [0, 3.15, 0];\\n  if (eqLabel) scene.remove(eqLabel);\\n  eqLabel = new Text({ text: str, color: YELLOW, fontSize: 28 });\\n  eqLabel.moveTo(pos);\\n  scene.add(eqLabel);\\n}\\n\\n// ---------- Helpers ----------\\nfunction worldToData(c) {\\n  const dx = ((c[0] - originW[0]) / (cornerW[0] - originW[0])) * 10;\\n  const dy = ((c[1] - originW[1]) / (cornerW[1] - originW[1])) * 10;\\n  return [dx, dy];\\n}\\n\\n// Clip the line y = mx + b to the box [0,10] x [0,10]\\nfunction clipLine(m, b) {\\n  if (Math.abs(m) < 1e-9) {\\n    if (b < -0.001 || b > 10.001) return null;\\n    return [ax.c2p(0, b), ax.c2p(10, b)];\\n  }\\n  const xAtY0 = (0 - b) / m;\\n  const xAtY10 = (10 - b) / m;\\n  const lo = Math.min(xAtY0, xAtY10);\\n  const hi = Math.max(xAtY0, xAtY10);\\n  const xLo = Math.max(0, lo);\\n  const xHi = Math.min(10, hi);\\n  if (xHi < xLo) return null;\\n  return [ax.c2p(xLo, m * xLo + b",
+        "explanation": null,
+        "error": "Error: Model returned invalid JSON: SyntaxError: Unterminated string in JSON at position 3111 (line 1 column 3112)"
+      },
+      "code": null,
+      "render": null,
+      "frames": {}
+    }
+  ],
+  "finishedAt": "2026-10-04T02:51:33.635Z"
+}

@@ -1,0 +1,79 @@
+{
+  "itemId": "calc-matrix-transform",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "6.25% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=2 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "5.10% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 46075,
+        "inputTokens": 5061,
+        "cachedInputTokens": 128,
+        "outputTokens": 2743,
+        "costUsd": 0.0263624,
+        "rawResponse": "{\n  \"explanation\": \"The matrix [[2, 1], [0, 1]] shears the plane horizontally while stretching the x-direction by 2. The unit square becomes a parallelogram of base 2 and height 1. The determinant equals 2·1 − 1·0 = 2, which is exactly the factor by which areas are scaled — here the unit square’s area 1 becomes area 2.\",\n  \"manimCode\": \"const matrix = [[2, 1], [0, 1]];\\nconst det = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];\\n\\nfunction lerpMat(s) {\\n  return [\\n    [1 + s, s],\\n    [0, 1]\\n  ];\\n}\\n\\nfunction apply(m, x, y) {\\n  return [m[0][0] * x + m[0][1] * y, m[1][0] * x + m[1][1] * y];\\n}\\n\\nconst ax = new Axes({\\n  xRange: [-3, 5, 1],\\n  yRange: [-2, 3, 1],\\n  xLength: 10,\\n  yLength: 6,\\n  tips: true\\n});\\nax.setStrokeWidth(1.5);\\nscene.add(ax);\\n\\nconst title = new Text({ text: 'Matrix [[2, 1], [0, 1]]  —  det = 2', color: WHITE, fontSize: 28 });\\ntitle.moveTo([0, 3.5, 0]);\\nscene.add(title);\\n\\nlet tVal = 0;\\n\\nfunction buildGrid(s) {\\n  const m = lerpMat(s);\\n  const lines = [];\\n  for (let i = -2; i <= 4; i++) {\\n    const p0 = apply(m, i, -1.5);\\n    const p1 = apply(m, i, 2.5);\\n    const ln = new Polygon({\\n      vertices: [ax.c2p(p0[0], p0[1]), ax.c2p(p1[0], p1[1])],\\n      color: GRAY,\\n      strokeWidth: 1\\n    });\\n    ln.setFillOpacity(0);\\n    lines.push(ln);\\n  }\\n  for (let j = -1; j <= 2; j++) {\\n    const p0 = apply(m, -2, j);\\n    const p1 = apply(m, 4, j);\\n    const ln = new Polygon({\\n      vertices: [ax.c2p(p0[0], p0[1]), ax.c2p(p1[0], p1[1])],\\n      color: GRAY,\\n      strokeWidth: 1\\n    });\\n    ln.setFillOpacity(0);\\n    lines.push(ln);\\n  }\\n  return lines;\\n}\\n\\nfunction buildSquare(s, color, opacity) {\\n  const m = lerpMat(s);\\n  const corners = [[0, 0], [1, 0], [1, 1], [0, 1]].map(([x, y]) => {\\n    const p = apply(m, x, y);\\n    return ax.c2p(p[0], p[1]);\\n  });\\n  const poly = new Polygon({ vertices: corners, color: color, strokeWidth: 3 });\\n  poly.setFill(color, opacity);\\n  return poly;\\n}\\n\\nfunction buildBasis(s) {\\n  const m = lerpMat(s);\\n  const o = ax.c2p(0, 0);\\n  const iEnd = apply(m, 1, 0);\\n  const jEnd = apply(m, 0, 1);\\n  const iArr = new Arrow({ start: o, end: ax.c2p(iEnd[0], iEnd[1]), color: GREEN });\\n  const jArr = new Arrow({ start: o, end: ax.c2p(jEnd[0], jEnd[1]), color: RED });\\n  return [iArr, jArr];\\n}\\n\\nlet gridLines = buildGrid(0);\\ngridLines.forEach(l => scene.add(l));\\n\\nconst origSquare = buildSquare(0, BLUE_E, 0.15);\\norigSquare.setStrokeWidth(1);\\nscene.add(origSquare);\\n\\nlet liveSquare = buildSquare(0, YELLOW, 0.35);\\nscene.add(liveSquare);\\n\\nlet [iHat, jHat] = buildBasis(0);\\nscene.add(iHat, jHat);\\n\\nlet iLabel = new Text({ text: 'î', color: GREEN, fontSize: 22 });\\niLabel.nextTo(iHat, DOWN);\\nscene.add(iLabel);\\n\\nlet jLabel = new Text({ text: 'ĵ', color: RED, fontSize: 22 });\\njLabel.nextTo(jHat, LEFT);\\nscene.add(jLabel);\\n\\nlet areaLabel = new Text({ text: 'Area = 1.00   (× det = 1.00)', color: GOLD, fontSize: 24 });\\nareaLabel.moveTo([0, -3.3, 0]);\\nscene.add(areaLabel);\\n\\nconst detNote = new MathTex({ latex: '\\\\\\\\det\\\\\\\\begin{pmatrix}2&1\\\\\\\\\\\\\\\\0&1\\\\\\\\end{pmatrix}=2' });\\nawait detNote.waitForRender();\\ndetNote.scale(0.7);\\ndetNote.moveTo([3.8, 2.6, 0]);\\nscene.add(detNote);\\n\\nfunction rebuild(s) {\\n  gridLines.forEach(l => scene.remove(l));\\n  gridLines = buildGrid(s);\\n  gridLines.forEach(l => scene.add(l));\\n\\n  scene.remove(liveSquare);\\n  liveSquare = buildSquare(s, YELLOW, 0.35);\\n  scene.add(liveSquare);\\n\\n  scene.remove(iHat);\\n  scene.remove(jHat);\\n  [iHat, jHat] = buildBasis(s);\\n  scene.add(iHat, jHat);\\n\\n  scene.remove(iLabel);\\n  scene.remove(jLabel);\\n  iLabel = new Text({ text: 'î', color: GREEN, fontSize: 22 });\\n  const m = lerpMat(s);\\n  const iEnd = apply(m, 1, 0);\\n  const jEnd = apply(m, 0, 1);\\n  iLabel.moveTo(ax.c2p(iEnd[0], iEnd[1] - 0.35));\\n  jLabel = new Text({ text: 'ĵ', color: RED, fontSize: 22 });\\n  jLabel.moveTo(ax.c2p(jEnd[0] - 0.35, jEnd[1]));\\n  scene.add(iLabel, jLabel);\\n\\n  const area = 1 + s;\\n  scene.remove(areaLabel);\\n  areaLabel = new Text({\\n    text: 'Area = ' + area.toFixed(2) + '   (× det factor = ' + area.toFixed(2) + ')',\\n    color: GOLD,\\n    fontSize: 24\\n  });\\n  areaLabel.moveTo([0, -3.3, 0]);\\n  scene.add(areaLabel);\\n}\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 280 });\\ncontrols.addSlider({\\n  label: 'Transform t',\\n  min: 0,\\n  max: 1,\\n  value: 0,\\n  step: 0.01,\\n  onChange: (v) => {\\n    tVal = v;\\n    rebuild(tVal);\\n  }\\n});\\ncontrols.addButton({\\n  label: 'Play full transform',\\n  onClick: async () => {\\n    const steps = 40;\\n    for (let i = 0; i <= steps; i++) {\\n      tVal = i / steps;\\n      rebuild(tVal);\\n      await scene.wait(0.03);\\n    }\\n  }\\n});\\ncontrols.addButton({\\n  label: 'Reset',\\n  onClick: () => {\\n    tVal = 0;\\n    rebuild(0);\\n  }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "The matrix [[2, 1], [0, 1]] shears the plane horizontally while stretching the x-direction by 2. The unit square becomes a parallelogram of base 2 and height 1. The determinant equals 2·1 − 1·0 = 2, which is exactly the factor by which areas are scaled — here the unit square’s area 1 becomes area 2."
+      },
+      "code": "const matrix = [[2, 1], [0, 1]];\nconst det = matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];\n\nfunction lerpMat(s) {\n  return [\n    [1 + s, s],\n    [0, 1]\n  ];\n}\n\nfunction apply(m, x, y) {\n  return [m[0][0] * x + m[0][1] * y, m[1][0] * x + m[1][1] * y];\n}\n\nconst ax = new Axes({\n  xRange: [-3, 5, 1],\n  yRange: [-2, 3, 1],\n  xLength: 10,\n  yLength: 6,\n  tips: true\n});\nax.setStrokeWidth(1.5);\nscene.add(ax);\n\nconst title = new Text({ text: 'Matrix [[2, 1], [0, 1]]  —  det = 2', color: WHITE, fontSize: 28 });\ntitle.moveTo([0, 3.5, 0]);\nscene.add(title);\n\nlet tVal = 0;\n\nfunction buildGrid(s) {\n  const m = lerpMat(s);\n  const lines = [];\n  for (let i = -2; i <= 4; i++) {\n    const p0 = apply(m, i, -1.5);\n    const p1 = apply(m, i, 2.5);\n    const ln = new Polygon({\n      vertices: [ax.c2p(p0[0], p0[1]), ax.c2p(p1[0], p1[1])],\n      color: GRAY,\n      strokeWidth: 1\n    });\n    ln.setFillOpacity(0);\n    lines.push(ln);\n  }\n  for (let j = -1; j <= 2; j++) {\n    const p0 = apply(m, -2, j);\n    const p1 = apply(m, 4, j);\n    const ln = new Polygon({\n      vertices: [ax.c2p(p0[0], p0[1]), ax.c2p(p1[0], p1[1])],\n      color: GRAY,\n      strokeWidth: 1\n    });\n    ln.setFillOpacity(0);\n    lines.push(ln);\n  }\n  return lines;\n}\n\nfunction buildSquare(s, color, opacity) {\n  const m = lerpMat(s);\n  const corners = [[0, 0], [1, 0], [1, 1], [0, 1]].map(([x, y]) => {\n    const p = apply(m, x, y);\n    return ax.c2p(p[0], p[1]);\n  });\n  const poly = new Polygon({ vertices: corners, color: color, strokeWidth: 3 });\n  poly.setFill(color, opacity);\n  return poly;\n}\n\nfunction buildBasis(s) {\n  const m = lerpMat(s);\n  const o = ax.c2p(0, 0);\n  const iEnd = apply(m, 1, 0);\n  const jEnd = apply(m, 0, 1);\n  const iArr = new Arrow({ start: o, end: ax.c2p(iEnd[0], iEnd[1]), color: GREEN });\n  const jArr = new Arrow({ start: o, end: ax.c2p(jEnd[0], jEnd[1]), color: RED });\n  return [iArr, jArr];\n}\n\nlet gridLines = buildGrid(0);\ngridLines.forEach(l => scene.add(l));\n\nconst origSquare = buildSquare(0, BLUE_E, 0.15);\norigSquare.setStrokeWidth(1);\nscene.add(origSquare);\n\nlet liveSquare = buildSquare(0, YELLOW, 0.35);\nscene.add(liveSquare);\n\nlet [iHat, jHat] = buildBasis(0);\nscene.add(iHat, jHat);\n\nlet iLabel = new Text({ text: 'î', color: GREEN, fontSize: 22 });\niLabel.nextTo(iHat, DOWN);\nscene.add(iLabel);\n\nlet jLabel = new Text({ text: 'ĵ', color: RED, fontSize: 22 });\njLabel.nextTo(jHat, LEFT);\nscene.add(jLabel);\n\nlet areaLabel = new Text({ text: 'Area = 1.00   (× det = 1.00)', color: GOLD, fontSize: 24 });\nareaLabel.moveTo([0, -3.3, 0]);\nscene.add(areaLabel);\n\nconst detNote = new MathTex({ latex: '\\\\det\\\\begin{pmatrix}2&1\\\\\\\\0&1\\\\end{pmatrix}=2' });\nawait detNote.waitForRender();\ndetNote.scale(0.7);\ndetNote.moveTo([3.8, 2.6, 0]);\nscene.add(detNote);\n\nfunction rebuild(s) {\n  gridLines.forEach(l => scene.remove(l));\n  gridLines = buildGrid(s);\n  gridLines.forEach(l => scene.add(l));\n\n  scene.remove(liveSquare);\n  liveSquare = buildSquare(s, YELLOW, 0.35);\n  scene.add(liveSquare);\n\n  scene.remove(iHat);\n  scene.remove(jHat);\n  [iHat, jHat] = buildBasis(s);\n  scene.add(iHat, jHat);\n\n  scene.remove(iLabel);\n  scene.remove(jLabel);\n  iLabel = new Text({ text: 'î', color: GREEN, fontSize: 22 });\n  const m = lerpMat(s);\n  const iEnd = apply(m, 1, 0);\n  const jEnd = apply(m, 0, 1);\n  iLabel.moveTo(ax.c2p(iEnd[0], iEnd[1] - 0.35));\n  jLabel = new Text({ text: 'ĵ', color: RED, fontSize: 22 });\n  jLabel.moveTo(ax.c2p(jEnd[0] - 0.35, jEnd[1]));\n  scene.add(iLabel, jLabel);\n\n  const area = 1 + s;\n  scene.remove(areaLabel);\n  areaLabel = new Text({\n    text: 'Area = ' + area.toFixed(2) + '   (× det factor = ' + area.toFixed(2) + ')',\n    color: GOLD,\n    fontSize: 24\n  });\n  areaLabel.moveTo([0, -3.3, 0]);\n  scene.add(areaLabel);\n}\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 280 });\ncontrols.addSlider({\n  label: 'Transform t',\n  min: 0,\n  max: 1,\n  value: 0,\n  step: 0.01,\n  onChange: (v) => {\n    tVal = v;\n    rebuild(tVal);\n  }\n});\ncontrols.addButton({\n  label: 'Play full transform',\n  onClick: async () => {\n    const steps = 40;\n    for (let i = 0; i <= steps; i++) {\n      tVal = i / steps;\n      rebuild(tVal);\n      await scene.wait(0.03);\n    }\n  }\n});\ncontrols.addButton({\n  label: 'Reset',\n  onClick: () => {\n    tVal = 0;\n    rebuild(0);\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4757,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 2,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/calc-matrix-transform.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/calc-matrix-transform.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:52.681Z"
+}

@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-regression-drag",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.06% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=2 checkboxes=1 draggables=9 clickables=0 hoverables=9"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.30% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 25714,
+        "inputTokens": 8050,
+        "cachedInputTokens": 7569,
+        "outputTokens": 3006,
+        "costUsd": 0.0654738,
+        "rawResponse": "{\"explanation\":\"The line of best fit (least-squares regression line) is the line ŷ = mx + b that makes the sum of squared vertical distances from the points to the line as small as possible. The slope is m = Σ(x−x̄)(y−ȳ) / Σ(x−x̄)², and the line always passes through the mean point (x̄, ȳ). Drag any yellow point and the line, the equation, and R² (how much of the variation in y the line explains) all update right away. Turn on residuals to see the vertical red gaps the line is minimizing. A single outlier can pull the line a long way.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [0, 10, 1], yRange: [0, 10, 1],\\n  xLength: 8.5, yLength: 6, tips: false\\n});\\nax.moveTo([-1.2, -0.4, 0]);\\nscene.add(ax);\\n\\n// Linear map from screen -> data, derived from axes corners\\nconst o = ax.c2p(0, 0);\\nconst c = ax.c2p(10, 10);\\nconst toData = (p) => [ (p[0] - o[0]) / (c[0] - o[0]) * 10, (p[1] - o[1]) / (c[1] - o[1]) * 10 ];\\n\\nconst initial = [[1, 2], [2, 2.8], [3, 3.5], [4, 5.2], [5, 4.6], [6, 6.3], [7, 6.9], [8, 8.1], [9, 8.4]];\\n\\n// Residual segments (2-vertex polygons)\\nlet showResiduals = false;\\nconst residuals = initial.map(([x, y]) => {\\n  const seg = new Polygon({ vertices: [ax.c2p(x, y), ax.c2p(x, y + 0.01)], color: RED });\\n  seg.setStrokeWidth(2);\\n  seg.setFillOpacity(0);\\n  seg.setOpacity(0);\\n  return seg;\\n});\\nresiduals.forEach(r => scene.add(r));\\n\\n// Regression line\\nconst fitLine = new Polygon({ vertices: [ax.c2p(0, 0), ax.c2p(10, 10)], color: BLUE });\\nfitLine.setStrokeWidth(4);\\nfitLine.setFillOpacity(0);\\nscene.add(fitLine);\\n\\n// Mean point marker\\nconst meanDot = new Dot({ point: ax.c2p(5, 5), color: GREEN, radius: 0.1 });\\nscene.add(meanDot);\\n\\n// Draggable data points\\nconst dots = initial.map(([x, y]) => new Dot({ point: ax.c2p(x, y), color: YELLOW, radius: 0.12 }));\\ndots.forEach(d => scene.add(d));\\n\\nlet eqLabel = null;\\nlet r2Label = null;\\n\\nfunction fmt(v) { return (Math.abs(v) < 0.005 ? 0 : v).toFixed(2); }\\n\\nfunction update() {\\n  const pts = dots.map(d => toData(d.getCenter()));\\n  const n = pts.length;\\n  const mx = pts.reduce((s, p) => s + p[0], 0) / n;\\n  const my = pts.reduce((s, p) => s + p[1], 0) / n;\\n  let sxy = 0, sxx = 0, syy = 0;\\n  pts.forEach(([x, y]) => { sxy += (x - mx) * (y - my); sxx += (x - mx) ** 2; syy += (y - my) ** 2; });\\n  if (sxx < 1e-6) return;\\n  const m = sxy / sxx;\\n  const b = my - m * mx;\\n\\n  // Clip line to the [0,10]x[0,10] box\\n  let x0 = 0, x1 = 10;\\n  if (Math.abs(m) > 1e-9) {\\n    const xa = (0 - b) / m, xb = (10 - b) / m;\\n    x0 = Math.max(0, Math.min(xa, xb));\\n    x1 = Math.min(10, Math.max(xa, xb));\\n  }\\n  if (x1 > x0) {\\n    fitLine.setVertices([ax.c2p(x0, m * x0 + b), ax.c2p(x1, m * x1 + b)]);\\n    fitLine.setOpacity(1);\\n  } else {\\n    fitLine.setOpacity(0);\\n  }\\n  meanDot.moveTo(ax.c2p(mx, my));\\n\\n  pts.forEach(([x, y], i) => {\\n    const yh = Math.min(10, Math.max(0, m * x + b));\\n    residuals[i].setVertices([ax.c2p(x, y), ax.c2p(x, Math.abs(yh - y) < 0.01 ? y + 0.01 : yh)]);\\n    residuals[i].setOpacity(showResiduals ? 1 : 0);\\n  });\\n\\n  const r2 = syy > 1e-9 ? (sxy * sxy) / (sxx * syy) : 1;\\n\\n  if (eqLabel) scene.remove(eqLabel);\\n  if (r2Label) scene.remove(r2Label);\\n  const sign = b >= 0 ? '+' : '−';\\n  eqLabel = new Text({ text: 'ŷ = ' + fmt(m) + 'x ' + sign + ' ' + fmt(Math.abs(b)), color: BLUE, fontSize: 28 });\\n  eqLabel.moveTo([4.6, -1.6, 0]);\\n  r2Label = new Text({ text: 'R² = ' + r2.toFixed(3), color: WHITE, fontSize: 28 });\\n  r2Label.moveTo([4.6, -2.3, 0]);\\n  scene.add(eqLabel, r2Label);\\n}\\n\\ndots.forEach(d => makeDraggable(d, scene, {\\n  constrainX: [o[0], c[0]],\\n  constrainY: [o[1], c[1]],\\n  onDrag: update\\n}));\\ndots.forEach(d => makeHoverable(d, scene, { hoverScale: 1.4 }));\\n\\nconst hint = new Text({ text: 'Drag the yellow points', color: GRAY, fontSize: 22 });\\nhint.moveTo([4.6, -3.0, 0]);\\nconst meanNote = new Text({ text: '● mean (x̄, ȳ)', color: GREEN, fontSize: 20 });\\nmeanNote.moveTo([4.6, -0.9, 0]);\\nscene.add(hint, meanNote);\\n\\nupdate();\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addCheckbox({ label: 'Show residuals', checked: false, onChange: (v) => { showResiduals = v; update(); } });\\ncontrols.addButton({ label: 'Reset points', onClick: () => {\\n  dots.forEach((d, i) => d.moveTo(ax.c2p(initial[i][0], initial[i][1])));\\n  update();\\n}});\\ncontrols.addButton({ label: 'Randomize', onClick: () => {\\n  dots.forEach(d => d.moveTo(ax.c2p(0.5 + Math.random() * 9, 0.5 + Math.random() * 9)));\\n  update();\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The line of best fit (least-squares regression line) is the line ŷ = mx + b that makes the sum of squared vertical distances from the points to the line as small as possible. The slope is m = Σ(x−x̄)(y−ȳ) / Σ(x−x̄)², and the line always passes through the mean point (x̄, ȳ). Drag any yellow point and the line, the equation, and R² (how much of the variation in y the line explains) all update right away. Turn on residuals to see the vertical red gaps the line is minimizing. A single outlier can pull the line a long way."
+      },
+      "code": "const ax = new Axes({\n  xRange: [0, 10, 1], yRange: [0, 10, 1],\n  xLength: 8.5, yLength: 6, tips: false\n});\nax.moveTo([-1.2, -0.4, 0]);\nscene.add(ax);\n\n// Linear map from screen -> data, derived from axes corners\nconst o = ax.c2p(0, 0);\nconst c = ax.c2p(10, 10);\nconst toData = (p) => [ (p[0] - o[0]) / (c[0] - o[0]) * 10, (p[1] - o[1]) / (c[1] - o[1]) * 10 ];\n\nconst initial = [[1, 2], [2, 2.8], [3, 3.5], [4, 5.2], [5, 4.6], [6, 6.3], [7, 6.9], [8, 8.1], [9, 8.4]];\n\n// Residual segments (2-vertex polygons)\nlet showResiduals = false;\nconst residuals = initial.map(([x, y]) => {\n  const seg = new Polygon({ vertices: [ax.c2p(x, y), ax.c2p(x, y + 0.01)], color: RED });\n  seg.setStrokeWidth(2);\n  seg.setFillOpacity(0);\n  seg.setOpacity(0);\n  return seg;\n});\nresiduals.forEach(r => scene.add(r));\n\n// Regression line\nconst fitLine = new Polygon({ vertices: [ax.c2p(0, 0), ax.c2p(10, 10)], color: BLUE });\nfitLine.setStrokeWidth(4);\nfitLine.setFillOpacity(0);\nscene.add(fitLine);\n\n// Mean point marker\nconst meanDot = new Dot({ point: ax.c2p(5, 5), color: GREEN, radius: 0.1 });\nscene.add(meanDot);\n\n// Draggable data points\nconst dots = initial.map(([x, y]) => new Dot({ point: ax.c2p(x, y), color: YELLOW, radius: 0.12 }));\ndots.forEach(d => scene.add(d));\n\nlet eqLabel = null;\nlet r2Label = null;\n\nfunction fmt(v) { return (Math.abs(v) < 0.005 ? 0 : v).toFixed(2); }\n\nfunction update() {\n  const pts = dots.map(d => toData(d.getCenter()));\n  const n = pts.length;\n  const mx = pts.reduce((s, p) => s + p[0], 0) / n;\n  const my = pts.reduce((s, p) => s + p[1], 0) / n;\n  let sxy = 0, sxx = 0, syy = 0;\n  pts.forEach(([x, y]) => { sxy += (x - mx) * (y - my); sxx += (x - mx) ** 2; syy += (y - my) ** 2; });\n  if (sxx < 1e-6) return;\n  const m = sxy / sxx;\n  const b = my - m * mx;\n\n  // Clip line to the [0,10]x[0,10] box\n  let x0 = 0, x1 = 10;\n  if (Math.abs(m) > 1e-9) {\n    const xa = (0 - b) / m, xb = (10 - b) / m;\n    x0 = Math.max(0, Math.min(xa, xb));\n    x1 = Math.min(10, Math.max(xa, xb));\n  }\n  if (x1 > x0) {\n    fitLine.setVertices([ax.c2p(x0, m * x0 + b), ax.c2p(x1, m * x1 + b)]);\n    fitLine.setOpacity(1);\n  } else {\n    fitLine.setOpacity(0);\n  }\n  meanDot.moveTo(ax.c2p(mx, my));\n\n  pts.forEach(([x, y], i) => {\n    const yh = Math.min(10, Math.max(0, m * x + b));\n    residuals[i].setVertices([ax.c2p(x, y), ax.c2p(x, Math.abs(yh - y) < 0.01 ? y + 0.01 : yh)]);\n    residuals[i].setOpacity(showResiduals ? 1 : 0);\n  });\n\n  const r2 = syy > 1e-9 ? (sxy * sxy) / (sxx * syy) : 1;\n\n  if (eqLabel) scene.remove(eqLabel);\n  if (r2Label) scene.remove(r2Label);\n  const sign = b >= 0 ? '+' : '−';\n  eqLabel = new Text({ text: 'ŷ = ' + fmt(m) + 'x ' + sign + ' ' + fmt(Math.abs(b)), color: BLUE, fontSize: 28 });\n  eqLabel.moveTo([4.6, -1.6, 0]);\n  r2Label = new Text({ text: 'R² = ' + r2.toFixed(3), color: WHITE, fontSize: 28 });\n  r2Label.moveTo([4.6, -2.3, 0]);\n  scene.add(eqLabel, r2Label);\n}\n\ndots.forEach(d => makeDraggable(d, scene, {\n  constrainX: [o[0], c[0]],\n  constrainY: [o[1], c[1]],\n  onDrag: update\n}));\ndots.forEach(d => makeHoverable(d, scene, { hoverScale: 1.4 }));\n\nconst hint = new Text({ text: 'Drag the yellow points', color: GRAY, fontSize: 22 });\nhint.moveTo([4.6, -3.0, 0]);\nconst meanNote = new Text({ text: '● mean (x̄, ȳ)', color: GREEN, fontSize: 20 });\nmeanNote.moveTo([4.6, -0.9, 0]);\nscene.add(hint, meanNote);\n\nupdate();\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addCheckbox({ label: 'Show residuals', checked: false, onChange: (v) => { showResiduals = v; update(); } });\ncontrols.addButton({ label: 'Reset points', onClick: () => {\n  dots.forEach((d, i) => d.moveTo(ax.c2p(initial[i][0], initial[i][1])));\n  update();\n}});\ncontrols.addButton({ label: 'Randomize', onClick: () => {\n  dots.forEach(d => d.moveTo(ax.c2p(0.5 + Math.random() * 9, 0.5 + Math.random() * 9)));\n  update();\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4540,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 2,
+          "checkboxes": 1
+        },
+        "draggables": 9,
+        "clickables": 0,
+        "hoverables": 9
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/stats-regression-drag.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/stats-regression-drag.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:37.839Z"
+}

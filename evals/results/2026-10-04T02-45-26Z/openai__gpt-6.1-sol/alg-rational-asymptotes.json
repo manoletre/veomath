@@ -1,0 +1,80 @@
+{
+  "itemId": "alg-rational-asymptotes",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.99% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "MathTex \"f(x)=\\frac{2x+1}{x-3}=2+\\frac{7}{x-3}\" overlaps MathTex \"y\" (61%)\nMathTex \"x\" overlaps MathTex \"y=2\" (92%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.31% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 30452,
+        "inputTokens": 4612,
+        "cachedInputTokens": 4581,
+        "outputTokens": 1547,
+        "costUsd": 0.0159901,
+        "rawResponse": "{\"explanation\":\"Rewrite the function as f(x) = 2 + 7/(x − 3). Its vertical asymptote is x = 3, where the function is undefined, and its horizontal asymptote is y = 2, which the graph approaches as x → ±∞. Move the slider to explore points on both branches.\",\"manimCode\":\"const title = new MathTex({ latex: 'f(x)=\\\\\\\\frac{2x+1}{x-3}=2+\\\\\\\\frac{7}{x-3}' });\\nawait title.waitForRender();\\ntitle.scale(0.85);\\ntitle.moveTo([0, 3.15, 0]);\\nawait scene.play(new Write(title));\\n\\nconst ax = new Axes({\\n  xRange: [-6, 10, 2],\\n  yRange: [-7, 11, 2],\\n  xLength: 10,\\n  yLength: 4.8,\\n  tips: true\\n});\\nax.moveTo([0, -0.35, 0]);\\nconst axisLabels = ax.getAxisLabels();\\nawait scene.play(new Create(ax));\\nscene.add(axisLabels);\\n\\nfunction dashedSegment(a, b, color) {\\n  const pieces = [];\\n  const count = 36;\\n  for (let i = 0; i < count; i++) {\\n    const u = i / count;\\n    const v = (i + 0.55) / count;\\n    const start = a.map((n, j) => n + u * (b[j] - n));\\n    const end = a.map((n, j) => n + v * (b[j] - n));\\n    pieces.push(new Line({ start, end, color }));\\n  }\\n  return new VGroup(...pieces);\\n}\\n\\nconst vertical = dashedSegment(ax.c2p(3, -7), ax.c2p(3, 11), ORANGE);\\nconst horizontal = dashedSegment(ax.c2p(-6, 2), ax.c2p(10, 2), GREEN);\\nconst verticalLabel = new MathTex({ latex: 'x=3', color: ORANGE });\\nconst horizontalLabel = new MathTex({ latex: 'y=2', color: GREEN });\\nawait verticalLabel.waitForRender();\\nawait horizontalLabel.waitForRender();\\nverticalLabel.scale(0.65).moveTo([0.65, 2.4, 0]);\\nhorizontalLabel.scale(0.65).moveTo([5.55, -0.1, 0]);\\nawait scene.play(new AnimationGroup([new FadeIn(vertical), new FadeIn(horizontal), new FadeIn(verticalLabel), new FadeIn(horizontalLabel)]));\\n\\nconst fn = x => 2 + 7 / (x - 3);\\n// Separate domains prevent connecting the branches across the pole.\\n// Trim each branch to the visible y range.\\nconst leftBranch = ax.plot(fn, {\\n  xRange: [-6, 3 - 7 / 9], color: BLUE, numSamples: 600\\n});\\nconst rightBranch = ax.plot(fn, {\\n  xRange: [3 + 7 / 9, 10], color: BLUE, numSamples: 600\\n});\\nawait scene.play(new AnimationGroup([new Create(leftBranch), new Create(rightBranch)]));\\n\\nconst marker = new Dot({ point: ax.c2p(0, fn(0)), color: YELLOW });\\nscene.add(marker);\\nmakeHoverable(marker, scene, { hoverScale: 1.4 });\\nlet readout;\\nfunction updatePoint(value) {\\n  const atPole = Math.abs(value - 3) < 0.000001;\\n  const yValue = atPole ? null : fn(value);\\n  const visible = !atPole && yValue >= -7 && yValue <= 11;\\n  marker.setOpacity(visible ? 1 : 0);\\n  if (visible) marker.moveTo(ax.c2p(value, yValue));\\n  if (readout) scene.remove(readout);\\n  const message = atPole\\n    ? 'x = 3: undefined (vertical asymptote)'\\n    : 'x = ' + value.toFixed(2) + '    f(x) = ' + yValue.toFixed(2) + (visible ? '' : '    (outside view)');\\n  readout = new Text({ text: message, fontSize: 22, color: YELLOW });\\n  readout.moveTo([0, -3.3, 0]);\\n  scene.add(readout);\\n}\\nupdatePoint(0);\\nconst controls = new Controls(scene, { position: 'top-right', width: 230 });\\ncontrols.addSlider({ label: 'Explore x', min: -6, max: 10, value: 0, step: 0.05, onChange: updatePoint });\\nawait scene.wait(999999);\"}",
+        "explanation": "Rewrite the function as f(x) = 2 + 7/(x − 3). Its vertical asymptote is x = 3, where the function is undefined, and its horizontal asymptote is y = 2, which the graph approaches as x → ±∞. Move the slider to explore points on both branches."
+      },
+      "code": "const title = new MathTex({ latex: 'f(x)=\\\\frac{2x+1}{x-3}=2+\\\\frac{7}{x-3}' });\nawait title.waitForRender();\ntitle.scale(0.85);\ntitle.moveTo([0, 3.15, 0]);\nawait scene.play(new Write(title));\n\nconst ax = new Axes({\n  xRange: [-6, 10, 2],\n  yRange: [-7, 11, 2],\n  xLength: 10,\n  yLength: 4.8,\n  tips: true\n});\nax.moveTo([0, -0.35, 0]);\nconst axisLabels = ax.getAxisLabels();\nawait scene.play(new Create(ax));\nscene.add(axisLabels);\n\nfunction dashedSegment(a, b, color) {\n  const pieces = [];\n  const count = 36;\n  for (let i = 0; i < count; i++) {\n    const u = i / count;\n    const v = (i + 0.55) / count;\n    const start = a.map((n, j) => n + u * (b[j] - n));\n    const end = a.map((n, j) => n + v * (b[j] - n));\n    pieces.push(new Line({ start, end, color }));\n  }\n  return new VGroup(...pieces);\n}\n\nconst vertical = dashedSegment(ax.c2p(3, -7), ax.c2p(3, 11), ORANGE);\nconst horizontal = dashedSegment(ax.c2p(-6, 2), ax.c2p(10, 2), GREEN);\nconst verticalLabel = new MathTex({ latex: 'x=3', color: ORANGE });\nconst horizontalLabel = new MathTex({ latex: 'y=2', color: GREEN });\nawait verticalLabel.waitForRender();\nawait horizontalLabel.waitForRender();\nverticalLabel.scale(0.65).moveTo([0.65, 2.4, 0]);\nhorizontalLabel.scale(0.65).moveTo([5.55, -0.1, 0]);\nawait scene.play(new AnimationGroup([new FadeIn(vertical), new FadeIn(horizontal), new FadeIn(verticalLabel), new FadeIn(horizontalLabel)]));\n\nconst fn = x => 2 + 7 / (x - 3);\n// Separate domains prevent connecting the branches across the pole.\n// Trim each branch to the visible y range.\nconst leftBranch = ax.plot(fn, {\n  xRange: [-6, 3 - 7 / 9], color: BLUE, numSamples: 600\n});\nconst rightBranch = ax.plot(fn, {\n  xRange: [3 + 7 / 9, 10], color: BLUE, numSamples: 600\n});\nawait scene.play(new AnimationGroup([new Create(leftBranch), new Create(rightBranch)]));\n\nconst marker = new Dot({ point: ax.c2p(0, fn(0)), color: YELLOW });\nscene.add(marker);\nmakeHoverable(marker, scene, { hoverScale: 1.4 });\nlet readout;\nfunction updatePoint(value) {\n  const atPole = Math.abs(value - 3) < 0.000001;\n  const yValue = atPole ? null : fn(value);\n  const visible = !atPole && yValue >= -7 && yValue <= 11;\n  marker.setOpacity(visible ? 1 : 0);\n  if (visible) marker.moveTo(ax.c2p(value, yValue));\n  if (readout) scene.remove(readout);\n  const message = atPole\n    ? 'x = 3: undefined (vertical asymptote)'\n    : 'x = ' + value.toFixed(2) + '    f(x) = ' + yValue.toFixed(2) + (visible ? '' : '    (outside view)');\n  readout = new Text({ text: message, fontSize: 22, color: YELLOW });\n  readout.moveTo([0, -3.3, 0]);\n  scene.add(readout);\n}\nupdatePoint(0);\nconst controls = new Controls(scene, { position: 'top-right', width: 230 });\ncontrols.addSlider({ label: 'Explore x', min: -6, max: 10, value: 0, step: 0.05, onChange: updatePoint });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 10523,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 4,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/alg-rational-asymptotes.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/alg-rational-asymptotes.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:21.697Z"
+}

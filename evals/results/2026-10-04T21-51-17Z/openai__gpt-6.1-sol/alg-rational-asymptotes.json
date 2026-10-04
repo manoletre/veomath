@@ -1,0 +1,91 @@
+{
+  "itemId": "alg-rational-asymptotes",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.49% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (1.2, 1.4) — 0.22% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (1.2, 1.4) — 0.22% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 35202,
+        "inputTokens": 5318,
+        "cachedInputTokens": 5287,
+        "outputTokens": 1625,
+        "costUsd": 0.0168407,
+        "rawResponse": "{\"explanation\":\"Rewrite the function as f(x) = 2 + 7/(x − 3). Its vertical asymptote is x = 3, where the denominator is zero, and its horizontal asymptote is y = 2, which the graph approaches as x tends to either infinity. Drag the yellow point along either branch to explore the function’s values.\",\"manimCode\":\"const axes = new Axes({ xRange: [-6, 12, 1], yRange: [-8, 10, 2], xLength: 10.5, yLength: 5.4, tips: true });\\nconst f = x => 2 + 7 / (x - 3);\\nconst leftBranch = axes.plot(f, { xRange: [-6, 2.3, 0.025], color: BLUE });\\nconst rightBranch = axes.plot(f, { xRange: [3.875, 12, 0.025], color: BLUE });\\nconst vertical = new DashedLine({ start: axes.c2p(3, -8), end: axes.c2p(3, 10), color: ORANGE });\\nconst horizontal = new DashedLine({ start: axes.c2p(-6, 2), end: axes.c2p(12, 2), color: GREEN });\\nvertical.setStrokeWidth(2);\\nhorizontal.setStrokeWidth(2);\\n\\nconst formula = new MathTex({ latex: 'f(x)=\\\\\\\\frac{2x+1}{x-3}=2+\\\\\\\\frac{7}{x-3}', color: WHITE });\\nawait formula.waitForRender();\\nformula.scale(0.8);\\nformula.moveTo([0, 3.25, 0]);\\nconst verticalLabel = new Text({ text: 'x = 3', fontSize: 23, color: ORANGE });\\nverticalLabel.moveTo([0.7, 2.4, 0]);\\nconst horizontalLabel = new Text({ text: 'y = 2', fontSize: 23, color: GREEN });\\nhorizontalLabel.moveTo(axes.c2p(10.3, 3.1));\\nconst readout = new Text({ text: '', fontSize: 24, color: YELLOW });\\nreadout.moveTo([-3.35, 2.2, 0]);\\nconst hint = new Text({ text: 'Drag the yellow point along either branch', fontSize: 22, color: GRAY });\\nhint.moveTo([0, -3.35, 0]);\\n\\nscene.add(axes, formula, verticalLabel, horizontalLabel, hint);\\nfor (const value of [-6, 0, 3, 6, 9, 12]) {\\n  const tickLabel = new Text({ text: String(value), fontSize: 17, color: GRAY });\\n  const p = axes.c2p(value, 0);\\n  tickLabel.moveTo([p[0], p[1] - 0.23, 0]);\\n  scene.add(tickLabel);\\n}\\nfor (const value of [-6, -4, 6, 8]) {\\n  const tickLabel = new Text({ text: String(value), fontSize: 17, color: GRAY });\\n  const p = axes.c2p(0, value);\\n  tickLabel.moveTo([p[0] - 0.28, p[1], 0]);\\n  scene.add(tickLabel);\\n}\\nawait scene.play(new AnimationGroup([new Create(vertical), new Create(horizontal)]));\\nawait scene.play(new AnimationGroup([new Create(leftBranch), new Create(rightBranch)]));\\n\\nlet currentX = 5;\\nconst handle = new Dot({ point: axes.c2p(currentX, f(currentX)), radius: 0.13, color: YELLOW });\\nconst guide = new DashedLine({ start: axes.c2p(currentX, 0), end: axes.c2p(currentX, f(currentX)), color: GRAY });\\nguide.setStrokeWidth(1);\\nscene.add(guide, handle, readout);\\nfunction update() {\\n  const currentY = f(currentX);\\n  handle.moveTo(axes.c2p(currentX, currentY));\\n  guide.setStart(axes.c2p(currentX, 0));\\n  guide.setEnd(axes.c2p(currentX, currentY));\\n  readout.setText('x = ' + currentX.toFixed(2) + '   f(x) = ' + currentY.toFixed(2));\\n}\\nupdate();\\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\\n  let pointerX = axes.pointToCoords(pos)[0];\\n  pointerX = Math.max(-6, Math.min(12, pointerX));\\n  if (pointerX > 2.3 && pointerX < 3.875) {\\n    pointerX = pointerX < (2.3 + 3.875) / 2 ? 2.3 : 3.875;\\n  }\\n  currentX = pointerX;\\n  update();\\n} });\\nawait scene.wait(999999);\"}",
+        "explanation": "Rewrite the function as f(x) = 2 + 7/(x − 3). Its vertical asymptote is x = 3, where the denominator is zero, and its horizontal asymptote is y = 2, which the graph approaches as x tends to either infinity. Drag the yellow point along either branch to explore the function’s values."
+      },
+      "code": "const axes = new Axes({ xRange: [-6, 12, 1], yRange: [-8, 10, 2], xLength: 10.5, yLength: 5.4, tips: true });\nconst f = x => 2 + 7 / (x - 3);\nconst leftBranch = axes.plot(f, { xRange: [-6, 2.3, 0.025], color: BLUE });\nconst rightBranch = axes.plot(f, { xRange: [3.875, 12, 0.025], color: BLUE });\nconst vertical = new DashedLine({ start: axes.c2p(3, -8), end: axes.c2p(3, 10), color: ORANGE });\nconst horizontal = new DashedLine({ start: axes.c2p(-6, 2), end: axes.c2p(12, 2), color: GREEN });\nvertical.setStrokeWidth(2);\nhorizontal.setStrokeWidth(2);\n\nconst formula = new MathTex({ latex: 'f(x)=\\\\frac{2x+1}{x-3}=2+\\\\frac{7}{x-3}', color: WHITE });\nawait formula.waitForRender();\nformula.scale(0.8);\nformula.moveTo([0, 3.25, 0]);\nconst verticalLabel = new Text({ text: 'x = 3', fontSize: 23, color: ORANGE });\nverticalLabel.moveTo([0.7, 2.4, 0]);\nconst horizontalLabel = new Text({ text: 'y = 2', fontSize: 23, color: GREEN });\nhorizontalLabel.moveTo(axes.c2p(10.3, 3.1));\nconst readout = new Text({ text: '', fontSize: 24, color: YELLOW });\nreadout.moveTo([-3.35, 2.2, 0]);\nconst hint = new Text({ text: 'Drag the yellow point along either branch', fontSize: 22, color: GRAY });\nhint.moveTo([0, -3.35, 0]);\n\nscene.add(axes, formula, verticalLabel, horizontalLabel, hint);\nfor (const value of [-6, 0, 3, 6, 9, 12]) {\n  const tickLabel = new Text({ text: String(value), fontSize: 17, color: GRAY });\n  const p = axes.c2p(value, 0);\n  tickLabel.moveTo([p[0], p[1] - 0.23, 0]);\n  scene.add(tickLabel);\n}\nfor (const value of [-6, -4, 6, 8]) {\n  const tickLabel = new Text({ text: String(value), fontSize: 17, color: GRAY });\n  const p = axes.c2p(0, value);\n  tickLabel.moveTo([p[0] - 0.28, p[1], 0]);\n  scene.add(tickLabel);\n}\nawait scene.play(new AnimationGroup([new Create(vertical), new Create(horizontal)]));\nawait scene.play(new AnimationGroup([new Create(leftBranch), new Create(rightBranch)]));\n\nlet currentX = 5;\nconst handle = new Dot({ point: axes.c2p(currentX, f(currentX)), radius: 0.13, color: YELLOW });\nconst guide = new DashedLine({ start: axes.c2p(currentX, 0), end: axes.c2p(currentX, f(currentX)), color: GRAY });\nguide.setStrokeWidth(1);\nscene.add(guide, handle, readout);\nfunction update() {\n  const currentY = f(currentX);\n  handle.moveTo(axes.c2p(currentX, currentY));\n  guide.setStart(axes.c2p(currentX, 0));\n  guide.setEnd(axes.c2p(currentX, currentY));\n  readout.setText('x = ' + currentX.toFixed(2) + '   f(x) = ' + currentY.toFixed(2));\n}\nupdate();\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\n  let pointerX = axes.pointToCoords(pos)[0];\n  pointerX = Math.max(-6, Math.min(12, pointerX));\n  if (pointerX > 2.3 && pointerX < 3.875) {\n    pointerX = pointerX < (2.3 + 3.875) / 2 ? 2.3 : 3.875;\n  }\n  currentX = pointerX;\n  update();\n} });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9344,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 2,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "drag",
+            "label": "Dot at (1.2, 1.4)",
+            "change": 0.0022265625,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/alg-rational-asymptotes.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/alg-rational-asymptotes.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:52:02.605Z"
+}

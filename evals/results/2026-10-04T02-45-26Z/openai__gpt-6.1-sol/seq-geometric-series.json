@@ -1,0 +1,79 @@
+{
+  "itemId": "seq-geometric-series",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "9.60% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "2.34% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 39276,
+        "inputTokens": 4615,
+        "cachedInputTokens": 4581,
+        "outputTokens": 1975,
+        "costUsd": 0.020276100000000002,
+        "rawResponse": "{\"explanation\":\"Start with a square of area 1. Fill half of it, then half of the remaining space, then half again—adding areas 1/2, 1/4, 1/8, and so on. After n steps, only 1/2ⁿ remains unfilled; because this tends to zero, the infinite sum fills the whole square and equals 1.\",\"manimCode\":\"const title = new Text({ text: 'Half of what remains', fontSize: 32, color: WHITE });\\ntitle.moveTo([0, 3.1, 0]);\\nconst outline = new Square({ sideLength: 3, color: WHITE });\\noutline.moveTo([-2, 0, 0]);\\noutline.setFillOpacity(0);\\noutline.setStrokeWidth(3);\\n\\nconst equation = new MathTex({ latex: '\\\\\\\\frac12 + \\\\\\\\frac14 + \\\\\\\\frac18 + \\\\\\\\cdots = 1', color: WHITE });\\nawait equation.waitForRender();\\nequation.scale(0.8);\\nequation.moveTo([2.3, 1.3, 0]);\\n\\nconst caption = new Text({ text: 'Each step halves the empty space.', fontSize: 20, color: GRAY });\\ncaption.moveTo([-2, -2.2, 0]);\\n\\nconst tiles = [];\\nconst tileLabels = [];\\nconst remainingBoxes = [[-3.5, -1.5, -0.5, 1.5]];\\nconst palette = [BLUE, TEAL, GREEN, BLUE_C, TEAL, GREEN_C];\\nlet leftEdge = -3.5;\\nlet bottomEdge = -1.5;\\nlet rightEdge = -0.5;\\nlet topEdge = 1.5;\\n\\nfor (let i = 0; i < 12; i++) {\\n  let bounds;\\n  if (i % 2 === 0) {\\n    const middle = (leftEdge + rightEdge) / 2;\\n    bounds = [leftEdge, bottomEdge, middle, topEdge];\\n    leftEdge = middle;\\n  } else {\\n    const middle = (bottomEdge + topEdge) / 2;\\n    bounds = [leftEdge, bottomEdge, rightEdge, middle];\\n    bottomEdge = middle;\\n  }\\n  const [a, b, c, d] = bounds;\\n  const tile = new Polygon({ vertices: [[a,b,0],[c,b,0],[c,d,0],[a,d,0]], color: palette[i % palette.length] });\\n  tile.setFill(palette[i % palette.length], 0.85);\\n  tile.setStrokeWidth(1);\\n  tiles.push(tile);\\n  remainingBoxes.push([leftEdge, bottomEdge, rightEdge, topEdge]);\\n  if (i < 4) {\\n    const fraction = new MathTex({ latex: '\\\\\\\\frac{1}{' + Math.pow(2, i + 1) + '}', color: WHITE });\\n    await fraction.waitForRender();\\n    fraction.scale([0.75, 0.65, 0.5, 0.4][i]);\\n    fraction.moveTo([(a+c)/2, (b+d)/2, 0]);\\n    tileLabels.push(fraction);\\n  }\\n}\\n\\nconst emptyOutline = new Polygon({ vertices: [[-3.5,-1.5,0],[-0.5,-1.5,0],[-0.5,1.5,0],[-3.5,1.5,0]], color: YELLOW });\\nemptyOutline.setFillOpacity(0);\\nemptyOutline.setStrokeWidth(2);\\nlet filledLabel;\\nlet emptyLabel;\\nfunction updateReadout(n) {\\n  if (filledLabel) scene.remove(filledLabel);\\n  if (emptyLabel) scene.remove(emptyLabel);\\n  const denominator = Math.pow(2, n);\\n  filledLabel = new Text({ text: n === 0 ? 'Filled area: 0' : 'Filled area: ' + (denominator - 1) + '/' + denominator, fontSize: 25, color: TEAL });\\n  filledLabel.moveTo([2.3, 0.25, 0]);\\n  emptyLabel = new Text({ text: n === 0 ? 'Unfilled area: 1' : 'Unfilled area: 1/' + denominator, fontSize: 25, color: YELLOW });\\n  emptyLabel.moveTo([2.3, -0.45, 0]);\\n  scene.add(filledLabel, emptyLabel);\\n  const [a,b,c,d] = remainingBoxes[n];\\n  emptyOutline.setVertices([[a,b,0],[c,b,0],[c,d,0],[a,d,0]]);\\n}\\n\\nawait scene.play(new AnimationGroup([new Write(title), new Create(outline), new Write(equation)]));\\nscene.add(caption, emptyOutline);\\nupdateReadout(0);\\nawait scene.wait(0.6);\\nfor (let n = 1; n <= 6; n++) {\\n  await scene.play(new FadeIn(tiles[n - 1]));\\n  if (n <= tileLabels.length) scene.add(tileLabels[n - 1]);\\n  updateReadout(n);\\n  await scene.wait(0.45);\\n}\\n\\nconst limitNote = new Text({ text: 'The leftover area tends to zero.', fontSize: 21, color: WHITE });\\nlimitNote.moveTo([2.3, -1.2, 0]);\\nawait scene.play(new FadeIn(limitNote));\\n\\nfunction showSteps(n) {\\n  for (const tile of tiles) scene.remove(tile);\\n  for (const label of tileLabels) scene.remove(label);\\n  scene.remove(emptyOutline);\\n  for (let i = 0; i < n; i++) {\\n    scene.add(tiles[i]);\\n    if (i < tileLabels.length) scene.add(tileLabels[i]);\\n  }\\n  updateReadout(n);\\n  scene.add(emptyOutline);\\n}\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\\ncontrols.addSlider({ label: 'Number of filled pieces', min: 0, max: 12, step: 1, value: 6, onChange: (value) => showSteps(Math.round(value)) });\\nawait scene.wait(999999);\"}",
+        "explanation": "Start with a square of area 1. Fill half of it, then half of the remaining space, then half again—adding areas 1/2, 1/4, 1/8, and so on. After n steps, only 1/2ⁿ remains unfilled; because this tends to zero, the infinite sum fills the whole square and equals 1."
+      },
+      "code": "const title = new Text({ text: 'Half of what remains', fontSize: 32, color: WHITE });\ntitle.moveTo([0, 3.1, 0]);\nconst outline = new Square({ sideLength: 3, color: WHITE });\noutline.moveTo([-2, 0, 0]);\noutline.setFillOpacity(0);\noutline.setStrokeWidth(3);\n\nconst equation = new MathTex({ latex: '\\\\frac12 + \\\\frac14 + \\\\frac18 + \\\\cdots = 1', color: WHITE });\nawait equation.waitForRender();\nequation.scale(0.8);\nequation.moveTo([2.3, 1.3, 0]);\n\nconst caption = new Text({ text: 'Each step halves the empty space.', fontSize: 20, color: GRAY });\ncaption.moveTo([-2, -2.2, 0]);\n\nconst tiles = [];\nconst tileLabels = [];\nconst remainingBoxes = [[-3.5, -1.5, -0.5, 1.5]];\nconst palette = [BLUE, TEAL, GREEN, BLUE_C, TEAL, GREEN_C];\nlet leftEdge = -3.5;\nlet bottomEdge = -1.5;\nlet rightEdge = -0.5;\nlet topEdge = 1.5;\n\nfor (let i = 0; i < 12; i++) {\n  let bounds;\n  if (i % 2 === 0) {\n    const middle = (leftEdge + rightEdge) / 2;\n    bounds = [leftEdge, bottomEdge, middle, topEdge];\n    leftEdge = middle;\n  } else {\n    const middle = (bottomEdge + topEdge) / 2;\n    bounds = [leftEdge, bottomEdge, rightEdge, middle];\n    bottomEdge = middle;\n  }\n  const [a, b, c, d] = bounds;\n  const tile = new Polygon({ vertices: [[a,b,0],[c,b,0],[c,d,0],[a,d,0]], color: palette[i % palette.length] });\n  tile.setFill(palette[i % palette.length], 0.85);\n  tile.setStrokeWidth(1);\n  tiles.push(tile);\n  remainingBoxes.push([leftEdge, bottomEdge, rightEdge, topEdge]);\n  if (i < 4) {\n    const fraction = new MathTex({ latex: '\\\\frac{1}{' + Math.pow(2, i + 1) + '}', color: WHITE });\n    await fraction.waitForRender();\n    fraction.scale([0.75, 0.65, 0.5, 0.4][i]);\n    fraction.moveTo([(a+c)/2, (b+d)/2, 0]);\n    tileLabels.push(fraction);\n  }\n}\n\nconst emptyOutline = new Polygon({ vertices: [[-3.5,-1.5,0],[-0.5,-1.5,0],[-0.5,1.5,0],[-3.5,1.5,0]], color: YELLOW });\nemptyOutline.setFillOpacity(0);\nemptyOutline.setStrokeWidth(2);\nlet filledLabel;\nlet emptyLabel;\nfunction updateReadout(n) {\n  if (filledLabel) scene.remove(filledLabel);\n  if (emptyLabel) scene.remove(emptyLabel);\n  const denominator = Math.pow(2, n);\n  filledLabel = new Text({ text: n === 0 ? 'Filled area: 0' : 'Filled area: ' + (denominator - 1) + '/' + denominator, fontSize: 25, color: TEAL });\n  filledLabel.moveTo([2.3, 0.25, 0]);\n  emptyLabel = new Text({ text: n === 0 ? 'Unfilled area: 1' : 'Unfilled area: 1/' + denominator, fontSize: 25, color: YELLOW });\n  emptyLabel.moveTo([2.3, -0.45, 0]);\n  scene.add(filledLabel, emptyLabel);\n  const [a,b,c,d] = remainingBoxes[n];\n  emptyOutline.setVertices([[a,b,0],[c,b,0],[c,d,0],[a,d,0]]);\n}\n\nawait scene.play(new AnimationGroup([new Write(title), new Create(outline), new Write(equation)]));\nscene.add(caption, emptyOutline);\nupdateReadout(0);\nawait scene.wait(0.6);\nfor (let n = 1; n <= 6; n++) {\n  await scene.play(new FadeIn(tiles[n - 1]));\n  if (n <= tileLabels.length) scene.add(tileLabels[n - 1]);\n  updateReadout(n);\n  await scene.wait(0.45);\n}\n\nconst limitNote = new Text({ text: 'The leftover area tends to zero.', fontSize: 21, color: WHITE });\nlimitNote.moveTo([2.3, -1.2, 0]);\nawait scene.play(new FadeIn(limitNote));\n\nfunction showSteps(n) {\n  for (const tile of tiles) scene.remove(tile);\n  for (const label of tileLabels) scene.remove(label);\n  scene.remove(emptyOutline);\n  for (let i = 0; i < n; i++) {\n    scene.add(tiles[i]);\n    if (i < tileLabels.length) scene.add(tileLabels[i]);\n  }\n  updateReadout(n);\n  scene.add(emptyOutline);\n}\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\ncontrols.addSlider({ label: 'Number of filled pieces', min: 0, max: 12, step: 1, value: 6, onChange: (value) => showSteps(Math.round(value)) });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 15879,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 8,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/seq-geometric-series.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/seq-geometric-series.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:31.686Z"
+}

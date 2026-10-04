@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-bayes-medical",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.65% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "6.49% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 82751,
+        "inputTokens": 4731,
+        "cachedInputTokens": 4480,
+        "outputTokens": 10411,
+        "costUsd": 0.15826199999999999,
+        "rawResponse": "{  \"explanation\": \"This is the classic base rate fallacy, solved with Bayes' theorem. Out of 1,000 people, only about 10 are sick, and 9 of them test positive — but 99 of the 990 healthy people also (falsely) test positive. So of the 108 positive tests, only 9 are actually sick: 9/108 ≈ 8.3%. Even a 90%-accurate test gives a surprising result because the disease is rare; drag the sliders to see how prevalence, sensitivity, and specificity change the answer.\",  \"manimCode\": \"// ---- Title ----\\nconst title = new Text({ text: 'The Base Rate Fallacy', color: WHITE, fontSize: 38 });\\ntitle.moveTo([-0.9, 3.5, 0]);\\nawait scene.play(new Write(title));\\n\\n// ---- Divider ----\\nconst divider = new Line({ start: [-0.45, 2.9, 0], end: [-0.45, -1.6, 0], color: GRAY });\\ndivider.setOpacity(0.4);\\nscene.add(divider);\\n\\n// ---- Population grid: 1,000 dots ----\\nconst COLS = 40, ROWS = 25, N = 1000;\\nconst spacing = 0.13;\\nconst cx = -3.35, cy = 0.4;\\nconst dots = [];\\nfor (let r = 0; r < ROWS; r++) {\\n  for (let c = 0; c < COLS; c++) {\\n    const x = cx + (c - (COLS - 1) / 2) * spacing;\\n    const y = cy + ((ROWS - 1) / 2 - r) * spacing;\\n    const d = new Dot({ point: [x, y, 0], radius: 0.05, color: GRAY });\\n    dots.push(d);\\n    scene.add(d);\\n  }\\n}\\n\\nconst caption = new Text({ text: 'each dot = 1 person (1,000 total)', color: GRAY, fontSize: 20 });\\ncaption.moveTo([cx, cy - 1.85, 0]);\\nscene.add(caption);\\n\\n// ---- Deterministic shuffle so colored dots spread out ----\\nfunction mulberry32(a) {\\n  return function () {\\n    a |= 0; a = (a + 0x6D2B79F5) | 0;\\n    let t = Math.imul(a ^ (a >>> 15), 1 | a);\\n    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;\\n    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;\\n  };\\n}\\nconst rng = mulberry32(12345);\\nconst orderIdx = [];\\nfor (let i = 0; i < N; i++) orderIdx.push(i);\\nfor (let i = N - 1; i > 0; i--) {\\n  const j = Math.floor(rng() * (i + 1));\\n  const tmp = orderIdx[i]; orderIdx[i] = orderIdx[j]; orderIdx[j] = tmp;\\n}\\n\\n// ---- Parameters (percent) ----\\nlet prevPct = 1, sensPct = 90, specPct = 90;\\n\\n// ---- Stats panel (Text is immutable: remove & recreate on update) ----\\nlet statMobs = [];\\nfunction setStats(items) {\\n  for (const m of statMobs) scene.remove(m);\\n  statMobs = [];\\n  for (const it of items) {\\n    const t = new Text({ text: it.s, color: it.c, fontSize: it.f });\\n    t.moveTo([2.75, it.y, 0]);\\n    scene.add(t);\\n    statMobs.push(t);\\n  }\\n}\\n\\nfunction updateViz() {\\n  const sick = Math.max(1, Math.round(prevPct * 10));\\n  const healthy = N - sick;\\n  const tp = Math.round(sick * sensPct / 100);\\n  const fp = Math.round(healthy * (1 - specPct / 100));\\n  const totalPos = tp + fp;\\n  const pct = totalPos > 0 ? (100 * tp / totalPos) : 0;\\n\\n  for (let i = 0; i < N; i++) {\\n    const d = dots[orderIdx[i]];\\n    if (i < tp) { d.setColor(RED); d.setOpacity(1); }           // sick, test +\\n    else if (i < sick) { d.setColor(MAROON); d.setOpacity(0.9); } // sick, test -\\n    else if (i < sick + fp) { d.setColor(YELLOW); d.setOpacity(1); } // healthy, test +\\n    else { d.setColor(GRAY); d.setOpacity(0.22); }              // healthy, test -\\n  }\\n\\n  setStats([\\n    { s: 'Out of 1,000 people:', c: WHITE, f: 26, y: 2.55 },\\n    { s: sick + ' sick  •  ' + healthy + ' healthy', c: GRAY, f: 22, y: 2.0 },\\n    { s: 'Tested positive: ' + totalPos, c: WHITE, f: 24, y: 1.3 },\\n    { s: tp + ' sick (true positives)', c: RED, f: 22, y: 0.72 },\\n    { s: fp + ' healthy (false positives)', c: YELLOW, f: 22, y: 0.22 },\\n    { s: 'P(sick | +) \\\\u2248 ' + pct.toFixed(1) + '%', c: GOLD, f: 40, y: -0.6 },\\n    { s: '= ' + tp + ' of ' + totalPos + ' positive tests', c: GOLD, f: 20, y: -1.3 },\\n  ]);\\n}\\n\\n// ---- Bayes formula ----\\nconst formula = new MathTex({ latex: 'P(\\\\\\\\text{sick}\\\\\\\\,|\\\\\\\\,+)=\\\\\\\\frac{P(+\\\\\\\\,|\\\\\\\\,\\\\\\\\text{sick})\\\\\\\\,P(\\\\\\\\text{sick})}{P(+\\\\\\\\,|\\\\\\\\,\\\\\\\\text{sick})\\\\\\\\,P(\\\\\\\\text{sick})+P(+\\\\\\\\,|\\\\\\\\,\\\\\\\\text{healthy})\\\\\\\\,P(\\\\\\\\text{healthy})}' });\\nawait formula.waitForRender();\\nformula.scale(0.5);\\nformula.moveTo([-2.2, -3.35, 0]);\\nscene.add(formula);\\n\\nupdateViz();\\n\\n// ---- Interactive controls ----\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\\ncontrols.addSlider({ label: 'Prevalence (%)', min: 0.1, max: 20, value: 1, step: 0.1, onChange: (v) => { prevPct = v; updateViz(); } });\\ncontrols.addSlider({ label: 'Sensitivity (%)', min: 50, max: 100, value: 90, step: 1, onChange: (v) => { sensPct = v; updateViz(); } });\\ncontrols.addSlider({ label: 'Specificity (%)', min: 50, max: 100, value: 90, step: 1, onChange: (v) => { specPct = v; updateViz(); } });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "This is the classic base rate fallacy, solved with Bayes' theorem. Out of 1,000 people, only about 10 are sick, and 9 of them test positive — but 99 of the 990 healthy people also (falsely) test positive. So of the 108 positive tests, only 9 are actually sick: 9/108 ≈ 8.3%. Even a 90%-accurate test gives a surprising result because the disease is rare; drag the sliders to see how prevalence, sensitivity, and specificity change the answer."
+      },
+      "code": "// ---- Title ----\nconst title = new Text({ text: 'The Base Rate Fallacy', color: WHITE, fontSize: 38 });\ntitle.moveTo([-0.9, 3.5, 0]);\nawait scene.play(new Write(title));\n\n// ---- Divider ----\nconst divider = new Line({ start: [-0.45, 2.9, 0], end: [-0.45, -1.6, 0], color: GRAY });\ndivider.setOpacity(0.4);\nscene.add(divider);\n\n// ---- Population grid: 1,000 dots ----\nconst COLS = 40, ROWS = 25, N = 1000;\nconst spacing = 0.13;\nconst cx = -3.35, cy = 0.4;\nconst dots = [];\nfor (let r = 0; r < ROWS; r++) {\n  for (let c = 0; c < COLS; c++) {\n    const x = cx + (c - (COLS - 1) / 2) * spacing;\n    const y = cy + ((ROWS - 1) / 2 - r) * spacing;\n    const d = new Dot({ point: [x, y, 0], radius: 0.05, color: GRAY });\n    dots.push(d);\n    scene.add(d);\n  }\n}\n\nconst caption = new Text({ text: 'each dot = 1 person (1,000 total)', color: GRAY, fontSize: 20 });\ncaption.moveTo([cx, cy - 1.85, 0]);\nscene.add(caption);\n\n// ---- Deterministic shuffle so colored dots spread out ----\nfunction mulberry32(a) {\n  return function () {\n    a |= 0; a = (a + 0x6D2B79F5) | 0;\n    let t = Math.imul(a ^ (a >>> 15), 1 | a);\n    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;\n    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;\n  };\n}\nconst rng = mulberry32(12345);\nconst orderIdx = [];\nfor (let i = 0; i < N; i++) orderIdx.push(i);\nfor (let i = N - 1; i > 0; i--) {\n  const j = Math.floor(rng() * (i + 1));\n  const tmp = orderIdx[i]; orderIdx[i] = orderIdx[j]; orderIdx[j] = tmp;\n}\n\n// ---- Parameters (percent) ----\nlet prevPct = 1, sensPct = 90, specPct = 90;\n\n// ---- Stats panel (Text is immutable: remove & recreate on update) ----\nlet statMobs = [];\nfunction setStats(items) {\n  for (const m of statMobs) scene.remove(m);\n  statMobs = [];\n  for (const it of items) {\n    const t = new Text({ text: it.s, color: it.c, fontSize: it.f });\n    t.moveTo([2.75, it.y, 0]);\n    scene.add(t);\n    statMobs.push(t);\n  }\n}\n\nfunction updateViz() {\n  const sick = Math.max(1, Math.round(prevPct * 10));\n  const healthy = N - sick;\n  const tp = Math.round(sick * sensPct / 100);\n  const fp = Math.round(healthy * (1 - specPct / 100));\n  const totalPos = tp + fp;\n  const pct = totalPos > 0 ? (100 * tp / totalPos) : 0;\n\n  for (let i = 0; i < N; i++) {\n    const d = dots[orderIdx[i]];\n    if (i < tp) { d.setColor(RED); d.setOpacity(1); }           // sick, test +\n    else if (i < sick) { d.setColor(MAROON); d.setOpacity(0.9); } // sick, test -\n    else if (i < sick + fp) { d.setColor(YELLOW); d.setOpacity(1); } // healthy, test +\n    else { d.setColor(GRAY); d.setOpacity(0.22); }              // healthy, test -\n  }\n\n  setStats([\n    { s: 'Out of 1,000 people:', c: WHITE, f: 26, y: 2.55 },\n    { s: sick + ' sick  •  ' + healthy + ' healthy', c: GRAY, f: 22, y: 2.0 },\n    { s: 'Tested positive: ' + totalPos, c: WHITE, f: 24, y: 1.3 },\n    { s: tp + ' sick (true positives)', c: RED, f: 22, y: 0.72 },\n    { s: fp + ' healthy (false positives)', c: YELLOW, f: 22, y: 0.22 },\n    { s: 'P(sick | +) \\u2248 ' + pct.toFixed(1) + '%', c: GOLD, f: 40, y: -0.6 },\n    { s: '= ' + tp + ' of ' + totalPos + ' positive tests', c: GOLD, f: 20, y: -1.3 },\n  ]);\n}\n\n// ---- Bayes formula ----\nconst formula = new MathTex({ latex: 'P(\\\\text{sick}\\\\,|\\\\,+)=\\\\frac{P(+\\\\,|\\\\,\\\\text{sick})\\\\,P(\\\\text{sick})}{P(+\\\\,|\\\\,\\\\text{sick})\\\\,P(\\\\text{sick})+P(+\\\\,|\\\\,\\\\text{healthy})\\\\,P(\\\\text{healthy})}' });\nawait formula.waitForRender();\nformula.scale(0.5);\nformula.moveTo([-2.2, -3.35, 0]);\nscene.add(formula);\n\nupdateViz();\n\n// ---- Interactive controls ----\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\ncontrols.addSlider({ label: 'Prevalence (%)', min: 0.1, max: 20, value: 1, step: 0.1, onChange: (v) => { prevPct = v; updateViz(); } });\ncontrols.addSlider({ label: 'Sensitivity (%)', min: 50, max: 100, value: 90, step: 1, onChange: (v) => { sensPct = v; updateViz(); } });\ncontrols.addSlider({ label: 'Specificity (%)', min: 50, max: 100, value: 90, step: 1, onChange: (v) => { specPct = v; updateViz(); } });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 21899,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 3,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/stats-bayes-medical.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/stats-bayes-medical.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:57:29.232Z"
+}

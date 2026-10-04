@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-phone-plans",
+  "model": "anthropic/claude-opus-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.90% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.02% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 21062,
+        "inputTokens": 8081,
+        "cachedInputTokens": 7569,
+        "outputTokens": 2537,
+        "costUsd": 0.05634180000000001,
+        "rawResponse": "{\"explanation\":\"Set the costs equal: 20 + 0.10m = 35 + 0.05m. Then 0.05m = 15, so m = 300 minutes, and both plans cost $50. Plan A starts $15 cheaper, and Plan B saves 5¢ per minute, so Plan B catches up after 15 ÷ 0.05 = 300 minutes. Under 300 minutes Plan A is cheaper, and over 300 minutes Plan B is cheaper. Drag the Minutes slider to compare the plans at any point.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [0, 600, 100],\\n  yRange: [0, 80, 10],\\n  xLength: 9,\\n  yLength: 5.2,\\n  tips: false,\\n  axisConfig: { includeNumbers: true }\\n});\\nax.moveTo([-0.8, -0.6, 0]);\\n\\nconst fA = m => 20 + 0.10 * m;\\nconst fB = m => 35 + 0.05 * m;\\n\\nconst lineA = ax.plot(fA, { color: BLUE, xRange: [0, 600] });\\nconst lineB = ax.plot(fB, { color: ORANGE, xRange: [0, 600] });\\n\\nconst title = new Text({ text: 'When do phone plans A and B cost the same?', color: WHITE, fontSize: 26 });\\ntitle.moveTo([-1.2, 3.5, 0]);\\n\\nconst xLab = new Text({ text: 'minutes', color: GRAY, fontSize: 20 });\\nxLab.moveTo(ax.c2p(560, -9));\\nconst yLab = new Text({ text: 'cost ($)', color: GRAY, fontSize: 20 });\\nyLab.moveTo(ax.c2p(40, 86));\\n\\nscene.add(ax);\\nawait scene.play(new Write(title));\\nawait scene.play(new AnimationGroup([new FadeIn(xLab), new FadeIn(yLab)]));\\n\\nconst labA = new MathTex({ latex: 'A = 20 + 0.10m', color: BLUE });\\nawait labA.waitForRender();\\nlabA.scale(0.75);\\nlabA.moveTo(ax.c2p(500, 80));\\n\\nconst labB = new MathTex({ latex: 'B = 35 + 0.05m', color: ORANGE });\\nawait labB.waitForRender();\\nlabB.scale(0.75);\\nlabB.moveTo(ax.c2p(500, 57));\\n\\nawait scene.play(new AnimationGroup([new Create(lineA), new Create(lineB)]));\\nawait scene.play(new AnimationGroup([new Write(labA), new Write(labB)]));\\n\\n// Intersection\\nconst inter = new Dot({ point: ax.c2p(300, 50), color: YELLOW });\\ninter.scale(1.4);\\nconst interLab = new MathTex({ latex: '(300,\\\\\\\\ \\\\\\\\$50)', color: YELLOW });\\nawait interLab.waitForRender();\\ninterLab.scale(0.75);\\ninterLab.moveTo(ax.c2p(300, 60));\\nawait scene.play(new FadeIn(inter));\\nawait scene.play(new Write(interLab));\\n\\n// Interactive slider\\nlet m = 100;\\nconst vline = new Polygon({ vertices: [ax.c2p(m, 0), ax.c2p(m, 80)], color: GRAY });\\nvline.setStrokeWidth(2);\\nvline.setFillOpacity(0);\\nconst dA = new Dot({ point: ax.c2p(m, fA(m)), color: BLUE });\\nconst dB = new Dot({ point: ax.c2p(m, fB(m)), color: ORANGE });\\ndA.addUpdater(() => dA.moveTo(ax.c2p(m, fA(m))));\\ndB.addUpdater(() => dB.moveTo(ax.c2p(m, fB(m))));\\nscene.add(vline, dA, dB);\\n\\nlet readout = null;\\nfunction updateReadout() {\\n  if (readout) scene.remove(readout);\\n  const a = fA(m), b = fB(m);\\n  let verdict = 'Same cost!';\\n  if (a < b - 1e-9) verdict = 'Plan A is cheaper';\\n  else if (b < a - 1e-9) verdict = 'Plan B is cheaper';\\n  readout = new Text({\\n    text: m.toFixed(0) + ' min:  A = $' + a.toFixed(2) + '   B = $' + b.toFixed(2) + '   -> ' + verdict,\\n    color: WHITE,\\n    fontSize: 22\\n  });\\n  readout.moveTo([-0.8, -3.6, 0]);\\n  scene.add(readout);\\n}\\nupdateReadout();\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({\\n  label: 'Minutes', min: 0, max: 600, value: 100, step: 10,\\n  onChange: (v) => {\\n    m = v;\\n    vline.setVertices([ax.c2p(m, 0), ax.c2p(m, 80)]);\\n    updateReadout();\\n  }\\n});\\ncontrols.addButton({\\n  label: 'Jump to break-even',\\n  onClick: () => {\\n    m = 300;\\n    vline.setVertices([ax.c2p(m, 0), ax.c2p(m, 80)]);\\n    updateReadout();\\n  }\\n});\\n\\nmakeHoverable(inter, scene, { hoverScale: 1.5 });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Set the costs equal: 20 + 0.10m = 35 + 0.05m. Then 0.05m = 15, so m = 300 minutes, and both plans cost $50. Plan A starts $15 cheaper, and Plan B saves 5¢ per minute, so Plan B catches up after 15 ÷ 0.05 = 300 minutes. Under 300 minutes Plan A is cheaper, and over 300 minutes Plan B is cheaper. Drag the Minutes slider to compare the plans at any point."
+      },
+      "code": "const ax = new Axes({\n  xRange: [0, 600, 100],\n  yRange: [0, 80, 10],\n  xLength: 9,\n  yLength: 5.2,\n  tips: false,\n  axisConfig: { includeNumbers: true }\n});\nax.moveTo([-0.8, -0.6, 0]);\n\nconst fA = m => 20 + 0.10 * m;\nconst fB = m => 35 + 0.05 * m;\n\nconst lineA = ax.plot(fA, { color: BLUE, xRange: [0, 600] });\nconst lineB = ax.plot(fB, { color: ORANGE, xRange: [0, 600] });\n\nconst title = new Text({ text: 'When do phone plans A and B cost the same?', color: WHITE, fontSize: 26 });\ntitle.moveTo([-1.2, 3.5, 0]);\n\nconst xLab = new Text({ text: 'minutes', color: GRAY, fontSize: 20 });\nxLab.moveTo(ax.c2p(560, -9));\nconst yLab = new Text({ text: 'cost ($)', color: GRAY, fontSize: 20 });\nyLab.moveTo(ax.c2p(40, 86));\n\nscene.add(ax);\nawait scene.play(new Write(title));\nawait scene.play(new AnimationGroup([new FadeIn(xLab), new FadeIn(yLab)]));\n\nconst labA = new MathTex({ latex: 'A = 20 + 0.10m', color: BLUE });\nawait labA.waitForRender();\nlabA.scale(0.75);\nlabA.moveTo(ax.c2p(500, 80));\n\nconst labB = new MathTex({ latex: 'B = 35 + 0.05m', color: ORANGE });\nawait labB.waitForRender();\nlabB.scale(0.75);\nlabB.moveTo(ax.c2p(500, 57));\n\nawait scene.play(new AnimationGroup([new Create(lineA), new Create(lineB)]));\nawait scene.play(new AnimationGroup([new Write(labA), new Write(labB)]));\n\n// Intersection\nconst inter = new Dot({ point: ax.c2p(300, 50), color: YELLOW });\ninter.scale(1.4);\nconst interLab = new MathTex({ latex: '(300,\\\\ \\\\$50)', color: YELLOW });\nawait interLab.waitForRender();\ninterLab.scale(0.75);\ninterLab.moveTo(ax.c2p(300, 60));\nawait scene.play(new FadeIn(inter));\nawait scene.play(new Write(interLab));\n\n// Interactive slider\nlet m = 100;\nconst vline = new Polygon({ vertices: [ax.c2p(m, 0), ax.c2p(m, 80)], color: GRAY });\nvline.setStrokeWidth(2);\nvline.setFillOpacity(0);\nconst dA = new Dot({ point: ax.c2p(m, fA(m)), color: BLUE });\nconst dB = new Dot({ point: ax.c2p(m, fB(m)), color: ORANGE });\ndA.addUpdater(() => dA.moveTo(ax.c2p(m, fA(m))));\ndB.addUpdater(() => dB.moveTo(ax.c2p(m, fB(m))));\nscene.add(vline, dA, dB);\n\nlet readout = null;\nfunction updateReadout() {\n  if (readout) scene.remove(readout);\n  const a = fA(m), b = fB(m);\n  let verdict = 'Same cost!';\n  if (a < b - 1e-9) verdict = 'Plan A is cheaper';\n  else if (b < a - 1e-9) verdict = 'Plan B is cheaper';\n  readout = new Text({\n    text: m.toFixed(0) + ' min:  A = $' + a.toFixed(2) + '   B = $' + b.toFixed(2) + '   -> ' + verdict,\n    color: WHITE,\n    fontSize: 22\n  });\n  readout.moveTo([-0.8, -3.6, 0]);\n  scene.add(readout);\n}\nupdateReadout();\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({\n  label: 'Minutes', min: 0, max: 600, value: 100, step: 10,\n  onChange: (v) => {\n    m = v;\n    vline.setVertices([ax.c2p(m, 0), ax.c2p(m, 80)]);\n    updateReadout();\n  }\n});\ncontrols.addButton({\n  label: 'Jump to break-even',\n  onClick: () => {\n    m = 300;\n    vline.setVertices([ax.c2p(m, 0), ax.c2p(m, 80)]);\n    updateReadout();\n  }\n});\n\nmakeHoverable(inter, scene, { hoverScale: 1.5 });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 13153,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 6,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "anthropic__claude-opus-5.5/alg-phone-plans.0.final.jpg",
+        "interacted": "anthropic__claude-opus-5.5/alg-phone-plans.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:02.236Z"
+}

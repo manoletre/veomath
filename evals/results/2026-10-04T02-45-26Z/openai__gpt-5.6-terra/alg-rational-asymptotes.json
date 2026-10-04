@@ -1,0 +1,81 @@
+{
+  "itemId": "alg-rational-asymptotes",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 0.7,
+  "firstAttemptScore": 0.7,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.7,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.09% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "FunctionGraph [x -5.25..0.75, y -22.05..0.00] exceeds frame ±7.11 × ±4.00\nFunctionGraph [x 1.00..5.25, y 1.08..22.95] exceeds frame ±7.11 × ±4.00\nGroup [x -1.40..5.97, y -0.77..4.17] exceeds frame ±7.11 × ±4.00\nMathTex \"f(x)=\\frac{2x+1}{x-3}=2+\\frac{7}{x-3}\" [x -3.43..3.38, y 2.93..4.14] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "MathTex \"y\" overlaps MathTex \"f(x)=\\frac{2x+1}{x-3}=2+\\frac{7}{x-3}\" (100%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.13% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 21524,
+        "inputTokens": 11749,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1014,
+        "costUsd": 0.0158516,
+        "rawResponse": "{\"explanation\":\"The function can be rewritten as \\\\(f(x)=2+\\\\frac{7}{x-3}\\\\). Thus \\\\(x=3\\\\) is a vertical asymptote, while \\\\(y=2\\\\) is a horizontal asymptote: the curve approaches these lines but never reaches them.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-4, 8, 1],\\n  yRange: [-6, 8, 2],\\n  xLength: 10.5,\\n  yLength: 6.3,\\n  tips: true\\n});\\nconst axisLabels = ax.getAxisLabels();\\n\\nconst leftBranch = ax.plot(x => (2 * x + 1) / (x - 3), {\\n  xRange: [-4, 2.86],\\n  color: BLUE,\\n  numSamples: 500\\n});\\nconst rightBranch = ax.plot(x => (2 * x + 1) / (x - 3), {\\n  xRange: [3.14, 8],\\n  color: BLUE,\\n  numSamples: 500\\n});\\n\\nconst verticalAsymptote = new Polygon({\\n  vertices: [ax.c2p(3, -6), ax.c2p(3, 8)],\\n  color: YELLOW\\n});\\nverticalAsymptote.setStrokeWidth(3).setFillOpacity(0);\\n\\nconst horizontalAsymptote = new Polygon({\\n  vertices: [ax.c2p(-4, 2), ax.c2p(8, 2)],\\n  color: YELLOW\\n});\\nhorizontalAsymptote.setStrokeWidth(3).setFillOpacity(0);\\n\\nconst title = new MathTex({ latex: 'f(x)=\\\\\\\\frac{2x+1}{x-3}=2+\\\\\\\\frac{7}{x-3}' });\\nconst verticalLabel = new MathTex({ latex: 'x=3' });\\nconst horizontalLabel = new MathTex({ latex: 'y=2' });\\nawait title.waitForRender();\\nawait verticalLabel.waitForRender();\\nawait horizontalLabel.waitForRender();\\ntitle.moveTo([0, 3.5, 0]);\\nverticalLabel.moveTo(ax.c2p(3.55, 7.1));\\nhorizontalLabel.moveTo(ax.c2p(-3.15, 2.65));\\nverticalLabel.setColor(YELLOW);\\nhorizontalLabel.setColor(YELLOW);\\n\\nlet xValue = 0;\\nconst movingDot = new Dot({ color: RED, radius: 0.09 });\\nmovingDot.addUpdater(d => {\\n  const safeX = Math.abs(xValue - 3) < 0.12 ? 3.12 : xValue;\\n  d.moveTo(ax.c2p(safeX, (2 * safeX + 1) / (safeX - 3)));\\n});\\n\\nawait scene.play(new AnimationGroup([\\n  new Create(ax),\\n  new Create(leftBranch),\\n  new Create(rightBranch)\\n]));\\nscene.add(axisLabels, title);\\nawait scene.play(new AnimationGroup([\\n  new Create(verticalAsymptote),\\n  new Create(horizontalAsymptote),\\n  new Write(verticalLabel),\\n  new Write(horizontalLabel)\\n]));\\nscene.add(movingDot);\\n\\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 260 });\\ncontrols.addSlider({\\n  label: 'Trace x', min: -4, max: 8, value: 0, step: 0.05,\\n  onChange: v => { xValue = v; }\\n});\\ncontrols.addButton({\\n  label: 'Reset tracer',\\n  onClick: () => { xValue = 0; }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The function can be rewritten as \\(f(x)=2+\\frac{7}{x-3}\\). Thus \\(x=3\\) is a vertical asymptote, while \\(y=2\\) is a horizontal asymptote: the curve approaches these lines but never reaches them."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-4, 8, 1],\n  yRange: [-6, 8, 2],\n  xLength: 10.5,\n  yLength: 6.3,\n  tips: true\n});\nconst axisLabels = ax.getAxisLabels();\n\nconst leftBranch = ax.plot(x => (2 * x + 1) / (x - 3), {\n  xRange: [-4, 2.86],\n  color: BLUE,\n  numSamples: 500\n});\nconst rightBranch = ax.plot(x => (2 * x + 1) / (x - 3), {\n  xRange: [3.14, 8],\n  color: BLUE,\n  numSamples: 500\n});\n\nconst verticalAsymptote = new Polygon({\n  vertices: [ax.c2p(3, -6), ax.c2p(3, 8)],\n  color: YELLOW\n});\nverticalAsymptote.setStrokeWidth(3).setFillOpacity(0);\n\nconst horizontalAsymptote = new Polygon({\n  vertices: [ax.c2p(-4, 2), ax.c2p(8, 2)],\n  color: YELLOW\n});\nhorizontalAsymptote.setStrokeWidth(3).setFillOpacity(0);\n\nconst title = new MathTex({ latex: 'f(x)=\\\\frac{2x+1}{x-3}=2+\\\\frac{7}{x-3}' });\nconst verticalLabel = new MathTex({ latex: 'x=3' });\nconst horizontalLabel = new MathTex({ latex: 'y=2' });\nawait title.waitForRender();\nawait verticalLabel.waitForRender();\nawait horizontalLabel.waitForRender();\ntitle.moveTo([0, 3.5, 0]);\nverticalLabel.moveTo(ax.c2p(3.55, 7.1));\nhorizontalLabel.moveTo(ax.c2p(-3.15, 2.65));\nverticalLabel.setColor(YELLOW);\nhorizontalLabel.setColor(YELLOW);\n\nlet xValue = 0;\nconst movingDot = new Dot({ color: RED, radius: 0.09 });\nmovingDot.addUpdater(d => {\n  const safeX = Math.abs(xValue - 3) < 0.12 ? 3.12 : xValue;\n  d.moveTo(ax.c2p(safeX, (2 * safeX + 1) / (safeX - 3)));\n});\n\nawait scene.play(new AnimationGroup([\n  new Create(ax),\n  new Create(leftBranch),\n  new Create(rightBranch)\n]));\nscene.add(axisLabels, title);\nawait scene.play(new AnimationGroup([\n  new Create(verticalAsymptote),\n  new Create(horizontalAsymptote),\n  new Write(verticalLabel),\n  new Write(horizontalLabel)\n]));\nscene.add(movingDot);\n\nconst controls = new Controls(scene, { position: 'bottom-left', theme: 'dark', width: 260 });\ncontrols.addSlider({\n  label: 'Trace x', min: -4, max: 8, value: 0, step: 0.05,\n  onChange: v => { xValue = v; }\n});\ncontrols.addButton({\n  label: 'Reset tracer',\n  onClick: () => { xValue = 0; }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 7711,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 2,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/alg-rational-asymptotes.0.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/alg-rational-asymptotes.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:57:02.841Z"
+}

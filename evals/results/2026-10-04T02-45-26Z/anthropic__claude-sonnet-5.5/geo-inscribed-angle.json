@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-inscribed-angle",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.62% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.81% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 12910,
+        "inputTokens": 7974,
+        "cachedInputTokens": 7476,
+        "outputTokens": 1862,
+        "costUsd": 0.022103199999999996,
+        "rawResponse": "{\"explanation\":\"The inscribed angle theorem says that for a fixed chord AB, every point P on the same arc sees AB at the same angle, which is half the central angle AOB. Drag the yellow point P along the circle's major arc and the angle at P stays constant. The label shows it is always half of the central angle.\",\"manimCode\":\"const R = 2.3;\\nconst C = [-1.5, 0, 0];\\nconst pt = (a) => [C[0] + R*Math.cos(a), C[1] + R*Math.sin(a), 0];\\n\\nconst circle = new Circle({ radius: R, color: BLUE });\\ncircle.moveTo(C);\\n\\nconst aA = Math.PI * 1.15, aB = Math.PI * 1.85; // chord at bottom\\nconst A = pt(aA), B = pt(aB);\\nconst O = C;\\n\\nconst dotA = new Dot({ point: A, color: RED });\\nconst dotB = new Dot({ point: B, color: RED });\\nconst dotO = new Dot({ point: O, color: WHITE });\\n\\nconst chordAB = new Polygon({ vertices: [A, B], color: RED });\\nchordAB.setStrokeWidth(4).setFillOpacity(0);\\n\\nconst centralA = new Polygon({ vertices: [O, A], color: GRAY });\\ncentralA.setStrokeWidth(2).setFillOpacity(0);\\nconst centralB = new Polygon({ vertices: [O, B], color: GRAY });\\ncentralB.setStrokeWidth(2).setFillOpacity(0);\\n\\nlet ang = Math.PI * 0.5;\\nconst P = new Dot({ point: pt(ang), color: YELLOW, radius: 0.12 });\\n\\nconst sideA = new Polygon({ vertices: [pt(ang), A], color: YELLOW });\\nsideA.setStrokeWidth(3).setFillOpacity(0);\\nconst sideB = new Polygon({ vertices: [pt(ang), B], color: YELLOW });\\nsideB.setStrokeWidth(3).setFillOpacity(0);\\n\\nscene.add(circle, chordAB, centralA, centralB, sideA, sideB, dotA, dotB, dotO, P);\\n\\n// Angle values\\nconst central = (() => {\\n  const v1 = [A[0]-O[0], A[1]-O[1]], v2 = [B[0]-O[0], B[1]-O[1]];\\n  return Math.acos((v1[0]*v2[0]+v1[1]*v2[1]) / (R*R)) * 180 / Math.PI;\\n})();\\n\\nlet info = null;\\nfunction showInfo(deg) {\\n  if (info) scene.remove(info);\\n  info = new Text({\\n    text: 'Inscribed angle APB = ' + deg.toFixed(1) + '°\\\\nCentral angle AOB = ' + central.toFixed(1) + '°\\\\nInscribed = ½ · Central',\\n    color: WHITE, fontSize: 24\\n  });\\n  info.moveTo([4, 1.5, 0]);\\n  scene.add(info);\\n}\\n\\nlet arcMark = null;\\nfunction update() {\\n  const [x, y] = P.getCenter();\\n  // keep P on circle, only on the major arc (above chord)\\n  let a = Math.atan2(y - C[1], x - C[0]);\\n  if (a < 0) a += 2*Math.PI;\\n  // allowed arc: from aB (wrapping) to aA, i.e. outside (aA, aB)\\n  if (a > aA && a < aB) {\\n    a = (a - aA < aB - a) ? aA - 0.05 : aB + 0.05 - 2*Math.PI;\\n  }\\n  const p = pt(a);\\n  P.moveTo(p);\\n  sideA.setVertices([p, A]);\\n  sideB.setVertices([p, B]);\\n  const u = [A[0]-p[0], A[1]-p[1]], w = [B[0]-p[0], B[1]-p[1]];\\n  const cosv = (u[0]*w[0]+u[1]*w[1]) / (Math.hypot(...u) * Math.hypot(...w));\\n  const deg = Math.acos(Math.max(-1, Math.min(1, cosv))) * 180 / Math.PI;\\n  showInfo(deg);\\n  // small arc marker at P\\n  if (arcMark) scene.remove(arcMark);\\n  const a1 = Math.atan2(u[1], u[0]), a2 = Math.atan2(w[1], w[0]);\\n  let d = a2 - a1;\\n  while (d > Math.PI) d -= 2*Math.PI;\\n  while (d < -Math.PI) d += 2*Math.PI;\\n  const verts = [];\\n  for (let i = 0; i <= 12; i++) {\\n    const t = a1 + d * i / 12;\\n    verts.push([p[0] + 0.5*Math.cos(t), p[1] + 0.5*Math.sin(t), 0]);\\n  }\\n  arcMark = new Polygon({ vertices: verts, color: ORANGE });\\n  arcMark.setStrokeWidth(4).setFillOpacity(0);\\n  scene.add(arcMark);\\n}\\n\\nmakeDraggable(P, scene, { onDrag: update });\\nupdate();\\n\\nconst title = new Text({ text: 'Inscribed Angle Theorem — drag the yellow point', color: WHITE, fontSize: 28 });\\ntitle.moveTo([0, 3.5, 0]);\\nscene.add(title);\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "The inscribed angle theorem says that for a fixed chord AB, every point P on the same arc sees AB at the same angle, which is half the central angle AOB. Drag the yellow point P along the circle's major arc and the angle at P stays constant. The label shows it is always half of the central angle."
+      },
+      "code": "const R = 2.3;\nconst C = [-1.5, 0, 0];\nconst pt = (a) => [C[0] + R*Math.cos(a), C[1] + R*Math.sin(a), 0];\n\nconst circle = new Circle({ radius: R, color: BLUE });\ncircle.moveTo(C);\n\nconst aA = Math.PI * 1.15, aB = Math.PI * 1.85; // chord at bottom\nconst A = pt(aA), B = pt(aB);\nconst O = C;\n\nconst dotA = new Dot({ point: A, color: RED });\nconst dotB = new Dot({ point: B, color: RED });\nconst dotO = new Dot({ point: O, color: WHITE });\n\nconst chordAB = new Polygon({ vertices: [A, B], color: RED });\nchordAB.setStrokeWidth(4).setFillOpacity(0);\n\nconst centralA = new Polygon({ vertices: [O, A], color: GRAY });\ncentralA.setStrokeWidth(2).setFillOpacity(0);\nconst centralB = new Polygon({ vertices: [O, B], color: GRAY });\ncentralB.setStrokeWidth(2).setFillOpacity(0);\n\nlet ang = Math.PI * 0.5;\nconst P = new Dot({ point: pt(ang), color: YELLOW, radius: 0.12 });\n\nconst sideA = new Polygon({ vertices: [pt(ang), A], color: YELLOW });\nsideA.setStrokeWidth(3).setFillOpacity(0);\nconst sideB = new Polygon({ vertices: [pt(ang), B], color: YELLOW });\nsideB.setStrokeWidth(3).setFillOpacity(0);\n\nscene.add(circle, chordAB, centralA, centralB, sideA, sideB, dotA, dotB, dotO, P);\n\n// Angle values\nconst central = (() => {\n  const v1 = [A[0]-O[0], A[1]-O[1]], v2 = [B[0]-O[0], B[1]-O[1]];\n  return Math.acos((v1[0]*v2[0]+v1[1]*v2[1]) / (R*R)) * 180 / Math.PI;\n})();\n\nlet info = null;\nfunction showInfo(deg) {\n  if (info) scene.remove(info);\n  info = new Text({\n    text: 'Inscribed angle APB = ' + deg.toFixed(1) + '°\\nCentral angle AOB = ' + central.toFixed(1) + '°\\nInscribed = ½ · Central',\n    color: WHITE, fontSize: 24\n  });\n  info.moveTo([4, 1.5, 0]);\n  scene.add(info);\n}\n\nlet arcMark = null;\nfunction update() {\n  const [x, y] = P.getCenter();\n  // keep P on circle, only on the major arc (above chord)\n  let a = Math.atan2(y - C[1], x - C[0]);\n  if (a < 0) a += 2*Math.PI;\n  // allowed arc: from aB (wrapping) to aA, i.e. outside (aA, aB)\n  if (a > aA && a < aB) {\n    a = (a - aA < aB - a) ? aA - 0.05 : aB + 0.05 - 2*Math.PI;\n  }\n  const p = pt(a);\n  P.moveTo(p);\n  sideA.setVertices([p, A]);\n  sideB.setVertices([p, B]);\n  const u = [A[0]-p[0], A[1]-p[1]], w = [B[0]-p[0], B[1]-p[1]];\n  const cosv = (u[0]*w[0]+u[1]*w[1]) / (Math.hypot(...u) * Math.hypot(...w));\n  const deg = Math.acos(Math.max(-1, Math.min(1, cosv))) * 180 / Math.PI;\n  showInfo(deg);\n  // small arc marker at P\n  if (arcMark) scene.remove(arcMark);\n  const a1 = Math.atan2(u[1], u[0]), a2 = Math.atan2(w[1], w[0]);\n  let d = a2 - a1;\n  while (d > Math.PI) d -= 2*Math.PI;\n  while (d < -Math.PI) d += 2*Math.PI;\n  const verts = [];\n  for (let i = 0; i <= 12; i++) {\n    const t = a1 + d * i / 12;\n    verts.push([p[0] + 0.5*Math.cos(t), p[1] + 0.5*Math.sin(t), 0]);\n  }\n  arcMark = new Polygon({ vertices: verts, color: ORANGE });\n  arcMark.setStrokeWidth(4).setFillOpacity(0);\n  scene.add(arcMark);\n}\n\nmakeDraggable(P, scene, { onDrag: update });\nupdate();\n\nconst title = new Text({ text: 'Inscribed Angle Theorem — drag the yellow point', color: WHITE, fontSize: 28 });\ntitle.moveTo([0, 3.5, 0]);\nscene.add(title);\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3197,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/geo-inscribed-angle.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/geo-inscribed-angle.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:34:22.096Z"
+}

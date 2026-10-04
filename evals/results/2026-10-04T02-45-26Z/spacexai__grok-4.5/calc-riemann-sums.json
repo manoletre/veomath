@@ -1,0 +1,79 @@
+{
+  "itemId": "calc-riemann-sums",
+  "model": "spacexai/grok-4.5",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "15.80% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "6.31% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 23444,
+        "inputTokens": 5060,
+        "cachedInputTokens": 128,
+        "outputTokens": 1696,
+        "costUsd": 0.0200784,
+        "rawResponse": "{\n  \"explanation\": \"A Riemann sum approximates the area under a curve by adding up the areas of many thin rectangles. For y = x² from 0 to 2 we partition [0, 2] into n equal-width strips and take the height of each rectangle from a sample point (here the right endpoint). As n grows the stepped shape hugs the parabola more tightly and the total area approaches the exact integral ∫₀² x² dx = 8/3.\",\n  \"manimCode\": \"const axes = new Axes({\\n  xRange: [0, 2.5, 0.5],\\n  yRange: [0, 5, 1],\\n  xLength: 9,\\n  yLength: 5.5,\\n  tips: true\\n});\\naxes.moveTo([0, -0.3, 0]);\\n\\nconst curve = axes.plot(x => x * x, { color: YELLOW, xRange: [0, 2] });\\nconst xLabel = axes.getAxisLabels('x', 'y');\\n\\nconst title = new MathTex({ latex: '\\\\\\\\int_0^2 x^2\\\\\\\\,dx \\\\\\\\approx \\\\\\\\text{Riemann sum}' });\\nawait title.waitForRender();\\ntitle.scale(0.7);\\ntitle.moveTo([0, 3.4, 0]);\\n\\nscene.add(axes, curve, xLabel, title);\\n\\nlet n = 4;\\nlet rects = [];\\nlet sumLabel = null;\\n\\nfunction rightRiemannSum(num) {\\n  const dx = 2 / num;\\n  let total = 0;\\n  for (let i = 1; i <= num; i++) {\\n    const x = i * dx;\\n    total += x * x * dx;\\n  }\\n  return total;\\n}\\n\\nfunction buildRects(num) {\\n  for (const r of rects) scene.remove(r);\\n  rects = [];\\n  const dx = 2 / num;\\n  for (let i = 0; i < num; i++) {\\n    const left = i * dx;\\n    const right = (i + 1) * dx;\\n    const h = right * right; // right endpoint\\n    const verts = [\\n      axes.c2p(left, 0),\\n      axes.c2p(right, 0),\\n      axes.c2p(right, h),\\n      axes.c2p(left, h)\\n    ];\\n    const poly = new Polygon({ vertices: verts, color: BLUE_C });\\n    poly.setFill(BLUE_C, 0.45);\\n    poly.setStrokeWidth(1.5);\\n    rects.push(poly);\\n    scene.add(poly);\\n  }\\n  // keep curve on top\\n  scene.remove(curve);\\n  scene.add(curve);\\n\\n  if (sumLabel) scene.remove(sumLabel);\\n  const approx = rightRiemannSum(num);\\n  const exact = 8 / 3;\\n  sumLabel = new Text({\\n    text: `n = ${num}   sum ≈ ${approx.toFixed(4)}   (exact = ${exact.toFixed(4)})`,\\n    color: WHITE,\\n    fontSize: 26\\n  });\\n  sumLabel.moveTo([0, -3.5, 0]);\\n  scene.add(sumLabel);\\n}\\n\\nbuildRects(n);\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\ncontrols.addSlider({\\n  label: 'Rectangles (n)',\\n  min: 1,\\n  max: 60,\\n  value: n,\\n  step: 1,\\n  onChange: (val) => {\\n    n = Math.round(val);\\n    buildRects(n);\\n  }\\n});\\n\\ncontrols.addButton({\\n  label: 'Reset n = 4',\\n  onClick: () => {\\n    n = 4;\\n    buildRects(n);\\n  }\\n});\\n\\nawait scene.wait(999999);\"\n}",
+        "explanation": "A Riemann sum approximates the area under a curve by adding up the areas of many thin rectangles. For y = x² from 0 to 2 we partition [0, 2] into n equal-width strips and take the height of each rectangle from a sample point (here the right endpoint). As n grows the stepped shape hugs the parabola more tightly and the total area approaches the exact integral ∫₀² x² dx = 8/3."
+      },
+      "code": "const axes = new Axes({\n  xRange: [0, 2.5, 0.5],\n  yRange: [0, 5, 1],\n  xLength: 9,\n  yLength: 5.5,\n  tips: true\n});\naxes.moveTo([0, -0.3, 0]);\n\nconst curve = axes.plot(x => x * x, { color: YELLOW, xRange: [0, 2] });\nconst xLabel = axes.getAxisLabels('x', 'y');\n\nconst title = new MathTex({ latex: '\\\\int_0^2 x^2\\\\,dx \\\\approx \\\\text{Riemann sum}' });\nawait title.waitForRender();\ntitle.scale(0.7);\ntitle.moveTo([0, 3.4, 0]);\n\nscene.add(axes, curve, xLabel, title);\n\nlet n = 4;\nlet rects = [];\nlet sumLabel = null;\n\nfunction rightRiemannSum(num) {\n  const dx = 2 / num;\n  let total = 0;\n  for (let i = 1; i <= num; i++) {\n    const x = i * dx;\n    total += x * x * dx;\n  }\n  return total;\n}\n\nfunction buildRects(num) {\n  for (const r of rects) scene.remove(r);\n  rects = [];\n  const dx = 2 / num;\n  for (let i = 0; i < num; i++) {\n    const left = i * dx;\n    const right = (i + 1) * dx;\n    const h = right * right; // right endpoint\n    const verts = [\n      axes.c2p(left, 0),\n      axes.c2p(right, 0),\n      axes.c2p(right, h),\n      axes.c2p(left, h)\n    ];\n    const poly = new Polygon({ vertices: verts, color: BLUE_C });\n    poly.setFill(BLUE_C, 0.45);\n    poly.setStrokeWidth(1.5);\n    rects.push(poly);\n    scene.add(poly);\n  }\n  // keep curve on top\n  scene.remove(curve);\n  scene.add(curve);\n\n  if (sumLabel) scene.remove(sumLabel);\n  const approx = rightRiemannSum(num);\n  const exact = 8 / 3;\n  sumLabel = new Text({\n    text: `n = ${num}   sum ≈ ${approx.toFixed(4)}   (exact = ${exact.toFixed(4)})`,\n    color: WHITE,\n    fontSize: 26\n  });\n  sumLabel.moveTo([0, -3.5, 0]);\n  scene.add(sumLabel);\n}\n\nbuildRects(n);\n\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\ncontrols.addSlider({\n  label: 'Rectangles (n)',\n  min: 1,\n  max: 60,\n  value: n,\n  step: 1,\n  onChange: (val) => {\n    n = Math.round(val);\n    buildRects(n);\n  }\n});\n\ncontrols.addButton({\n  label: 'Reset n = 4',\n  onClick: () => {\n    n = 4;\n    buildRects(n);\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4131,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "spacexai__grok-4.5/calc-riemann-sums.0.final.jpg",
+        "interacted": "spacexai__grok-4.5/calc-riemann-sums.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:49:37.917Z"
+}

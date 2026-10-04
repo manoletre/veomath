@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-radian",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.02% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.47% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 18691,
+        "inputTokens": 12265,
+        "cachedInputTokens": 0,
+        "outputTokens": 872,
+        "costUsd": 0.0016625,
+        "rawResponse": "{\"explanation\":\"A radian measures an angle by comparing the arc it cuts off on a circle with the circle’s radius. One radian is the angle that subtends an arc exactly as long as the radius; a full turn is 2π radians.\",\"manimCode\":\"const R = 2;\\nconst c = new Circle({ radius: R, color: BLUE });\\nc.moveTo([0, -0.25, 0]);\\nconst ctr = [0, -0.25, 0];\\nconst theta = 1;\\nconst p0 = [ctr[0] + R, ctr[1], 0];\\nconst p1 = [ctr[0] + R * Math.cos(theta), ctr[1] + R * Math.sin(theta), 0];\\nconst r1 = new Line({ start: ctr, end: p0, color: YELLOW });\\nconst r2 = new Line({ start: ctr, end: p1, color: YELLOW });\\nconst arcPts = [];\\nfor (let i = 0; i <= 40; i++) {\\n  const a = theta * i / 40;\\n  arcPts.push([ctr[0] + R * Math.cos(a), ctr[1] + R * Math.sin(a), 0]);\\n}\\nconst arc = new Polygon({ vertices: arcPts, color: ORANGE });\\narc.setFillOpacity(0);\\narc.setStrokeWidth(4);\\nconst title = new Text({ text: 'One radian', color: WHITE, fontSize: 38 });\\ntitle.moveTo([0, 3.05, 0]);\\nconst relation = new MathTex({ latex: '\\\\\\\\theta = \\\\\\\\frac{\\\\\\\\text{arc length}}{\\\\\\\\text{radius}} = 1' });\\nawait relation.waitForRender();\\nrelation.moveTo([0, -3.1, 0]);\\nconst dot = new Dot({ point: ctr, color: WHITE });\\nconst radiusLabel = new Text({ text: 'r', color: YELLOW, fontSize: 28 });\\nradiusLabel.moveTo([1.0, -0.55, 0]);\\nconst arcLabel = new Text({ text: 'arc length = r', color: ORANGE, fontSize: 24 });\\narcLabel.moveTo([1.6, 0.9, 0]);\\nawait scene.play(new Write(title));\\nawait scene.play(new Create(c));\\nawait scene.play(new AnimationGroup([new Create(r1), new Create(r2), new Create(arc), new FadeIn(dot)]));\\nawait scene.play(new Write(radiusLabel));\\nawait scene.play(new Write(arcLabel));\\nawait scene.play(new Write(relation));\\nconst controls = new Controls(scene, { position: 'top-right', width: 220 });\\ncontrols.addSlider({ label: 'Angle (rad)', min: 0.2, max: 2.4, value: 1, step: 0.05, onChange: (value) => {\\n  const end = [ctr[0] + R * Math.cos(value), ctr[1] + R * Math.sin(value), 0];\\n  r2.setVertices ? r2.setVertices([ctr, end]) : null;\\n  const pts = [];\\n  for (let i = 0; i <= 40; i++) {\\n    const a = value * i / 40;\\n    pts.push([ctr[0] + R * Math.cos(a), ctr[1] + R * Math.sin(a), 0]);\\n  }\\n  scene.remove(arc);\\n  const nextArc = new Polygon({ vertices: pts, color: ORANGE });\\n  nextArc.setFillOpacity(0);\\n  nextArc.setStrokeWidth(4);\\n  scene.add(nextArc);\\n}});\\nawait scene.wait(999999);\"}",
+        "explanation": "A radian measures an angle by comparing the arc it cuts off on a circle with the circle’s radius. One radian is the angle that subtends an arc exactly as long as the radius; a full turn is 2π radians."
+      },
+      "code": "const R = 2;\nconst c = new Circle({ radius: R, color: BLUE });\nc.moveTo([0, -0.25, 0]);\nconst ctr = [0, -0.25, 0];\nconst theta = 1;\nconst p0 = [ctr[0] + R, ctr[1], 0];\nconst p1 = [ctr[0] + R * Math.cos(theta), ctr[1] + R * Math.sin(theta), 0];\nconst r1 = new Line({ start: ctr, end: p0, color: YELLOW });\nconst r2 = new Line({ start: ctr, end: p1, color: YELLOW });\nconst arcPts = [];\nfor (let i = 0; i <= 40; i++) {\n  const a = theta * i / 40;\n  arcPts.push([ctr[0] + R * Math.cos(a), ctr[1] + R * Math.sin(a), 0]);\n}\nconst arc = new Polygon({ vertices: arcPts, color: ORANGE });\narc.setFillOpacity(0);\narc.setStrokeWidth(4);\nconst title = new Text({ text: 'One radian', color: WHITE, fontSize: 38 });\ntitle.moveTo([0, 3.05, 0]);\nconst relation = new MathTex({ latex: '\\\\theta = \\\\frac{\\\\text{arc length}}{\\\\text{radius}} = 1' });\nawait relation.waitForRender();\nrelation.moveTo([0, -3.1, 0]);\nconst dot = new Dot({ point: ctr, color: WHITE });\nconst radiusLabel = new Text({ text: 'r', color: YELLOW, fontSize: 28 });\nradiusLabel.moveTo([1.0, -0.55, 0]);\nconst arcLabel = new Text({ text: 'arc length = r', color: ORANGE, fontSize: 24 });\narcLabel.moveTo([1.6, 0.9, 0]);\nawait scene.play(new Write(title));\nawait scene.play(new Create(c));\nawait scene.play(new AnimationGroup([new Create(r1), new Create(r2), new Create(arc), new FadeIn(dot)]));\nawait scene.play(new Write(radiusLabel));\nawait scene.play(new Write(arcLabel));\nawait scene.play(new Write(relation));\nconst controls = new Controls(scene, { position: 'top-right', width: 220 });\ncontrols.addSlider({ label: 'Angle (rad)', min: 0.2, max: 2.4, value: 1, step: 0.05, onChange: (value) => {\n  const end = [ctr[0] + R * Math.cos(value), ctr[1] + R * Math.sin(value), 0];\n  r2.setVertices ? r2.setVertices([ctr, end]) : null;\n  const pts = [];\n  for (let i = 0; i <= 40; i++) {\n    const a = value * i / 40;\n    pts.push([ctr[0] + R * Math.cos(a), ctr[1] + R * Math.sin(a), 0]);\n  }\n  scene.remove(arc);\n  const nextArc = new Polygon({ vertices: pts, color: ORANGE });\n  nextArc.setFillOpacity(0);\n  nextArc.setStrokeWidth(4);\n  scene.add(nextArc);\n}});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 11510,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 6,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/trig-radian.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/trig-radian.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:55:01.123Z"
+}

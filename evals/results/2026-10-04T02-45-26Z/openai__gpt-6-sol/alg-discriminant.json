@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-discriminant",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.47% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.98% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 51308,
+        "inputTokens": 12285,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1923,
+        "costUsd": 0.0239856,
+        "rawResponse": "{\"explanation\":\"For a quadratic, the discriminant Δ = b² − 4ac determines how many times its graph meets the x-axis: twice if Δ > 0, once if Δ = 0, and not at all if Δ < 0. Move the slider through c = 1 to see all three cases for x² − 2x + c = 0.\",\"manimCode\":\"const title = new Text({ text: 'The discriminant and real roots', color: WHITE, fontSize: 34 });\\ntitle.moveTo([0, 3.25, 0]);\\n\\nconst ax = new Axes({ xRange: [-0.5, 2.5, 0.5], yRange: [-1.5, 3, 0.5], xLength: 7, yLength: 4.5, tips: false });\\nax.moveTo([-2, -0.5, 0]);\\n\\nconst equation = new MathTex({ latex: 'x^2-2x+c=0' });\\nawait equation.waitForRender();\\nequation.moveTo([3.7, 1.8, 0]);\\n\\nconst formula = new MathTex({ latex: '\\\\\\\\Delta=b^2-4ac=4-4c' });\\nawait formula.waitForRender();\\nformula.moveTo([3.7, 0.95, 0]);\\n\\nlet c = 0;\\nlet curve = ax.plot(x => x*x - 2*x + c, { color: BLUE, xRange: [-0.5, 2.5] });\\nlet vertex = new Dot({ point: ax.c2p(1, c - 1), color: YELLOW });\\nlet roots = [];\\nlet status;\\n\\nfunction redraw() {\\n  scene.remove(curve, vertex);\\n  for (const dot of roots) scene.remove(dot);\\n  if (status) scene.remove(status);\\n\\n  curve = ax.plot(x => x*x - 2*x + c, { color: BLUE, xRange: [-0.5, 2.5] });\\n  vertex = new Dot({ point: ax.c2p(1, c - 1), color: YELLOW });\\n  scene.add(curve, vertex);\\n\\n  const delta = 4 - 4*c;\\n  let message;\\n  let caseColor;\\n  if (delta > 0.000001) {\\n    const offset = Math.sqrt(1 - c);\\n    roots = [\\n      new Dot({ point: ax.c2p(1 - offset, 0), color: GREEN }),\\n      new Dot({ point: ax.c2p(1 + offset, 0), color: GREEN })\\n    ];\\n    message = 'Δ = ' + delta.toFixed(2) + ' > 0: two real roots';\\n    caseColor = GREEN;\\n  } else if (delta < -0.000001) {\\n    roots = [];\\n    message = 'Δ = ' + delta.toFixed(2) + ' < 0: no real roots';\\n    caseColor = RED;\\n  } else {\\n    roots = [new Dot({ point: ax.c2p(1, 0), color: GOLD })];\\n    message = 'Δ = 0: one repeated root';\\n    caseColor = GOLD;\\n  }\\n  for (const dot of roots) scene.add(dot);\\n  status = new Text({ text: message, color: caseColor, fontSize: 25 });\\n  status.moveTo([3.7, 0, 0]);\\n  scene.add(status);\\n}\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new Create(ax));\\nawait scene.play(new AnimationGroup([new Write(equation), new Write(formula)]));\\nredraw();\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 290 });\\ncontrols.addSlider({ label: 'c', min: -0.5, max: 1.5, value: 0, step: 0.05, onChange: value => {\\n  c = value;\\n  redraw();\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "For a quadratic, the discriminant Δ = b² − 4ac determines how many times its graph meets the x-axis: twice if Δ > 0, once if Δ = 0, and not at all if Δ < 0. Move the slider through c = 1 to see all three cases for x² − 2x + c = 0."
+      },
+      "code": "const title = new Text({ text: 'The discriminant and real roots', color: WHITE, fontSize: 34 });\ntitle.moveTo([0, 3.25, 0]);\n\nconst ax = new Axes({ xRange: [-0.5, 2.5, 0.5], yRange: [-1.5, 3, 0.5], xLength: 7, yLength: 4.5, tips: false });\nax.moveTo([-2, -0.5, 0]);\n\nconst equation = new MathTex({ latex: 'x^2-2x+c=0' });\nawait equation.waitForRender();\nequation.moveTo([3.7, 1.8, 0]);\n\nconst formula = new MathTex({ latex: '\\\\Delta=b^2-4ac=4-4c' });\nawait formula.waitForRender();\nformula.moveTo([3.7, 0.95, 0]);\n\nlet c = 0;\nlet curve = ax.plot(x => x*x - 2*x + c, { color: BLUE, xRange: [-0.5, 2.5] });\nlet vertex = new Dot({ point: ax.c2p(1, c - 1), color: YELLOW });\nlet roots = [];\nlet status;\n\nfunction redraw() {\n  scene.remove(curve, vertex);\n  for (const dot of roots) scene.remove(dot);\n  if (status) scene.remove(status);\n\n  curve = ax.plot(x => x*x - 2*x + c, { color: BLUE, xRange: [-0.5, 2.5] });\n  vertex = new Dot({ point: ax.c2p(1, c - 1), color: YELLOW });\n  scene.add(curve, vertex);\n\n  const delta = 4 - 4*c;\n  let message;\n  let caseColor;\n  if (delta > 0.000001) {\n    const offset = Math.sqrt(1 - c);\n    roots = [\n      new Dot({ point: ax.c2p(1 - offset, 0), color: GREEN }),\n      new Dot({ point: ax.c2p(1 + offset, 0), color: GREEN })\n    ];\n    message = 'Δ = ' + delta.toFixed(2) + ' > 0: two real roots';\n    caseColor = GREEN;\n  } else if (delta < -0.000001) {\n    roots = [];\n    message = 'Δ = ' + delta.toFixed(2) + ' < 0: no real roots';\n    caseColor = RED;\n  } else {\n    roots = [new Dot({ point: ax.c2p(1, 0), color: GOLD })];\n    message = 'Δ = 0: one repeated root';\n    caseColor = GOLD;\n  }\n  for (const dot of roots) scene.add(dot);\n  status = new Text({ text: message, color: caseColor, fontSize: 25 });\n  status.moveTo([3.7, 0, 0]);\n  scene.add(status);\n}\n\nawait scene.play(new Write(title));\nawait scene.play(new Create(ax));\nawait scene.play(new AnimationGroup([new Write(equation), new Write(formula)]));\nredraw();\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 290 });\ncontrols.addSlider({ label: 'c', min: -0.5, max: 1.5, value: 0, step: 0.05, onChange: value => {\n  c = value;\n  redraw();\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 8968,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 3,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/alg-discriminant.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/alg-discriminant.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:44.959Z"
+}

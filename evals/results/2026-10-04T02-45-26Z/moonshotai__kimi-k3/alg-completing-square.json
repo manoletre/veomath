@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-completing-square",
+  "model": "moonshotai/kimi-k3",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "9.71% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=1 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.09% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 81315,
+        "inputTokens": 4709,
+        "cachedInputTokens": 64,
+        "outputTokens": 9346,
+        "costUsd": 0.1541442,
+        "rawResponse": "{\"explanation\":\"Completing the square turns x² + 6x into a perfect square by thinking geometrically: x² is a square of side x, and 6x is a rectangle we split into two 3x strips placed along two sides of the square. The only thing missing from a full (x + 3) × (x + 3) square is the little 3 × 3 corner, which has area 9. So x² + 6x + 9 = (x + 3)² — use the slider to change x and watch the area model stay balanced, and toggle the corner piece to see why we add 9.\",\"manimCode\":\"const A = [-3.5, -2.8];\\nconst s = 0.6;\\nlet curX = 2;\\nconst p = (mx, my) => [A[0] + s * mx, A[1] + s * my, 0];\\n\\n// --- Shapes (Polygons so vertices can update live) ---\\nconst square = new Polygon({ vertices: [p(0,0), p(2,0), p(2,2), p(0,2)], color: BLUE });\\nsquare.setFill(BLUE_E, 0.55);\\nsquare.setStrokeWidth(3);\\n\\nconst rightRect = new Polygon({ vertices: [p(2,0), p(5,0), p(5,2), p(2,2)], color: GREEN });\\nrightRect.setFill(GREEN_E, 0.55);\\nrightRect.setStrokeWidth(3);\\n\\nconst topRect = new Polygon({ vertices: [p(0,2), p(2,2), p(2,5), p(0,5)], color: ORANGE });\\ntopRect.setFill(ORANGE, 0.4);\\ntopRect.setStrokeWidth(3);\\n\\nconst corner = new Polygon({ vertices: [p(2,2), p(5,2), p(5,5), p(2,5)], color: RED });\\ncorner.setFill(RED_E, 0.45);\\ncorner.setStrokeWidth(3);\\n\\nconst outline = new Polygon({ vertices: [p(0,0), p(5,0), p(5,5), p(0,5)], color: GRAY });\\noutline.setFillOpacity(0);\\noutline.setStrokeWidth(1.5);\\n\\n// --- Labels ---\\nconst lblSq = new MathTex({ latex: 'x^2' });\\nawait lblSq.waitForRender();\\nlblSq.moveTo(p(1, 1));\\n\\nconst lblR = new MathTex({ latex: '3x' });\\nawait lblR.waitForRender();\\nlblR.moveTo(p(3.5, 1));\\n\\nconst lblT = new MathTex({ latex: '3x' });\\nawait lblT.waitForRender();\\nlblT.moveTo(p(1, 3.5));\\n\\nconst lblC = new MathTex({ latex: '9' });\\nawait lblC.waitForRender();\\nlblC.moveTo(p(3.5, 3.5));\\n\\nconst lblXb = new MathTex({ latex: 'x' });\\nawait lblXb.waitForRender();\\nlblXb.moveTo([p(1,0)[0], A[1] - 0.4, 0]);\\n\\nconst lbl3b = new MathTex({ latex: '3' });\\nawait lbl3b.waitForRender();\\nlbl3b.moveTo([p(3.5,0)[0], A[1] - 0.4, 0]);\\n\\nconst lblXl = new MathTex({ latex: 'x' });\\nawait lblXl.waitForRender();\\nlblXl.moveTo([A[0] - 0.4, p(0,1)[1], 0]);\\n\\nconst lbl3l = new MathTex({ latex: '3' });\\nawait lbl3l.waitForRender();\\nlbl3l.moveTo([A[0] - 0.4, p(0,3.5)[1], 0]);\\n\\nconst title = new Text({ text: 'Completing the Square', color: WHITE, fontSize: 40 });\\ntitle.moveTo([0, 3.2, 0]);\\n\\nconst eq1 = new MathTex({ latex: 'x^2 + 6x' });\\nawait eq1.waitForRender();\\neq1.scale(0.9);\\neq1.moveTo([3.3, 1.4, 0]);\\n\\n// --- Live layout updater ---\\nfunction layout(xv) {\\n  curX = xv;\\n  square.setVertices([p(0,0), p(xv,0), p(xv,xv), p(0,xv)]);\\n  rightRect.setVertices([p(xv,0), p(xv+3,0), p(xv+3,xv), p(xv,xv)]);\\n  topRect.setVertices([p(0,xv), p(xv,xv), p(xv,xv+3), p(0,xv+3)]);\\n  corner.setVertices([p(xv,xv), p(xv+3,xv), p(xv+3,xv+3), p(xv,xv+3)]);\\n  outline.setVertices([p(0,0), p(xv+3,0), p(xv+3,xv+3), p(0,xv+3)]);\\n  lblSq.moveTo(p(xv/2, xv/2));\\n  lblR.moveTo(p(xv + 1.5, xv/2));\\n  lblT.moveTo(p(xv/2, xv + 1.5));\\n  lblC.moveTo(p(xv + 1.5, xv + 1.5));\\n  lblXb.moveTo([p(xv/2, 0)[0], A[1] - 0.4, 0]);\\n  lbl3b.moveTo([p(xv + 1.5, 0)[0], A[1] - 0.4, 0]);\\n  lblXl.moveTo([A[0] - 0.4, p(0, xv/2)[1], 0]);\\n  lbl3l.moveTo([A[0] - 0.4, p(0, xv + 1.5)[1], 0]);\\n}\\n\\n// --- Animated build-up ---\\nawait scene.play(new Write(title));\\nawait scene.play(new Write(eq1));\\nawait scene.play(new DrawBorderThenFill(square));\\nawait scene.play(new AnimationGroup([new FadeIn(lblSq), new FadeIn(lblXb), new FadeIn(lblXl)]));\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(rightRect), new DrawBorderThenFill(topRect)]));\\nawait scene.play(new AnimationGroup([new FadeIn(lblR), new FadeIn(lblT), new FadeIn(lbl3b), new FadeIn(lbl3l)]));\\nawait scene.wait(0.4);\\nawait scene.play(new AnimationGroup([new FadeIn(corner), new Create(outline)]));\\nawait scene.play(new FadeIn(lblC));\\nawait scene.wait(0.4);\\n\\nconst eq2 = new MathTex({ latex: 'x^2 + 6x + 9 = (x + 3)^2' });\\nawait eq2.waitForRender();\\neq2.scale(0.9);\\neq2.moveTo([3.3, 1.4, 0]);\\nawait scene.play(new FadeOut(eq1));\\nawait scene.play(new Write(eq2));\\n\\nconst hint = new Text({ text: 'Drag the slider to change x', color: GRAY, fontSize: 22 });\\nhint.moveTo([3.3, 0.5, 0]);\\nawait scene.play(new FadeIn(hint));\\n\\n// --- Interactive controls ---\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'x', min: 1, max: 3.5, value: 2, step: 0.1, onChange: (v) => { layout(v); } });\\ncontrols.addCheckbox({ label: 'Show missing corner (+9)', checked: true, onChange: (checked) => {\\n  if (checked) {\\n    scene.add(corner);\\n    scene.add(lblC);\\n  } else {\\n    scene.remove(corner);\\n    scene.remove(lblC);\\n  }\\n} });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Completing the square turns x² + 6x into a perfect square by thinking geometrically: x² is a square of side x, and 6x is a rectangle we split into two 3x strips placed along two sides of the square. The only thing missing from a full (x + 3) × (x + 3) square is the little 3 × 3 corner, which has area 9. So x² + 6x + 9 = (x + 3)² — use the slider to change x and watch the area model stay balanced, and toggle the corner piece to see why we add 9."
+      },
+      "code": "const A = [-3.5, -2.8];\nconst s = 0.6;\nlet curX = 2;\nconst p = (mx, my) => [A[0] + s * mx, A[1] + s * my, 0];\n\n// --- Shapes (Polygons so vertices can update live) ---\nconst square = new Polygon({ vertices: [p(0,0), p(2,0), p(2,2), p(0,2)], color: BLUE });\nsquare.setFill(BLUE_E, 0.55);\nsquare.setStrokeWidth(3);\n\nconst rightRect = new Polygon({ vertices: [p(2,0), p(5,0), p(5,2), p(2,2)], color: GREEN });\nrightRect.setFill(GREEN_E, 0.55);\nrightRect.setStrokeWidth(3);\n\nconst topRect = new Polygon({ vertices: [p(0,2), p(2,2), p(2,5), p(0,5)], color: ORANGE });\ntopRect.setFill(ORANGE, 0.4);\ntopRect.setStrokeWidth(3);\n\nconst corner = new Polygon({ vertices: [p(2,2), p(5,2), p(5,5), p(2,5)], color: RED });\ncorner.setFill(RED_E, 0.45);\ncorner.setStrokeWidth(3);\n\nconst outline = new Polygon({ vertices: [p(0,0), p(5,0), p(5,5), p(0,5)], color: GRAY });\noutline.setFillOpacity(0);\noutline.setStrokeWidth(1.5);\n\n// --- Labels ---\nconst lblSq = new MathTex({ latex: 'x^2' });\nawait lblSq.waitForRender();\nlblSq.moveTo(p(1, 1));\n\nconst lblR = new MathTex({ latex: '3x' });\nawait lblR.waitForRender();\nlblR.moveTo(p(3.5, 1));\n\nconst lblT = new MathTex({ latex: '3x' });\nawait lblT.waitForRender();\nlblT.moveTo(p(1, 3.5));\n\nconst lblC = new MathTex({ latex: '9' });\nawait lblC.waitForRender();\nlblC.moveTo(p(3.5, 3.5));\n\nconst lblXb = new MathTex({ latex: 'x' });\nawait lblXb.waitForRender();\nlblXb.moveTo([p(1,0)[0], A[1] - 0.4, 0]);\n\nconst lbl3b = new MathTex({ latex: '3' });\nawait lbl3b.waitForRender();\nlbl3b.moveTo([p(3.5,0)[0], A[1] - 0.4, 0]);\n\nconst lblXl = new MathTex({ latex: 'x' });\nawait lblXl.waitForRender();\nlblXl.moveTo([A[0] - 0.4, p(0,1)[1], 0]);\n\nconst lbl3l = new MathTex({ latex: '3' });\nawait lbl3l.waitForRender();\nlbl3l.moveTo([A[0] - 0.4, p(0,3.5)[1], 0]);\n\nconst title = new Text({ text: 'Completing the Square', color: WHITE, fontSize: 40 });\ntitle.moveTo([0, 3.2, 0]);\n\nconst eq1 = new MathTex({ latex: 'x^2 + 6x' });\nawait eq1.waitForRender();\neq1.scale(0.9);\neq1.moveTo([3.3, 1.4, 0]);\n\n// --- Live layout updater ---\nfunction layout(xv) {\n  curX = xv;\n  square.setVertices([p(0,0), p(xv,0), p(xv,xv), p(0,xv)]);\n  rightRect.setVertices([p(xv,0), p(xv+3,0), p(xv+3,xv), p(xv,xv)]);\n  topRect.setVertices([p(0,xv), p(xv,xv), p(xv,xv+3), p(0,xv+3)]);\n  corner.setVertices([p(xv,xv), p(xv+3,xv), p(xv+3,xv+3), p(xv,xv+3)]);\n  outline.setVertices([p(0,0), p(xv+3,0), p(xv+3,xv+3), p(0,xv+3)]);\n  lblSq.moveTo(p(xv/2, xv/2));\n  lblR.moveTo(p(xv + 1.5, xv/2));\n  lblT.moveTo(p(xv/2, xv + 1.5));\n  lblC.moveTo(p(xv + 1.5, xv + 1.5));\n  lblXb.moveTo([p(xv/2, 0)[0], A[1] - 0.4, 0]);\n  lbl3b.moveTo([p(xv + 1.5, 0)[0], A[1] - 0.4, 0]);\n  lblXl.moveTo([A[0] - 0.4, p(0, xv/2)[1], 0]);\n  lbl3l.moveTo([A[0] - 0.4, p(0, xv + 1.5)[1], 0]);\n}\n\n// --- Animated build-up ---\nawait scene.play(new Write(title));\nawait scene.play(new Write(eq1));\nawait scene.play(new DrawBorderThenFill(square));\nawait scene.play(new AnimationGroup([new FadeIn(lblSq), new FadeIn(lblXb), new FadeIn(lblXl)]));\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(rightRect), new DrawBorderThenFill(topRect)]));\nawait scene.play(new AnimationGroup([new FadeIn(lblR), new FadeIn(lblT), new FadeIn(lbl3b), new FadeIn(lbl3l)]));\nawait scene.wait(0.4);\nawait scene.play(new AnimationGroup([new FadeIn(corner), new Create(outline)]));\nawait scene.play(new FadeIn(lblC));\nawait scene.wait(0.4);\n\nconst eq2 = new MathTex({ latex: 'x^2 + 6x + 9 = (x + 3)^2' });\nawait eq2.waitForRender();\neq2.scale(0.9);\neq2.moveTo([3.3, 1.4, 0]);\nawait scene.play(new FadeOut(eq1));\nawait scene.play(new Write(eq2));\n\nconst hint = new Text({ text: 'Drag the slider to change x', color: GRAY, fontSize: 22 });\nhint.moveTo([3.3, 0.5, 0]);\nawait scene.play(new FadeIn(hint));\n\n// --- Interactive controls ---\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'x', min: 1, max: 3.5, value: 2, step: 0.1, onChange: (v) => { layout(v); } });\ncontrols.addCheckbox({ label: 'Show missing corner (+9)', checked: true, onChange: (checked) => {\n  if (checked) {\n    scene.add(corner);\n    scene.add(lblC);\n  } else {\n    scene.remove(corner);\n    scene.remove(lblC);\n  }\n} });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 18410,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 11,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 1
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "moonshotai__kimi-k3/alg-completing-square.0.final.jpg",
+        "interacted": "moonshotai__kimi-k3/alg-completing-square.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:53:00.138Z"
+}

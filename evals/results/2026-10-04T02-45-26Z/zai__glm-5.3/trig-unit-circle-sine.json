@@ -1,0 +1,83 @@
+{
+  "itemId": "trig-unit-circle-sine",
+  "model": "zai/glm-5.3",
+  "via": "gateway",
+  "score": 0.8,
+  "firstAttemptScore": 0.8,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.8,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.18% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "Axes [x 2.43..7.95, y -2.20..1.00] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=2 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.48% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": false,
+          "detail": "Uncaught TypeError: Assignment to constant variable."
+        }
+      },
+      "generation": {
+        "latencyMs": 12391,
+        "inputTokens": 4458,
+        "cachedInputTokens": 4416,
+        "outputTokens": 1815,
+        "costUsd": 0.00866304,
+        "rawResponse": "{ \"explanation\": \"## Why the Sine Graph is Wavy\\n\\nThe sine graph looks like a wave because sine measures something that goes around and around: **the height of a point traveling on a circle**.\\n\\nImagine a point moving counterclockwise around a unit circle. Its height above the center is exactly `sin(θ)`, where θ is the angle swept so far. As the point travels:\\n\\n- **0 → π/2**: height grows from 0 up to 1 (the wave rises to its peak)\\n- **π/2 → π**: height shrinks back to 0 (the wave falls back to the axis)\\n- **π → 3π/2**: the point dips *below* the center, height goes to −1 (the wave troughs)\\n- **3π/2 → 2π**: height returns to 0 (the wave completes one cycle)\\n\\nThen it repeats — forever. Since circular motion is smooth and periodic, the unrolled \\\"height history\\\" is a smooth, repeating curve: **the sine wave**. The wiggles aren't randomness — they're the fingerprint of rotation!\\n\\nThe animation below shows exactly this: drag the angle slider (or hit Play) and watch the point on the circle trace its height onto the graph to the right.\", \"manimCode\": \"// ---- Left: unit circle with rotating point. Right: unrolled sine graph ----\\n\\nconst cx = -3.2, cy = 0.4, R = 1.6;          // circle center & radius\\nlet theta = 0;                                // current angle\\n\\n// Circle\\nconst circle = new Circle({ radius: R, color: BLUE });\\ncircle.moveTo([cx, cy, 0]);\\n\\n// Horizontal diameter (baseline for height)\\nconst baseline = new Polygon({\\n  vertices: [[cx - R, cy, 0], [cx + R, cy, 0]],\\n  color: GRAY\\n});\\nbaseline.setStrokeWidth(2).setFillOpacity(0);\\n\\n// Radius arm from center to moving point\\nconst arm = new Polygon({\\n  vertices: [[cx, cy, 0], [cx + R, cy, 0]],\\n  color: YELLOW\\n});\\narm.setStrokeWidth(3).setFillOpacity(0);\\n\\n// The moving point on the circle\\nconst dot = new Dot({ point: [cx + R, cy, 0], color: YELLOW });\\n\\n// Dashed \\\"height\\\" line from the point down to the baseline\\nconst heightLine = new Polygon({\\n  vertices: [[cx + R, cy, 0], [cx + R, cy, 0]],\\n  color: YELLOW_D\\n});\\nheightLine.setStrokeWidth(2).setFillOpacity(0);\\n\\n// Dashed projection line from the circle point over to the graph\\nconst projLine = new Polygon({\\n  vertices: [[cx + R, cy, 0], [1.2, cy, 0]],\\n  color: GRAY\\n});\\nprojLine.setStrokeWidth(1).setFillOpacity(0);\\n\\n// ---- Right: the sine graph (one full period) ----\\nconst ax = new Axes({\\n  xRange: [0, 2 * Math.PI, Math.PI / 2],\\n  yRange: [-1.5, 1.5, 0.5],\\n  xLength: 5.4,\\n  yLength: 3.2,\\n  tips: false\\n});\\nax.moveTo([3.9, -0.6, 0]);\\nconst xLabels = ax.getAxisLabels();\\n\\n// Traced-so-far portion of the sine curve (rebuilt as theta changes)\\nlet trace = ax.plot(x => Math.sin(x), {\\n  color: BLUE,\\n  xRange: [0, Math.max(theta, 0.001)],\\n  numSamples: 200\\n});\\n\\n// Ghost of the full wave\\nconst fullWave = ax.plot(x => Math.sin(x), { color: BLUE, opacity: 0.15 });\\n\\n// Dot on the graph at (theta, sin theta)\\nconst graphDot = new Dot({ point: ax.c2p(0, 0), color: YELLOW });\\n\\n// ---- Labels ----\\nconst title = new Text({ text: \\\"Sine = height on a circle\\\", color: WHITE, fontSize: 30 });\\ntitle.moveTo([0, 3.3, 0]);\\n\\nconst sinLabel = new MathTex({ latex: \\\"\\\\\\\\sin(\\\\\\\\theta)\\\" });\\nawait sinLabel.waitForRender();\\nsinLabel.nextTo(ax, UP);\\nsinLabel.shift(scaleVec(1.4, RIGHT));\\nsinLabel.setColor(BLUE);\\n\\nconst angleLabel = new Text({ text: \\\"θ = 0.00 rad\\\", color: YELLOW, fontSize: 22 });\\nangleLabel.moveTo([cx, cy + R + 0.6, 0]);\\n\\n// ---- Rebuild everything that depends on theta ----\\nfunction refresh() {\\n  const px = cx + R * Math.cos(theta);\\n  const py = cy + R * Math.sin(theta);\\n\\n  dot.moveTo([px, py, 0]);\\n  arm.setVertices([[cx, cy, 0], [px, py, 0]]);\\n  heightLine.setVertices([[px, py, 0], [px, cy, 0]]);\\n  projLine.setVertices([[px, py, 0], [ax.c2p(theta, Math.sin(theta))[0], py, 0]]);\\n\\n  graphDot.moveTo(ax.c2p(theta, Math.sin(theta)));\\n\\n  scene.remove(trace);\\n  trace = ax.plot(x => Math.sin(x), {\\n    color: BLUE,\\n    xRange: [0, Math.max(theta, 0.001)],\\n    numSamples: 200\\n  });\\n  scene.add(trace);\\n\\n  const pos = angleLabel.getCenter();\\n  scene.remove(angleLabel);\\n  const fresh = new Text({\\n    text: \\\"θ = \\\" + theta.toFixed(2) + \\\" rad\\\",\\n    color: YELLOW,\\n    fontSize: 22\\n  });\\n  fresh.moveTo(pos);\\n  scene.add(angleLabel = fresh);\\n}\\n\\nscene.add(title, circle, baseline, fullWave, trace, ax, xLabels,\\n          projLine, heightLine, arm, dot, graphDot, sinLabel, angleLabel);\\n\\n// ---- Controls: slider + play button ----\\nconst controls = new Controls(scene, { position: 'bottom-left', width: 280 });\\n\\ncontrols.addSlider({\\n  label: 'Angle θ',\\n  min: 0,\\n  max: 2 * Math.PI,\\n  value: 0,\\n  step: 0.02,\\n  onChange: (v) => {\\n    theta = v;\\n    refresh();\\n  }\\n});\\n\\nlet playing = false;\\ncontrols.addButton({\\n  label: '▶ Play rotation',\\n  onClick: () => { playing = !playing; }\\n});\\ncontrols.addButton({\\n  label: 'Reset',\\n  onClick: () => {\\n    theta = 0;\\n    playing = false;\\n    refresh();\\n  }\\n});\\n\\n// ---- Animation loop for the play button ----\\nlet last = performance.now();\\nfunction loop(now) {\\n  if (playing) {\\n    theta += (now - last) / 1000 * 1.2;   // ~1.2 rad per second\\n    if (theta >= 2 * Math.PI) {\\n      theta = 2 * Math.PI;\\n      playing = false;\\n    }\\n    refresh();\\n  }\\n  last = now;\\n  requestAnimationFrame(loop);\\n}\\nrequestAnimationFrame(loop);\\n\\nawait scene.wait(999999);\" }",
+        "explanation": "## Why the Sine Graph is Wavy\n\nThe sine graph looks like a wave because sine measures something that goes around and around: **the height of a point traveling on a circle**.\n\nImagine a point moving counterclockwise around a unit circle. Its height above the center is exactly `sin(θ)`, where θ is the angle swept so far. As the point travels:\n\n- **0 → π/2**: height grows from 0 up to 1 (the wave rises to its peak)\n- **π/2 → π**: height shrinks back to 0 (the wave falls back to the axis)\n- **π → 3π/2**: the point dips *below* the center, height goes to −1 (the wave troughs)\n- **3π/2 → 2π**: height returns to 0 (the wave completes one cycle)\n\nThen it repeats — forever. Since circular motion is smooth and periodic, the unrolled \"height history\" is a smooth, repeating curve: **the sine wave**. The wiggles aren't randomness — they're the fingerprint of rotation!\n\nThe animation below shows exactly this: drag the angle slider (or hit Play) and watch the point on the circle trace its height onto the graph to the right."
+      },
+      "code": "// ---- Left: unit circle with rotating point. Right: unrolled sine graph ----\n\nconst cx = -3.2, cy = 0.4, R = 1.6;          // circle center & radius\nlet theta = 0;                                // current angle\n\n// Circle\nconst circle = new Circle({ radius: R, color: BLUE });\ncircle.moveTo([cx, cy, 0]);\n\n// Horizontal diameter (baseline for height)\nconst baseline = new Polygon({\n  vertices: [[cx - R, cy, 0], [cx + R, cy, 0]],\n  color: GRAY\n});\nbaseline.setStrokeWidth(2).setFillOpacity(0);\n\n// Radius arm from center to moving point\nconst arm = new Polygon({\n  vertices: [[cx, cy, 0], [cx + R, cy, 0]],\n  color: YELLOW\n});\narm.setStrokeWidth(3).setFillOpacity(0);\n\n// The moving point on the circle\nconst dot = new Dot({ point: [cx + R, cy, 0], color: YELLOW });\n\n// Dashed \"height\" line from the point down to the baseline\nconst heightLine = new Polygon({\n  vertices: [[cx + R, cy, 0], [cx + R, cy, 0]],\n  color: YELLOW_D\n});\nheightLine.setStrokeWidth(2).setFillOpacity(0);\n\n// Dashed projection line from the circle point over to the graph\nconst projLine = new Polygon({\n  vertices: [[cx + R, cy, 0], [1.2, cy, 0]],\n  color: GRAY\n});\nprojLine.setStrokeWidth(1).setFillOpacity(0);\n\n// ---- Right: the sine graph (one full period) ----\nconst ax = new Axes({\n  xRange: [0, 2 * Math.PI, Math.PI / 2],\n  yRange: [-1.5, 1.5, 0.5],\n  xLength: 5.4,\n  yLength: 3.2,\n  tips: false\n});\nax.moveTo([3.9, -0.6, 0]);\nconst xLabels = ax.getAxisLabels();\n\n// Traced-so-far portion of the sine curve (rebuilt as theta changes)\nlet trace = ax.plot(x => Math.sin(x), {\n  color: BLUE,\n  xRange: [0, Math.max(theta, 0.001)],\n  numSamples: 200\n});\n\n// Ghost of the full wave\nconst fullWave = ax.plot(x => Math.sin(x), { color: BLUE, opacity: 0.15 });\n\n// Dot on the graph at (theta, sin theta)\nconst graphDot = new Dot({ point: ax.c2p(0, 0), color: YELLOW });\n\n// ---- Labels ----\nconst title = new Text({ text: \"Sine = height on a circle\", color: WHITE, fontSize: 30 });\ntitle.moveTo([0, 3.3, 0]);\n\nconst sinLabel = new MathTex({ latex: \"\\\\sin(\\\\theta)\" });\nawait sinLabel.waitForRender();\nsinLabel.nextTo(ax, UP);\nsinLabel.shift(scaleVec(1.4, RIGHT));\nsinLabel.setColor(BLUE);\n\nconst angleLabel = new Text({ text: \"θ = 0.00 rad\", color: YELLOW, fontSize: 22 });\nangleLabel.moveTo([cx, cy + R + 0.6, 0]);\n\n// ---- Rebuild everything that depends on theta ----\nfunction refresh() {\n  const px = cx + R * Math.cos(theta);\n  const py = cy + R * Math.sin(theta);\n\n  dot.moveTo([px, py, 0]);\n  arm.setVertices([[cx, cy, 0], [px, py, 0]]);\n  heightLine.setVertices([[px, py, 0], [px, cy, 0]]);\n  projLine.setVertices([[px, py, 0], [ax.c2p(theta, Math.sin(theta))[0], py, 0]]);\n\n  graphDot.moveTo(ax.c2p(theta, Math.sin(theta)));\n\n  scene.remove(trace);\n  trace = ax.plot(x => Math.sin(x), {\n    color: BLUE,\n    xRange: [0, Math.max(theta, 0.001)],\n    numSamples: 200\n  });\n  scene.add(trace);\n\n  const pos = angleLabel.getCenter();\n  scene.remove(angleLabel);\n  const fresh = new Text({\n    text: \"θ = \" + theta.toFixed(2) + \" rad\",\n    color: YELLOW,\n    fontSize: 22\n  });\n  fresh.moveTo(pos);\n  scene.add(angleLabel = fresh);\n}\n\nscene.add(title, circle, baseline, fullWave, trace, ax, xLabels,\n          projLine, heightLine, arm, dot, graphDot, sinLabel, angleLabel);\n\n// ---- Controls: slider + play button ----\nconst controls = new Controls(scene, { position: 'bottom-left', width: 280 });\n\ncontrols.addSlider({\n  label: 'Angle θ',\n  min: 0,\n  max: 2 * Math.PI,\n  value: 0,\n  step: 0.02,\n  onChange: (v) => {\n    theta = v;\n    refresh();\n  }\n});\n\nlet playing = false;\ncontrols.addButton({\n  label: '▶ Play rotation',\n  onClick: () => { playing = !playing; }\n});\ncontrols.addButton({\n  label: 'Reset',\n  onClick: () => {\n    theta = 0;\n    playing = false;\n    refresh();\n  }\n});\n\n// ---- Animation loop for the play button ----\nlet last = performance.now();\nfunction loop(now) {\n  if (playing) {\n    theta += (now - last) / 1000 * 1.2;   // ~1.2 rad per second\n    if (theta >= 2 * Math.PI) {\n      theta = 2 * Math.PI;\n      playing = false;\n    }\n    refresh();\n  }\n  last = now;\n  requestAnimationFrame(loop);\n}\nrequestAnimationFrame(loop);\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 4649,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [
+          "Uncaught TypeError: Assignment to constant variable."
+        ],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 2,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "zai__glm-5.3/trig-unit-circle-sine.0.final.jpg",
+        "interacted": "zai__glm-5.3/trig-unit-circle-sine.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:50:45.575Z"
+}

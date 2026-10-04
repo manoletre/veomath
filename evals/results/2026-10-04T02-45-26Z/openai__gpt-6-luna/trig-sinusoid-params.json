@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-sinusoid-params",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.53% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=4 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.91% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 16016,
+        "inputTokens": 12280,
+        "cachedInputTokens": 12032,
+        "outputTokens": 578,
+        "costUsd": 0.00043411999999999997,
+        "rawResponse": "{\"explanation\":\"In y = A sin(B(x − C)) + D, A sets the wave’s height and whether it flips, B controls its period (2π/|B|), C shifts it horizontally, and D moves it vertically. Use the sliders to change each parameter and watch the graph and its key features respond.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-6.5, 6.5, 1],\\n  yRange: [-4, 4, 1],\\n  xLength: 10,\\n  yLength: 5.6,\\n  tips: false\\n});\\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 260 });\\nlet A = 1.5, B = 1, C = 0, D = 0;\\nlet curve = ax.plot(x => A * Math.sin(B * (x - C)) + D, { color: BLUE, xRange: [-6.5, 6.5], numSamples: 500 });\\nconst midLine = new Line({ start: ax.c2p(-6.5, 0), end: ax.c2p(6.5, 0), color: GRAY });\\nscene.add(ax, midLine, curve);\\n\\nfunction redraw() {\\n  scene.remove(curve);\\n  curve = ax.plot(x => A * Math.sin(B * (x - C)) + D, { color: BLUE, xRange: [-6.5, 6.5], numSamples: 500 });\\n  scene.add(curve);\\n}\\ncontrols.addSlider({ label: 'A (amplitude)', min: -3, max: 3, value: A, step: 0.1, onChange: v => { A = v; redraw(); } });\\ncontrols.addSlider({ label: 'B (frequency)', min: 0.2, max: 3, value: B, step: 0.1, onChange: v => { B = v; redraw(); } });\\ncontrols.addSlider({ label: 'C (horizontal shift)', min: -3, max: 3, value: C, step: 0.1, onChange: v => { C = v; redraw(); } });\\ncontrols.addSlider({ label: 'D (vertical shift)', min: -2.5, max: 2.5, value: D, step: 0.1, onChange: v => { D = v; redraw(); } });\\nawait scene.wait(999999);\"}",
+        "explanation": "In y = A sin(B(x − C)) + D, A sets the wave’s height and whether it flips, B controls its period (2π/|B|), C shifts it horizontally, and D moves it vertically. Use the sliders to change each parameter and watch the graph and its key features respond."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-6.5, 6.5, 1],\n  yRange: [-4, 4, 1],\n  xLength: 10,\n  yLength: 5.6,\n  tips: false\n});\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 260 });\nlet A = 1.5, B = 1, C = 0, D = 0;\nlet curve = ax.plot(x => A * Math.sin(B * (x - C)) + D, { color: BLUE, xRange: [-6.5, 6.5], numSamples: 500 });\nconst midLine = new Line({ start: ax.c2p(-6.5, 0), end: ax.c2p(6.5, 0), color: GRAY });\nscene.add(ax, midLine, curve);\n\nfunction redraw() {\n  scene.remove(curve);\n  curve = ax.plot(x => A * Math.sin(B * (x - C)) + D, { color: BLUE, xRange: [-6.5, 6.5], numSamples: 500 });\n  scene.add(curve);\n}\ncontrols.addSlider({ label: 'A (amplitude)', min: -3, max: 3, value: A, step: 0.1, onChange: v => { A = v; redraw(); } });\ncontrols.addSlider({ label: 'B (frequency)', min: 0.2, max: 3, value: B, step: 0.1, onChange: v => { B = v; redraw(); } });\ncontrols.addSlider({ label: 'C (horizontal shift)', min: -3, max: 3, value: C, step: 0.1, onChange: v => { C = v; redraw(); } });\ncontrols.addSlider({ label: 'D (vertical shift)', min: -2.5, max: 2.5, value: D, step: 0.1, onChange: v => { D = v; redraw(); } });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 2750,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 4,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/trig-sinusoid-params.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/trig-sinusoid-params.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:54:56.811Z"
+}

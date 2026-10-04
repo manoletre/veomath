@@ -1,0 +1,61 @@
+{
+  "itemId": "alg-completing-square",
+  "model": "zai/glm-5.3",
+  "via": "gateway",
+  "score": 0,
+  "firstAttemptScore": 0,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0,
+      "checks": {
+        "generated": {
+          "pass": false,
+          "detail": "Request failed or the response was not valid JSON with manimCode"
+        },
+        "runs": {
+          "pass": false
+        },
+        "completes": {
+          "pass": false
+        },
+        "nonBlank": {
+          "pass": false
+        },
+        "inFrame": {
+          "pass": false
+        },
+        "noTextOverlap": {
+          "pass": false
+        },
+        "noRawLatex": {
+          "pass": false
+        },
+        "interactive": {
+          "pass": false
+        },
+        "respondsToInteraction": {
+          "pass": null
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 39873,
+        "inputTokens": null,
+        "cachedInputTokens": null,
+        "outputTokens": null,
+        "costUsd": null,
+        "rawResponse": "",
+        "explanation": null,
+        "error": "Error: Model returned invalid JSON: SyntaxError: Unexpected end of JSON input"
+      },
+      "code": null,
+      "render": null,
+      "frames": {}
+    }
+  ],
+  "finishedAt": "2026-10-04T02:50:04.467Z"
+}

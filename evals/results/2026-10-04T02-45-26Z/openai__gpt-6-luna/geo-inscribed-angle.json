@@ -1,0 +1,82 @@
+{
+  "itemId": "geo-inscribed-angle",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.82% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=2"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.82% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": false,
+          "detail": "Uncaught TypeError: Assignment to constant variable."
+        }
+      },
+      "generation": {
+        "latencyMs": 21104,
+        "inputTokens": 12281,
+        "cachedInputTokens": 12032,
+        "outputTokens": 969,
+        "costUsd": 0.00062972,
+        "rawResponse": "{\"explanation\":\"An inscribed angle is formed by two chords meeting at a point on a circle. As that vertex moves along the same arc, the angle remains half the measure of the intercepted arc, so it stays constant while the endpoints of the chords remain fixed.\",\"manimCode\":\"const center = [0, 0, 0];\\nconst radius = 2.35;\\nconst circle = new Circle({ radius, color: BLUE_C });\\n\\n// Fixed chord endpoints on the circle; moving vertex stays on the opposite arc.\\nconst angleA = 205 * Math.PI / 180;\\nconst angleB = 335 * Math.PI / 180;\\nconst pointA = [radius * Math.cos(angleA), radius * Math.sin(angleA), 0];\\nconst pointB = [radius * Math.cos(angleB), radius * Math.sin(angleB), 0];\\nconst dotA = new Dot({ point: pointA, color: TEAL });\\nconst dotB = new Dot({ point: pointB, color: TEAL });\\nlet vertexAngle = 90 * Math.PI / 180;\\nconst vertex = new Dot({ point: [radius * Math.cos(vertexAngle), radius * Math.sin(vertexAngle), 0], color: YELLOW });\\n\\nconst chord1 = new Polygon({ vertices: [pointA, vertex.getCenter()], color: WHITE });\\nconst chord2 = new Polygon({ vertices: [vertex.getCenter(), pointB], color: WHITE });\\nchord1.setFillOpacity(0);\\nchord2.setFillOpacity(0);\\nchord1.setStrokeWidth(3);\\nchord2.setStrokeWidth(3);\\n\\nconst diameterCenter = new Dot({ point: center, color: GOLD });\\nconst title = new Text({ text: 'Inscribed angle theorem', color: WHITE, fontSize: 34 });\\ntitle.moveTo([0, 3.2, 0]);\\nconst note = new Text({ text: 'Move the yellow point along the circle', color: GRAY, fontSize: 22 });\\nnote.moveTo([0, -3.15, 0]);\\nconst measure = new Text({ text: '∠APB = 65°', color: YELLOW, fontSize: 28 });\\nmeasure.moveTo([0, 2.65, 0]);\\n\\nscene.add(circle, chord1, chord2, dotA, dotB, diameterCenter, vertex, title, note, measure);\\n\\nfunction updateChords() {\\n  const p = vertex.getCenter();\\n  chord1.setVertices([pointA, p]);\\n  chord2.setVertices([p, pointB]);\\n  const [vx, vy] = p;\\n  const u = [pointA[0] - vx, pointA[1] - vy];\\n  const v = [pointB[0] - vx, pointB[1] - vy];\\n  const cosine = Math.max(-1, Math.min(1, (u[0] * v[0] + u[1] * v[1]) / (Math.hypot(...u) * Math.hypot(...v))));\\n  const deg = Math.round(Math.acos(cosine) * 180 / Math.PI);\\n  const oldPos = measure.getCenter();\\n  scene.remove(measure);\\n  measure = new Text({ text: `∠APB = ${deg}°`, color: YELLOW, fontSize: 28 });\\n  measure.moveTo(oldPos);\\n  scene.add(measure);\\n}\\n\\nmakeDraggable(vertex, scene, {\\n  onDrag: (mob) => {\\n    const [x, y] = mob.getCenter();\\n    const theta = Math.atan2(y, x);\\n    const clamped = Math.max(15 * Math.PI / 180, Math.min(165 * Math.PI / 180, theta));\\n    mob.moveTo([radius * Math.cos(clamped), radius * Math.sin(clamped), 0]);\\n    updateChords();\\n  }\\n});\\nmakeHoverable(dotA, scene, { hoverScale: 1.3, hoverColor: TEAL });\\nmakeHoverable(dotB, scene, { hoverScale: 1.3, hoverColor: TEAL });\\nawait scene.wait(999999);\"}",
+        "explanation": "An inscribed angle is formed by two chords meeting at a point on a circle. As that vertex moves along the same arc, the angle remains half the measure of the intercepted arc, so it stays constant while the endpoints of the chords remain fixed."
+      },
+      "code": "const center = [0, 0, 0];\nconst radius = 2.35;\nconst circle = new Circle({ radius, color: BLUE_C });\n\n// Fixed chord endpoints on the circle; moving vertex stays on the opposite arc.\nconst angleA = 205 * Math.PI / 180;\nconst angleB = 335 * Math.PI / 180;\nconst pointA = [radius * Math.cos(angleA), radius * Math.sin(angleA), 0];\nconst pointB = [radius * Math.cos(angleB), radius * Math.sin(angleB), 0];\nconst dotA = new Dot({ point: pointA, color: TEAL });\nconst dotB = new Dot({ point: pointB, color: TEAL });\nlet vertexAngle = 90 * Math.PI / 180;\nconst vertex = new Dot({ point: [radius * Math.cos(vertexAngle), radius * Math.sin(vertexAngle), 0], color: YELLOW });\n\nconst chord1 = new Polygon({ vertices: [pointA, vertex.getCenter()], color: WHITE });\nconst chord2 = new Polygon({ vertices: [vertex.getCenter(), pointB], color: WHITE });\nchord1.setFillOpacity(0);\nchord2.setFillOpacity(0);\nchord1.setStrokeWidth(3);\nchord2.setStrokeWidth(3);\n\nconst diameterCenter = new Dot({ point: center, color: GOLD });\nconst title = new Text({ text: 'Inscribed angle theorem', color: WHITE, fontSize: 34 });\ntitle.moveTo([0, 3.2, 0]);\nconst note = new Text({ text: 'Move the yellow point along the circle', color: GRAY, fontSize: 22 });\nnote.moveTo([0, -3.15, 0]);\nconst measure = new Text({ text: '∠APB = 65°', color: YELLOW, fontSize: 28 });\nmeasure.moveTo([0, 2.65, 0]);\n\nscene.add(circle, chord1, chord2, dotA, dotB, diameterCenter, vertex, title, note, measure);\n\nfunction updateChords() {\n  const p = vertex.getCenter();\n  chord1.setVertices([pointA, p]);\n  chord2.setVertices([p, pointB]);\n  const [vx, vy] = p;\n  const u = [pointA[0] - vx, pointA[1] - vy];\n  const v = [pointB[0] - vx, pointB[1] - vy];\n  const cosine = Math.max(-1, Math.min(1, (u[0] * v[0] + u[1] * v[1]) / (Math.hypot(...u) * Math.hypot(...v))));\n  const deg = Math.round(Math.acos(cosine) * 180 / Math.PI);\n  const oldPos = measure.getCenter();\n  scene.remove(measure);\n  measure = new Text({ text: `∠APB = ${deg}°`, color: YELLOW, fontSize: 28 });\n  measure.moveTo(oldPos);\n  scene.add(measure);\n}\n\nmakeDraggable(vertex, scene, {\n  onDrag: (mob) => {\n    const [x, y] = mob.getCenter();\n    const theta = Math.atan2(y, x);\n    const clamped = Math.max(15 * Math.PI / 180, Math.min(165 * Math.PI / 180, theta));\n    mob.moveTo([radius * Math.cos(clamped), radius * Math.sin(clamped), 0]);\n    updateChords();\n  }\n});\nmakeHoverable(dotA, scene, { hoverScale: 1.3, hoverColor: TEAL });\nmakeHoverable(dotB, scene, { hoverScale: 1.3, hoverColor: TEAL });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3107,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [
+          "Uncaught TypeError: Assignment to constant variable."
+        ],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 2
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/geo-inscribed-angle.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/geo-inscribed-angle.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:54:24.912Z"
+}

@@ -1,0 +1,79 @@
+{
+  "itemId": "trig-law-of-cosines",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "3.91% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.41% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 48693,
+        "inputTokens": 4606,
+        "cachedInputTokens": 4581,
+        "outputTokens": 2446,
+        "costUsd": 0.024968100000000003,
+        "rawResponse": "{\"explanation\":\"The law of cosines is the Pythagorean theorem with a correction for the angle between two sides: a² = b² + c² − 2bc cos θ. Dropping a perpendicular gives a right triangle with legs c − b cos θ and b sin θ; applying Pythagoras and expanding produces the correction term. For an acute angle it subtracts, for an obtuse angle it adds, and at 90° it vanishes—leaving a² = b² + c².\",\"manimCode\":\"const title = new Text({ text: 'Pythagoras + an angle correction', fontSize: 30, color: WHITE });\\ntitle.moveTo([0, 3.15, 0]);\\nconst bLen = 2.8;\\nconst cLen = 4;\\nlet degrees = 55;\\nconst origin = [-4.6, -1.35, 0];\\nconst endB = [-0.6, -1.35, 0];\\nfunction geometry() {\\n  const angle = degrees * Math.PI / 180;\\n  const endC = [origin[0] + bLen * Math.cos(angle), origin[1] + bLen * Math.sin(angle), 0];\\n  const foot = [endC[0], origin[1], 0];\\n  return { angle, endC, foot };\\n}\\nconst initial = geometry();\\nconst triangle = new Polygon({ vertices: [origin, endB, initial.endC], color: WHITE });\\ntriangle.setFill(BLUE_E, 0.13).setStrokeWidth(1);\\nfunction segment(p, q, color) {\\n  const obj = new Polygon({ vertices: [p, q], color });\\n  obj.setFillOpacity(0).setStrokeWidth(3);\\n  return obj;\\n}\\nconst sideB = segment(origin, initial.endC, GREEN);\\nconst sideC = segment(origin, endB, BLUE);\\nconst sideA = segment(endB, initial.endC, YELLOW);\\nconst altitude = segment(initial.endC, initial.foot, PURPLE);\\naltitude.setStrokeWidth(2);\\nconst projection = segment(origin, initial.foot, PURPLE);\\nprojection.setStrokeWidth(5);\\nconst rightMark = new Polygon({ vertices: [[0,0,0], [0.1,0,0]], color: PURPLE });\\nrightMark.setFillOpacity(0).setStrokeWidth(2);\\nconst tip = new Dot({ point: initial.endC, color: WHITE });\\nconst labelA = new Text({ text: 'a', fontSize: 26, color: YELLOW });\\nconst labelB = new Text({ text: 'b', fontSize: 26, color: GREEN });\\nconst labelC = new Text({ text: 'c', fontSize: 26, color: BLUE });\\nlabelC.moveTo([-2.6, -1.85, 0]);\\nconst thetaLabel = new MathTex({ latex: '\\\\\\\\theta', color: ORANGE });\\nawait thetaLabel.waitForRender();\\nthetaLabel.scale(0.65);\\nconst angleWedge = new Polygon({ vertices: [origin, [origin[0]+0.5, origin[1],0], [origin[0]+0.3, origin[1]+0.3,0]], color: ORANGE });\\nangleWedge.setFill(ORANGE, 0.18).setStrokeWidth(1);\\nconst projectionFormula = new MathTex({ latex: 'x=b\\\\\\\\cos\\\\\\\\theta,\\\\\\\\quad h=b\\\\\\\\sin\\\\\\\\theta', color: PURPLE });\\nawait projectionFormula.waitForRender();\\nprojectionFormula.scale(0.65).moveTo([3, 1.8, 0]);\\nconst pythagoras = new MathTex({ latex: 'a^2=(c-b\\\\\\\\cos\\\\\\\\theta)^2+(b\\\\\\\\sin\\\\\\\\theta)^2' });\\nawait pythagoras.waitForRender();\\npythagoras.scale(0.57).moveTo([3, 0.85, 0]);\\nconst identity = new MathTex({ latex: '\\\\\\\\sin^2\\\\\\\\theta+\\\\\\\\cos^2\\\\\\\\theta=1', color: GRAY });\\nawait identity.waitForRender();\\nidentity.scale(0.65).moveTo([3, 0.05, 0]);\\nconst result = new MathTex({ latex: 'a^2=b^2+c^2\\\\\\\\underbrace{-2bc\\\\\\\\cos\\\\\\\\theta}_{\\\\\\\\text{angle correction}}' });\\nawait result.waitForRender();\\nresult.scale(0.82).moveTo([-1.6, -2.85, 0]);\\nlet status;\\nfunction updateGeometry() {\\n  const g = geometry();\\n  triangle.setVertices([origin, endB, g.endC]);\\n  sideB.setVertices([origin, g.endC]);\\n  sideA.setVertices([endB, g.endC]);\\n  altitude.setVertices([g.endC, g.foot]);\\n  projection.setVertices([origin, g.foot]);\\n  const f = g.foot;\\n  rightMark.setVertices([[f[0]+0.16, f[1],0], [f[0]+0.16, f[1]+0.16,0], [f[0], f[1]+0.16,0]]);\\n  tip.moveTo(g.endC);\\n  labelB.moveTo([(origin[0]+g.endC[0])/2-0.3, (origin[1]+g.endC[1])/2+0.13,0]);\\n  labelA.moveTo([(endB[0]+g.endC[0])/2+0.28, (endB[1]+g.endC[1])/2+0.1,0]);\\n  const wedgePoints = [origin];\\n  for (let i=0; i<=24; i++) {\\n    const t = g.angle*i/24;\\n    wedgePoints.push([origin[0]+0.48*Math.cos(t), origin[1]+0.48*Math.sin(t),0]);\\n  }\\n  angleWedge.setVertices(wedgePoints);\\n  thetaLabel.moveTo([origin[0]+0.77*Math.cos(g.angle/2), origin[1]+0.77*Math.sin(g.angle/2),0]);\\n  if (status) scene.remove(status);\\n  const correction = -2*bLen*cLen*Math.cos(g.angle);\\n  const nearZero = Math.abs(correction)<0.00001;\\n  const description = nearZero ? '90°: correction = 0' : degrees.toFixed(0)+'°: correction '+(correction<0 ? 'subtracts ' : 'adds ')+Math.abs(correction).toFixed(2);\\n  status = new Text({ text: description, fontSize: 21, color: nearZero ? GREEN : ORANGE });\\n  status.moveTo([3, -0.8, 0]);\\n  scene.add(status);\\n}\\nscene.add(title, triangle, sideB, sideC, sideA, altitude, projection, rightMark, angleWedge, tip, labelA, labelB, labelC, thetaLabel);\\nupdateGeometry();\\nawait scene.play(new FadeIn(projectionFormula));\\nawait scene.play(new FadeIn(pythagoras), new FadeIn(identity));\\nawait scene.play(new Write(result));\\nmakeHoverable(triangle, scene, { hoverScale: 1, hoverOpacity: 0.3 });\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\\ncontrols.addSlider({ label: 'Included angle θ', min: 25, max: 115, step: 1, value: degrees, onChange: value => { degrees = value; updateGeometry(); } });\\ncontrols.addButton({ label: 'Show Pythagoras: θ = 90°', onClick: () => { degrees = 90; updateGeometry(); } });\\nawait scene.wait(999999);\"}",
+        "explanation": "The law of cosines is the Pythagorean theorem with a correction for the angle between two sides: a² = b² + c² − 2bc cos θ. Dropping a perpendicular gives a right triangle with legs c − b cos θ and b sin θ; applying Pythagoras and expanding produces the correction term. For an acute angle it subtracts, for an obtuse angle it adds, and at 90° it vanishes—leaving a² = b² + c²."
+      },
+      "code": "const title = new Text({ text: 'Pythagoras + an angle correction', fontSize: 30, color: WHITE });\ntitle.moveTo([0, 3.15, 0]);\nconst bLen = 2.8;\nconst cLen = 4;\nlet degrees = 55;\nconst origin = [-4.6, -1.35, 0];\nconst endB = [-0.6, -1.35, 0];\nfunction geometry() {\n  const angle = degrees * Math.PI / 180;\n  const endC = [origin[0] + bLen * Math.cos(angle), origin[1] + bLen * Math.sin(angle), 0];\n  const foot = [endC[0], origin[1], 0];\n  return { angle, endC, foot };\n}\nconst initial = geometry();\nconst triangle = new Polygon({ vertices: [origin, endB, initial.endC], color: WHITE });\ntriangle.setFill(BLUE_E, 0.13).setStrokeWidth(1);\nfunction segment(p, q, color) {\n  const obj = new Polygon({ vertices: [p, q], color });\n  obj.setFillOpacity(0).setStrokeWidth(3);\n  return obj;\n}\nconst sideB = segment(origin, initial.endC, GREEN);\nconst sideC = segment(origin, endB, BLUE);\nconst sideA = segment(endB, initial.endC, YELLOW);\nconst altitude = segment(initial.endC, initial.foot, PURPLE);\naltitude.setStrokeWidth(2);\nconst projection = segment(origin, initial.foot, PURPLE);\nprojection.setStrokeWidth(5);\nconst rightMark = new Polygon({ vertices: [[0,0,0], [0.1,0,0]], color: PURPLE });\nrightMark.setFillOpacity(0).setStrokeWidth(2);\nconst tip = new Dot({ point: initial.endC, color: WHITE });\nconst labelA = new Text({ text: 'a', fontSize: 26, color: YELLOW });\nconst labelB = new Text({ text: 'b', fontSize: 26, color: GREEN });\nconst labelC = new Text({ text: 'c', fontSize: 26, color: BLUE });\nlabelC.moveTo([-2.6, -1.85, 0]);\nconst thetaLabel = new MathTex({ latex: '\\\\theta', color: ORANGE });\nawait thetaLabel.waitForRender();\nthetaLabel.scale(0.65);\nconst angleWedge = new Polygon({ vertices: [origin, [origin[0]+0.5, origin[1],0], [origin[0]+0.3, origin[1]+0.3,0]], color: ORANGE });\nangleWedge.setFill(ORANGE, 0.18).setStrokeWidth(1);\nconst projectionFormula = new MathTex({ latex: 'x=b\\\\cos\\\\theta,\\\\quad h=b\\\\sin\\\\theta', color: PURPLE });\nawait projectionFormula.waitForRender();\nprojectionFormula.scale(0.65).moveTo([3, 1.8, 0]);\nconst pythagoras = new MathTex({ latex: 'a^2=(c-b\\\\cos\\\\theta)^2+(b\\\\sin\\\\theta)^2' });\nawait pythagoras.waitForRender();\npythagoras.scale(0.57).moveTo([3, 0.85, 0]);\nconst identity = new MathTex({ latex: '\\\\sin^2\\\\theta+\\\\cos^2\\\\theta=1', color: GRAY });\nawait identity.waitForRender();\nidentity.scale(0.65).moveTo([3, 0.05, 0]);\nconst result = new MathTex({ latex: 'a^2=b^2+c^2\\\\underbrace{-2bc\\\\cos\\\\theta}_{\\\\text{angle correction}}' });\nawait result.waitForRender();\nresult.scale(0.82).moveTo([-1.6, -2.85, 0]);\nlet status;\nfunction updateGeometry() {\n  const g = geometry();\n  triangle.setVertices([origin, endB, g.endC]);\n  sideB.setVertices([origin, g.endC]);\n  sideA.setVertices([endB, g.endC]);\n  altitude.setVertices([g.endC, g.foot]);\n  projection.setVertices([origin, g.foot]);\n  const f = g.foot;\n  rightMark.setVertices([[f[0]+0.16, f[1],0], [f[0]+0.16, f[1]+0.16,0], [f[0], f[1]+0.16,0]]);\n  tip.moveTo(g.endC);\n  labelB.moveTo([(origin[0]+g.endC[0])/2-0.3, (origin[1]+g.endC[1])/2+0.13,0]);\n  labelA.moveTo([(endB[0]+g.endC[0])/2+0.28, (endB[1]+g.endC[1])/2+0.1,0]);\n  const wedgePoints = [origin];\n  for (let i=0; i<=24; i++) {\n    const t = g.angle*i/24;\n    wedgePoints.push([origin[0]+0.48*Math.cos(t), origin[1]+0.48*Math.sin(t),0]);\n  }\n  angleWedge.setVertices(wedgePoints);\n  thetaLabel.moveTo([origin[0]+0.77*Math.cos(g.angle/2), origin[1]+0.77*Math.sin(g.angle/2),0]);\n  if (status) scene.remove(status);\n  const correction = -2*bLen*cLen*Math.cos(g.angle);\n  const nearZero = Math.abs(correction)<0.00001;\n  const description = nearZero ? '90°: correction = 0' : degrees.toFixed(0)+'°: correction '+(correction<0 ? 'subtracts ' : 'adds ')+Math.abs(correction).toFixed(2);\n  status = new Text({ text: description, fontSize: 21, color: nearZero ? GREEN : ORANGE });\n  status.moveTo([3, -0.8, 0]);\n  scene.add(status);\n}\nscene.add(title, triangle, sideB, sideC, sideA, altitude, projection, rightMark, angleWedge, tip, labelA, labelB, labelC, thetaLabel);\nupdateGeometry();\nawait scene.play(new FadeIn(projectionFormula));\nawait scene.play(new FadeIn(pythagoras), new FadeIn(identity));\nawait scene.play(new Write(result));\nmakeHoverable(triangle, scene, { hoverScale: 1, hoverOpacity: 0.3 });\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\ncontrols.addSlider({ label: 'Included angle θ', min: 25, max: 115, step: 1, value: degrees, onChange: value => { degrees = value; updateGeometry(); } });\ncontrols.addButton({ label: 'Show Pythagoras: θ = 90°', onClick: () => { degrees = 90; updateGeometry(); } });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 8997,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 3,
+        "controls": {
+          "sliders": 1,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/trig-law-of-cosines.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/trig-law-of-cosines.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:47:25.894Z"
+}

@@ -1,0 +1,81 @@
+{
+  "itemId": "alg-vertex-form",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 0.8,
+  "firstAttemptScore": 0.8,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.8,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.72% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "FunctionGraph [x -5.00..5.00, y -0.33..23.67] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "MathTex \"y\" overlaps Text \"y = a(x - h)^2 + k\" (98%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.99% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 14385,
+        "inputTokens": 12280,
+        "cachedInputTokens": 12032,
+        "outputTokens": 573,
+        "costUsd": 0.00043161999999999996,
+        "rawResponse": "{\"explanation\":\"In vertex form, \\\\(y=a(x-h)^2+k\\\\), the vertex is \\\\((h,k)\\\\): changing \\\\(h\\\\) slides the parabola left or right, and changing \\\\(k\\\\) slides it up or down. The value \\\\(a\\\\) controls the opening and width: positive opens upward, negative opens downward, and larger \\\\(|a|\\\\) makes it narrower.\",\"manimCode\":\"const ax = new Axes({ xRange: [-6, 6, 1], yRange: [-4, 5, 1], xLength: 10, yLength: 6, tips: false });\\nscene.add(ax, ax.getAxisLabels());\\nlet a = 1, h = 0, k = 0;\\nlet curve = ax.plot(x => a * (x - h) ** 2 + k, { color: BLUE, xRange: [-6, 6] });\\nlet vertex = new Dot({ point: ax.c2p(h, k), color: YELLOW });\\nscene.add(curve, vertex);\\nconst title = new Text({ text: 'y = a(x - h)^2 + k', color: WHITE, fontSize: 28 });\\ntitle.moveTo([0, 3.25, 0]);\\nscene.add(title);\\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 250 });\\nfunction redraw() {\\n  scene.remove(curve, vertex);\\n  curve = ax.plot(x => a * (x - h) ** 2 + k, { color: BLUE, xRange: [-6, 6] });\\n  vertex = new Dot({ point: ax.c2p(h, k), color: YELLOW });\\n  scene.add(curve, vertex);\\n}\\ncontrols.addSlider({ label: 'a (opening / width)', min: -2, max: 2, value: 1, step: 0.1, onChange: v => { a = v; redraw(); } });\\ncontrols.addSlider({ label: 'h (left / right)', min: -3, max: 3, value: 0, step: 0.1, onChange: v => { h = v; redraw(); } });\\ncontrols.addSlider({ label: 'k (up / down)', min: -2, max: 3, value: 0, step: 0.1, onChange: v => { k = v; redraw(); } });\\nawait scene.wait(999999);\"}",
+        "explanation": "In vertex form, \\(y=a(x-h)^2+k\\), the vertex is \\((h,k)\\): changing \\(h\\) slides the parabola left or right, and changing \\(k\\) slides it up or down. The value \\(a\\) controls the opening and width: positive opens upward, negative opens downward, and larger \\(|a|\\) makes it narrower."
+      },
+      "code": "const ax = new Axes({ xRange: [-6, 6, 1], yRange: [-4, 5, 1], xLength: 10, yLength: 6, tips: false });\nscene.add(ax, ax.getAxisLabels());\nlet a = 1, h = 0, k = 0;\nlet curve = ax.plot(x => a * (x - h) ** 2 + k, { color: BLUE, xRange: [-6, 6] });\nlet vertex = new Dot({ point: ax.c2p(h, k), color: YELLOW });\nscene.add(curve, vertex);\nconst title = new Text({ text: 'y = a(x - h)^2 + k', color: WHITE, fontSize: 28 });\ntitle.moveTo([0, 3.25, 0]);\nscene.add(title);\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 250 });\nfunction redraw() {\n  scene.remove(curve, vertex);\n  curve = ax.plot(x => a * (x - h) ** 2 + k, { color: BLUE, xRange: [-6, 6] });\n  vertex = new Dot({ point: ax.c2p(h, k), color: YELLOW });\n  scene.add(curve, vertex);\n}\ncontrols.addSlider({ label: 'a (opening / width)', min: -2, max: 2, value: 1, step: 0.1, onChange: v => { a = v; redraw(); } });\ncontrols.addSlider({ label: 'h (left / right)', min: -3, max: 3, value: 0, step: 0.1, onChange: v => { h = v; redraw(); } });\ncontrols.addSlider({ label: 'k (up / down)', min: -2, max: 3, value: 0, step: 0.1, onChange: v => { k = v; redraw(); } });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3170,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 3,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/alg-vertex-form.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/alg-vertex-form.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:53:27.700Z"
+}

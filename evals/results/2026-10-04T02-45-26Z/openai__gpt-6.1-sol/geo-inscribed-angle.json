@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-inscribed-angle",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.84% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.74% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 40065,
+        "inputTokens": 4613,
+        "cachedInputTokens": 4581,
+        "outputTokens": 2269,
+        "costUsd": 0.023212100000000003,
+        "rawResponse": "{\"explanation\":\"An inscribed angle is half the measure of the arc it intercepts—the arc between the two fixed endpoints that does not contain the moving point. Drag the yellow point around the circle: the angle stays at 50° while you remain on the same arc. Crossing an endpoint switches it to the supplementary angle, 130°; at the endpoints themselves, the angle is undefined.\",\"manimCode\":\"const center = [-2, -0.15, 0];\\nconst radius = 2.25;\\nconst radians = degrees => degrees * Math.PI / 180;\\nconst circlePoint = angle => [center[0] + radius * Math.cos(angle), center[1] + radius * Math.sin(angle), 0];\\nconst aAngle = radians(220);\\nconst bAngle = radians(320);\\nconst pointA = circlePoint(aAngle);\\nconst pointB = circlePoint(bAngle);\\n\\nconst title = new Text({ text: 'The inscribed angle theorem', fontSize: 30, color: WHITE });\\ntitle.moveTo([0, 3.25, 0]);\\nconst circle = new Circle({ radius, color: BLUE });\\ncircle.moveTo(center);\\nconst chord = new Line({ start: pointA, end: pointB, color: BLUE });\\nconst centralRays = new VGroup(\\n  new Line({ start: center, end: pointA, color: GRAY }),\\n  new Line({ start: center, end: pointB, color: GRAY })\\n);\\nconst centerDot = new Dot({ point: center, color: GRAY });\\nconst centralArcPoints = [];\\nfor (let i = 0; i <= 40; i++) {\\n  const angle = aAngle + (bAngle - aAngle) * i / 40;\\n  centralArcPoints.push([center[0] + 0.62 * Math.cos(angle), center[1] + 0.62 * Math.sin(angle), 0]);\\n}\\nconst centralArc = new Polygon({ vertices: centralArcPoints, color: ORANGE });\\ncentralArc.setFillOpacity(0);\\ncentralArc.setStrokeWidth(3);\\nconst centralLabel = new Text({ text: '100°', fontSize: 22, color: ORANGE });\\ncentralLabel.moveTo([center[0], center[1] - 0.95, 0]);\\n\\nconst endpointA = new Dot({ point: pointA, color: BLUE });\\nconst endpointB = new Dot({ point: pointB, color: BLUE });\\nconst labelA = new Text({ text: 'A', fontSize: 23, color: BLUE });\\nlabelA.moveTo([pointA[0] - 0.25, pointA[1] - 0.27, 0]);\\nconst labelB = new Text({ text: 'B', fontSize: 23, color: BLUE });\\nlabelB.moveTo([pointB[0] + 0.25, pointB[1] - 0.27, 0]);\\n\\nconst movingPoint = new Dot({ point: circlePoint(Math.PI / 2), color: YELLOW });\\nconst rays = new Polygon({ vertices: [pointA, movingPoint.getCenter(), pointB], color: YELLOW });\\nrays.setFillOpacity(0);\\nrays.setStrokeWidth(3);\\nconst angleArc = new Polygon({ vertices: [[0, 0, 0], [0.1, 0, 0]], color: YELLOW });\\nangleArc.setFillOpacity(0);\\nangleArc.setStrokeWidth(4);\\nlet angleReadout = null;\\nlet arcReadout = null;\\nlet statusReadout = null;\\n\\nconst sideHeading = new Text({ text: 'Drag the yellow point', fontSize: 25, color: YELLOW });\\nsideHeading.moveTo([3.05, 1.9, 0]);\\nconst fixedNote = new Text({ text: 'A and B stay fixed', fontSize: 21, color: BLUE });\\nfixedNote.moveTo([3.05, 1.35, 0]);\\nconst footnote = new Text({ text: 'Same arc → same inscribed angle', fontSize: 24, color: WHITE });\\nfootnote.moveTo([0, -3.15, 0]);\\n\\nfunction replaceReadout(oldLabel, value, y, color, fontSize) {\\n  if (oldLabel) scene.remove(oldLabel);\\n  const freshLabel = new Text({ text: value, fontSize, color });\\n  freshLabel.moveTo([3.05, y, 0]);\\n  scene.add(freshLabel);\\n  return freshLabel;\\n}\\n\\nfunction refreshGeometry() {\\n  const p = movingPoint.getCenter();\\n  rays.setVertices([pointA, p, pointB]);\\n  const ux = pointA[0] - p[0];\\n  const uy = pointA[1] - p[1];\\n  const vx = pointB[0] - p[0];\\n  const vy = pointB[1] - p[1];\\n  const lenA = Math.hypot(ux, uy);\\n  const lenB = Math.hypot(vx, vy);\\n  if (Math.min(lenA, lenB) < 0.025) {\\n    angleArc.setOpacity(0);\\n    angleReadout = replaceReadout(angleReadout, 'Angle undefined', 0.4, YELLOW, 28);\\n    arcReadout = replaceReadout(arcReadout, 'Two vertices coincide', -0.35, WHITE, 21);\\n    statusReadout = replaceReadout(statusReadout, 'Move away from A or B', -1.15, GRAY, 19);\\n    return;\\n  }\\n  angleArc.setOpacity(1);\\n  const startAngle = Math.atan2(uy, ux);\\n  let sweep = Math.atan2(vy, vx) - startAngle;\\n  while (sweep > Math.PI) sweep -= 2 * Math.PI;\\n  while (sweep < -Math.PI) sweep += 2 * Math.PI;\\n  const arcVertices = [];\\n  const arcRadius = Math.min(0.43, lenA * 0.35, lenB * 0.35);\\n  for (let i = 0; i <= 30; i++) {\\n    const theta = startAngle + sweep * i / 30;\\n    arcVertices.push([p[0] + arcRadius * Math.cos(theta), p[1] + arcRadius * Math.sin(theta), 0]);\\n  }\\n  angleArc.setVertices(arcVertices);\\n  const degrees = Math.abs(sweep) * 180 / Math.PI;\\n  const isSmall = degrees < 90;\\n  angleReadout = replaceReadout(angleReadout, 'Angle APB = ' + Math.round(degrees) + '°', 0.4, YELLOW, 28);\\n  arcReadout = replaceReadout(arcReadout, isSmall ? '½ × 100° = 50°' : '½ × 260° = 130°', -0.35, WHITE, 25);\\n  statusReadout = replaceReadout(statusReadout, isSmall ? 'Intercepts the lower arc' : 'Intercepts the upper arc', -1.15, GRAY, 19);\\n}\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new Create(circle));\\nscene.add(chord, centralRays, centerDot, centralArc, centralLabel, endpointA, endpointB, labelA, labelB);\\nscene.add(rays, angleArc, movingPoint, sideHeading, fixedNote, footnote);\\nrefreshGeometry();\\nmakeDraggable(movingPoint, scene, {\\n  constrainX: [center[0] - radius, center[0] + radius],\\n  constrainY: [center[1] - radius, center[1] + radius],\\n  onDrag: (mob, pos) => {\\n    const dx = pos[0] - center[0];\\n    const dy = pos[1] - center[1];\\n    if (Math.hypot(dx, dy) < 0.001) return;\\n    mob.moveTo(circlePoint(Math.atan2(dy, dx)));\\n    refreshGeometry();\\n  }\\n});\\nawait scene.wait(999999);\"}",
+        "explanation": "An inscribed angle is half the measure of the arc it intercepts—the arc between the two fixed endpoints that does not contain the moving point. Drag the yellow point around the circle: the angle stays at 50° while you remain on the same arc. Crossing an endpoint switches it to the supplementary angle, 130°; at the endpoints themselves, the angle is undefined."
+      },
+      "code": "const center = [-2, -0.15, 0];\nconst radius = 2.25;\nconst radians = degrees => degrees * Math.PI / 180;\nconst circlePoint = angle => [center[0] + radius * Math.cos(angle), center[1] + radius * Math.sin(angle), 0];\nconst aAngle = radians(220);\nconst bAngle = radians(320);\nconst pointA = circlePoint(aAngle);\nconst pointB = circlePoint(bAngle);\n\nconst title = new Text({ text: 'The inscribed angle theorem', fontSize: 30, color: WHITE });\ntitle.moveTo([0, 3.25, 0]);\nconst circle = new Circle({ radius, color: BLUE });\ncircle.moveTo(center);\nconst chord = new Line({ start: pointA, end: pointB, color: BLUE });\nconst centralRays = new VGroup(\n  new Line({ start: center, end: pointA, color: GRAY }),\n  new Line({ start: center, end: pointB, color: GRAY })\n);\nconst centerDot = new Dot({ point: center, color: GRAY });\nconst centralArcPoints = [];\nfor (let i = 0; i <= 40; i++) {\n  const angle = aAngle + (bAngle - aAngle) * i / 40;\n  centralArcPoints.push([center[0] + 0.62 * Math.cos(angle), center[1] + 0.62 * Math.sin(angle), 0]);\n}\nconst centralArc = new Polygon({ vertices: centralArcPoints, color: ORANGE });\ncentralArc.setFillOpacity(0);\ncentralArc.setStrokeWidth(3);\nconst centralLabel = new Text({ text: '100°', fontSize: 22, color: ORANGE });\ncentralLabel.moveTo([center[0], center[1] - 0.95, 0]);\n\nconst endpointA = new Dot({ point: pointA, color: BLUE });\nconst endpointB = new Dot({ point: pointB, color: BLUE });\nconst labelA = new Text({ text: 'A', fontSize: 23, color: BLUE });\nlabelA.moveTo([pointA[0] - 0.25, pointA[1] - 0.27, 0]);\nconst labelB = new Text({ text: 'B', fontSize: 23, color: BLUE });\nlabelB.moveTo([pointB[0] + 0.25, pointB[1] - 0.27, 0]);\n\nconst movingPoint = new Dot({ point: circlePoint(Math.PI / 2), color: YELLOW });\nconst rays = new Polygon({ vertices: [pointA, movingPoint.getCenter(), pointB], color: YELLOW });\nrays.setFillOpacity(0);\nrays.setStrokeWidth(3);\nconst angleArc = new Polygon({ vertices: [[0, 0, 0], [0.1, 0, 0]], color: YELLOW });\nangleArc.setFillOpacity(0);\nangleArc.setStrokeWidth(4);\nlet angleReadout = null;\nlet arcReadout = null;\nlet statusReadout = null;\n\nconst sideHeading = new Text({ text: 'Drag the yellow point', fontSize: 25, color: YELLOW });\nsideHeading.moveTo([3.05, 1.9, 0]);\nconst fixedNote = new Text({ text: 'A and B stay fixed', fontSize: 21, color: BLUE });\nfixedNote.moveTo([3.05, 1.35, 0]);\nconst footnote = new Text({ text: 'Same arc → same inscribed angle', fontSize: 24, color: WHITE });\nfootnote.moveTo([0, -3.15, 0]);\n\nfunction replaceReadout(oldLabel, value, y, color, fontSize) {\n  if (oldLabel) scene.remove(oldLabel);\n  const freshLabel = new Text({ text: value, fontSize, color });\n  freshLabel.moveTo([3.05, y, 0]);\n  scene.add(freshLabel);\n  return freshLabel;\n}\n\nfunction refreshGeometry() {\n  const p = movingPoint.getCenter();\n  rays.setVertices([pointA, p, pointB]);\n  const ux = pointA[0] - p[0];\n  const uy = pointA[1] - p[1];\n  const vx = pointB[0] - p[0];\n  const vy = pointB[1] - p[1];\n  const lenA = Math.hypot(ux, uy);\n  const lenB = Math.hypot(vx, vy);\n  if (Math.min(lenA, lenB) < 0.025) {\n    angleArc.setOpacity(0);\n    angleReadout = replaceReadout(angleReadout, 'Angle undefined', 0.4, YELLOW, 28);\n    arcReadout = replaceReadout(arcReadout, 'Two vertices coincide', -0.35, WHITE, 21);\n    statusReadout = replaceReadout(statusReadout, 'Move away from A or B', -1.15, GRAY, 19);\n    return;\n  }\n  angleArc.setOpacity(1);\n  const startAngle = Math.atan2(uy, ux);\n  let sweep = Math.atan2(vy, vx) - startAngle;\n  while (sweep > Math.PI) sweep -= 2 * Math.PI;\n  while (sweep < -Math.PI) sweep += 2 * Math.PI;\n  const arcVertices = [];\n  const arcRadius = Math.min(0.43, lenA * 0.35, lenB * 0.35);\n  for (let i = 0; i <= 30; i++) {\n    const theta = startAngle + sweep * i / 30;\n    arcVertices.push([p[0] + arcRadius * Math.cos(theta), p[1] + arcRadius * Math.sin(theta), 0]);\n  }\n  angleArc.setVertices(arcVertices);\n  const degrees = Math.abs(sweep) * 180 / Math.PI;\n  const isSmall = degrees < 90;\n  angleReadout = replaceReadout(angleReadout, 'Angle APB = ' + Math.round(degrees) + '°', 0.4, YELLOW, 28);\n  arcReadout = replaceReadout(arcReadout, isSmall ? '½ × 100° = 50°' : '½ × 260° = 130°', -0.35, WHITE, 25);\n  statusReadout = replaceReadout(statusReadout, isSmall ? 'Intercepts the lower arc' : 'Intercepts the upper arc', -1.15, GRAY, 19);\n}\n\nawait scene.play(new Write(title));\nawait scene.play(new Create(circle));\nscene.add(chord, centralRays, centerDot, centralArc, centralLabel, endpointA, endpointB, labelA, labelB);\nscene.add(rays, angleArc, movingPoint, sideHeading, fixedNote, footnote);\nrefreshGeometry();\nmakeDraggable(movingPoint, scene, {\n  constrainX: [center[0] - radius, center[0] + radius],\n  constrainY: [center[1] - radius, center[1] + radius],\n  onDrag: (mob, pos) => {\n    const dx = pos[0] - center[0];\n    const dy = pos[1] - center[1];\n    if (Math.hypot(dx, dy) < 0.001) return;\n    mob.moveTo(circlePoint(Math.atan2(dy, dx)));\n    refreshGeometry();\n  }\n});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 11271,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 2,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/geo-inscribed-angle.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/geo-inscribed-angle.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:33.018Z"
+}

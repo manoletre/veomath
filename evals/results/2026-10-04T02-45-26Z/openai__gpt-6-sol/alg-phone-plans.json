@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-phone-plans",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.61% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.07% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 48065,
+        "inputTokens": 12294,
+        "cachedInputTokens": 0,
+        "outputTokens": 1757,
+        "costUsd": 0.042158,
+        "rawResponse": "{\"explanation\":\"Set the costs equal: $20 + $0.10m = $35 + $0.05m. Solving gives m = 300 minutes, when both plans cost $50. On the graph, that is where the two lines cross; move the slider to compare costs at other minute totals.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [0, 400, 100],\\n  yRange: [0, 70, 10],\\n  xLength: 9,\\n  yLength: 5,\\n  tips: false\\n});\\nax.moveTo([-1.1, -0.2, 0]);\\n\\nconst planA = ax.plot(m => 20 + 0.10 * m, { color: BLUE, xRange: [0, 400] });\\nconst planB = ax.plot(m => 35 + 0.05 * m, { color: ORANGE, xRange: [0, 400] });\\nconst crossing = new Dot({ point: ax.c2p(300, 50), color: GOLD });\\n\\nconst title = new Text({ text: 'When do the phone plans cost the same?', color: WHITE, fontSize: 30 });\\ntitle.moveTo([-1, 3.3, 0]);\\nconst xLabel = new Text({ text: 'Minutes', color: WHITE, fontSize: 23 });\\nxLabel.moveTo([3.4, -3.25, 0]);\\nconst yLabel = new Text({ text: 'Cost ($)', color: WHITE, fontSize: 23 });\\nyLabel.moveTo([-5.35, 2.65, 0]);\\nconst aLabel = new Text({ text: 'A: $20 + $0.10/min', color: BLUE, fontSize: 23 });\\naLabel.moveTo([4.75, 2.15, 0]);\\nconst bLabel = new Text({ text: 'B: $35 + $0.05/min', color: ORANGE, fontSize: 23 });\\nbLabel.moveTo([4.75, 1.62, 0]);\\nconst answer = new Text({ text: '300 min  →  $50 each', color: GOLD, fontSize: 25 });\\nanswer.moveTo([4.65, 0.65, 0]);\\n\\nawait scene.play(new Write(title));\\nawait scene.play(new Create(ax));\\nscene.add(xLabel, yLabel, aLabel, bLabel);\\nawait scene.play(new AnimationGroup([new Create(planA), new Create(planB)]));\\nawait scene.play(new FadeIn(crossing));\\nawait scene.play(new Write(answer));\\n\\nlet minutes = 150;\\nconst aDot = new Dot({ point: ax.c2p(minutes, 20 + 0.10 * minutes), color: BLUE });\\nconst bDot = new Dot({ point: ax.c2p(minutes, 35 + 0.05 * minutes), color: ORANGE });\\nscene.add(aDot, bDot);\\n\\nconst controls = new Controls(scene, { position: 'bottom-right' });\\ncontrols.addSlider({\\n  label: 'Minutes', min: 0, max: 400, value: minutes, step: 1,\\n  onChange: v => {\\n    minutes = v;\\n    aDot.moveTo(ax.c2p(v, 20 + 0.10 * v));\\n    bDot.moveTo(ax.c2p(v, 35 + 0.05 * v));\\n  }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Set the costs equal: $20 + $0.10m = $35 + $0.05m. Solving gives m = 300 minutes, when both plans cost $50. On the graph, that is where the two lines cross; move the slider to compare costs at other minute totals."
+      },
+      "code": "const ax = new Axes({\n  xRange: [0, 400, 100],\n  yRange: [0, 70, 10],\n  xLength: 9,\n  yLength: 5,\n  tips: false\n});\nax.moveTo([-1.1, -0.2, 0]);\n\nconst planA = ax.plot(m => 20 + 0.10 * m, { color: BLUE, xRange: [0, 400] });\nconst planB = ax.plot(m => 35 + 0.05 * m, { color: ORANGE, xRange: [0, 400] });\nconst crossing = new Dot({ point: ax.c2p(300, 50), color: GOLD });\n\nconst title = new Text({ text: 'When do the phone plans cost the same?', color: WHITE, fontSize: 30 });\ntitle.moveTo([-1, 3.3, 0]);\nconst xLabel = new Text({ text: 'Minutes', color: WHITE, fontSize: 23 });\nxLabel.moveTo([3.4, -3.25, 0]);\nconst yLabel = new Text({ text: 'Cost ($)', color: WHITE, fontSize: 23 });\nyLabel.moveTo([-5.35, 2.65, 0]);\nconst aLabel = new Text({ text: 'A: $20 + $0.10/min', color: BLUE, fontSize: 23 });\naLabel.moveTo([4.75, 2.15, 0]);\nconst bLabel = new Text({ text: 'B: $35 + $0.05/min', color: ORANGE, fontSize: 23 });\nbLabel.moveTo([4.75, 1.62, 0]);\nconst answer = new Text({ text: '300 min  →  $50 each', color: GOLD, fontSize: 25 });\nanswer.moveTo([4.65, 0.65, 0]);\n\nawait scene.play(new Write(title));\nawait scene.play(new Create(ax));\nscene.add(xLabel, yLabel, aLabel, bLabel);\nawait scene.play(new AnimationGroup([new Create(planA), new Create(planB)]));\nawait scene.play(new FadeIn(crossing));\nawait scene.play(new Write(answer));\n\nlet minutes = 150;\nconst aDot = new Dot({ point: ax.c2p(minutes, 20 + 0.10 * minutes), color: BLUE });\nconst bDot = new Dot({ point: ax.c2p(minutes, 35 + 0.05 * minutes), color: ORANGE });\nscene.add(aDot, bDot);\n\nconst controls = new Controls(scene, { position: 'bottom-right' });\ncontrols.addSlider({\n  label: 'Minutes', min: 0, max: 400, value: minutes, step: 1,\n  onChange: v => {\n    minutes = v;\n    aDot.moveTo(ax.c2p(v, 20 + 0.10 * v));\n    bDot.moveTo(ax.c2p(v, 35 + 0.05 * v));\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 12438,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 5,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/alg-phone-plans.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/alg-phone-plans.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:49.059Z"
+}

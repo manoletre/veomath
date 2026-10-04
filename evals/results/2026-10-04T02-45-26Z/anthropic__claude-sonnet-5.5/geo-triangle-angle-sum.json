@@ -1,0 +1,79 @@
+{
+  "itemId": "geo-triangle-angle-sum",
+  "model": "anthropic/claude-sonnet-5.5",
+  "via": "claude",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.52% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=3 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.00% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 11623,
+        "inputTokens": 7958,
+        "cachedInputTokens": 7476,
+        "outputTokens": 1612,
+        "costUsd": 0.0195392,
+        "rawResponse": "{\"explanation\":\"Draw a line through one vertex parallel to the opposite side. Alternate interior angles are equal, so the two angles beside the top vertex match the triangle's two base angles. Together with the top angle, they make a straight line, which is 180°. Drag the vertices to change the triangle. The sum stays 180°.\",\"manimCode\":\"const A = [-2, -1.5, 0];\\nconst B = [2, -1.5, 0];\\nconst C = [-0.5, 1.5, 0];\\n\\nconst dA = new Dot({ point: [...A], color: RED });\\nconst dB = new Dot({ point: [...B], color: BLUE });\\nconst dC = new Dot({ point: [...C], color: GREEN });\\n\\nconst tri = new Polygon({ vertices: [A, B, C], color: WHITE });\\ntri.setFill(GRAY, 0.15);\\n\\nconst para = new Polygon({ vertices: [[-6, C[1], 0], [6, C[1], 0]], color: YELLOW });\\npara.setStrokeWidth(2).setFillOpacity(0);\\n\\n// angle wedges drawn as small filled polygons\\nfunction wedge(P, d1, d2, r, color) {\\n  const a1 = Math.atan2(d1[1], d1[0]);\\n  let a2 = Math.atan2(d2[1], d2[0]);\\n  let diff = a2 - a1;\\n  while (diff > Math.PI) diff -= 2 * Math.PI;\\n  while (diff < -Math.PI) diff += 2 * Math.PI;\\n  const pts = [[P[0], P[1], 0]];\\n  for (let i = 0; i <= 12; i++) {\\n    const a = a1 + diff * i / 12;\\n    pts.push([P[0] + r * Math.cos(a), P[1] + r * Math.sin(a), 0]);\\n  }\\n  return pts;\\n}\\n\\nconst wA = new Polygon({ vertices: wedge(A, [1,0], [1,0], 0.5, RED), color: RED });\\nconst wB = new Polygon({ vertices: wedge(B, [1,0], [1,0], 0.5, BLUE), color: BLUE });\\nconst wC1 = new Polygon({ vertices: wedge(C, [1,0], [1,0], 0.5, RED), color: RED });\\nconst wC2 = new Polygon({ vertices: wedge(C, [1,0], [1,0], 0.5, GREEN), color: GREEN });\\nconst wC3 = new Polygon({ vertices: wedge(C, [1,0], [1,0], 0.5, BLUE), color: BLUE });\\n[[wA, RED], [wB, BLUE], [wC1, RED], [wC2, GREEN], [wC3, BLUE]].forEach(([w, c]) => w.setFill(c, 0.6));\\n\\nscene.add(para, tri, wA, wB, wC1, wC2, wC3, dA, dB, dC);\\n\\nfunction update() {\\n  const a = dA.getCenter(), b = dB.getCenter(), c = dC.getCenter();\\n  tri.setVertices([a, b, c]);\\n  para.setVertices([[-6, c[1], 0], [6, c[1], 0]]);\\n  const sub = (p, q) => [p[0] - q[0], p[1] - q[1]];\\n  const r = 0.5;\\n  wA.setVertices(wedge(a, sub(b, a), sub(c, a), r, RED));\\n  wB.setVertices(wedge(b, sub(c, b), sub(a, b), r, BLUE));\\n  // at C: left ray along parallel line -> CA ; CA -> CB ; CB -> right ray\\n  wC1.setVertices(wedge(c, [-1, 0], sub(a, c), r, RED));\\n  wC2.setVertices(wedge(c, sub(a, c), sub(b, c), r, GREEN));\\n  wC3.setVertices(wedge(c, sub(b, c), [1, 0], r, BLUE));\\n}\\nmakeDraggable(dA, scene, { onDrag: update });\\nmakeDraggable(dB, scene, { onDrag: update });\\nmakeDraggable(dC, scene, { onDrag: update });\\nupdate();\\n\\nconst title = new Text({ text: 'Red + Green + Blue = a straight line = 180°', color: YELLOW, fontSize: 30 });\\ntitle.moveTo([0, 3.3, 0]);\\nscene.add(title);\\n\\nconst note = new Text({ text: 'Parallel lines: alternate angles are equal. Drag the vertices!', color: WHITE, fontSize: 24 });\\nnote.moveTo([0, -3.2, 0]);\\nscene.add(note);\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "Draw a line through one vertex parallel to the opposite side. Alternate interior angles are equal, so the two angles beside the top vertex match the triangle's two base angles. Together with the top angle, they make a straight line, which is 180°. Drag the vertices to change the triangle. The sum stays 180°."
+      },
+      "code": "const A = [-2, -1.5, 0];\nconst B = [2, -1.5, 0];\nconst C = [-0.5, 1.5, 0];\n\nconst dA = new Dot({ point: [...A], color: RED });\nconst dB = new Dot({ point: [...B], color: BLUE });\nconst dC = new Dot({ point: [...C], color: GREEN });\n\nconst tri = new Polygon({ vertices: [A, B, C], color: WHITE });\ntri.setFill(GRAY, 0.15);\n\nconst para = new Polygon({ vertices: [[-6, C[1], 0], [6, C[1], 0]], color: YELLOW });\npara.setStrokeWidth(2).setFillOpacity(0);\n\n// angle wedges drawn as small filled polygons\nfunction wedge(P, d1, d2, r, color) {\n  const a1 = Math.atan2(d1[1], d1[0]);\n  let a2 = Math.atan2(d2[1], d2[0]);\n  let diff = a2 - a1;\n  while (diff > Math.PI) diff -= 2 * Math.PI;\n  while (diff < -Math.PI) diff += 2 * Math.PI;\n  const pts = [[P[0], P[1], 0]];\n  for (let i = 0; i <= 12; i++) {\n    const a = a1 + diff * i / 12;\n    pts.push([P[0] + r * Math.cos(a), P[1] + r * Math.sin(a), 0]);\n  }\n  return pts;\n}\n\nconst wA = new Polygon({ vertices: wedge(A, [1,0], [1,0], 0.5, RED), color: RED });\nconst wB = new Polygon({ vertices: wedge(B, [1,0], [1,0], 0.5, BLUE), color: BLUE });\nconst wC1 = new Polygon({ vertices: wedge(C, [1,0], [1,0], 0.5, RED), color: RED });\nconst wC2 = new Polygon({ vertices: wedge(C, [1,0], [1,0], 0.5, GREEN), color: GREEN });\nconst wC3 = new Polygon({ vertices: wedge(C, [1,0], [1,0], 0.5, BLUE), color: BLUE });\n[[wA, RED], [wB, BLUE], [wC1, RED], [wC2, GREEN], [wC3, BLUE]].forEach(([w, c]) => w.setFill(c, 0.6));\n\nscene.add(para, tri, wA, wB, wC1, wC2, wC3, dA, dB, dC);\n\nfunction update() {\n  const a = dA.getCenter(), b = dB.getCenter(), c = dC.getCenter();\n  tri.setVertices([a, b, c]);\n  para.setVertices([[-6, c[1], 0], [6, c[1], 0]]);\n  const sub = (p, q) => [p[0] - q[0], p[1] - q[1]];\n  const r = 0.5;\n  wA.setVertices(wedge(a, sub(b, a), sub(c, a), r, RED));\n  wB.setVertices(wedge(b, sub(c, b), sub(a, b), r, BLUE));\n  // at C: left ray along parallel line -> CA ; CA -> CB ; CB -> right ray\n  wC1.setVertices(wedge(c, [-1, 0], sub(a, c), r, RED));\n  wC2.setVertices(wedge(c, sub(a, c), sub(b, c), r, GREEN));\n  wC3.setVertices(wedge(c, sub(b, c), [1, 0], r, BLUE));\n}\nmakeDraggable(dA, scene, { onDrag: update });\nmakeDraggable(dB, scene, { onDrag: update });\nmakeDraggable(dC, scene, { onDrag: update });\nupdate();\n\nconst title = new Text({ text: 'Red + Green + Blue = a straight line = 180°', color: YELLOW, fontSize: 30 });\ntitle.moveTo([0, 3.3, 0]);\nscene.add(title);\n\nconst note = new Text({ text: 'Parallel lines: alternate angles are equal. Drag the vertices!', color: WHITE, fontSize: 24 });\nnote.moveTo([0, -3.2, 0]);\nscene.add(note);\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3897,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 3,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "anthropic__claude-sonnet-5.5/geo-triangle-angle-sum.0.final.jpg",
+        "interacted": "anthropic__claude-sonnet-5.5/geo-triangle-angle-sum.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T05:34:20.464Z"
+}

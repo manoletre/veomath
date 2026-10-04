@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-completing-square",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "8.80% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.07% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 37887,
+        "inputTokens": 4605,
+        "cachedInputTokens": 4581,
+        "outputTokens": 2023,
+        "costUsd": 0.0207361,
+        "rawResponse": "{\"explanation\":\"Think of x² as a square of side x, and split the 6x area into two rectangles, each measuring x by 3. Place one rectangle above the square and the other beside it: the missing corner is a 3-by-3 square, with area 9. Adding that corner makes a square of side x + 3, so x² + 6x + 9 = (x + 3)²—and therefore x² + 6x = (x + 3)² − 9.\",\"manimCode\":\"const heading = new Text({ text: 'Completing the square', fontSize: 34, color: WHITE });\\nheading.moveTo([0, 3.25, 0]);\\nawait scene.play(new Write(heading));\\n\\nconst unit = 0.6;\\nconst left = -5.6;\\nconst bottom = -2.2;\\nlet side = 2.5;\\nfunction corners(x0, y0, width, height) {\\n  return [[x0,y0,0], [x0+width,y0,0], [x0+width,y0+height,0], [x0,y0+height,0]];\\n}\\nconst core = new Polygon({ vertices: corners(left, bottom, side*unit, side*unit), color: BLUE });\\ncore.setFill(BLUE, 0.45);\\nconst upper = new Polygon({ vertices: corners(left, bottom+side*unit, side*unit, 3*unit), color: ORANGE });\\nupper.setFill(ORANGE, 0.35);\\nconst rightStrip = new Polygon({ vertices: corners(left+side*unit, bottom, 3*unit, side*unit), color: ORANGE });\\nrightStrip.setFill(ORANGE, 0.35);\\nconst corner = new Polygon({ vertices: corners(left+side*unit, bottom+side*unit, 3*unit, 3*unit), color: GREEN });\\ncorner.setFillOpacity(0);\\n\\nasync function mathLabel(latex, color, position, size) {\\n  const label = new MathTex({ latex, color, fontSize: size });\\n  await label.waitForRender();\\n  label.moveTo(position);\\n  return label;\\n}\\nconst coreLabel = await mathLabel('x^2', WHITE, [left+side*unit/2,bottom+side*unit/2,0], 28);\\nconst upperLabel = await mathLabel('3x', WHITE, [left+side*unit/2,bottom+side*unit+1.5*unit,0], 28);\\nconst stripLabel = await mathLabel('3x', WHITE, [left+side*unit+1.5*unit,bottom+side*unit/2,0], 28);\\nconst cornerLabel = await mathLabel('9', GREEN, [left+side*unit+1.5*unit,bottom+side*unit+1.5*unit,0], 32);\\nconst sideX = await mathLabel('x', BLUE, [left+side*unit/2,bottom-0.3,0], 24);\\nconst sideThree = await mathLabel('3', ORANGE, [left+side*unit+1.5*unit,bottom-0.3,0], 24);\\nconst leftX = await mathLabel('x', BLUE, [left-0.3,bottom+side*unit/2,0], 24);\\nconst leftThree = await mathLabel('3', ORANGE, [left-0.3,bottom+side*unit+1.5*unit,0], 24);\\n\\nconst splitFormula = await mathLabel('x^2+6x=x^2+3x+3x', WHITE, [2.8,1.55,0], 27);\\nawait scene.play(new Create(core));\\nawait scene.play(new Write(coreLabel));\\nawait scene.play(new AnimationGroup([new Create(upper), new Create(rightStrip)]));\\nscene.add(upperLabel, stripLabel, sideX, sideThree, leftX, leftThree);\\nawait scene.play(new Write(splitFormula));\\nawait scene.wait(1);\\nawait scene.play(new Create(corner));\\n\\nconst prompt = new Text({ text: 'Missing corner: 3 × 3 = 9', fontSize: 23, color: GREEN });\\nprompt.moveTo([-3.4,-3.05,0]);\\nawait scene.play(new Write(prompt));\\nawait scene.wait(1);\\ncorner.setFill(GREEN, 0.3);\\nawait scene.play(new Write(cornerLabel));\\nconst completed = await mathLabel('x^2+6x+9=(x+3)^2', GREEN, [2.8,0.5,0], 29);\\nawait scene.play(new Write(completed));\\nconst result = await mathLabel('x^2+6x=(x+3)^2-9', YELLOW, [2.8,-0.6,0], 29);\\nawait scene.play(new Write(result));\\n\\nfunction updateModel(value) {\\n  side = value;\\n  const length = side*unit;\\n  core.setVertices(corners(left,bottom,length,length));\\n  upper.setVertices(corners(left,bottom+length,length,3*unit));\\n  rightStrip.setVertices(corners(left+length,bottom,3*unit,length));\\n  corner.setVertices(corners(left+length,bottom+length,3*unit,3*unit));\\n  coreLabel.moveTo([left+length/2,bottom+length/2,0]);\\n  upperLabel.moveTo([left+length/2,bottom+length+1.5*unit,0]);\\n  stripLabel.moveTo([left+length+1.5*unit,bottom+length/2,0]);\\n  cornerLabel.moveTo([left+length+1.5*unit,bottom+length+1.5*unit,0]);\\n  sideX.moveTo([left+length/2,bottom-0.3,0]);\\n  sideThree.moveTo([left+length+1.5*unit,bottom-0.3,0]);\\n  leftX.moveTo([left-0.3,bottom+length/2,0]);\\n  leftThree.moveTo([left-0.3,bottom+length+1.5*unit,0]);\\n}\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\\ncontrols.addSlider({ label: 'Side x (positive area model)', min: 2, max: 4, value: side, step: 0.1, onChange: updateModel });\\nawait scene.wait(999999);\"}",
+        "explanation": "Think of x² as a square of side x, and split the 6x area into two rectangles, each measuring x by 3. Place one rectangle above the square and the other beside it: the missing corner is a 3-by-3 square, with area 9. Adding that corner makes a square of side x + 3, so x² + 6x + 9 = (x + 3)²—and therefore x² + 6x = (x + 3)² − 9."
+      },
+      "code": "const heading = new Text({ text: 'Completing the square', fontSize: 34, color: WHITE });\nheading.moveTo([0, 3.25, 0]);\nawait scene.play(new Write(heading));\n\nconst unit = 0.6;\nconst left = -5.6;\nconst bottom = -2.2;\nlet side = 2.5;\nfunction corners(x0, y0, width, height) {\n  return [[x0,y0,0], [x0+width,y0,0], [x0+width,y0+height,0], [x0,y0+height,0]];\n}\nconst core = new Polygon({ vertices: corners(left, bottom, side*unit, side*unit), color: BLUE });\ncore.setFill(BLUE, 0.45);\nconst upper = new Polygon({ vertices: corners(left, bottom+side*unit, side*unit, 3*unit), color: ORANGE });\nupper.setFill(ORANGE, 0.35);\nconst rightStrip = new Polygon({ vertices: corners(left+side*unit, bottom, 3*unit, side*unit), color: ORANGE });\nrightStrip.setFill(ORANGE, 0.35);\nconst corner = new Polygon({ vertices: corners(left+side*unit, bottom+side*unit, 3*unit, 3*unit), color: GREEN });\ncorner.setFillOpacity(0);\n\nasync function mathLabel(latex, color, position, size) {\n  const label = new MathTex({ latex, color, fontSize: size });\n  await label.waitForRender();\n  label.moveTo(position);\n  return label;\n}\nconst coreLabel = await mathLabel('x^2', WHITE, [left+side*unit/2,bottom+side*unit/2,0], 28);\nconst upperLabel = await mathLabel('3x', WHITE, [left+side*unit/2,bottom+side*unit+1.5*unit,0], 28);\nconst stripLabel = await mathLabel('3x', WHITE, [left+side*unit+1.5*unit,bottom+side*unit/2,0], 28);\nconst cornerLabel = await mathLabel('9', GREEN, [left+side*unit+1.5*unit,bottom+side*unit+1.5*unit,0], 32);\nconst sideX = await mathLabel('x', BLUE, [left+side*unit/2,bottom-0.3,0], 24);\nconst sideThree = await mathLabel('3', ORANGE, [left+side*unit+1.5*unit,bottom-0.3,0], 24);\nconst leftX = await mathLabel('x', BLUE, [left-0.3,bottom+side*unit/2,0], 24);\nconst leftThree = await mathLabel('3', ORANGE, [left-0.3,bottom+side*unit+1.5*unit,0], 24);\n\nconst splitFormula = await mathLabel('x^2+6x=x^2+3x+3x', WHITE, [2.8,1.55,0], 27);\nawait scene.play(new Create(core));\nawait scene.play(new Write(coreLabel));\nawait scene.play(new AnimationGroup([new Create(upper), new Create(rightStrip)]));\nscene.add(upperLabel, stripLabel, sideX, sideThree, leftX, leftThree);\nawait scene.play(new Write(splitFormula));\nawait scene.wait(1);\nawait scene.play(new Create(corner));\n\nconst prompt = new Text({ text: 'Missing corner: 3 × 3 = 9', fontSize: 23, color: GREEN });\nprompt.moveTo([-3.4,-3.05,0]);\nawait scene.play(new Write(prompt));\nawait scene.wait(1);\ncorner.setFill(GREEN, 0.3);\nawait scene.play(new Write(cornerLabel));\nconst completed = await mathLabel('x^2+6x+9=(x+3)^2', GREEN, [2.8,0.5,0], 29);\nawait scene.play(new Write(completed));\nconst result = await mathLabel('x^2+6x=(x+3)^2-9', YELLOW, [2.8,-0.6,0], 29);\nawait scene.play(new Write(result));\n\nfunction updateModel(value) {\n  side = value;\n  const length = side*unit;\n  core.setVertices(corners(left,bottom,length,length));\n  upper.setVertices(corners(left,bottom+length,length,3*unit));\n  rightStrip.setVertices(corners(left+length,bottom,3*unit,length));\n  corner.setVertices(corners(left+length,bottom+length,3*unit,3*unit));\n  coreLabel.moveTo([left+length/2,bottom+length/2,0]);\n  upperLabel.moveTo([left+length/2,bottom+length+1.5*unit,0]);\n  stripLabel.moveTo([left+length+1.5*unit,bottom+length/2,0]);\n  cornerLabel.moveTo([left+length+1.5*unit,bottom+length+1.5*unit,0]);\n  sideX.moveTo([left+length/2,bottom-0.3,0]);\n  sideThree.moveTo([left+length+1.5*unit,bottom-0.3,0]);\n  leftX.moveTo([left-0.3,bottom+length/2,0]);\n  leftThree.moveTo([left-0.3,bottom+length+1.5*unit,0]);\n}\nconst controls = new Controls(scene, { position: 'bottom-right', width: 260 });\ncontrols.addSlider({ label: 'Side x (positive area model)', min: 2, max: 4, value: side, step: 0.1, onChange: updateModel });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 22601,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 10,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/alg-completing-square.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/alg-completing-square.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:46:36.574Z"
+}

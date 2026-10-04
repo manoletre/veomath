@@ -1,0 +1,149 @@
+{
+  "itemId": "geo-similar-area",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0,
+  "retried": true,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": false,
+          "detail": "TypeError: Cannot read properties of null (reading '4')"
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": false,
+          "detail": "0.00% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": false,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": null,
+          "detail": "No sliders or draggables to exercise"
+        },
+        "stableUnderInteraction": {
+          "pass": null
+        }
+      },
+      "generation": {
+        "latencyMs": 42672,
+        "inputTokens": 12276,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1600,
+        "costUsd": 0.020737600000000002,
+        "rawResponse": "{\"explanation\":\"A triangle’s area is half its base times its height: A = ½bh. Scaling by k multiplies both the base and height by k, so the new area is ½(kb)(kh) = k²A. Move the slider to see both dimensions—and therefore the area—change together.\",\"manimCode\":\"const title = new Text({ text: 'Why does area scale by k²?', color: WHITE, fontSize: 34 });\\ntitle.moveTo([0, 3.1, 0]);\\n\\nconst original = new Polygon({ vertices: [[-4.5,-1.5,0],[-2.5,-1.5,0],[-4.5,0.1,0]], color: BLUE });\\noriginal.setFill(BLUE, 0.28).setStrokeWidth(3);\\n\\nlet k = 1.4;\\nconst scaled = new Polygon({ vertices: [[0,-1.5,0],[2*k,-1.5,0],[0,-1.5+1.6*k,0]], color: YELLOW });\\nscaled.setFill(YELLOW, 0.28).setStrokeWidth(3);\\n\\nconst leftName = new Text({ text: 'Original', color: BLUE, fontSize: 26 });\\nleftName.moveTo([-3.5, 1.5, 0]);\\nconst rightName = new Text({ text: 'Scaled by k', color: YELLOW, fontSize: 26 });\\nrightName.moveTo([1.5, 1.5, 0]);\\n\\nconst b = new Text({ text: 'b', color: BLUE, fontSize: 26 });\\nb.moveTo([-3.5, -1.95, 0]);\\nconst h = new Text({ text: 'h', color: BLUE, fontSize: 26 });\\nh.moveTo([-4.85, -0.7, 0]);\\nconst kb = new Text({ text: 'kb', color: YELLOW, fontSize: 26 });\\nkb.moveTo([k, -1.95, 0]);\\nconst kh = new Text({ text: 'kh', color: YELLOW, fontSize: 26 });\\nkh.moveTo([-0.45, -1.5+0.8*k, 0]);\\n\\nconst formula = new MathTex({ latex: 'A_{\\\\text{new}}=\\\\frac12(kb)(kh)=k^2\\\\!\\\\left(\\\\frac12 bh\\\\right)=k^2 A' });\\nawait formula.waitForRender();\\nformula.moveTo([-1.6, -3, 0]);\\n\\nscene.add(title, leftName, rightName, b, h, kb, kh, formula);\\nawait scene.play(new AnimationGroup([new Create(original), new Create(scaled)]));\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\\ncontrols.addSlider({ label: 'Scale factor k', min: 0.5, max: 1.8, value: k, step: 0.05, onChange: (value) => {\\n  k = value;\\n  scaled.setVertices([[0,-1.5,0],[2*k,-1.5,0],[0,-1.5+1.6*k,0]]);\\n  kb.moveTo([k, -1.95, 0]);\\n  kh.moveTo([-0.45, -1.5+0.8*k, 0]);\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A triangle’s area is half its base times its height: A = ½bh. Scaling by k multiplies both the base and height by k, so the new area is ½(kb)(kh) = k²A. Move the slider to see both dimensions—and therefore the area—change together."
+      },
+      "code": "const title = new Text({ text: 'Why does area scale by k²?', color: WHITE, fontSize: 34 });\ntitle.moveTo([0, 3.1, 0]);\n\nconst original = new Polygon({ vertices: [[-4.5,-1.5,0],[-2.5,-1.5,0],[-4.5,0.1,0]], color: BLUE });\noriginal.setFill(BLUE, 0.28).setStrokeWidth(3);\n\nlet k = 1.4;\nconst scaled = new Polygon({ vertices: [[0,-1.5,0],[2*k,-1.5,0],[0,-1.5+1.6*k,0]], color: YELLOW });\nscaled.setFill(YELLOW, 0.28).setStrokeWidth(3);\n\nconst leftName = new Text({ text: 'Original', color: BLUE, fontSize: 26 });\nleftName.moveTo([-3.5, 1.5, 0]);\nconst rightName = new Text({ text: 'Scaled by k', color: YELLOW, fontSize: 26 });\nrightName.moveTo([1.5, 1.5, 0]);\n\nconst b = new Text({ text: 'b', color: BLUE, fontSize: 26 });\nb.moveTo([-3.5, -1.95, 0]);\nconst h = new Text({ text: 'h', color: BLUE, fontSize: 26 });\nh.moveTo([-4.85, -0.7, 0]);\nconst kb = new Text({ text: 'kb', color: YELLOW, fontSize: 26 });\nkb.moveTo([k, -1.95, 0]);\nconst kh = new Text({ text: 'kh', color: YELLOW, fontSize: 26 });\nkh.moveTo([-0.45, -1.5+0.8*k, 0]);\n\nconst formula = new MathTex({ latex: 'A_{\\text{new}}=\\frac12(kb)(kh)=k^2\\!\\left(\\frac12 bh\\right)=k^2 A' });\nawait formula.waitForRender();\nformula.moveTo([-1.6, -3, 0]);\n\nscene.add(title, leftName, rightName, b, h, kb, kh, formula);\nawait scene.play(new AnimationGroup([new Create(original), new Create(scaled)]));\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\ncontrols.addSlider({ label: 'Scale factor k', min: 0.5, max: 1.8, value: k, step: 0.05, onChange: (value) => {\n  k = value;\n  scaled.setVertices([[0,-1.5,0],[2*k,-1.5,0],[0,-1.5+1.6*k,0]]);\n  kb.moveTo([k, -1.95, 0]);\n  kh.moveTo([-0.45, -1.5+0.8*k, 0]);\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3727,
+        "fatalError": "TypeError: Cannot read properties of null (reading '4')",
+        "errors": [
+          "TypeError: Cannot read properties of null (reading '4')"
+        ],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/geo-similar-area.0.final.jpg"
+      }
+    },
+    {
+      "kind": "auto-retry",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "5.73% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": false,
+          "detail": "0.07% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 37642,
+        "inputTokens": 12970,
+        "cachedInputTokens": 12032,
+        "outputTokens": 1327,
+        "costUsd": 0.0175524,
+        "rawResponse": "{\"explanation\":\"A triangle’s area is half its base times its height. Scaling by k multiplies both the base and the height by k, so the new area is ½(kb)(kh) = k²A. The failed code likely came from unescaped backslashes in the MathTex string; this version uses plain text instead.\",\"manimCode\":\"const title = new Text({ text: 'Why does area scale by k²?', color: WHITE, fontSize: 34 });\\ntitle.moveTo([0, 3.1, 0]);\\n\\nconst original = new Polygon({ vertices: [[-4.5, -1.4, 0], [-2.5, -1.4, 0], [-4.5, 0.2, 0]], color: BLUE });\\noriginal.setFill(BLUE, 0.28);\\noriginal.setStrokeWidth(3);\\n\\nlet k = 1.4;\\nconst scaled = new Polygon({ vertices: [[-0.3, -1.4, 0], [-0.3 + 2*k, -1.4, 0], [-0.3, -1.4 + 1.6*k, 0]], color: YELLOW });\\nscaled.setFill(YELLOW, 0.28);\\nscaled.setStrokeWidth(3);\\n\\nconst leftName = new Text({ text: 'Original', color: BLUE, fontSize: 26 });\\nleftName.moveTo([-3.5, 1.9, 0]);\\nconst rightName = new Text({ text: 'Scaled by k', color: YELLOW, fontSize: 26 });\\nrightName.moveTo([1.5, 1.9, 0]);\\n\\nconst b = new Text({ text: 'b', color: BLUE, fontSize: 26 });\\nb.moveTo([-3.5, -1.85, 0]);\\nconst h = new Text({ text: 'h', color: BLUE, fontSize: 26 });\\nh.moveTo([-4.85, -0.6, 0]);\\nconst kb = new Text({ text: 'kb', color: YELLOW, fontSize: 26 });\\nkb.moveTo([-0.3 + k, -1.85, 0]);\\nconst kh = new Text({ text: 'kh', color: YELLOW, fontSize: 26 });\\nkh.moveTo([-0.75, -1.4 + 0.8*k, 0]);\\n\\nconst formula = new Text({ text: 'A′ = ½(kb)(kh) = k²(½bh) = k²A', color: WHITE, fontSize: 29 });\\nformula.moveTo([-0.5, -2.8, 0]);\\n\\nscene.add(title, original, scaled, leftName, rightName, b, h, kb, kh, formula);\\n\\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\\ncontrols.addSlider({ label: 'Scale factor k', min: 0.5, max: 1.8, value: k, step: 0.05, onChange: (value) => {\\n  k = value;\\n  scaled.setVertices([[-0.3, -1.4, 0], [-0.3 + 2*k, -1.4, 0], [-0.3, -1.4 + 1.6*k, 0]]);\\n  kb.moveTo([-0.3 + k, -1.85, 0]);\\n  kh.moveTo([-0.75, -1.4 + 0.8*k, 0]);\\n}});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A triangle’s area is half its base times its height. Scaling by k multiplies both the base and the height by k, so the new area is ½(kb)(kh) = k²A. The failed code likely came from unescaped backslashes in the MathTex string; this version uses plain text instead."
+      },
+      "code": "const title = new Text({ text: 'Why does area scale by k²?', color: WHITE, fontSize: 34 });\ntitle.moveTo([0, 3.1, 0]);\n\nconst original = new Polygon({ vertices: [[-4.5, -1.4, 0], [-2.5, -1.4, 0], [-4.5, 0.2, 0]], color: BLUE });\noriginal.setFill(BLUE, 0.28);\noriginal.setStrokeWidth(3);\n\nlet k = 1.4;\nconst scaled = new Polygon({ vertices: [[-0.3, -1.4, 0], [-0.3 + 2*k, -1.4, 0], [-0.3, -1.4 + 1.6*k, 0]], color: YELLOW });\nscaled.setFill(YELLOW, 0.28);\nscaled.setStrokeWidth(3);\n\nconst leftName = new Text({ text: 'Original', color: BLUE, fontSize: 26 });\nleftName.moveTo([-3.5, 1.9, 0]);\nconst rightName = new Text({ text: 'Scaled by k', color: YELLOW, fontSize: 26 });\nrightName.moveTo([1.5, 1.9, 0]);\n\nconst b = new Text({ text: 'b', color: BLUE, fontSize: 26 });\nb.moveTo([-3.5, -1.85, 0]);\nconst h = new Text({ text: 'h', color: BLUE, fontSize: 26 });\nh.moveTo([-4.85, -0.6, 0]);\nconst kb = new Text({ text: 'kb', color: YELLOW, fontSize: 26 });\nkb.moveTo([-0.3 + k, -1.85, 0]);\nconst kh = new Text({ text: 'kh', color: YELLOW, fontSize: 26 });\nkh.moveTo([-0.75, -1.4 + 0.8*k, 0]);\n\nconst formula = new Text({ text: 'A′ = ½(kb)(kh) = k²(½bh) = k²A', color: WHITE, fontSize: 29 });\nformula.moveTo([-0.5, -2.8, 0]);\n\nscene.add(title, original, scaled, leftName, rightName, b, h, kb, kh, formula);\n\nconst controls = new Controls(scene, { position: 'bottom-right', width: 250 });\ncontrols.addSlider({ label: 'Scale factor k', min: 0.5, max: 1.8, value: k, step: 0.05, onChange: (value) => {\n  k = value;\n  scaled.setVertices([[-0.3, -1.4, 0], [-0.3 + 2*k, -1.4, 0], [-0.3, -1.4 + 1.6*k, 0]]);\n  kb.moveTo([-0.3 + k, -1.85, 0]);\n  kh.moveTo([-0.75, -1.4 + 0.8*k, 0]);\n}});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 2846,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/geo-similar-area.1.final.jpg",
+        "interacted": "openai__gpt-6-sol/geo-similar-area.1.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T03:01:00.349Z"
+}

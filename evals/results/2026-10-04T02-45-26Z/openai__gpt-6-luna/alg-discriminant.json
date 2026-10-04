@@ -1,0 +1,79 @@
+{
+  "itemId": "alg-discriminant",
+  "model": "openai/gpt-6-luna",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.27% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.28% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 21496,
+        "inputTokens": 12285,
+        "cachedInputTokens": 0,
+        "outputTokens": 1010,
+        "costUsd": 0.0017335,
+        "rawResponse": "{\"explanation\":\"For a quadratic equation, the discriminant \\\\(D=b^2-4ac\\\\) determines how the parabola meets the x-axis: positive means two intersections (two distinct real roots), zero means it touches once (one repeated real root), and negative means no real intersections (no real roots). The visualization uses \\\\(x^2+c=0\\\\), whose discriminant is \\\\(-4c\\\\), so moving the slider across \\\\(c=0\\\\) shows all three cases.\",\"manimCode\":\"const ax = new Axes({\\n  xRange: [-2, 2, 1],\\n  yRange: [-1.5, 3, 1],\\n  xLength: 8,\\n  yLength: 4.5,\\n  tips: true\\n});\\nscene.add(ax, ax.getAxisLabels());\\n\\nlet c = -1;\\nlet curve = ax.plot(x => x * x + c, { color: BLUE, numSamples: 240 });\\nscene.add(curve);\\n\\nconst title = new Text({ text: 'x² + c = 0', color: WHITE, fontSize: 34 });\\ntitle.moveTo([-3.8, 3.05, 0]);\\nscene.add(title);\\n\\nlet status = new Text({ text: 'c = −1  |  D = 4 > 0  |  2 real roots', color: YELLOW, fontSize: 26 });\\nstatus.moveTo([0, -3.1, 0]);\\nscene.add(status);\\n\\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\\ncontrols.addSlider({\\n  label: 'c', min: -1, max: 1, value: -1, step: 0.05,\\n  onChange: (value) => {\\n    c = value;\\n    scene.remove(curve);\\n    curve = ax.plot(x => x * x + c, { color: BLUE, numSamples: 240 });\\n    scene.add(curve);\\n\\n    scene.remove(status);\\n    const disc = -4 * c;\\n    let message;\\n    if (Math.abs(disc) < 1e-8) message = 'D = 0  |  1 repeated real root';\\n    else if (disc > 0) message = `D = ${disc.toFixed(1)} > 0  |  2 real roots`;\\n    else message = `D = ${disc.toFixed(1)} < 0  |  0 real roots`;\\n    status = new Text({ text: `c = ${value.toFixed(2)}  |  ${message}`, color: YELLOW, fontSize: 26 });\\n    status.moveTo([0, -3.1, 0]);\\n    scene.add(status);\\n  }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "For a quadratic equation, the discriminant \\(D=b^2-4ac\\) determines how the parabola meets the x-axis: positive means two intersections (two distinct real roots), zero means it touches once (one repeated real root), and negative means no real intersections (no real roots). The visualization uses \\(x^2+c=0\\), whose discriminant is \\(-4c\\), so moving the slider across \\(c=0\\) shows all three cases."
+      },
+      "code": "const ax = new Axes({\n  xRange: [-2, 2, 1],\n  yRange: [-1.5, 3, 1],\n  xLength: 8,\n  yLength: 4.5,\n  tips: true\n});\nscene.add(ax, ax.getAxisLabels());\n\nlet c = -1;\nlet curve = ax.plot(x => x * x + c, { color: BLUE, numSamples: 240 });\nscene.add(curve);\n\nconst title = new Text({ text: 'x² + c = 0', color: WHITE, fontSize: 34 });\ntitle.moveTo([-3.8, 3.05, 0]);\nscene.add(title);\n\nlet status = new Text({ text: 'c = −1  |  D = 4 > 0  |  2 real roots', color: YELLOW, fontSize: 26 });\nstatus.moveTo([0, -3.1, 0]);\nscene.add(status);\n\nconst controls = new Controls(scene, { position: 'top-right', width: 260 });\ncontrols.addSlider({\n  label: 'c', min: -1, max: 1, value: -1, step: 0.05,\n  onChange: (value) => {\n    c = value;\n    scene.remove(curve);\n    curve = ax.plot(x => x * x + c, { color: BLUE, numSamples: 240 });\n    scene.add(curve);\n\n    scene.remove(status);\n    const disc = -4 * c;\n    let message;\n    if (Math.abs(disc) < 1e-8) message = 'D = 0  |  1 repeated real root';\n    else if (disc > 0) message = `D = ${disc.toFixed(1)} > 0  |  2 real roots`;\n    else message = `D = ${disc.toFixed(1)} < 0  |  0 real roots`;\n    status = new Text({ text: `c = ${value.toFixed(2)}  |  ${message}`, color: YELLOW, fontSize: 26 });\n    status.moveTo([0, -3.1, 0]);\n    scene.add(status);\n  }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3475,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-luna/alg-discriminant.0.final.jpg",
+        "interacted": "openai__gpt-6-luna/alg-discriminant.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:54:05.351Z"
+}

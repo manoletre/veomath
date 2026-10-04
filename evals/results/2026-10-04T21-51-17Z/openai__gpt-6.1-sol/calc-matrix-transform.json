@@ -1,0 +1,109 @@
+{
+  "itemId": "calc-matrix-transform",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "6.42% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=2 clickables=1 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ hover Dot at (2.3, 1.1) — 0.13% changed\n✓ click Text at (4.8, 1.9) — 0.63% changed\n✓ drag Dot at (-0.8, 1.1) — 3.26% changed\n✓ drag Dot at (3.5, 1.4) — 0.91% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ click Text at (4.8, 1.9) — 0.63% changed\n✓ drag Dot at (-0.8, 1.1) — 3.26% changed\n✓ drag Dot at (3.5, 1.4) — 0.91% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 59657,
+        "inputTokens": 5323,
+        "cachedInputTokens": 5287,
+        "outputTokens": 2752,
+        "costUsd": 0.028120700000000002,
+        "rawResponse": "{\"explanation\":\"The matrix sends each point (x, y) to (2x + y, y): it doubles the horizontal component and adds a horizontal shear, while leaving height unchanged. Its determinant is 2, so every region becomes twice as large in area; the positive sign means orientation is preserved. Drag either corner to compare a rectangle with its transformed parallelogram—the area ratio stays 2.\",\"manimCode\":\"const ax = new Axes({ xRange: [-2, 6, 1], yRange: [-2.5, 2.5, 1], xLength: 9, yLength: 4, tips: false });\\nlet width = 1.3;\\nlet height = 1.4;\\nlet showGrid = true;\\nconst clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));\\nconst imagePoint = (x, y) => ax.c2p(2 * x + y, y);\\n\\nconst title = new MathTex({ latex: 'A=\\\\\\\\begin{pmatrix}2&1\\\\\\\\\\\\\\\\0&1\\\\\\\\end{pmatrix}\\\\\\\\qquad (x,y)\\\\\\\\mapsto(2x+y,y)', color: WHITE });\\nawait title.waitForRender();\\ntitle.scale(0.8);\\ntitle.moveTo([0, 3.1, 0]);\\nconst subtitle = new Text({ text: 'Horizontal stretch + shear   |   det(A) = 2', fontSize: 23, color: WHITE });\\nsubtitle.moveTo([0, 2.45, 0]);\\n\\nconst originalGrid = [];\\nfor (let k = -2; k <= 6; k++) {\\n  const ln = new Line({ start: ax.c2p(k, -2.5), end: ax.c2p(k, 2.5), color: GRAY });\\n  ln.setOpacity(0.18);\\n  ln.setStrokeWidth(1);\\n  originalGrid.push(ln);\\n}\\nfor (let k = -2; k <= 2; k++) {\\n  const ln = new Line({ start: ax.c2p(-2, k), end: ax.c2p(6, k), color: GRAY });\\n  ln.setOpacity(0.18);\\n  ln.setStrokeWidth(1);\\n  originalGrid.push(ln);\\n}\\nconst mappedGrid = [];\\n// Images of vertical lines x = k become oblique lines X = 2k + Y.\\n// Clip every segment to the same visible coordinate window.\\nfor (let k = -3; k <= 4; k++) {\\n  const lo = Math.max(-2.5, -2 - 2 * k);\\n  const hi = Math.min(2.5, 6 - 2 * k);\\n  if (hi > lo) {\\n    const ln = new Line({ start: imagePoint(k, lo), end: imagePoint(k, hi), color: TEAL });\\n    ln.setStrokeWidth(1.5);\\n    ln.setOpacity(0.38);\\n    mappedGrid.push(ln);\\n  }\\n}\\nscene.add(...originalGrid, ...mappedGrid, ax, title, subtitle);\\n\\nconst O = ax.c2p(0, 0);\\nconst original = new Polygon({ vertices: [O, ax.c2p(width, 0), ax.c2p(width, height), ax.c2p(0, height)], color: BLUE });\\noriginal.setFill(BLUE, 0.25);\\noriginal.setStrokeWidth(3);\\nconst mapped = new Polygon({ vertices: [O, imagePoint(width, 0), imagePoint(width, height), imagePoint(0, height)], color: YELLOW });\\nmapped.setFill(YELLOW, 0.2);\\nmapped.setStrokeWidth(3);\\nconst blueHandle = new Dot({ point: ax.c2p(width, height), radius: 0.13, color: BLUE });\\nconst yellowHandle = new Dot({ point: imagePoint(width, height), radius: 0.13, color: YELLOW });\\nconst correspondence = new DashedLine({ start: blueHandle.getCenter(), end: yellowHandle.getCenter(), color: WHITE });\\ncorrespondence.setOpacity(0.45);\\n\\nconst originalReadout = new Text({ text: '', fontSize: 24, color: BLUE });\\noriginalReadout.moveTo([-2.6, -2.45, 0]);\\nconst mappedReadout = new Text({ text: '', fontSize: 24, color: YELLOW });\\nmappedReadout.moveTo([2.6, -2.45, 0]);\\nconst ratio = new Text({ text: 'Image area / original area = 2', fontSize: 25, color: WHITE });\\nratio.moveTo([0, -2.95, 0]);\\nconst hint = new Text({ text: 'Drag either bright corner to resize the rectangle', fontSize: 21, color: GRAY });\\nhint.moveTo([0, -3.45, 0]);\\nconst gridToggle = new Text({ text: '', fontSize: 18, color: TEAL });\\ngridToggle.moveTo([4.8, 1.85, 0]);\\nconst dimensionReadout = new Text({ text: '', fontSize: 19, color: WHITE });\\ndimensionReadout.moveTo([-2.5, 1.8, 0]);\\n\\nfunction update() {\\n  original.setVertices([O, ax.c2p(width, 0), ax.c2p(width, height), ax.c2p(0, height)]);\\n  mapped.setVertices([O, imagePoint(width, 0), imagePoint(width, height), imagePoint(0, height)]);\\n  blueHandle.moveTo(ax.c2p(width, height));\\n  yellowHandle.moveTo(imagePoint(width, height));\\n  correspondence.setStart(ax.c2p(width, height));\\n  correspondence.setEnd(imagePoint(width, height));\\n  const area = width * height;\\n  originalReadout.setText('Original area = ' + area.toFixed(2));\\n  mappedReadout.setText('Image area = ' + (2 * area).toFixed(2));\\n  dimensionReadout.setText('w = ' + width.toFixed(2) + '    h = ' + height.toFixed(2));\\n  gridToggle.setText(showGrid ? 'Hide image grid' : 'Show image grid');\\n  mappedGrid.forEach(ln => ln.setOpacity(showGrid ? 0.38 : 0));\\n}\\nupdate();\\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(original), new DrawBorderThenFill(mapped)]));\\nscene.add(correspondence, blueHandle, yellowHandle, originalReadout, mappedReadout, ratio, hint, gridToggle, dimensionReadout);\\n\\nmakeDraggable(blueHandle, scene, { onDrag: (mob, pos) => {\\n  const p = ax.pointToCoords(pos);\\n  width = clamp(p[0], 0.5, 1.65);\\n  height = clamp(p[1], 0.5, 1.8);\\n  update();\\n} });\\nmakeDraggable(yellowHandle, scene, { onDrag: (mob, pos) => {\\n  const p = ax.pointToCoords(pos);\\n  // Pull the dragged image point back through A inverse.\\n  width = clamp((p[0] - p[1]) / 2, 0.5, 1.65);\\n  height = clamp(p[1], 0.5, 1.8);\\n  update();\\n} });\\nmakeClickable(gridToggle, scene, { onClick: () => {\\n  showGrid = !showGrid;\\n  update();\\n} });\\n\\nconst hoverInfo = new Text({ text: '', fontSize: 20, color: WHITE });\\nhoverInfo.moveTo([0, -2.05, 0]);\\nmakeHoverable(yellowHandle, scene, {\\n  onHoverStart: () => {\\n    hoverInfo.setText('Corner image: (' + (2 * width + height).toFixed(2) + ', ' + height.toFixed(2) + ')');\\n    scene.add(hoverInfo);\\n  },\\n  onHoverEnd: () => scene.remove(hoverInfo)\\n});\\nawait scene.wait(999999);\"}",
+        "explanation": "The matrix sends each point (x, y) to (2x + y, y): it doubles the horizontal component and adds a horizontal shear, while leaving height unchanged. Its determinant is 2, so every region becomes twice as large in area; the positive sign means orientation is preserved. Drag either corner to compare a rectangle with its transformed parallelogram—the area ratio stays 2."
+      },
+      "code": "const ax = new Axes({ xRange: [-2, 6, 1], yRange: [-2.5, 2.5, 1], xLength: 9, yLength: 4, tips: false });\nlet width = 1.3;\nlet height = 1.4;\nlet showGrid = true;\nconst clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));\nconst imagePoint = (x, y) => ax.c2p(2 * x + y, y);\n\nconst title = new MathTex({ latex: 'A=\\\\begin{pmatrix}2&1\\\\\\\\0&1\\\\end{pmatrix}\\\\qquad (x,y)\\\\mapsto(2x+y,y)', color: WHITE });\nawait title.waitForRender();\ntitle.scale(0.8);\ntitle.moveTo([0, 3.1, 0]);\nconst subtitle = new Text({ text: 'Horizontal stretch + shear   |   det(A) = 2', fontSize: 23, color: WHITE });\nsubtitle.moveTo([0, 2.45, 0]);\n\nconst originalGrid = [];\nfor (let k = -2; k <= 6; k++) {\n  const ln = new Line({ start: ax.c2p(k, -2.5), end: ax.c2p(k, 2.5), color: GRAY });\n  ln.setOpacity(0.18);\n  ln.setStrokeWidth(1);\n  originalGrid.push(ln);\n}\nfor (let k = -2; k <= 2; k++) {\n  const ln = new Line({ start: ax.c2p(-2, k), end: ax.c2p(6, k), color: GRAY });\n  ln.setOpacity(0.18);\n  ln.setStrokeWidth(1);\n  originalGrid.push(ln);\n}\nconst mappedGrid = [];\n// Images of vertical lines x = k become oblique lines X = 2k + Y.\n// Clip every segment to the same visible coordinate window.\nfor (let k = -3; k <= 4; k++) {\n  const lo = Math.max(-2.5, -2 - 2 * k);\n  const hi = Math.min(2.5, 6 - 2 * k);\n  if (hi > lo) {\n    const ln = new Line({ start: imagePoint(k, lo), end: imagePoint(k, hi), color: TEAL });\n    ln.setStrokeWidth(1.5);\n    ln.setOpacity(0.38);\n    mappedGrid.push(ln);\n  }\n}\nscene.add(...originalGrid, ...mappedGrid, ax, title, subtitle);\n\nconst O = ax.c2p(0, 0);\nconst original = new Polygon({ vertices: [O, ax.c2p(width, 0), ax.c2p(width, height), ax.c2p(0, height)], color: BLUE });\noriginal.setFill(BLUE, 0.25);\noriginal.setStrokeWidth(3);\nconst mapped = new Polygon({ vertices: [O, imagePoint(width, 0), imagePoint(width, height), imagePoint(0, height)], color: YELLOW });\nmapped.setFill(YELLOW, 0.2);\nmapped.setStrokeWidth(3);\nconst blueHandle = new Dot({ point: ax.c2p(width, height), radius: 0.13, color: BLUE });\nconst yellowHandle = new Dot({ point: imagePoint(width, height), radius: 0.13, color: YELLOW });\nconst correspondence = new DashedLine({ start: blueHandle.getCenter(), end: yellowHandle.getCenter(), color: WHITE });\ncorrespondence.setOpacity(0.45);\n\nconst originalReadout = new Text({ text: '', fontSize: 24, color: BLUE });\noriginalReadout.moveTo([-2.6, -2.45, 0]);\nconst mappedReadout = new Text({ text: '', fontSize: 24, color: YELLOW });\nmappedReadout.moveTo([2.6, -2.45, 0]);\nconst ratio = new Text({ text: 'Image area / original area = 2', fontSize: 25, color: WHITE });\nratio.moveTo([0, -2.95, 0]);\nconst hint = new Text({ text: 'Drag either bright corner to resize the rectangle', fontSize: 21, color: GRAY });\nhint.moveTo([0, -3.45, 0]);\nconst gridToggle = new Text({ text: '', fontSize: 18, color: TEAL });\ngridToggle.moveTo([4.8, 1.85, 0]);\nconst dimensionReadout = new Text({ text: '', fontSize: 19, color: WHITE });\ndimensionReadout.moveTo([-2.5, 1.8, 0]);\n\nfunction update() {\n  original.setVertices([O, ax.c2p(width, 0), ax.c2p(width, height), ax.c2p(0, height)]);\n  mapped.setVertices([O, imagePoint(width, 0), imagePoint(width, height), imagePoint(0, height)]);\n  blueHandle.moveTo(ax.c2p(width, height));\n  yellowHandle.moveTo(imagePoint(width, height));\n  correspondence.setStart(ax.c2p(width, height));\n  correspondence.setEnd(imagePoint(width, height));\n  const area = width * height;\n  originalReadout.setText('Original area = ' + area.toFixed(2));\n  mappedReadout.setText('Image area = ' + (2 * area).toFixed(2));\n  dimensionReadout.setText('w = ' + width.toFixed(2) + '    h = ' + height.toFixed(2));\n  gridToggle.setText(showGrid ? 'Hide image grid' : 'Show image grid');\n  mappedGrid.forEach(ln => ln.setOpacity(showGrid ? 0.38 : 0));\n}\nupdate();\nawait scene.play(new AnimationGroup([new DrawBorderThenFill(original), new DrawBorderThenFill(mapped)]));\nscene.add(correspondence, blueHandle, yellowHandle, originalReadout, mappedReadout, ratio, hint, gridToggle, dimensionReadout);\n\nmakeDraggable(blueHandle, scene, { onDrag: (mob, pos) => {\n  const p = ax.pointToCoords(pos);\n  width = clamp(p[0], 0.5, 1.65);\n  height = clamp(p[1], 0.5, 1.8);\n  update();\n} });\nmakeDraggable(yellowHandle, scene, { onDrag: (mob, pos) => {\n  const p = ax.pointToCoords(pos);\n  // Pull the dragged image point back through A inverse.\n  width = clamp((p[0] - p[1]) / 2, 0.5, 1.65);\n  height = clamp(p[1], 0.5, 1.8);\n  update();\n} });\nmakeClickable(gridToggle, scene, { onClick: () => {\n  showGrid = !showGrid;\n  update();\n} });\n\nconst hoverInfo = new Text({ text: '', fontSize: 20, color: WHITE });\nhoverInfo.moveTo([0, -2.05, 0]);\nmakeHoverable(yellowHandle, scene, {\n  onHoverStart: () => {\n    hoverInfo.setText('Corner image: (' + (2 * width + height).toFixed(2) + ', ' + height.toFixed(2) + ')');\n    scene.add(hoverInfo);\n  },\n  onHoverEnd: () => scene.remove(hoverInfo)\n});\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 10911,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 1,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 2,
+        "clickables": 1,
+        "hoverables": 1,
+        "interactions": [
+          {
+            "kind": "hover",
+            "label": "Dot at (2.3, 1.1)",
+            "change": 0.0012944878472222223,
+            "responded": true
+          },
+          {
+            "kind": "click",
+            "label": "Text at (4.8, 1.9)",
+            "change": 0.006276041666666667,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (-0.8, 1.1)",
+            "change": 0.032607421875,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (3.5, 1.4)",
+            "change": 0.009137369791666667,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/calc-matrix-transform.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/calc-matrix-transform.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:54:31.388Z"
+}

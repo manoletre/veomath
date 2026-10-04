@@ -1,0 +1,80 @@
+{
+  "itemId": "alg-vertex-form",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "2.89% non-background pixels"
+        },
+        "inFrame": {
+          "pass": false,
+          "detail": "FunctionGraph [x -4.75..4.75, y 0.00..16.88] exceeds frame ±7.11 × ±4.00"
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=3 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=1"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "0.97% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 23538,
+        "inputTokens": 11749,
+        "cachedInputTokens": 0,
+        "outputTokens": 1119,
+        "costUsd": 0.036926,
+        "rawResponse": "{\"explanation\":\"In vertex form, `a` controls the parabola’s opening and vertical stretch: positive opens upward, negative opens downward, and larger magnitude makes it narrower. The value `h` moves the vertex horizontally, while `k` moves it vertically, so the vertex is always `(h, k)`.\",\"manimCode\":\"const title = new Text({ text: 'y = a(x - h)² + k', color: YELLOW, fontSize: 34 });\\ntitle.moveTo([0, 3.35, 0]);\\n\\nconst ax = new Axes({\\n  xRange: [-5, 5, 1],\\n  yRange: [-4, 4, 1],\\n  xLength: 9.5,\\n  yLength: 5.4,\\n  tips: true\\n});\\nax.moveTo([0, -0.25, 0]);\\n\\nlet aVal = 1;\\nlet hVal = 0;\\nlet kVal = 0;\\nlet curve = ax.plot(x => aVal * Math.pow(x - hVal, 2) + kVal, {\\n  color: BLUE,\\n  xRange: [-5, 5],\\n  numSamples: 300\\n});\\n\\nconst vertex = new Dot({ point: ax.c2p(hVal, kVal), color: YELLOW });\\nlet readout = new Text({ text: 'a = 1.0     h = 0.0     k = 0.0', color: WHITE, fontSize: 23 });\\nreadout.moveTo([0, -3.35, 0]);\\n\\nscene.add(title, ax, curve, vertex, readout);\\n\\nfunction refresh() {\\n  scene.remove(curve);\\n  curve = ax.plot(x => aVal * Math.pow(x - hVal, 2) + kVal, {\\n    color: BLUE,\\n    xRange: [-5, 5],\\n    numSamples: 300\\n  });\\n  scene.add(curve);\\n  vertex.moveTo(ax.c2p(hVal, kVal));\\n\\n  const pos = readout.getCenter();\\n  scene.remove(readout);\\n  readout = new Text({\\n    text: `a = ${aVal.toFixed(1)}     h = ${hVal.toFixed(1)}     k = ${kVal.toFixed(1)}`,\\n    color: WHITE,\\n    fontSize: 23\\n  });\\n  readout.moveTo(pos);\\n  scene.add(readout);\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 230 });\\ncontrols.addSlider({\\n  label: 'a: shape / opening', min: -2, max: 2, value: 1, step: 0.1,\\n  onChange: v => { aVal = Math.abs(v) < 0.1 ? 0.1 : v; refresh(); }\\n});\\ncontrols.addSlider({\\n  label: 'h: horizontal shift', min: -3, max: 3, value: 0, step: 0.1,\\n  onChange: v => { hVal = v; refresh(); }\\n});\\ncontrols.addSlider({\\n  label: 'k: vertical shift', min: -3, max: 3, value: 0, step: 0.1,\\n  onChange: v => { kVal = v; refresh(); }\\n});\\ncontrols.addButton({\\n  label: 'Reset',\\n  onClick: () => { aVal = 1; hVal = 0; kVal = 0; refresh(); }\\n});\\n\\nmakeHoverable(vertex, scene, { hoverScale: 1.5, hoverColor: ORANGE });\\nawait scene.wait(999999);\"}",
+        "explanation": "In vertex form, `a` controls the parabola’s opening and vertical stretch: positive opens upward, negative opens downward, and larger magnitude makes it narrower. The value `h` moves the vertex horizontally, while `k` moves it vertically, so the vertex is always `(h, k)`."
+      },
+      "code": "const title = new Text({ text: 'y = a(x - h)² + k', color: YELLOW, fontSize: 34 });\ntitle.moveTo([0, 3.35, 0]);\n\nconst ax = new Axes({\n  xRange: [-5, 5, 1],\n  yRange: [-4, 4, 1],\n  xLength: 9.5,\n  yLength: 5.4,\n  tips: true\n});\nax.moveTo([0, -0.25, 0]);\n\nlet aVal = 1;\nlet hVal = 0;\nlet kVal = 0;\nlet curve = ax.plot(x => aVal * Math.pow(x - hVal, 2) + kVal, {\n  color: BLUE,\n  xRange: [-5, 5],\n  numSamples: 300\n});\n\nconst vertex = new Dot({ point: ax.c2p(hVal, kVal), color: YELLOW });\nlet readout = new Text({ text: 'a = 1.0     h = 0.0     k = 0.0', color: WHITE, fontSize: 23 });\nreadout.moveTo([0, -3.35, 0]);\n\nscene.add(title, ax, curve, vertex, readout);\n\nfunction refresh() {\n  scene.remove(curve);\n  curve = ax.plot(x => aVal * Math.pow(x - hVal, 2) + kVal, {\n    color: BLUE,\n    xRange: [-5, 5],\n    numSamples: 300\n  });\n  scene.add(curve);\n  vertex.moveTo(ax.c2p(hVal, kVal));\n\n  const pos = readout.getCenter();\n  scene.remove(readout);\n  readout = new Text({\n    text: `a = ${aVal.toFixed(1)}     h = ${hVal.toFixed(1)}     k = ${kVal.toFixed(1)}`,\n    color: WHITE,\n    fontSize: 23\n  });\n  readout.moveTo(pos);\n  scene.add(readout);\n}\n\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 230 });\ncontrols.addSlider({\n  label: 'a: shape / opening', min: -2, max: 2, value: 1, step: 0.1,\n  onChange: v => { aVal = Math.abs(v) < 0.1 ? 0.1 : v; refresh(); }\n});\ncontrols.addSlider({\n  label: 'h: horizontal shift', min: -3, max: 3, value: 0, step: 0.1,\n  onChange: v => { hVal = v; refresh(); }\n});\ncontrols.addSlider({\n  label: 'k: vertical shift', min: -3, max: 3, value: 0, step: 0.1,\n  onChange: v => { kVal = v; refresh(); }\n});\ncontrols.addButton({\n  label: 'Reset',\n  onClick: () => { aVal = 1; hVal = 0; kVal = 0; refresh(); }\n});\n\nmakeHoverable(vertex, scene, { hoverScale: 1.5, hoverColor: ORANGE });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3007,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 3,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 1
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/alg-vertex-form.0.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/alg-vertex-form.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:56:20.878Z"
+}

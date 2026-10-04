@@ -1,0 +1,79 @@
+{
+  "itemId": "stats-regression-drag",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "1.53% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=0 buttons=0 checkboxes=0 draggables=6 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.41% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 50005,
+        "inputTokens": 12274,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1927,
+        "costUsd": 0.0240036,
+        "rawResponse": "{\"explanation\":\"The line of best fit minimizes the sum of the squared vertical distances from the points. Drag any point to see how its position changes the regression line and its equation.\",\"manimCode\":\"const ax = new Axes({ xRange: [-5, 5, 1], yRange: [-3, 3, 1], xLength: 10, yLength: 5.4, tips: false });\\nconst title = new Text({ text: 'Drag the points to change the best-fit line', color: WHITE, fontSize: 28 });\\ntitle.moveTo([0, 3.4, 0]);\\n\\nconst data = [[-4, -1.8], [-2.4, -1.1], [-0.8, -0.7], [0.8, 0.5], [2.5, 1.1], [4, 2.1]];\\nconst dots = data.map(([x, y]) => new Dot({ point: ax.c2p(x, y), color: YELLOW }));\\nconst fitLine = new Polygon({ vertices: [ax.c2p(-4.9, 0), ax.c2p(4.9, 0)], color: GOLD });\\nfitLine.setStrokeWidth(4).setFillOpacity(0);\\nlet equation;\\n\\nconst origin = ax.c2p(0, 0);\\nconst oneX = ax.c2p(1, 0);\\nconst oneY = ax.c2p(0, 1);\\nfunction coordinates(dot) {\\n  const p = dot.getCenter();\\n  return [(p[0] - origin[0]) / (oneX[0] - origin[0]), (p[1] - origin[1]) / (oneY[1] - origin[1])];\\n}\\nfunction updateFit() {\\n  const pts = dots.map(coordinates);\\n  const n = pts.length;\\n  const meanX = pts.reduce((s, p) => s + p[0], 0) / n;\\n  const meanY = pts.reduce((s, p) => s + p[1], 0) / n;\\n  const variance = pts.reduce((s, p) => s + (p[0] - meanX) ** 2, 0);\\n  const covariance = pts.reduce((s, p) => s + (p[0] - meanX) * (p[1] - meanY), 0);\\n  const m = variance > 0.0001 ? covariance / variance : 0;\\n  const b = meanY - m * meanX;\\n\\n  const ends = [];\\n  for (const x of [-4.9, 4.9]) {\\n    const y = m * x + b;\\n    if (y >= -2.7 && y <= 2.7) ends.push([x, y]);\\n  }\\n  if (Math.abs(m) > 0.000001) {\\n    for (const y of [-2.7, 2.7]) {\\n      const x = (y - b) / m;\\n      if (x >= -4.9 && x <= 4.9) ends.push([x, y]);\\n    }\\n  }\\n  ends.sort((a, c) => a[0] - c[0]);\\n  if (ends.length >= 2) {\\n    fitLine.setVertices([ax.c2p(ends[0][0], ends[0][1]), ax.c2p(ends[ends.length - 1][0], ends[ends.length - 1][1])]);\\n  }\\n\\n  if (equation) scene.remove(equation);\\n  const sign = b < 0 ? '−' : '+';\\n  equation = new Text({ text: `Best fit: y = ${m.toFixed(2)}x ${sign} ${Math.abs(b).toFixed(2)}`, color: GOLD, fontSize: 27 });\\n  equation.moveTo([0, -3.45, 0]);\\n  scene.add(equation);\\n}\\n\\nscene.add(ax, fitLine, ...dots, title);\\nupdateFit();\\nconst lower = ax.c2p(-4.5, -2.4);\\nconst upper = ax.c2p(4.5, 2.4);\\nfor (const dot of dots) {\\n  makeDraggable(dot, scene, {\\n    constrainX: [lower[0], upper[0]],\\n    constrainY: [lower[1], upper[1]],\\n    onDrag: updateFit\\n  });\\n}\\nawait scene.wait(999999);\"}",
+        "explanation": "The line of best fit minimizes the sum of the squared vertical distances from the points. Drag any point to see how its position changes the regression line and its equation."
+      },
+      "code": "const ax = new Axes({ xRange: [-5, 5, 1], yRange: [-3, 3, 1], xLength: 10, yLength: 5.4, tips: false });\nconst title = new Text({ text: 'Drag the points to change the best-fit line', color: WHITE, fontSize: 28 });\ntitle.moveTo([0, 3.4, 0]);\n\nconst data = [[-4, -1.8], [-2.4, -1.1], [-0.8, -0.7], [0.8, 0.5], [2.5, 1.1], [4, 2.1]];\nconst dots = data.map(([x, y]) => new Dot({ point: ax.c2p(x, y), color: YELLOW }));\nconst fitLine = new Polygon({ vertices: [ax.c2p(-4.9, 0), ax.c2p(4.9, 0)], color: GOLD });\nfitLine.setStrokeWidth(4).setFillOpacity(0);\nlet equation;\n\nconst origin = ax.c2p(0, 0);\nconst oneX = ax.c2p(1, 0);\nconst oneY = ax.c2p(0, 1);\nfunction coordinates(dot) {\n  const p = dot.getCenter();\n  return [(p[0] - origin[0]) / (oneX[0] - origin[0]), (p[1] - origin[1]) / (oneY[1] - origin[1])];\n}\nfunction updateFit() {\n  const pts = dots.map(coordinates);\n  const n = pts.length;\n  const meanX = pts.reduce((s, p) => s + p[0], 0) / n;\n  const meanY = pts.reduce((s, p) => s + p[1], 0) / n;\n  const variance = pts.reduce((s, p) => s + (p[0] - meanX) ** 2, 0);\n  const covariance = pts.reduce((s, p) => s + (p[0] - meanX) * (p[1] - meanY), 0);\n  const m = variance > 0.0001 ? covariance / variance : 0;\n  const b = meanY - m * meanX;\n\n  const ends = [];\n  for (const x of [-4.9, 4.9]) {\n    const y = m * x + b;\n    if (y >= -2.7 && y <= 2.7) ends.push([x, y]);\n  }\n  if (Math.abs(m) > 0.000001) {\n    for (const y of [-2.7, 2.7]) {\n      const x = (y - b) / m;\n      if (x >= -4.9 && x <= 4.9) ends.push([x, y]);\n    }\n  }\n  ends.sort((a, c) => a[0] - c[0]);\n  if (ends.length >= 2) {\n    fitLine.setVertices([ax.c2p(ends[0][0], ends[0][1]), ax.c2p(ends[ends.length - 1][0], ends[ends.length - 1][1])]);\n  }\n\n  if (equation) scene.remove(equation);\n  const sign = b < 0 ? '−' : '+';\n  equation = new Text({ text: `Best fit: y = ${m.toFixed(2)}x ${sign} ${Math.abs(b).toFixed(2)}`, color: GOLD, fontSize: 27 });\n  equation.moveTo([0, -3.45, 0]);\n  scene.add(equation);\n}\n\nscene.add(ax, fitLine, ...dots, title);\nupdateFit();\nconst lower = ax.c2p(-4.5, -2.4);\nconst upper = ax.c2p(4.5, 2.4);\nfor (const dot of dots) {\n  makeDraggable(dot, scene, {\n    constrainX: [lower[0], upper[0]],\n    constrainY: [lower[1], upper[1]],\n    onDrag: updateFit\n  });\n}\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3268,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 0,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 6,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/stats-regression-drag.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/stats-regression-drag.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:52:34.124Z"
+}

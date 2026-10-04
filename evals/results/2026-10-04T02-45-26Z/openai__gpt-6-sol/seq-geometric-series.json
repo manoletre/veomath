@@ -1,0 +1,79 @@
+{
+  "itemId": "seq-geometric-series",
+  "model": "openai/gpt-6-sol",
+  "via": "codex",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "14.91% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "3.21% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 50482,
+        "inputTokens": 12283,
+        "cachedInputTokens": 12032,
+        "outputTokens": 1974,
+        "costUsd": 0.0226484,
+        "rawResponse": "{\"explanation\":\"Start with a square and shade half of it. Then shade half of what remains, and repeat: the new pieces have areas 1/2, 1/4, 1/8, and so on. The unshaded region keeps shrinking toward zero, so the shaded fractions add up to the whole square: 1.\",\"manimCode\":\"const title = new Text({ text: 'Fill the square, half of the remainder at a time', color: WHITE, fontSize: 32 });\\ntitle.moveTo([0, 3.25, 0]);\\nconst equation = new Text({ text: '1/2 + 1/4 + 1/8 + ... = 1', color: YELLOW, fontSize: 32 });\\nequation.moveTo([0, -3.2, 0]);\\nconst border = new Polygon({ vertices: [[-2, -1.85, 0], [2, -1.85, 0], [2, 2.15, 0], [-2, 2.15, 0]], color: WHITE });\\nborder.setFillOpacity(0).setStrokeWidth(3);\\nscene.add(title, equation);\\nawait scene.play(new Create(border));\\n\\nconst colors = [BLUE, TEAL, GREEN, YELLOW, ORANGE, RED, PURPLE, BLUE_C, GREEN_C, GOLD];\\nconst pieces = [];\\nconst labels = [];\\nlet left = -2, right = 2, bottom = -1.85, top = 2.15;\\nfor (let i = 0; i < 10; i++) {\\n  let x1, x2, y1, y2;\\n  if (i % 2 === 0) {\\n    const mid = (left + right) / 2;\\n    x1 = left; x2 = mid; y1 = bottom; y2 = top;\\n    left = mid;\\n  } else {\\n    const mid = (bottom + top) / 2;\\n    x1 = left; x2 = right; y1 = mid; y2 = top;\\n    top = mid;\\n  }\\n  const piece = new Polygon({ vertices: [[x1, y1, 0], [x2, y1, 0], [x2, y2, 0], [x1, y2, 0]], color: colors[i] });\\n  piece.setFill(colors[i], 0.88).setStrokeWidth(2);\\n  pieces.push(piece);\\n  if (i < 4) {\\n    const label = new Text({ text: `1/${2 ** (i + 1)}`, color: WHITE, fontSize: i < 2 ? 27 : 22 });\\n    label.moveTo([(x1 + x2) / 2, (y1 + y2) / 2, 0]);\\n    labels.push(label);\\n  }\\n}\\n\\nlet visible = 0;\\nfor (let i = 0; i < 5; i++) {\\n  await scene.play(new FadeIn(pieces[i]));\\n  if (i < labels.length) scene.add(labels[i]);\\n  visible++;\\n}\\nscene.remove(border);\\nscene.add(border);\\n\\nfunction showCount(count) {\\n  for (let i = 0; i < visible; i++) scene.remove(pieces[i]);\\n  for (let i = 0; i < Math.min(visible, labels.length); i++) scene.remove(labels[i]);\\n  visible = count;\\n  for (let i = 0; i < visible; i++) scene.add(pieces[i]);\\n  for (let i = 0; i < Math.min(visible, labels.length); i++) scene.add(labels[i]);\\n  scene.remove(border);\\n  scene.add(border);\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'Pieces shaded', min: 0, max: 10, value: 5, step: 1, onChange: (value) => showCount(Math.round(value)) });\\nawait scene.wait(999999);\"}",
+        "explanation": "Start with a square and shade half of it. Then shade half of what remains, and repeat: the new pieces have areas 1/2, 1/4, 1/8, and so on. The unshaded region keeps shrinking toward zero, so the shaded fractions add up to the whole square: 1."
+      },
+      "code": "const title = new Text({ text: 'Fill the square, half of the remainder at a time', color: WHITE, fontSize: 32 });\ntitle.moveTo([0, 3.25, 0]);\nconst equation = new Text({ text: '1/2 + 1/4 + 1/8 + ... = 1', color: YELLOW, fontSize: 32 });\nequation.moveTo([0, -3.2, 0]);\nconst border = new Polygon({ vertices: [[-2, -1.85, 0], [2, -1.85, 0], [2, 2.15, 0], [-2, 2.15, 0]], color: WHITE });\nborder.setFillOpacity(0).setStrokeWidth(3);\nscene.add(title, equation);\nawait scene.play(new Create(border));\n\nconst colors = [BLUE, TEAL, GREEN, YELLOW, ORANGE, RED, PURPLE, BLUE_C, GREEN_C, GOLD];\nconst pieces = [];\nconst labels = [];\nlet left = -2, right = 2, bottom = -1.85, top = 2.15;\nfor (let i = 0; i < 10; i++) {\n  let x1, x2, y1, y2;\n  if (i % 2 === 0) {\n    const mid = (left + right) / 2;\n    x1 = left; x2 = mid; y1 = bottom; y2 = top;\n    left = mid;\n  } else {\n    const mid = (bottom + top) / 2;\n    x1 = left; x2 = right; y1 = mid; y2 = top;\n    top = mid;\n  }\n  const piece = new Polygon({ vertices: [[x1, y1, 0], [x2, y1, 0], [x2, y2, 0], [x1, y2, 0]], color: colors[i] });\n  piece.setFill(colors[i], 0.88).setStrokeWidth(2);\n  pieces.push(piece);\n  if (i < 4) {\n    const label = new Text({ text: `1/${2 ** (i + 1)}`, color: WHITE, fontSize: i < 2 ? 27 : 22 });\n    label.moveTo([(x1 + x2) / 2, (y1 + y2) / 2, 0]);\n    labels.push(label);\n  }\n}\n\nlet visible = 0;\nfor (let i = 0; i < 5; i++) {\n  await scene.play(new FadeIn(pieces[i]));\n  if (i < labels.length) scene.add(labels[i]);\n  visible++;\n}\nscene.remove(border);\nscene.add(border);\n\nfunction showCount(count) {\n  for (let i = 0; i < visible; i++) scene.remove(pieces[i]);\n  for (let i = 0; i < Math.min(visible, labels.length); i++) scene.remove(labels[i]);\n  visible = count;\n  for (let i = 0; i < visible; i++) scene.add(pieces[i]);\n  for (let i = 0; i < Math.min(visible, labels.length); i++) scene.add(labels[i]);\n  scene.remove(border);\n  scene.add(border);\n}\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'Pieces shaded', min: 0, max: 10, value: 5, step: 1, onChange: (value) => showCount(Math.round(value)) });\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 14111,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 6,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-6-sol/seq-geometric-series.0.final.jpg",
+        "interacted": "openai__gpt-6-sol/seq-geometric-series.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:51:32.135Z"
+}

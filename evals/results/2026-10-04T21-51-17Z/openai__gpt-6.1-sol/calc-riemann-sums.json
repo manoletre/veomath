@@ -1,0 +1,97 @@
+{
+  "itemId": "calc-riemann-sums",
+  "model": "openai/gpt-6.1-sol",
+  "via": "gateway",
+  "score": 1,
+  "firstAttemptScore": 1,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 1,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "7.78% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": true
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=1 buttons=0 checkboxes=0 draggables=1 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "✓ slider \"Rectangles n\" — 2.67% changed\n✓ drag Dot at (2.6, 1.8) — 0.91% changed"
+        },
+        "canvasInteraction": {
+          "pass": true,
+          "detail": "✓ drag Dot at (2.6, 1.8) — 0.91% changed"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 35871,
+        "inputTokens": 5325,
+        "cachedInputTokens": 5287,
+        "outputTokens": 1491,
+        "costUsd": 0.015514700000000001,
+        "rawResponse": "{\"explanation\":\"A Riemann sum approximates the area under y = x² by adding rectangle areas: Σ f(xᵢ*)Δx, where Δx = 2/n. Use the slider to increase the number of rectangles, and drag the yellow point to change where each rectangle samples the curve—from left endpoints through midpoints to right endpoints. As n increases, the sum approaches the exact area, ∫₀² x² dx = 8/3.\",\"manimCode\":\"let n = 6;\\nlet sample = 0.5;\\nconst ax = new Axes({ xRange: [-0.3, 2.3, 0.5], yRange: [-0.5, 4.5, 1], xLength: 7, yLength: 4.6, tips: false });\\nconst curve = ax.plot(x => x * x, { xRange: [0, 2], color: BLUE });\\nconst title = new Text({ text: 'Riemann sums: y = x²', fontSize: 30, color: WHITE });\\ntitle.moveTo([-2.1, 3.25, 0]);\\nconst sumReadout = new Text({ text: '', fontSize: 25, color: TEAL });\\nsumReadout.moveTo([0, -2.65, 0]);\\nconst exactReadout = new Text({ text: '', fontSize: 22, color: WHITE });\\nexactReadout.moveTo([0, -3.02, 0]);\\nconst hint = new Text({ text: 'Drag yellow point: left → midpoint → right sampling', fontSize: 19, color: YELLOW });\\nhint.moveTo([0, -3.45, 0]);\\nconst handle = new Dot({ point: ax.c2p(1.8, 3.24), radius: 0.13, color: YELLOW });\\nlet rectangles = [];\\n\\nfunction rebuildRectangles() {\\n  for (const rect of rectangles) scene.remove(rect);\\n  rectangles = [];\\n  for (let i = 0; i < n; i++) {\\n    const rect = new Polygon({ vertices: [ax.c2p(0, 0), ax.c2p(0.01, 0), ax.c2p(0.01, 0.01), ax.c2p(0, 0.01)], color: TEAL });\\n    rect.setFill(TEAL, 0.28);\\n    rect.setStrokeWidth(1.5);\\n    rectangles.push(rect);\\n    scene.add(rect);\\n  }\\n  scene.remove(curve, handle);\\n  scene.add(curve, handle);\\n}\\n\\nfunction update() {\\n  const dx = 2 / n;\\n  let sum = 0;\\n  for (let i = 0; i < n; i++) {\\n    const left = i * dx;\\n    const right = (i + 1) * dx;\\n    const sampleX = left + sample * dx;\\n    const height = sampleX * sampleX;\\n    rectangles[i].setVertices([ax.c2p(left, 0), ax.c2p(right, 0), ax.c2p(right, height), ax.c2p(left, height)]);\\n    sum += height * dx;\\n  }\\n  const lastX = (n - 1 + sample) * dx;\\n  handle.moveTo(ax.c2p(lastX, lastX * lastX));\\n  const mode = sample < 0.001 ? 'Left endpoints' : sample > 0.999 ? 'Right endpoints' : Math.abs(sample - 0.5) < 0.015 ? 'Midpoints' : 'Sample position: ' + (100 * sample).toFixed(0) + '%';\\n  sumReadout.setText('n = ' + n + '   |   Δx = ' + dx.toFixed(3) + '   |   Sum = ' + sum.toFixed(5));\\n  exactReadout.setText(mode + '   •   Exact = 8/3 ≈ 2.66667   •   Error = ' + (sum - 8 / 3).toFixed(5));\\n}\\n\\nscene.add(title, sumReadout, exactReadout, hint);\\nawait scene.play(new Create(ax));\\nrebuildRectangles();\\nupdate();\\nawait scene.play(new Create(curve));\\n\\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\\n  const dx = 2 / n;\\n  const x = ax.pointToCoords(pos)[0];\\n  sample = Math.max(0, Math.min(1, (x - (n - 1) * dx) / dx));\\n  update();\\n} });\\n\\nconst controls = new Controls(scene, { position: 'top-right' });\\ncontrols.addSlider({ label: 'Rectangles n', min: 1, max: 60, value: n, step: 1, onChange: value => {\\n  n = Math.round(value);\\n  rebuildRectangles();\\n  update();\\n} });\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "A Riemann sum approximates the area under y = x² by adding rectangle areas: Σ f(xᵢ*)Δx, where Δx = 2/n. Use the slider to increase the number of rectangles, and drag the yellow point to change where each rectangle samples the curve—from left endpoints through midpoints to right endpoints. As n increases, the sum approaches the exact area, ∫₀² x² dx = 8/3."
+      },
+      "code": "let n = 6;\nlet sample = 0.5;\nconst ax = new Axes({ xRange: [-0.3, 2.3, 0.5], yRange: [-0.5, 4.5, 1], xLength: 7, yLength: 4.6, tips: false });\nconst curve = ax.plot(x => x * x, { xRange: [0, 2], color: BLUE });\nconst title = new Text({ text: 'Riemann sums: y = x²', fontSize: 30, color: WHITE });\ntitle.moveTo([-2.1, 3.25, 0]);\nconst sumReadout = new Text({ text: '', fontSize: 25, color: TEAL });\nsumReadout.moveTo([0, -2.65, 0]);\nconst exactReadout = new Text({ text: '', fontSize: 22, color: WHITE });\nexactReadout.moveTo([0, -3.02, 0]);\nconst hint = new Text({ text: 'Drag yellow point: left → midpoint → right sampling', fontSize: 19, color: YELLOW });\nhint.moveTo([0, -3.45, 0]);\nconst handle = new Dot({ point: ax.c2p(1.8, 3.24), radius: 0.13, color: YELLOW });\nlet rectangles = [];\n\nfunction rebuildRectangles() {\n  for (const rect of rectangles) scene.remove(rect);\n  rectangles = [];\n  for (let i = 0; i < n; i++) {\n    const rect = new Polygon({ vertices: [ax.c2p(0, 0), ax.c2p(0.01, 0), ax.c2p(0.01, 0.01), ax.c2p(0, 0.01)], color: TEAL });\n    rect.setFill(TEAL, 0.28);\n    rect.setStrokeWidth(1.5);\n    rectangles.push(rect);\n    scene.add(rect);\n  }\n  scene.remove(curve, handle);\n  scene.add(curve, handle);\n}\n\nfunction update() {\n  const dx = 2 / n;\n  let sum = 0;\n  for (let i = 0; i < n; i++) {\n    const left = i * dx;\n    const right = (i + 1) * dx;\n    const sampleX = left + sample * dx;\n    const height = sampleX * sampleX;\n    rectangles[i].setVertices([ax.c2p(left, 0), ax.c2p(right, 0), ax.c2p(right, height), ax.c2p(left, height)]);\n    sum += height * dx;\n  }\n  const lastX = (n - 1 + sample) * dx;\n  handle.moveTo(ax.c2p(lastX, lastX * lastX));\n  const mode = sample < 0.001 ? 'Left endpoints' : sample > 0.999 ? 'Right endpoints' : Math.abs(sample - 0.5) < 0.015 ? 'Midpoints' : 'Sample position: ' + (100 * sample).toFixed(0) + '%';\n  sumReadout.setText('n = ' + n + '   |   Δx = ' + dx.toFixed(3) + '   |   Sum = ' + sum.toFixed(5));\n  exactReadout.setText(mode + '   •   Exact = 8/3 ≈ 2.66667   •   Error = ' + (sum - 8 / 3).toFixed(5));\n}\n\nscene.add(title, sumReadout, exactReadout, hint);\nawait scene.play(new Create(ax));\nrebuildRectangles();\nupdate();\nawait scene.play(new Create(curve));\n\nmakeDraggable(handle, scene, { onDrag: (mob, pos) => {\n  const dx = 2 / n;\n  const x = ax.pointToCoords(pos)[0];\n  sample = Math.max(0, Math.min(1, (x - (n - 1) * dx) / dx));\n  update();\n} });\n\nconst controls = new Controls(scene, { position: 'top-right' });\ncontrols.addSlider({ label: 'Rectangles n', min: 1, max: 60, value: n, step: 1, onChange: value => {\n  n = Math.round(value);\n  rebuildRectangles();\n  update();\n} });\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 9014,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 2,
+        "controls": {
+          "sliders": 1,
+          "buttons": 0,
+          "checkboxes": 0
+        },
+        "draggables": 1,
+        "clickables": 0,
+        "hoverables": 0,
+        "interactions": [
+          {
+            "kind": "slider",
+            "label": "\"Rectangles n\"",
+            "change": 0.02666775173611111,
+            "responded": true
+          },
+          {
+            "kind": "drag",
+            "label": "Dot at (2.6, 1.8)",
+            "change": 0.009055989583333333,
+            "responded": true
+          }
+        ]
+      },
+      "frames": {
+        "final": "openai__gpt-6.1-sol/calc-riemann-sums.0.final.jpg",
+        "interacted": "openai__gpt-6.1-sol/calc-riemann-sums.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T21:54:01.430Z"
+}

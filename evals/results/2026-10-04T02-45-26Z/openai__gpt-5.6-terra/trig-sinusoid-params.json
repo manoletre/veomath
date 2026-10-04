@@ -1,0 +1,80 @@
+{
+  "itemId": "trig-sinusoid-params",
+  "model": "openai/gpt-5.6-terra",
+  "via": "codex",
+  "score": 0.9,
+  "firstAttemptScore": 0.9,
+  "retried": false,
+  "attempts": [
+    {
+      "kind": "initial",
+      "score": 0.9,
+      "checks": {
+        "generated": {
+          "pass": true
+        },
+        "runs": {
+          "pass": true
+        },
+        "completes": {
+          "pass": true
+        },
+        "nonBlank": {
+          "pass": true,
+          "detail": "4.03% non-background pixels"
+        },
+        "inFrame": {
+          "pass": true
+        },
+        "noTextOverlap": {
+          "pass": false,
+          "detail": "MathTex \"x\" is hidden under the controls panel (100%)"
+        },
+        "noRawLatex": {
+          "pass": true
+        },
+        "interactive": {
+          "pass": true,
+          "detail": "sliders=5 buttons=1 checkboxes=0 draggables=0 clickables=0 hoverables=0"
+        },
+        "respondsToInteraction": {
+          "pass": true,
+          "detail": "1.96% pixels changed (threshold 0.20%)"
+        },
+        "stableUnderInteraction": {
+          "pass": true
+        }
+      },
+      "generation": {
+        "latencyMs": 26552,
+        "inputTokens": 11749,
+        "cachedInputTokens": 11008,
+        "outputTokens": 1296,
+        "costUsd": 0.0192356,
+        "rawResponse": "{\"explanation\":\"In \\\\(y=A\\\\sin(B(x-C))+D\\\\), \\\\(A\\\\) controls amplitude, \\\\(B\\\\) controls frequency, \\\\(C\\\\) shifts the wave horizontally, and \\\\(D\\\\) shifts it vertically. Use the sliders to see each parameter reshape the same sine wave; the yellow point samples the curve at a movable \\\\(x\\\\)-value.\",\"manimCode\":\"const title = new MathTex({ latex: 'y=A\\\\\\\\sin(B(x-C))+D' });\\nawait title.waitForRender();\\ntitle.moveTo([0, 3.25, 0]);\\n\\nconst ax = new Axes({\\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\\n  yRange: [-3, 3, 1],\\n  xLength: 11,\\n  yLength: 4.6,\\n  tips: true\\n});\\nax.moveTo([0, -0.35, 0]);\\nconst axisLabels = ax.getAxisLabels();\\n\\nlet A = 1;\\nlet B = 1;\\nlet C = 0;\\nlet D = 0;\\nlet sampleX = 0;\\n\\nfunction f(x) {\\n  return A * Math.sin(B * (x - C)) + D;\\n}\\n\\nlet wave = ax.plot(x => f(x), {\\n  color: BLUE,\\n  xRange: [-2 * Math.PI, 2 * Math.PI],\\n  numSamples: 500\\n});\\n\\nconst sampleDot = new Dot({ point: ax.c2p(sampleX, f(sampleX)), color: YELLOW });\\nconst guide = new Polygon({\\n  vertices: [ax.c2p(sampleX, 0), ax.c2p(sampleX, f(sampleX))],\\n  color: YELLOW\\n});\\nguide.setStrokeWidth(2).setFillOpacity(0);\\nsampleDot.addUpdater(d => d.moveTo(ax.c2p(sampleX, f(sampleX))));\\nguide.addUpdater(g => g.setVertices([ax.c2p(sampleX, 0), ax.c2p(sampleX, f(sampleX))]));\\n\\nconst key = new Text({ text: 'blue: wave     yellow: sample point', color: GRAY, fontSize: 18 });\\nkey.moveTo([-2.5, -3.25, 0]);\\n\\nscene.add(title, ax, axisLabels, wave, guide, sampleDot, key);\\n\\nfunction redraw() {\\n  scene.remove(wave);\\n  wave = ax.plot(x => f(x), {\\n    color: BLUE,\\n    xRange: [-2 * Math.PI, 2 * Math.PI],\\n    numSamples: 500\\n  });\\n  scene.add(wave);\\n}\\n\\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 250 });\\ncontrols.addSlider({\\n  label: 'A — amplitude', min: -2.5, max: 2.5, value: 1, step: 0.1,\\n  onChange: v => { A = v; redraw(); }\\n});\\ncontrols.addSlider({\\n  label: 'B — frequency', min: 0.2, max: 3, value: 1, step: 0.1,\\n  onChange: v => { B = v; redraw(); }\\n});\\ncontrols.addSlider({\\n  label: 'C — phase shift', min: -Math.PI, max: Math.PI, value: 0, step: 0.1,\\n  onChange: v => { C = v; redraw(); }\\n});\\ncontrols.addSlider({\\n  label: 'D — vertical shift', min: -2, max: 2, value: 0, step: 0.1,\\n  onChange: v => { D = v; redraw(); }\\n});\\ncontrols.addSlider({\\n  label: 'Sample x', min: -2 * Math.PI, max: 2 * Math.PI, value: 0, step: 0.1,\\n  onChange: v => { sampleX = v; }\\n});\\ncontrols.addButton({\\n  label: 'Reset parameters',\\n  onClick: () => { A = 1; B = 1; C = 0; D = 0; sampleX = 0; redraw(); }\\n});\\n\\nawait scene.wait(999999);\"}",
+        "explanation": "In \\(y=A\\sin(B(x-C))+D\\), \\(A\\) controls amplitude, \\(B\\) controls frequency, \\(C\\) shifts the wave horizontally, and \\(D\\) shifts it vertically. Use the sliders to see each parameter reshape the same sine wave; the yellow point samples the curve at a movable \\(x\\)-value."
+      },
+      "code": "const title = new MathTex({ latex: 'y=A\\\\sin(B(x-C))+D' });\nawait title.waitForRender();\ntitle.moveTo([0, 3.25, 0]);\n\nconst ax = new Axes({\n  xRange: [-2 * Math.PI, 2 * Math.PI, Math.PI / 2],\n  yRange: [-3, 3, 1],\n  xLength: 11,\n  yLength: 4.6,\n  tips: true\n});\nax.moveTo([0, -0.35, 0]);\nconst axisLabels = ax.getAxisLabels();\n\nlet A = 1;\nlet B = 1;\nlet C = 0;\nlet D = 0;\nlet sampleX = 0;\n\nfunction f(x) {\n  return A * Math.sin(B * (x - C)) + D;\n}\n\nlet wave = ax.plot(x => f(x), {\n  color: BLUE,\n  xRange: [-2 * Math.PI, 2 * Math.PI],\n  numSamples: 500\n});\n\nconst sampleDot = new Dot({ point: ax.c2p(sampleX, f(sampleX)), color: YELLOW });\nconst guide = new Polygon({\n  vertices: [ax.c2p(sampleX, 0), ax.c2p(sampleX, f(sampleX))],\n  color: YELLOW\n});\nguide.setStrokeWidth(2).setFillOpacity(0);\nsampleDot.addUpdater(d => d.moveTo(ax.c2p(sampleX, f(sampleX))));\nguide.addUpdater(g => g.setVertices([ax.c2p(sampleX, 0), ax.c2p(sampleX, f(sampleX))]));\n\nconst key = new Text({ text: 'blue: wave     yellow: sample point', color: GRAY, fontSize: 18 });\nkey.moveTo([-2.5, -3.25, 0]);\n\nscene.add(title, ax, axisLabels, wave, guide, sampleDot, key);\n\nfunction redraw() {\n  scene.remove(wave);\n  wave = ax.plot(x => f(x), {\n    color: BLUE,\n    xRange: [-2 * Math.PI, 2 * Math.PI],\n    numSamples: 500\n  });\n  scene.add(wave);\n}\n\nconst controls = new Controls(scene, { position: 'top-right', theme: 'dark', width: 250 });\ncontrols.addSlider({\n  label: 'A — amplitude', min: -2.5, max: 2.5, value: 1, step: 0.1,\n  onChange: v => { A = v; redraw(); }\n});\ncontrols.addSlider({\n  label: 'B — frequency', min: 0.2, max: 3, value: 1, step: 0.1,\n  onChange: v => { B = v; redraw(); }\n});\ncontrols.addSlider({\n  label: 'C — phase shift', min: -Math.PI, max: Math.PI, value: 0, step: 0.1,\n  onChange: v => { C = v; redraw(); }\n});\ncontrols.addSlider({\n  label: 'D — vertical shift', min: -2, max: 2, value: 0, step: 0.1,\n  onChange: v => { D = v; redraw(); }\n});\ncontrols.addSlider({\n  label: 'Sample x', min: -2 * Math.PI, max: 2 * Math.PI, value: 0, step: 0.1,\n  onChange: v => { sampleX = v; }\n});\ncontrols.addButton({\n  label: 'Reset parameters',\n  onClick: () => { A = 1; B = 1; C = 0; D = 0; sampleX = 0; redraw(); }\n});\n\nawait scene.wait(999999);",
+      "render": {
+        "durationMs": 3570,
+        "fatalError": null,
+        "errors": [],
+        "interactionErrors": [],
+        "playCount": 0,
+        "controls": {
+          "sliders": 5,
+          "buttons": 1,
+          "checkboxes": 0
+        },
+        "draggables": 0,
+        "clickables": 0,
+        "hoverables": 0
+      },
+      "frames": {
+        "final": "openai__gpt-5.6-terra/trig-sinusoid-params.0.final.jpg",
+        "interacted": "openai__gpt-5.6-terra/trig-sinusoid-params.0.interacted.jpg"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-04T02:58:44.395Z"
+}
