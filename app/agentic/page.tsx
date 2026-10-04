@@ -2,6 +2,10 @@
 
 import React, { useState, useRef, useEffect, useCallback, Component } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import MathLogo from '../components/MathLogo';
+import { apiFetch, responseError } from '../lib/api-fetch';
+import { auth } from '../lib/firebase-client';
 
 const ManimRenderer = dynamic(() => import('../components/ManimRenderer'), { ssr: false });
 
@@ -107,6 +111,7 @@ export default function AgenticPage() {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [pdfUploading, setPdfUploading] = useState(false);
   const [pdfError, setPdfError] = useState('');
+  const [requestError, setRequestError] = useState('');
 
   const [slideProgress, setSlideProgress] = useState<Map<number, SlideProgress>>(new Map());
   const [globalProgress, setGlobalProgress] = useState('');
@@ -121,7 +126,7 @@ export default function AgenticPage() {
   useEffect(() => { sessionsRef.current = sessions; }, [sessions]);
 
   useEffect(() => {
-    const saved = localStorage.getItem('veomath-agentic-sessions');
+    const saved = localStorage.getItem(`veomath-agentic-sessions-${auth.currentUser?.uid}`);
     if (saved) {
       try {
         const parsed: Session[] = JSON.parse(saved);
@@ -141,7 +146,7 @@ export default function AgenticPage() {
 
   useEffect(() => {
     if (sessions.length > 0) {
-      localStorage.setItem('veomath-agentic-sessions', JSON.stringify(sessions));
+      localStorage.setItem(`veomath-agentic-sessions-${auth.currentUser?.uid}`, JSON.stringify(sessions));
     }
   }, [sessions]);
 
@@ -206,6 +211,7 @@ export default function AgenticPage() {
   }
 
   async function submitTopic() {
+    setRequestError('');
     if (!activeSession) return;
 
     if (inputMode === 'pdf') {
@@ -219,20 +225,21 @@ export default function AgenticPage() {
         // Step 1: Upload PDF to OpenAI
         const formData = new FormData();
         formData.append('file', pdfFile);
-        const uploadRes = await fetch('/api/agentic/upload', { method: 'POST', body: formData });
-        if (!uploadRes.ok) throw new Error('Upload failed');
+        formData.append('sessionId', activeSessionIdRef.current);
+        const uploadRes = await apiFetch('/api/agentic/upload', { method: 'POST', body: formData });
+        if (!uploadRes.ok) throw await responseError(uploadRes);
         const { fileId } = await uploadRes.json();
 
         // Store fileId on session
         updateSession(activeSessionIdRef.current, { paperFileId: fileId });
 
         // Step 2: Plan from PDF
-        const planRes = await fetch('/api/agentic', {
+        const planRes = await apiFetch('/api/agentic', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ mode: 'plan-from-pdf', fileId }),
+          body: JSON.stringify({ mode: 'plan-from-pdf', fileId, sessionId: activeSessionIdRef.current }),
         });
-        if (!planRes.ok) throw new Error('Plan generation failed');
+        if (!planRes.ok) throw await responseError(planRes);
         const data = await planRes.json();
 
         updateSession(activeSessionIdRef.current, {
@@ -243,6 +250,7 @@ export default function AgenticPage() {
         });
       } catch (err) {
         console.error(err);
+        setRequestError(err instanceof Error ? err.message : 'Request failed');
         setPdfError(String(err));
         updateSession(activeSessionIdRef.current, { phase: 'input' });
       } finally {
@@ -260,12 +268,12 @@ export default function AgenticPage() {
     setInput('');
 
     try {
-      const res = await fetch('/api/agentic', {
+      const res = await apiFetch('/api/agentic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode: 'plan', topic }),
+        body: JSON.stringify({ mode: 'plan', topic, sessionId: activeSessionIdRef.current }),
       });
-      if (!res.ok) throw new Error('API error');
+      if (!res.ok) throw await responseError(res);
       const data = await res.json();
 
       updateSession(activeSessionIdRef.current, {
@@ -275,6 +283,7 @@ export default function AgenticPage() {
       });
     } catch (err) {
       console.error(err);
+      setRequestError(err instanceof Error ? err.message : 'Request failed');
       updateSession(activeSessionIdRef.current, { phase: 'input' });
     }
   }
@@ -357,7 +366,7 @@ export default function AgenticPage() {
             onDone?.();
           } else if (event.type === 'error') {
             console.error('Stream error:', event.message);
-            setGlobalProgress(`Error: ${event.message}`);
+            setRequestError(event.message);
           }
         } catch {}
       }
@@ -368,14 +377,15 @@ export default function AgenticPage() {
       const item = itemsByIndex.get(i);
       if (item) finalItems.push(item);
     }
-    if (finalItems.length > 0) {
-      updateSession(activeSessionIdRef.current, { docItems: finalItems, phase: 'ready' });
-    }
+    updateSession(activeSessionIdRef.current, {
+      docItems: finalItems, phase: finalItems.length ? 'ready' : 'plan-ready',
+    });
     setGlobalProgress('');
     setSlideProgress(new Map());
   }
 
   async function proceedToGenerate() {
+    setRequestError('');
     if (!activeSession) return;
 
     const placeholders: DocItem[] = activeSession.planItems.map(item => ({
@@ -390,11 +400,12 @@ export default function AgenticPage() {
     setGlobalProgress('Starting generation...');
 
     try {
-      const res = await fetch('/api/agentic', {
+      const res = await apiFetch('/api/agentic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           mode: 'generate',
+          sessionId: activeSessionIdRef.current,
           topic: activeSession.topic,
           items: activeSession.planItems,
           userComments: planComments,
@@ -402,11 +413,12 @@ export default function AgenticPage() {
           fileId: activeSession.paperFileId,
         }),
       });
-      if (!res.ok) throw new Error('API error');
+      if (!res.ok) throw await responseError(res);
 
       await streamGenerationResponse(res, activeSession.planItems);
     } catch (err) {
       console.error(err);
+      setRequestError(err instanceof Error ? err.message : 'Request failed');
       updateSession(activeSessionIdRef.current, { phase: 'plan-ready' });
       setGlobalProgress('');
       setSlideProgress(new Map());
@@ -414,6 +426,7 @@ export default function AgenticPage() {
   }
 
   async function regenerateCourse() {
+    setRequestError('');
     if (!activeSession || isRegeneratingCourse) return;
     setIsRegeneratingCourse(true);
 
@@ -436,11 +449,12 @@ export default function AgenticPage() {
     setGlobalProgress('Regenerating course...');
 
     try {
-      const res = await fetch('/api/agentic', {
+      const res = await apiFetch('/api/agentic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           mode: 'regenerate-course',
+          sessionId: activeSessionIdRef.current,
           topic: activeSession.topic,
           items: activeSession.planItems,
           lessonContext,
@@ -448,13 +462,14 @@ export default function AgenticPage() {
           fileId: activeSession.paperFileId,
         }),
       });
-      if (!res.ok) throw new Error('API error');
+      if (!res.ok) throw await responseError(res);
 
       await streamGenerationResponse(res, activeSession.planItems, () => {
         setCourseRegenerateFeedback('');
       });
     } catch (err) {
       console.error(err);
+      setRequestError(err instanceof Error ? err.message : 'Request failed');
       updateSession(activeSessionIdRef.current, { phase: 'ready' });
       setGlobalProgress('');
       setSlideProgress(new Map());
@@ -481,11 +496,12 @@ export default function AgenticPage() {
         .map(i => (i as DocTextItem).content)
         .join(' ');
 
-      const res = await fetch('/api/agentic', {
+      const res = await apiFetch('/api/agentic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           mode: 'regenerate-slide',
+          sessionId: activeSessionIdRef.current,
           topic: session.topic,
           slideTitle: item.title,
           slideDescription: item.description,
@@ -498,7 +514,7 @@ export default function AgenticPage() {
           fileId: session.paperFileId,
         }),
       });
-      if (!res.ok) throw new Error('API error');
+      if (!res.ok) throw await responseError(res);
       const data: { manimCode: string } = await res.json();
 
       const freshSession = sessionsRef.current.find(s => s.id === sessionId);
@@ -512,12 +528,13 @@ export default function AgenticPage() {
         isRegenerating: false,
         codeHistory: [...prevHistory, data.manimCode],
       });
-    } catch {
-      updateDocItem(sessionId, itemIndex, { isRegenerating: false });
+    } catch (err) {
+      updateDocItem(sessionId, itemIndex, { isRegenerating: false, error: err instanceof Error ? err.message : 'Request failed' });
     }
   }, [updateDocItem]);
 
   async function regenerateSlide(itemIndex: number) {
+    setRequestError('');
     if (!activeSession) return;
     const item = activeSession.docItems[itemIndex];
     if (item.type !== 'slide') return;
@@ -531,11 +548,12 @@ export default function AgenticPage() {
         .map(i => (i as DocTextItem).content)
         .join(' ');
 
-      const res = await fetch('/api/agentic', {
+      const res = await apiFetch('/api/agentic', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           mode: 'regenerate-slide',
+          sessionId: activeSessionIdRef.current,
           topic: activeSession.topic,
           slideTitle: item.title,
           slideDescription: item.description,
@@ -546,7 +564,7 @@ export default function AgenticPage() {
           fileId: activeSession.paperFileId,
         }),
       });
-      if (!res.ok) throw new Error('API error');
+      if (!res.ok) throw await responseError(res);
       const data: { manimCode: string } = await res.json();
 
       const freshSession = sessionsRef.current.find(s => s.id === activeSessionIdRef.current);
@@ -561,8 +579,8 @@ export default function AgenticPage() {
         comment: '',
         codeHistory: [...prevHistory, data.manimCode],
       });
-    } catch {
-      updateDocItem(activeSessionIdRef.current, itemIndex, { isRegenerating: false });
+    } catch (err) {
+      updateDocItem(activeSessionIdRef.current, itemIndex, { isRegenerating: false, error: err instanceof Error ? err.message : 'Request failed' });
     }
   }
 
@@ -591,14 +609,14 @@ export default function AgenticPage() {
     .filter(({ item }) => item.type === 'slide') as Array<{ item: DocSlideItem; idx: number }>;
 
   return (
-    <div className="flex h-screen" style={{ background: '#0a0a0a', color: '#e5e5e5' }}>
+    <div className="flex h-screen" style={{ background: '#0a0a0a', color: 'var(--foreground)' }}>
 
       {/* Sidebar */}
       <div
         style={{
           width: sidebarOpen ? '220px' : '48px',
           minWidth: sidebarOpen ? '220px' : '48px',
-          borderRight: '1px solid #1a1a1a',
+          borderRight: '1px solid var(--border)',
           background: '#0d0d0d',
           display: 'flex',
           flexDirection: 'column',
@@ -613,7 +631,7 @@ export default function AgenticPage() {
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            borderBottom: '1px solid #1a1a1a',
+            borderBottom: '1px solid var(--border)',
             flexShrink: 0,
           }}
         >
@@ -623,7 +641,7 @@ export default function AgenticPage() {
             style={{
               background: 'none',
               border: 'none',
-              color: '#737373',
+              color: 'var(--muted-foreground)',
               cursor: 'pointer',
               padding: '4px',
               borderRadius: '6px',
@@ -636,8 +654,8 @@ export default function AgenticPage() {
               width: '28px',
               height: '28px',
             }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#a3a3a3')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#737373')}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--secondary-foreground)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted-foreground)')}
           >
             {sidebarOpen ? '\u27E8' : '\u27E9'}
           </button>
@@ -648,9 +666,9 @@ export default function AgenticPage() {
               title="New explainer"
               style={{
                 background: 'none',
-                border: '1px solid #2a2a2a',
+                border: '1px solid var(--input)',
                 borderRadius: '6px',
-                color: '#a3a3a3',
+                color: 'var(--secondary-foreground)',
                 fontSize: '11px',
                 cursor: 'pointer',
                 padding: '4px 10px',
@@ -658,8 +676,8 @@ export default function AgenticPage() {
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
               }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = '#505050')}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = '#2a2a2a')}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--border-hover)')}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--input)')}
             >
               + New
             </button>
@@ -674,7 +692,7 @@ export default function AgenticPage() {
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#737373',
+                color: 'var(--muted-foreground)',
                 cursor: 'pointer',
                 padding: '4px',
                 fontSize: '16px',
@@ -685,8 +703,8 @@ export default function AgenticPage() {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#a3a3a3')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#737373')}
+              onMouseEnter={e => (e.currentTarget.style.color = 'var(--secondary-foreground)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted-foreground)')}
             >
               +
             </button>
@@ -705,7 +723,7 @@ export default function AgenticPage() {
                   border: 'none',
                   borderRadius: '6px',
                   padding: '7px 8px',
-                  color: session.id === activeSessionId ? '#e5e5e5' : '#737373',
+                  color: session.id === activeSessionId ? 'var(--foreground)' : 'var(--muted-foreground)',
                   fontSize: '12px',
                   cursor: 'pointer',
                   textAlign: 'left',
@@ -731,7 +749,7 @@ export default function AgenticPage() {
                   <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {session.sessionTitle}
                   </div>
-                  <div style={{ fontSize: '10px', color: '#606060', marginTop: '2px' }}>
+                  <div style={{ fontSize: '10px', color: 'var(--muted-foreground)', marginTop: '2px' }}>
                     {formatDate(session.createdAt)}
                   </div>
                 </div>
@@ -741,7 +759,7 @@ export default function AgenticPage() {
                   title="Delete"
                   style={{
                     opacity: 0,
-                    color: '#737373',
+                    color: 'var(--muted-foreground)',
                     fontSize: '14px',
                     cursor: 'pointer',
                     padding: '0 2px',
@@ -750,7 +768,7 @@ export default function AgenticPage() {
                     transition: 'opacity 0.1s',
                   }}
                   onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#737373')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted-foreground)')}
                 >
                   x
                 </span>
@@ -766,7 +784,7 @@ export default function AgenticPage() {
         style={{
           width: '380px',
           minWidth: '320px',
-          borderRight: '1px solid #262626',
+          borderRight: '1px solid var(--border)',
           background: '#111111',
           flexShrink: 0,
         }}
@@ -774,33 +792,37 @@ export default function AgenticPage() {
         <div
           style={{
             padding: '16px 20px',
-            borderBottom: '1px solid #262626',
+            borderBottom: '1px solid var(--border)',
             fontSize: '15px',
             fontWeight: 600,
             letterSpacing: '-0.01em',
-            color: '#f5f5f5',
+            color: 'var(--foreground)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <span>veomath <span style={{ color: '#737373', fontWeight: 400, fontSize: '12px' }}>/ explainer</span></span>
-          <a
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '10px' }}>
+            <MathLogo />
+            <span>veomath <span style={{ color: 'var(--muted-foreground)', fontWeight: 400, fontSize: '12px' }}>/ explainer</span></span>
+          </span>
+          <Link
             href="/"
-            style={{ fontSize: '11px', color: '#737373', textDecoration: 'none' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#a3a3a3')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#737373')}
+            style={{ fontSize: '11px', color: 'var(--muted-foreground)', textDecoration: 'none' }}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--secondary-foreground)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted-foreground)')}
           >
             chat mode
-          </a>
+          </Link>
         </div>
 
         <div className="flex-1 overflow-y-auto" style={{ padding: '16px' }}>
+          {requestError && <p role="alert" className="auth-error">{requestError}</p>}
           {/* Phase: input */}
           {activeSession?.phase === 'input' && (
             <div
               style={{
-                color: '#737373',
+                color: 'var(--muted-foreground)',
                 fontSize: '13px',
                 textAlign: 'center',
                 marginTop: '40px',
@@ -812,7 +834,7 @@ export default function AgenticPage() {
                   Pick a topic and I&apos;ll create<br />
                   an interactive explainer for it.<br />
                   <br />
-                  <span style={{ color: '#606060' }}>
+                  <span style={{ color: 'var(--muted-foreground)' }}>
                     Try &ldquo;Why e^i*pi = -1&rdquo;<br />
                     or &ldquo;How derivatives work&rdquo;
                   </span>
@@ -822,7 +844,7 @@ export default function AgenticPage() {
                   Upload a research paper and<br />
                   I&apos;ll create an explainer from it.<br />
                   <br />
-                  <span style={{ color: '#606060' }}>
+                  <span style={{ color: 'var(--muted-foreground)' }}>
                     Supports PDF files
                   </span>
                 </>
@@ -839,7 +861,7 @@ export default function AgenticPage() {
                   borderRadius: '14px 14px 14px 4px',
                   background: '#1e1e1e',
                   fontSize: '13px',
-                  color: '#737373',
+                  color: 'var(--muted-foreground)',
                 }}
               >
                 <span className="thinking-dots">planning your explainer</span>
@@ -850,15 +872,15 @@ export default function AgenticPage() {
           {/* Phase: plan-ready — minimal summary with general comments + proceed */}
           {activeSession?.phase === 'plan-ready' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div style={{ fontSize: '14px', fontWeight: 600, color: '#e5e5e5', marginBottom: '4px' }}>
+              <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--foreground)', marginBottom: '4px' }}>
                 {activeSession.sessionTitle}
               </div>
-              <p style={{ fontSize: '12px', color: '#737373', lineHeight: 1.5, margin: 0 }}>
+              <p style={{ fontSize: '12px', color: 'var(--muted-foreground)', lineHeight: 1.5, margin: 0 }}>
                 Review the plan on the right. Add comments to individual slides or provide general feedback below.
               </p>
 
               <div style={{ marginTop: '8px' }}>
-                <div style={{ fontSize: '11px', color: '#737373', marginBottom: '4px' }}>
+                <div style={{ fontSize: '11px', color: 'var(--muted-foreground)', marginBottom: '4px' }}>
                   General comments (optional)
                 </div>
                 <textarea
@@ -869,10 +891,10 @@ export default function AgenticPage() {
                   style={{
                     width: '100%',
                     background: '#1a1a1a',
-                    border: '1px solid #2a2a2a',
+                    border: '1px solid var(--input)',
                     borderRadius: '8px',
                     padding: '8px 10px',
-                    color: '#e5e5e5',
+                    color: 'var(--foreground)',
                     fontSize: '12px',
                     lineHeight: '1.5',
                     resize: 'vertical',
@@ -913,7 +935,7 @@ export default function AgenticPage() {
                   borderRadius: '14px 14px 14px 4px',
                   background: '#1e1e1e',
                   fontSize: '13px',
-                  color: '#737373',
+                  color: 'var(--muted-foreground)',
                 }}
               >
                 <span className="thinking-dots">{globalProgress || 'generating slides'}</span>
@@ -929,15 +951,15 @@ export default function AgenticPage() {
                         key={idx}
                         style={{
                           background: '#1a1a1a',
-                          border: '1px solid #2a2a2a',
+                          border: '1px solid var(--input)',
                           borderRadius: '8px',
                           padding: '8px 10px',
                         }}
                       >
-                        <div style={{ fontSize: '11px', fontWeight: 600, color: '#d4d4d4', marginBottom: '3px' }}>
+                        <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--secondary-foreground)', marginBottom: '3px' }}>
                           {title}
                         </div>
-                        <div style={{ fontSize: '10px', color: '#737373', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <div style={{ fontSize: '10px', color: 'var(--muted-foreground)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <span
                             style={{
                               display: 'inline-block',
@@ -961,11 +983,11 @@ export default function AgenticPage() {
           {/* Phase: ready — slide nav */}
           {activeSession?.phase === 'ready' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <div style={{ fontSize: '14px', fontWeight: 600, color: '#e5e5e5', marginBottom: '8px' }}>
+              <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--foreground)', marginBottom: '8px' }}>
                 {activeSession.sessionTitle}
               </div>
 
-              <div style={{ fontSize: '10px', color: '#606060', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
+              <div style={{ fontSize: '10px', color: 'var(--muted-foreground)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
                 Slides
               </div>
 
@@ -976,10 +998,10 @@ export default function AgenticPage() {
                   style={{
                     width: '100%',
                     background: 'none',
-                    border: '1px solid #2a2a2a',
+                    border: '1px solid var(--input)',
                     borderRadius: '6px',
                     padding: '6px 10px',
-                    color: '#a3a3a3',
+                    color: 'var(--secondary-foreground)',
                     fontSize: '12px',
                     cursor: 'pointer',
                     textAlign: 'left',
@@ -987,17 +1009,17 @@ export default function AgenticPage() {
                     alignItems: 'center',
                     gap: '8px',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.borderColor = '#606060')}
-                  onMouseLeave={e => (e.currentTarget.style.borderColor = '#2a2a2a')}
+                  onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--border-hover)')}
+                  onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--input)')}
                 >
-                  <span style={{ color: '#737373', fontSize: '10px', fontWeight: 600, minWidth: '16px' }}>
+                  <span style={{ color: 'var(--muted-foreground)', fontSize: '10px', fontWeight: 600, minWidth: '16px' }}>
                     {slideNum + 1}
                   </span>
                   <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {item.title}
                   </span>
                   {item.error && <span style={{ color: '#ef4444', fontSize: '10px', marginLeft: 'auto', flexShrink: 0 }}>error</span>}
-                  {item.isRegenerating && <span style={{ color: '#737373', fontSize: '10px', marginLeft: 'auto', flexShrink: 0 }}>...</span>}
+                  {item.isRegenerating && <span style={{ color: 'var(--muted-foreground)', fontSize: '10px', marginLeft: 'auto', flexShrink: 0 }}>...</span>}
                 </button>
               ))}
 
@@ -1005,16 +1027,16 @@ export default function AgenticPage() {
                 onClick={newSession}
                 style={{
                   background: 'none',
-                  border: '1px solid #2a2a2a',
+                  border: '1px solid var(--input)',
                   borderRadius: '8px',
                   padding: '6px 12px',
-                  color: '#737373',
+                  color: 'var(--muted-foreground)',
                   fontSize: '11px',
                   cursor: 'pointer',
                   marginTop: '16px',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#a3a3a3')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#737373')}
+                onMouseEnter={e => (e.currentTarget.style.color = 'var(--secondary-foreground)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted-foreground)')}
               >
                 Start over
               </button>
@@ -1024,7 +1046,7 @@ export default function AgenticPage() {
 
         {/* Input area — only in input phase */}
         {activeSession?.phase === 'input' && (
-          <div style={{ padding: '12px 16px', borderTop: '1px solid #262626' }}>
+          <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border)' }}>
             {/* Mode toggle */}
             <div style={{ display: 'flex', gap: '2px', marginBottom: '8px', background: '#1a1a1a', borderRadius: '8px', padding: '2px' }}>
               {(['topic', 'pdf'] as const).map(mode => (
@@ -1037,7 +1059,7 @@ export default function AgenticPage() {
                     border: 'none',
                     borderRadius: '6px',
                     padding: '5px 0',
-                    color: inputMode === mode ? '#e5e5e5' : '#606060',
+                    color: inputMode === mode ? 'var(--foreground)' : 'var(--muted-foreground)',
                     fontSize: '11px',
                     fontWeight: 600,
                     cursor: 'pointer',
@@ -1060,7 +1082,7 @@ export default function AgenticPage() {
                     background: '#1a1a1a',
                     borderRadius: '12px',
                     padding: '8px 12px',
-                    border: '1px solid #2a2a2a',
+                    border: '1px solid var(--input)',
                   }}
                 >
                   <textarea
@@ -1076,7 +1098,7 @@ export default function AgenticPage() {
                       background: 'none',
                       border: 'none',
                       outline: 'none',
-                      color: '#e5e5e5',
+                      color: 'var(--foreground)',
                       fontSize: '13px',
                       lineHeight: '1.5',
                       resize: 'none',
@@ -1088,7 +1110,7 @@ export default function AgenticPage() {
                     disabled={isLoading || !input.trim()}
                     style={{
                       background: input.trim() && !isLoading ? '#2563eb' : '#262626',
-                      color: input.trim() && !isLoading ? '#fff' : '#737373',
+                      color: input.trim() && !isLoading ? '#fff' : 'var(--muted-foreground)',
                       border: 'none',
                       borderRadius: '8px',
                       padding: '5px 12px',
@@ -1101,7 +1123,7 @@ export default function AgenticPage() {
                     Plan
                   </button>
                 </div>
-                <div style={{ fontSize: '10px', color: '#606060', marginTop: '6px', textAlign: 'center' }}>
+                <div style={{ fontSize: '10px', color: 'var(--muted-foreground)', marginTop: '6px', textAlign: 'center' }}>
                   Enter to send
                 </div>
               </>
@@ -1110,10 +1132,10 @@ export default function AgenticPage() {
               <>
                 <div
                   onDragOver={e => { e.preventDefault(); e.currentTarget.style.borderColor = '#3b82f6'; }}
-                  onDragLeave={e => { e.currentTarget.style.borderColor = '#2a2a2a'; }}
+                  onDragLeave={e => { e.currentTarget.style.borderColor = 'var(--input)'; }}
                   onDrop={e => {
                     e.preventDefault();
-                    e.currentTarget.style.borderColor = '#2a2a2a';
+                    e.currentTarget.style.borderColor = 'var(--input)';
                     const file = e.dataTransfer.files[0];
                     if (file?.type === 'application/pdf') { setPdfFile(file); setPdfError(''); }
                     else setPdfError('Please drop a PDF file');
@@ -1139,20 +1161,20 @@ export default function AgenticPage() {
                 >
                   {pdfFile ? (
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                      <span style={{ fontSize: '12px', color: '#e5e5e5' }}>{pdfFile.name}</span>
+                      <span style={{ fontSize: '12px', color: 'var(--foreground)' }}>{pdfFile.name}</span>
                       <span
                         onClick={(e) => { e.stopPropagation(); setPdfFile(null); }}
-                        style={{ color: '#737373', cursor: 'pointer', fontSize: '14px' }}
+                        style={{ color: 'var(--muted-foreground)', cursor: 'pointer', fontSize: '14px' }}
                         onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
-                        onMouseLeave={e => (e.currentTarget.style.color = '#737373')}
+                        onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted-foreground)')}
                       >
                         ×
                       </span>
                     </div>
                   ) : (
                     <>
-                      <div style={{ fontSize: '20px', color: '#404040', marginBottom: '4px' }}>↑</div>
-                      <div style={{ fontSize: '12px', color: '#606060' }}>Drop a PDF here or click to browse</div>
+                      <div style={{ fontSize: '20px', color: 'var(--muted-foreground)', marginBottom: '4px' }}>↑</div>
+                      <div style={{ fontSize: '12px', color: 'var(--muted-foreground)' }}>Drop a PDF here or click to browse</div>
                     </>
                   )}
                 </div>
@@ -1169,7 +1191,7 @@ export default function AgenticPage() {
                   style={{
                     width: '100%',
                     background: pdfFile && !pdfUploading ? '#2563eb' : '#262626',
-                    color: pdfFile && !pdfUploading ? '#fff' : '#737373',
+                    color: pdfFile && !pdfUploading ? '#fff' : 'var(--muted-foreground)',
                     border: 'none',
                     borderRadius: '8px',
                     padding: '8px 16px',
@@ -1199,32 +1221,32 @@ export default function AgenticPage() {
         {activeSession?.phase === 'plan-ready' ? (
           <div style={{ height: '100%', overflowY: 'auto', padding: '48px 0' }}>
             <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 40px' }}>
-              <div style={{ fontSize: '20px', fontWeight: 600, color: '#f5f5f5', marginBottom: '32px' }}>
+              <div style={{ fontSize: '20px', fontWeight: 600, color: 'var(--foreground)', marginBottom: '32px' }}>
                 {activeSession.sessionTitle}
               </div>
 
               {activeSession.planItems.map((item, i) => (
                 <div key={i} style={{ marginBottom: '20px' }}>
                   {item.type === 'text' ? (
-                    <p style={{ fontSize: '16px', color: '#a3a3a3', lineHeight: 1.7, margin: 0, maxWidth: '720px' }}>
+                    <p style={{ fontSize: '16px', color: 'var(--secondary-foreground)', lineHeight: 1.7, margin: 0, maxWidth: '720px' }}>
                       {item.content}
                     </p>
                   ) : (
                     <div
                       style={{
                         background: '#141414',
-                        border: '1px solid #2a2a2a',
+                        border: '1px solid var(--input)',
                         borderRadius: '12px',
                         padding: '20px 24px',
                       }}
                     >
-                      <div style={{ fontSize: '15px', fontWeight: 600, color: '#d4d4d4', marginBottom: '8px' }}>
+                      <div style={{ fontSize: '15px', fontWeight: 600, color: 'var(--secondary-foreground)', marginBottom: '8px' }}>
                         {item.title}
                       </div>
-                      <div style={{ fontSize: '13px', color: '#737373', lineHeight: 1.6 }}>
+                      <div style={{ fontSize: '13px', color: 'var(--muted-foreground)', lineHeight: 1.6 }}>
                         {item.description}
                       </div>
-                      <div style={{ marginTop: '12px', borderTop: '1px solid #2a2a2a', paddingTop: '12px' }}>
+                      <div style={{ marginTop: '12px', borderTop: '1px solid var(--border)', paddingTop: '12px' }}>
                         <textarea
                           value={planSlideComments.get(i) || ''}
                           onChange={e => {
@@ -1239,10 +1261,10 @@ export default function AgenticPage() {
                           style={{
                             width: '100%',
                             background: '#1a1a1a',
-                            border: '1px solid #2a2a2a',
+                            border: '1px solid var(--input)',
                             borderRadius: '8px',
                             padding: '8px 10px',
-                            color: '#e5e5e5',
+                            color: 'var(--foreground)',
                             fontSize: '12px',
                             lineHeight: '1.5',
                             resize: 'vertical',
@@ -1275,7 +1297,7 @@ export default function AgenticPage() {
                   const progress = slideProgress.get(idx);
                   return (
                     <div key={`ph-${idx}`} style={{ margin: '32px 0' }}>
-                      <div style={{ fontSize: '11px', color: '#737373', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px', fontWeight: 600 }}>
+                      <div style={{ fontSize: '11px', color: 'var(--muted-foreground)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px', fontWeight: 600 }}>
                         {item.title}
                       </div>
                       <div
@@ -1292,8 +1314,8 @@ export default function AgenticPage() {
                           border: '1px solid #1e1e1e',
                         }}
                       >
-                        <div style={{ width: '32px', height: '32px', border: '2px solid #2a2a2a', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-                        <span style={{ color: '#606060', fontSize: '12px' }}>
+                        <div style={{ width: '32px', height: '32px', border: '2px solid var(--input)', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                        <span style={{ color: 'var(--muted-foreground)', fontSize: '12px' }}>
                           {progress ? progress.message : 'Waiting to generate...'}
                         </span>
                       </div>
@@ -1307,7 +1329,7 @@ export default function AgenticPage() {
                       key={idx}
                       style={{
                         fontSize: '15px',
-                        color: '#a3a3a3',
+                        color: 'var(--secondary-foreground)',
                         lineHeight: 1.7,
                         margin: '24px 0',
                         maxWidth: '680px',
@@ -1324,7 +1346,6 @@ export default function AgenticPage() {
                     item={item}
                     itemIndex={idx}
                     sessionId={activeSession.id}
-                    sessionTopic={activeSession.topic}
                     slideRefs={slideRefs}
                     onError={handleSlideError}
                     onRegenerate={regenerateSlide}
@@ -1344,14 +1365,14 @@ export default function AgenticPage() {
                     marginTop: '48px',
                     padding: '24px',
                     background: '#111',
-                    border: '1px solid #2a2a2a',
+                    border: '1px solid var(--input)',
                     borderRadius: '12px',
                   }}
                 >
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: '#d4d4d4', marginBottom: '12px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--secondary-foreground)', marginBottom: '12px' }}>
                     Regenerate this lesson
                   </div>
-                  <p style={{ fontSize: '12px', color: '#737373', lineHeight: 1.5, margin: '0 0 12px 0' }}>
+                  <p style={{ fontSize: '12px', color: 'var(--muted-foreground)', lineHeight: 1.5, margin: '0 0 12px 0' }}>
                     Provide overall feedback to generate a new version of this entire lesson, taking into account all slide comments.
                   </p>
                   <textarea
@@ -1362,10 +1383,10 @@ export default function AgenticPage() {
                     style={{
                       width: '100%',
                       background: '#1a1a1a',
-                      border: '1px solid #2a2a2a',
+                      border: '1px solid var(--input)',
                       borderRadius: '8px',
                       padding: '10px 12px',
-                      color: '#e5e5e5',
+                      color: 'var(--foreground)',
                       fontSize: '13px',
                       lineHeight: '1.5',
                       resize: 'vertical',
@@ -1379,7 +1400,7 @@ export default function AgenticPage() {
                       disabled={isRegeneratingCourse || !courseRegenerateFeedback.trim()}
                       style={{
                         background: courseRegenerateFeedback.trim() && !isRegeneratingCourse ? '#2563eb' : '#262626',
-                        color: courseRegenerateFeedback.trim() && !isRegeneratingCourse ? '#fff' : '#737373',
+                        color: courseRegenerateFeedback.trim() && !isRegeneratingCourse ? '#fff' : 'var(--muted-foreground)',
                         border: 'none',
                         borderRadius: '8px',
                         padding: '8px 20px',
@@ -1414,7 +1435,7 @@ export default function AgenticPage() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#262626',
+              color: 'var(--muted-foreground)',
               fontSize: '13px',
             }}
           >
@@ -1430,7 +1451,6 @@ function SlideBlock({
   item,
   itemIndex,
   sessionId,
-  sessionTopic,
   slideRefs,
   onError,
   onRegenerate,
@@ -1441,7 +1461,6 @@ function SlideBlock({
   item: DocSlideItem;
   itemIndex: number;
   sessionId: string;
-  sessionTopic: string;
   slideRefs: React.MutableRefObject<Map<number, HTMLDivElement>>;
   onError: (sessionId: string, itemIndex: number, failedCode: string, error: string) => void;
   onRegenerate: (itemIndex: number) => void;
@@ -1453,10 +1472,11 @@ function SlideBlock({
   const [commentOpen, setCommentOpen] = useState(false);
 
   useEffect(() => {
+    const refs = slideRefs.current;
     if (containerRef.current) {
-      slideRefs.current.set(itemIndex, containerRef.current);
+      refs.set(itemIndex, containerRef.current);
     }
-    return () => { slideRefs.current.delete(itemIndex); };
+    return () => { refs.delete(itemIndex); };
   }, [itemIndex, slideRefs]);
 
   const slideWrapperRef = useRef<HTMLDivElement>(null);
@@ -1521,7 +1541,7 @@ function SlideBlock({
       <div
         style={{
           fontSize: '11px',
-          color: '#737373',
+          color: 'var(--muted-foreground)',
           textTransform: 'uppercase',
           letterSpacing: '0.08em',
           marginBottom: '8px',
@@ -1551,7 +1571,7 @@ function SlideBlock({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: '#737373',
+                color: 'var(--muted-foreground)',
                 fontSize: '13px',
                 zIndex: 1,
               }}
@@ -1563,6 +1583,8 @@ function SlideBlock({
               <ManimRenderer
                 code={item.manimCode}
                 renderKey={item.renderKey}
+                activitySessionId={sessionId}
+                activitySlideIndex={itemIndex}
                 onError={handleError}
                 onSuccess={handleSuccess}
               />
@@ -1578,7 +1600,7 @@ function SlideBlock({
             top: '50px',
             right: '-30px',
             background: commentOpen ? '#1e1e1e' : 'none',
-            border: commentOpen ? '1px solid #3a3a3a' : '1px solid transparent',
+            border: commentOpen ? '1px solid var(--input)' : '1px solid transparent',
             borderRadius: '6px',
             width: '26px',
             height: '26px',
@@ -1589,10 +1611,10 @@ function SlideBlock({
             transition: 'all 0.15s',
             zIndex: 10,
           }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = '#3a3a3a'; (e.currentTarget.querySelector('svg') as SVGElement).style.opacity = '0.8'; }}
-          onMouseLeave={e => { if (!commentOpen) { e.currentTarget.style.borderColor = 'transparent'; (e.currentTarget.querySelector('svg') as SVGElement).style.opacity = commentOpen ? '0.8' : '0.3'; } }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--input)'; (e.currentTarget.querySelector('svg') as SVGElement).style.opacity = '1'; }}
+          onMouseLeave={e => { if (!commentOpen) { e.currentTarget.style.borderColor = 'transparent'; (e.currentTarget.querySelector('svg') as SVGElement).style.opacity = commentOpen ? '1' : '0.75'; } }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#a3a3a3', opacity: commentOpen ? 0.8 : 0.3, transition: 'opacity 0.15s' }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--secondary-foreground)', opacity: commentOpen ? 1 : 0.75, transition: 'opacity 0.15s' }}>
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
           </svg>
         </button>
@@ -1605,7 +1627,7 @@ function SlideBlock({
               right: '-260px',
               width: '220px',
               background: '#1a1a1a',
-              border: '1px solid #2a2a2a',
+              border: '1px solid var(--input)',
               borderRadius: '8px',
               padding: '10px',
               zIndex: 20,
@@ -1620,10 +1642,10 @@ function SlideBlock({
               style={{
                 width: '100%',
                 background: '#111',
-                border: '1px solid #2a2a2a',
+                border: '1px solid var(--input)',
                 borderRadius: '6px',
                 padding: '6px 8px',
-                color: '#e5e5e5',
+                color: 'var(--foreground)',
                 fontSize: '12px',
                 lineHeight: '1.5',
                 resize: 'vertical',
@@ -1637,7 +1659,7 @@ function SlideBlock({
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#737373',
+                  color: 'var(--muted-foreground)',
                   fontSize: '11px',
                   cursor: 'pointer',
                   padding: '2px 8px',
@@ -1650,7 +1672,7 @@ function SlideBlock({
                 disabled={!item.comment.trim() || item.isRegenerating}
                 style={{
                   background: item.comment.trim() ? '#2563eb' : '#262626',
-                  color: item.comment.trim() ? '#fff' : '#737373',
+                  color: item.comment.trim() ? '#fff' : 'var(--muted-foreground)',
                   border: 'none',
                   borderRadius: '6px',
                   padding: '3px 10px',
@@ -1717,16 +1739,16 @@ function SlideBlock({
                 onClick={() => onRestoreVersion(vIdx)}
                 style={{
                   background: isActive ? '#2563eb' : '#1a1a1a',
-                  border: `1px solid ${isActive ? '#2563eb' : '#2a2a2a'}`,
+                  border: `1px solid ${isActive ? '#2563eb' : 'var(--input)'}`,
                   borderRadius: '10px',
                   padding: '2px 8px',
-                  color: isActive ? '#fff' : '#737373',
+                  color: isActive ? '#fff' : 'var(--muted-foreground)',
                   fontSize: '10px',
                   cursor: 'pointer',
                   transition: 'all 0.15s',
                 }}
-                onMouseEnter={e => { if (!isActive) e.currentTarget.style.borderColor = '#606060'; }}
-                onMouseLeave={e => { if (!isActive) e.currentTarget.style.borderColor = '#2a2a2a'; }}
+                onMouseEnter={e => { if (!isActive) e.currentTarget.style.borderColor = 'var(--border-hover)'; }}
+                onMouseLeave={e => { if (!isActive) e.currentTarget.style.borderColor = 'var(--input)'; }}
               >
                 v{vIdx + 1}
               </button>

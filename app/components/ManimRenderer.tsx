@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { apiFetch } from '../lib/api-fetch';
 
 interface ManimRendererProps {
   code: string;
@@ -9,6 +10,8 @@ interface ManimRendererProps {
   onSuccess?: (frame: string | null) => void;
   onRuntimeError?: (error: string) => void;
   onReady?: (exportKeys: string[]) => void;
+  activitySessionId?: string;
+  activitySlideIndex?: number;
 }
 
 export default function ManimRenderer({
@@ -18,9 +21,87 @@ export default function ManimRenderer({
   onSuccess,
   onRuntimeError,
   onReady,
+  activitySessionId,
+  activitySlideIndex = 0,
 }: ManimRendererProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cleanupRef = useRef<() => void>(() => {});
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || !activitySessionId) return;
+    let visible = false;
+    let foreground = !document.hidden;
+    let lastViewed = performance.now();
+    let viewedMilliseconds = 0;
+    let pointer: { id: number; x: number; y: number; dragged: boolean } | null = null;
+    const counts = { viewedSeconds: 0, clicks: 0, drags: 0, controlChanges: 0 };
+    const updateViewed = () => {
+      const now = performance.now();
+      if (visible && foreground) viewedMilliseconds += now - lastViewed;
+      lastViewed = now;
+      const seconds = Math.floor(viewedMilliseconds / 1000);
+      counts.viewedSeconds += seconds;
+      viewedMilliseconds -= seconds * 1000;
+    };
+    const observer = new IntersectionObserver(entries => {
+      updateViewed();
+      visible = entries[0]?.intersectionRatio >= 0.25;
+    }, { threshold: [0, 0.25] });
+    observer.observe(container);
+    const onPointerDown = (event: PointerEvent) => {
+      counts.clicks++;
+      if (event.target instanceof HTMLCanvasElement) {
+        pointer = { id: event.pointerId, x: event.clientX, y: event.clientY, dragged: false };
+      }
+    };
+    const onPointerMove = (event: PointerEvent) => {
+      if (pointer?.id === event.pointerId && Math.hypot(event.clientX - pointer.x, event.clientY - pointer.y) > 5) {
+        pointer.dragged = true;
+      }
+    };
+    const onPointerUp = (event: PointerEvent) => {
+      if (pointer?.id !== event.pointerId) return;
+      if (pointer.dragged && event.type !== 'pointercancel') counts.drags++;
+      pointer = null;
+    };
+    const onInput = () => { counts.controlChanges++; };
+    container.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
+    container.addEventListener('input', onInput);
+    const flush = () => {
+      updateViewed();
+      if (!Object.values(counts).some(Boolean)) return;
+      const batch = { ...counts };
+      counts.viewedSeconds = counts.clicks = counts.drags = counts.controlChanges = 0;
+      void apiFetch('/api/activity', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
+        body: JSON.stringify({ sessionId: activitySessionId, slideIndex: activitySlideIndex, ...batch }),
+      }).catch(() => {});
+    };
+    const onVisibilityChange = () => {
+      updateViewed();
+      foreground = !document.hidden;
+      if (document.hidden) flush();
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('pagehide', flush);
+    const timer = window.setInterval(flush, 30000);
+    return () => {
+      window.clearInterval(timer);
+      observer.disconnect();
+      container.removeEventListener('pointerdown', onPointerDown);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
+      container.removeEventListener('input', onInput);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+      window.removeEventListener('pagehide', flush);
+      flush();
+    };
+  }, [activitySessionId, activitySlideIndex]);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -115,7 +196,7 @@ export default function ManimRenderer({
           const errStr = String(err);
           console.error('ManimRenderer error:', err);
           if (container) {
-            container.innerHTML = `<div style="color:#ef4444;padding:16px;font-family:monospace;font-size:12px;white-space:pre-wrap;">${errStr}</div>`;
+            container.textContent = errStr;
           }
           onError?.(code, errStr);
         }

@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(uid) {
+      return request.auth != null &&
+        request.auth.uid == uid &&
+        request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+
+    // Signed-in Google users may read only their own data. All writes go through
+    // verified server routes using the Admin SDK, which bypasses these rules.
+    // Client writes stay denied so users cannot reset dailyUsage quotas or forge
+    // uploads, prompts, or activity records.
+    match /users/{uid}/{document=**} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
+    // Everything else is denied by default.
+  }
+}

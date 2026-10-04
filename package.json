@@ -4,17 +4,27 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:local": "FIREBASE_PROJECT_ID=demo-veomath FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 NEXT_PUBLIC_FIREBASE_PROJECT_ID=demo-veomath NEXT_PUBLIC_USE_FIREBASE_EMULATORS=true next dev",
+    "emulators": "firebase emulators:start --project demo-veomath --only auth,firestore",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:security": "firebase emulators:exec --project demo-veomath --only auth,firestore 'node --test tests/security.test.mjs'"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.3.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "firebase": "^12.19.0",
+    "firebase-admin": "^14.5.0",
     "manim-web": "^0.3.9",
     "next": "16.1.6",
     "openai": "^6.26.0",
     "playwright": "^1.58.2",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "server-only": "^0.0.1",
+    "tailwind-merge": "^3.7.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -23,6 +33,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "firebase-tools": "^15.32.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

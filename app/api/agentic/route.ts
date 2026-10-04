@@ -2,6 +2,9 @@ import OpenAI from 'openai';
 import { NextRequest, NextResponse } from 'next/server';
 import { MANIM_SYSTEM_PROMPT } from '../shared/systemPrompt';
 import { generateAndIterateSlide, SlideSpec } from '../shared/animationIterator';
+import { meteredOpenAI, recordPrompt, requireUser, securityError, publicError, RequestError } from '../../lib/server-security';
+import { getDb } from '../../lib/firebase-admin';
+import { readJson, validateAgentic } from '../../lib/request-validation';
 
 const PLAN_SYSTEM_PROMPT = `You are a mathematics explainer that plans interactive visual documents.
 
@@ -32,27 +35,40 @@ You will receive:
 Generate improved manim-web JavaScript code for this single slide. The code is STANDALONE — it gets its own scene.`;
 
 export async function POST(request: NextRequest) {
+  const user = await requireUser(request);
+  if (user instanceof NextResponse) return user;
   try {
-    const body = await request.json();
+    const body = validateAgentic(await readJson(request, 500000));
     const { mode } = body;
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    if (body.fileId) {
+      const file = await getDb().doc(`users/${user.uid}/uploads/${body.fileId}`).get();
+      if (!file.exists) throw new RequestError('PDF not found for this account', 403);
+    }
+    const prompt = JSON.stringify({
+      topic: body.topic, fileId: body.fileId,
+      userComments: body.userComments, userComment: body.userComment, overallFeedback: body.overallFeedback,
+      items: body.items, slideComments: body.slideComments,
+      slideTitle: body.slideTitle, slideDescription: body.slideDescription,
+      comments: body.lessonContext?.map(item => item.comment),
+    });
+    await recordPrompt(user.uid, mode, prompt, body.sessionId);
+    const openai = meteredOpenAI(user.uid);
 
     if (mode === 'plan') {
-      return handlePlan(openai, body);
+      return await handlePlan(openai, body);
     } else if (mode === 'plan-from-pdf') {
-      return handlePlanFromPdf(openai, body);
+      return await handlePlanFromPdf(openai, { fileId: body.fileId! });
     } else if (mode === 'generate') {
-      return handleGenerate(openai, body);
+      return await handleGenerate(openai, body);
     } else if (mode === 'regenerate-slide') {
-      return handleRegenerateSlide(openai, body);
+      return await handleRegenerateSlide(openai, body);
     } else if (mode === 'regenerate-course') {
-      return handleRegenerateCourse(openai, body);
+      return await handleRegenerateCourse(openai, body);
     }
 
     return NextResponse.json({ error: 'Invalid mode' }, { status: 400 });
   } catch (error) {
-    console.error('Agentic API error:', error);
-    return NextResponse.json({ error: 'Failed to generate response' }, { status: 500 });
+    return securityError(error, 'Failed to generate response');
   }
 }
 
@@ -115,7 +131,7 @@ Rules:
 - Ground ALL content strictly in the paper. Do not add claims or formulas not present in the paper.`;
 
 async function handlePlanFromPdf(openai: OpenAI, body: { fileId: string }) {
-  const response = await (openai as any).responses.create({
+  const response = await openai.responses.create({
     model: 'gpt-4o',
     input: [
       {
@@ -170,9 +186,8 @@ async function handlePlanFromPdf(openai: OpenAI, body: { fileId: string }) {
     },
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const textOutput = response.output.find((o: any) => o.type === 'message');
-  const textContent = textOutput?.content?.[0]?.text;
+  const textOutput = response.output.find(o => o.type === 'message');
+  const textContent = textOutput?.content?.find(c => c.type === 'output_text')?.text;
   if (!textContent) throw new Error('No text output from plan-from-pdf');
   const content = JSON.parse(textContent);
   return NextResponse.json(content);
@@ -184,7 +199,7 @@ async function extractSlideContext(
   slideTitle: string,
   slideDescription: string,
 ): Promise<string> {
-  const response = await (openai as any).responses.create({
+  const response = await openai.responses.create({
     model: 'gpt-4o',
     input: [
       {
@@ -225,9 +240,8 @@ async function extractSlideContext(
     },
   });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const textOutput = response.output.find((o: any) => o.type === 'message');
-  const textContent = textOutput?.content?.[0]?.text;
+  const textOutput = response.output.find(o => o.type === 'message');
+  const textContent = textOutput?.content?.find(c => c.type === 'output_text')?.text;
   if (!textContent) return '';
   try {
     const parsed = JSON.parse(textContent);
@@ -362,7 +376,12 @@ function generateSlidesInParallel(
     });
   });
 
-  return Promise.all(slidePromises);
+  // Let all slides settle before closing the stream; another slide may still
+  // be sending a result when one of its peers reaches the quota.
+  return Promise.allSettled(slidePromises).then(results => {
+    const failure = results.find(result => result.status === 'rejected');
+    if (failure?.status === 'rejected') throw failure.reason;
+  });
 }
 
 async function handleGenerate(
@@ -403,7 +422,8 @@ async function handleGenerate(
 
         send({ type: 'done' });
       } catch (err) {
-        send({ type: 'error', message: String(err) });
+        const error = publicError(err, 'Failed to generate animations');
+        send({ type: 'error', message: error.error, status: error.status });
       } finally {
         controller.close();
       }
@@ -431,7 +451,7 @@ async function handleRegenerateSlide(openai: OpenAI, body: { topic: string; slid
     try {
       paperContext = await extractSlideContext(openai, body.fileId, body.slideTitle, body.slideDescription);
     } catch (e) {
-      console.error('Failed to extract slide context from paper:', e);
+      if (publicError(e, '').status === 429) throw e;
     }
   }
 
@@ -596,7 +616,8 @@ async function handleRegenerateCourse(
 
         send({ type: 'done' });
       } catch (err) {
-        send({ type: 'error', message: String(err) });
+        const error = publicError(err, 'Failed to regenerate animations');
+        send({ type: 'error', message: error.error, status: error.status });
       } finally {
         controller.close();
       }

@@ -3,6 +3,9 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import MathLogo from './components/MathLogo';
+import { apiFetch, responseError } from './lib/api-fetch';
+import { auth } from './lib/firebase-client';
 
 const ManimRenderer = dynamic(() => import('./components/ManimRenderer'), { ssr: false });
 
@@ -76,7 +79,7 @@ export default function Home() {
 
   // Load from localStorage on mount
   useEffect(() => {
-    const saved = localStorage.getItem('veomath-chats');
+    const saved = localStorage.getItem(`veomath-chats-${auth.currentUser?.uid}`);
     if (saved) {
       try {
         const parsed: Chat[] = JSON.parse(saved);
@@ -97,7 +100,7 @@ export default function Home() {
   // Persist to localStorage
   useEffect(() => {
     if (chats.length > 0) {
-      localStorage.setItem('veomath-chats', JSON.stringify(chats));
+      localStorage.setItem(`veomath-chats-${auth.currentUser?.uid}`, JSON.stringify(chats));
     }
   }, [chats]);
 
@@ -192,10 +195,11 @@ export default function Home() {
       const lastAssistantIdx = msgs.reduce((last, m, i) => m.role === 'assistant' ? i : last, -1);
       const msgsForRetry = lastAssistantIdx >= 0 ? msgs.slice(0, lastAssistantIdx) : msgs;
 
-      const res = await fetch('/api/chat', {
+      const res = await apiFetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          sessionId: activeChatIdRef.current,
           messages: msgsForRetry.map(m => ({
             role: m.role,
             content: m.role === 'assistant' && m.manimCode
@@ -207,7 +211,7 @@ export default function Home() {
         }),
       });
 
-      if (!res.ok) throw new Error('API error');
+      if (!res.ok) throw await responseError(res);
       const data: { explanation: string; manimCode: string } = await res.json();
       const fixedMessage: Message = { role: 'assistant', content: data.explanation, manimCode: data.manimCode };
 
@@ -235,10 +239,11 @@ export default function Home() {
   }, []);
 
   async function callApi(messages: Message[]) {
-    const res = await fetch('/api/chat', {
+    const res = await apiFetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        sessionId: activeChatIdRef.current,
         messages: messages.map(m => ({
           role: m.role,
           content: m.role === 'assistant' && m.manimCode
@@ -248,7 +253,7 @@ export default function Home() {
         currentFrame: currentFrameRef.current,
       }),
     });
-    if (!res.ok) throw new Error('API error');
+    if (!res.ok) throw await responseError(res);
     return res.json() as Promise<{ explanation: string; manimCode: string }>;
   }
 
@@ -346,14 +351,14 @@ export default function Home() {
   const debugPanelHeight = 220;
 
   return (
-    <div className="flex h-screen" style={{ background: '#0a0a0a', color: '#e5e5e5' }}>
+    <div className="flex h-screen" style={{ background: '#0a0a0a', color: 'var(--foreground)' }}>
 
       {/* Sidebar: Chat history */}
       <div
         style={{
           width: sidebarOpen ? '220px' : '48px',
           minWidth: sidebarOpen ? '220px' : '48px',
-          borderRight: '1px solid #252525',
+          borderRight: '1px solid var(--border)',
           background: '#0d0d0d',
           display: 'flex',
           flexDirection: 'column',
@@ -369,7 +374,7 @@ export default function Home() {
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            borderBottom: '1px solid #252525',
+            borderBottom: '1px solid var(--border)',
             flexShrink: 0,
           }}
         >
@@ -379,7 +384,7 @@ export default function Home() {
             style={{
               background: 'none',
               border: 'none',
-              color: '#6b6b6b',
+              color: 'var(--muted-foreground)',
               cursor: 'pointer',
               padding: '4px',
               borderRadius: '6px',
@@ -392,8 +397,8 @@ export default function Home() {
               width: '28px',
               height: '28px',
             }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#c0c0c0')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#6b6b6b')}
+            onMouseEnter={e => (e.currentTarget.style.color = 'var(--secondary-foreground)')}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted-foreground)')}
           >
             {sidebarOpen ? '⟨' : '⟩'}
           </button>
@@ -404,9 +409,9 @@ export default function Home() {
               title="New chat"
               style={{
                 background: 'none',
-              border: '1px solid #383838',
+              border: '1px solid var(--input)',
               borderRadius: '6px',
-              color: '#b4b4b4',
+              color: 'var(--secondary-foreground)',
               fontSize: '11px',
               cursor: 'pointer',
               padding: '4px 10px',
@@ -414,8 +419,8 @@ export default function Home() {
               whiteSpace: 'nowrap',
               flexShrink: 0,
             }}
-            onMouseEnter={e => (e.currentTarget.style.borderColor = '#555')}
-            onMouseLeave={e => (e.currentTarget.style.borderColor = '#383838')}
+            onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--border-hover)')}
+            onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--input)')}
             >
               + New
             </button>
@@ -431,7 +436,7 @@ export default function Home() {
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#6b6b6b',
+                color: 'var(--muted-foreground)',
                 cursor: 'pointer',
                 padding: '4px',
                 fontSize: '16px',
@@ -442,8 +447,8 @@ export default function Home() {
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#c0c0c0')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#6b6b6b')}
+              onMouseEnter={e => (e.currentTarget.style.color = 'var(--secondary-foreground)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted-foreground)')}
             >
               +
             </button>
@@ -463,7 +468,7 @@ export default function Home() {
                   border: 'none',
                   borderRadius: '6px',
                   padding: '7px 8px',
-                  color: chat.id === activeChatId ? '#e5e5e5' : '#909090',
+                  color: chat.id === activeChatId ? 'var(--foreground)' : 'var(--muted-foreground)',
                   fontSize: '12px',
                   cursor: 'pointer',
                   textAlign: 'left',
@@ -489,7 +494,7 @@ export default function Home() {
                   <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {chat.title}
                   </div>
-                  <div style={{ fontSize: '10px', color: '#575757', marginTop: '2px' }}>
+                  <div style={{ fontSize: '10px', color: 'var(--muted-foreground)', marginTop: '2px' }}>
                     {formatDate(chat.createdAt)}
                   </div>
                 </div>
@@ -499,7 +504,7 @@ export default function Home() {
                   title="Delete chat"
                   style={{
                   opacity: 0,
-                  color: '#6b6b6b',
+                  color: 'var(--muted-foreground)',
                   fontSize: '14px',
                   cursor: 'pointer',
                   padding: '0 2px',
@@ -508,7 +513,7 @@ export default function Home() {
                   transition: 'opacity 0.1s',
                 }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#6b6b6b')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted-foreground)')}
                 >
                   ×
                 </span>
@@ -537,9 +542,13 @@ export default function Home() {
             fontSize: '15px',
             fontWeight: 600,
             letterSpacing: '-0.01em',
-            color: '#f5f5f5',
+            color: 'var(--foreground)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
           }}
         >
+          <MathLogo />
           veomath
         </div>
 
@@ -548,7 +557,7 @@ export default function Home() {
           {(!activeChat || activeChat.messages.length === 0) && !loading && (
             <div
               style={{
-                color: '#6b6b6b',
+                color: 'var(--muted-foreground)',
                 fontSize: '13px',
                 textAlign: 'center',
                 marginTop: '40px',
@@ -572,18 +581,18 @@ export default function Home() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   background: '#1a1a1a',
-                  border: '1px solid #383838',
+                  border: '1px solid var(--input)',
                   borderRadius: '12px',
                   padding: '12px 20px',
-                  color: '#e5e5e5',
+                  color: 'var(--foreground)',
                   fontSize: '13px',
                   cursor: 'pointer',
                   textDecoration: 'none',
                   transition: 'all 0.2s',
                   boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = '#555'; e.currentTarget.style.background = '#252525'; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#383838'; e.currentTarget.style.background = '#1a1a1a'; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--border-hover)'; e.currentTarget.style.background = '#252525'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--input)'; e.currentTarget.style.background = '#1a1a1a'; }}
               >
                 ✨ Create a coherent storyline of animations
               </Link>
@@ -606,7 +615,7 @@ export default function Home() {
                     padding: '8px 12px',
                     borderRadius: m.role === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
                     background: m.role === 'user' ? '#2563eb' : '#232323',
-                    color: m.role === 'user' ? '#fff' : '#e0e0e0',
+                    color: m.role === 'user' ? '#fff' : 'var(--foreground)',
                     fontSize: '13px',
                     lineHeight: 1.55,
                   }}
@@ -620,13 +629,13 @@ export default function Home() {
                       marginTop: '4px',
                       background: 'none',
                       border: 'none',
-                      color: '#6b6b6b',
+                      color: 'var(--muted-foreground)',
                       fontSize: '11px',
                       cursor: 'pointer',
                       padding: '2px 4px',
                     }}
-                    onMouseEnter={e => (e.currentTarget.style.color = '#c0c0c0')}
-                    onMouseLeave={e => (e.currentTarget.style.color = '#6b6b6b')}
+                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--secondary-foreground)')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted-foreground)')}
                   >
                     replay animation
                   </button>
@@ -642,7 +651,7 @@ export default function Home() {
                     borderRadius: '14px 14px 14px 4px',
                     background: '#232323',
                     fontSize: '13px',
-                    color: '#6b6b6b',
+                    color: 'var(--muted-foreground)',
                   }}
                 >
                   <span className="thinking-dots">
@@ -664,15 +673,15 @@ export default function Home() {
                 onClick={retryLastMessage}
                 style={{
                   background: 'none',
-                border: '1px solid #383838',
+                border: '1px solid var(--input)',
                 borderRadius: '8px',
                 padding: '3px 10px',
-                color: '#6b6b6b',
+                color: 'var(--muted-foreground)',
                 fontSize: '11px',
                 cursor: 'pointer',
               }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#c0c0c0')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#6b6b6b')}
+              onMouseEnter={e => (e.currentTarget.style.color = 'var(--secondary-foreground)')}
+              onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted-foreground)')}
               >
                 regenerate
               </button>
@@ -686,7 +695,7 @@ export default function Home() {
               background: '#1a1a1a',
               borderRadius: '12px',
               padding: '8px 12px',
-              border: '1px solid #383838',
+              border: '1px solid var(--input)',
             }}
           >
             <textarea
@@ -702,7 +711,7 @@ export default function Home() {
                 background: 'none',
                 border: 'none',
                 outline: 'none',
-                color: '#e5e5e5',
+                color: 'var(--foreground)',
                 fontSize: '13px',
                 lineHeight: '1.5',
                 resize: 'none',
@@ -714,7 +723,7 @@ export default function Home() {
               disabled={loading || !input.trim()}
               style={{
                 background: input.trim() && !loading ? '#2563eb' : '#2e2e2e',
-                color: input.trim() && !loading ? '#fff' : '#6b6b6b',
+                color: input.trim() && !loading ? '#fff' : 'var(--muted-foreground)',
                 border: 'none',
                 borderRadius: '8px',
                 padding: '5px 12px',
@@ -727,7 +736,7 @@ export default function Home() {
               Send
             </button>
           </div>
-          <div style={{ fontSize: '10px', color: '#575757', marginTop: '6px', textAlign: 'center' }}>
+          <div style={{ fontSize: '10px', color: 'var(--muted-foreground)', marginTop: '6px', textAlign: 'center' }}>
             Enter to send &middot; Shift+Enter for newline
           </div>
         </div>
@@ -739,6 +748,7 @@ export default function Home() {
           <ManimRenderer
             code={activeChat.currentCode}
             renderKey={renderKey}
+            activitySessionId={activeChat.id}
             onError={handleRenderError}
             onSuccess={handleRenderSuccess}
             onRuntimeError={handleRuntimeError}
@@ -752,7 +762,7 @@ export default function Home() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#404040',
+              color: 'var(--muted-foreground)',
               fontSize: '13px',
             }}
           >
@@ -788,16 +798,16 @@ export default function Home() {
               title={showCodePanel ? 'Hide code' : 'View generated code'}
               style={{
               background: showCodePanel ? '#1e3a5f' : '#111',
-              border: `1px solid ${showCodePanel ? '#2563eb' : '#383838'}`,
+              border: `1px solid ${showCodePanel ? '#2563eb' : 'var(--input)'}`,
               borderRadius: '8px',
               padding: '3px 10px',
-              color: showCodePanel ? '#93c5fd' : '#6b6b6b',
+              color: showCodePanel ? '#93c5fd' : 'var(--muted-foreground)',
               fontSize: '11px',
               cursor: 'pointer',
               fontFamily: 'monospace',
             }}
-            onMouseEnter={e => { if (!showCodePanel) e.currentTarget.style.borderColor = '#555'; }}
-            onMouseLeave={e => { if (!showCodePanel) e.currentTarget.style.borderColor = '#383838'; }}
+            onMouseEnter={e => { if (!showCodePanel) e.currentTarget.style.borderColor = 'var(--border-hover)'; }}
+            onMouseLeave={e => { if (!showCodePanel) e.currentTarget.style.borderColor = 'var(--input)'; }}
             >
               {'{ }'}
             </button>
@@ -830,7 +840,7 @@ export default function Home() {
               flexShrink: 0,
             }}
           >
-              <span style={{ fontSize: '11px', color: '#6b6b6b', fontFamily: 'monospace' }}>
+              <span style={{ fontSize: '11px', color: 'var(--muted-foreground)', fontFamily: 'monospace' }}>
                 generated code
                 {manimExports.length > 0 && (
                   <span style={{ marginLeft: '8px', color: manimExports.includes('makeDraggable') ? '#4ade80' : '#f87171' }}>
@@ -843,21 +853,21 @@ export default function Home() {
                   onClick={() => navigator.clipboard.writeText(activeChat.currentCode!)}
                   style={{
                     background: 'none',
-                    border: '1px solid #383838',
+                    border: '1px solid var(--input)',
                     borderRadius: '6px',
                     padding: '2px 8px',
-                    color: '#6b6b6b',
+                    color: 'var(--muted-foreground)',
                     fontSize: '10px',
                     cursor: 'pointer',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.color = '#c0c0c0')}
-                  onMouseLeave={e => (e.currentTarget.style.color = '#6b6b6b')}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'var(--secondary-foreground)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted-foreground)')}
                 >
                   copy
                 </button>
                 <button
                   onClick={() => setShowCodePanel(false)}
-                  style={{ background: 'none', border: 'none', color: '#6b6b6b', fontSize: '14px', cursor: 'pointer', lineHeight: 1, padding: '0 2px' }}
+                  style={{ background: 'none', border: 'none', color: 'var(--muted-foreground)', fontSize: '14px', cursor: 'pointer', lineHeight: 1, padding: '0 2px' }}
                 >
                   ×
                 </button>
@@ -871,7 +881,7 @@ export default function Home() {
               </div>
             )}
             <div style={{ flex: 1, overflowY: 'auto', padding: '12px' }}>
-              <pre style={{ color: '#b8b8b8', fontSize: '11px', margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'monospace', lineHeight: 1.6 }}>
+              <pre style={{ color: 'var(--muted-foreground)', fontSize: '11px', margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'monospace', lineHeight: 1.6 }}>
                 {activeChat.currentCode}
               </pre>
             </div>
@@ -893,7 +903,7 @@ export default function Home() {
               transition: 'bottom 0.2s',
             }}
           >
-            <div style={{ fontSize: '10px', color: '#575757', marginBottom: '2px' }}>history</div>
+            <div style={{ fontSize: '10px', color: 'var(--muted-foreground)', marginBottom: '2px' }}>history</div>
             <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', justifyContent: 'flex-end', maxWidth: '320px' }}>
               {(activeChat?.animationHistory ?? []).map((item, i) => (
                 <button
@@ -901,10 +911,10 @@ export default function Home() {
                   onClick={() => showAnimation(item.code)}
                   style={{
                     background: activeChat?.currentCode === item.code ? '#2563eb' : '#111',
-                    border: `1px solid ${activeChat?.currentCode === item.code ? '#2563eb' : '#383838'}`,
+                    border: `1px solid ${activeChat?.currentCode === item.code ? '#2563eb' : 'var(--input)'}`,
                     borderRadius: '12px',
                     padding: '3px 10px',
-                    color: activeChat?.currentCode === item.code ? '#fff' : '#909090',
+                    color: activeChat?.currentCode === item.code ? '#fff' : 'var(--muted-foreground)',
                     fontSize: '11px',
                     cursor: 'pointer',
                     maxWidth: '140px',
@@ -955,7 +965,7 @@ export default function Home() {
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#6b6b6b',
+                  color: 'var(--muted-foreground)',
                   fontSize: '14px',
                   cursor: 'pointer',
                   lineHeight: 1,
@@ -967,14 +977,14 @@ export default function Home() {
             </div>
             <div style={{ overflow: 'auto', flex: 1, padding: '10px 12px', display: 'flex', gap: '12px' }}>
               <div style={{ flex: '0 0 40%' }}>
-                <div style={{ fontSize: '10px', color: '#6b6b6b', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Error</div>
+                <div style={{ fontSize: '10px', color: 'var(--muted-foreground)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Error</div>
                 <pre style={{ color: '#ef4444', fontSize: '11px', margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
                   {debugInfo.error}
                 </pre>
               </div>
               <div style={{ flex: 1, borderLeft: '1px solid #2d2d2d', paddingLeft: '12px' }}>
-                <div style={{ fontSize: '10px', color: '#6b6b6b', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Generated code</div>
-                <pre style={{ color: '#b8b8b8', fontSize: '11px', margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
+                <div style={{ fontSize: '10px', color: 'var(--muted-foreground)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Generated code</div>
+                <pre style={{ color: 'var(--muted-foreground)', fontSize: '11px', margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'monospace' }}>
                   {debugInfo.code}
                 </pre>
               </div>

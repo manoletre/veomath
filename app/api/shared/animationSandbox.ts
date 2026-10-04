@@ -32,6 +32,22 @@ export async function testAnimation(code: string): Promise<SandboxResult> {
     page = await browser.newPage();
     await page.setViewportSize({ width: 1280, height: 720 });
 
+    // Generated JavaScript runs on the server's browser. It must not be able
+    // to reach credential metadata endpoints or other internal services.
+    const origin = new URL(BASE_URL).origin;
+    await page.route('**/*', route => {
+      const request = route.request();
+      const url = new URL(request.url());
+      const allowed = url.origin === origin && request.method() === 'GET' && (
+        (url.pathname === '/sandbox' && url.searchParams.get('id') === id) ||
+        (url.pathname === '/api/agentic/sandbox-code' && url.searchParams.get('id') === id) ||
+        url.pathname.startsWith('/_next/static/') ||
+        url.pathname === '/favicon.ico'
+      );
+      return allowed ? route.continue() : route.abort();
+    });
+    await page.routeWebSocket('**/*', socket => socket.close());
+
     await page.goto(`${BASE_URL}/sandbox?id=${id}`, { waitUntil: 'domcontentloaded' });
 
     // Wait for __animationReady with timeout
