@@ -3,4 +3,5 @@ export const readFileSync = () => '';
 export const existsSync = () => false;
 export const writeFileSync = () => {};
 export const mkdirSync = () => {};
-export default { readFileSync, existsSync, writeFileSync, mkdirSync };
+const fs = { readFileSync, existsSync, writeFileSync, mkdirSync };
+export default fs;

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
 
 const ManimRenderer = dynamic(() => import('../components/ManimRenderer'), { ssr: false });
 
@@ -70,13 +71,13 @@ export default function ManualCodePage() {
     }
 
     return (
-        <div style={{ display: 'flex', height: '100vh', background: '#0a0a0a', color: '#e5e5e5' }}>
+        <div style={{ display: 'flex', height: '100vh', background: '#0a0a0a', color: 'var(--foreground)' }}>
             {/* Left: Code editor */}
             <div
                 style={{
                     width: '480px',
                     minWidth: '360px',
-                    borderRight: '1px solid #1a1a1a',
+                    borderRight: '1px solid var(--border)',
                     display: 'flex',
                     flexDirection: 'column',
                     background: '#0d0d0d',
@@ -87,23 +88,23 @@ export default function ManualCodePage() {
                 <div
                     style={{
                         padding: '12px 16px',
-                        borderBottom: '1px solid #1a1a1a',
+                        borderBottom: '1px solid var(--border)',
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
                     }}
                 >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <a
+                        <Link
                             href="/"
                             style={{
-                                color: '#525252',
+                                color: 'var(--muted-foreground)',
                                 fontSize: '12px',
                                 textDecoration: 'none',
                             }}
                         >
                             ← back
-                        </a>
+                        </Link>
                         <span style={{ fontSize: '14px', fontWeight: 600, letterSpacing: '-0.01em' }}>
                             manual code
                         </span>
@@ -113,10 +114,10 @@ export default function ManualCodePage() {
                             onClick={clearAll}
                             style={{
                                 background: 'none',
-                                border: '1px solid #2a2a2a',
+                                border: '1px solid var(--input)',
                                 borderRadius: '6px',
                                 padding: '4px 10px',
-                                color: '#525252',
+                                color: 'var(--muted-foreground)',
                                 fontSize: '11px',
                                 cursor: 'pointer',
                             }}
@@ -131,7 +132,7 @@ export default function ManualCodePage() {
                                 border: 'none',
                                 borderRadius: '6px',
                                 padding: '4px 14px',
-                                color: code.trim() ? '#fff' : '#525252',
+                                color: code.trim() ? '#fff' : 'var(--muted-foreground)',
                                 fontSize: '11px',
                                 fontWeight: 600,
                                 cursor: code.trim() ? 'pointer' : 'default',
@@ -147,15 +148,15 @@ export default function ManualCodePage() {
                     <div
                         style={{
                             padding: '6px 16px',
-                            borderBottom: '1px solid #1a1a1a',
+                            borderBottom: '1px solid var(--border)',
                             fontSize: '10px',
-                            color: '#404040',
+                            color: 'var(--muted-foreground)',
                             display: 'flex',
                             gap: '8px',
                             flexWrap: 'wrap',
                         }}
                     >
-                        <span style={{ color: '#525252' }}>available:</span>
+                        <span style={{ color: 'var(--muted-foreground)' }}>available:</span>
                         {['makeDraggable', 'makeHoverable', 'makeClickable', 'Controls'].map(name => (
                             <span
                                 key={name}
@@ -182,7 +183,7 @@ export default function ManualCodePage() {
                             background: 'transparent',
                             border: 'none',
                             outline: 'none',
-                            color: '#a3a3a3',
+                            color: 'var(--secondary-foreground)',
                             fontSize: '12px',
                             fontFamily: "'SF Mono', Monaco, Consolas, 'Courier New', monospace",
                             lineHeight: '1.7',
@@ -243,14 +244,14 @@ export default function ManualCodePage() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: '#262626',
+                            color: 'var(--muted-foreground)',
                             fontSize: '13px',
                             flexDirection: 'column',
                             gap: '8px',
                         }}
                     >
                         <span>Paste code and press Run</span>
-                        <span style={{ fontSize: '11px', color: '#1a1a1a' }}>⌘+Enter to run</span>
+                        <span style={{ fontSize: '11px', color: 'var(--muted-foreground)' }}>⌘+Enter to run</span>
                     </div>
                 )}
             </div>

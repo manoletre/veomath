@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# veomath
 
-## Getting Started
+Math visualizations with Google sign-in, a server-side OpenAI key, and a limit of 10 OpenAI HTTP calls per user per UTC day.
 
-First, run the development server:
+## Local emulators
+
+Install Node.js 20+ and Java 21+ (required by the Firestore emulator), then install dependencies with `pnpm install`. Start two terminals:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm emulators
+pnpm dev:local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. The Google sign-in popup is mocked by Firebase Auth Emulator, so no real Google or Firebase keys are needed locally. Set `OPENAI_API_KEY` in your own `.env.local` if you want to run actual generations; never commit it. The Firebase Emulator UI is at http://127.0.0.1:4000. Local emulator data is temporary unless you export it.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Production setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Create a Firebase project and enable **Google** under Authentication → Sign-in method. Add your deployed domain to Authorized domains.
+2. Copy the values in `.env.example` into your deployment environment. `NEXT_PUBLIC_FIREBASE_*` values are Firebase browser config and are public. `OPENAI_API_KEY` is server-only. Set `FIREBASE_PROJECT_ID` and provide Firebase Admin Application Default Credentials to the server. Anyone can sign in with Google; production API access requires a verified Google email, with no email allowlist. Do not set emulator environment variables in production.
+3. Deploy `firestore.rules` with `pnpm exec firebase deploy --only firestore:rules --project YOUR_PROJECT_ID`. These rules let a signed-in Google user read only their own `users/{uid}` data and deny all client writes; only verified server endpoints write to Firestore. Deploying them replaces any open "test mode" rules in the Firebase console.
 
-## Learn More
+Every OpenAI network request is counted in a Firestore transaction at `users/{uid}/dailyUsage/{YYYY-MM-DD}`. A multi-slide generation may consume all 10 calls and stop before the document is complete. Prompts are stored in `users/{uid}/prompts`; approximate viewed seconds, pointer actions, and control changes are aggregated in `users/{uid}/animationActivity`. Activity is client reported and is intended for analytics, not security decisions.
 
-To learn more about Next.js, take a look at the following resources:
+## Verification
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Run `pnpm lint`, `pnpm exec tsc --noEmit`, and `pnpm build`. Run `pnpm test:security` with emulator ports free to check Google-only authentication, concurrent quota enforcement, retries, prompt/activity storage, PDF ownership, request limits, and Firestore rules (owner-only reads, no client writes). The tests use a separate local server on port 3011 and mock OpenAI; no OpenAI key or paid calls are needed.

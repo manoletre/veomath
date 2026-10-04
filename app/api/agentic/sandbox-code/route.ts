@@ -18,5 +18,5 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Code not found or expired' }, { status: 404 });
   }
 
-  return NextResponse.json({ code });
+  return NextResponse.json({ code }, { headers: { 'Cache-Control': 'no-store' } });
 }

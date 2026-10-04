@@ -1,7 +1,8 @@
-import OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 import { NextRequest, NextResponse } from 'next/server';
 import { MANIM_SYSTEM_PROMPT } from '../shared/systemPrompt';
+import { meteredOpenAI, recordPrompt, requireUser, securityError } from '../../lib/server-security';
+import { readJson, validateChat } from '../../lib/request-validation';
 
 const SYSTEM_PROMPT = MANIM_SYSTEM_PROMPT;
 
@@ -11,10 +12,15 @@ type MessageContent = string | (TextPart | ImagePart)[];
 type ApiMessage = { role: 'system' | 'user' | 'assistant'; content: MessageContent };
 
 export async function POST(request: NextRequest) {
+  const user = await requireUser(request);
+  if (user instanceof NextResponse) return user;
   try {
-    const { messages, retryContext, currentFrame } = await request.json();
+    const { messages, retryContext, currentFrame, sessionId } = validateChat(await readJson(request, 500000));
+    const latestPrompt = [...messages].reverse().find(m => m.role === 'user')?.content;
+    if (!latestPrompt) return NextResponse.json({ error: 'A prompt is required' }, { status: 400 });
+    await recordPrompt(user.uid, retryContext ? 'chat-retry' : 'chat', latestPrompt, sessionId);
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const openai = meteredOpenAI(user.uid);
 
     const apiMessages: ApiMessage[] = [
       { role: 'system', content: SYSTEM_PROMPT },
@@ -74,7 +80,6 @@ export async function POST(request: NextRequest) {
     const content = JSON.parse(response.choices[0].message.content!);
     return NextResponse.json(content);
   } catch (error) {
-    console.error('Chat API error:', error);
-    return NextResponse.json({ error: 'Failed to generate response' }, { status: 500 });
+    return securityError(error, 'Failed to generate response');
   }
 }
