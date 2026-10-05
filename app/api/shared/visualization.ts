@@ -30,11 +30,11 @@ export const VISUALIZATION_RESPONSE_FORMAT = {
       properties: {
         explanation: {
           type: 'string',
-          description: 'Clear, conversational explanation of the mathematical concept (2-4 sentences)',
+          description: 'Clear, conversational explanation of the central mathematical claim or concept and its key justification (2-4 sentences)',
         },
         manimCode: {
           type: 'string',
-          description: 'Plain JavaScript code (body of async function, scene variable available, no imports) that creates the manim-web visualization',
+          description: 'Plain JavaScript code (body of async function, scene variable available, no imports) that visually presents the key construction, justified steps, and conclusion; add interaction only when it supports the explanation or the user requests it',
         },
       },
       required: ['explanation', 'manimCode'],
