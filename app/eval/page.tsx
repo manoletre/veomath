@@ -13,10 +13,10 @@ export default async function EvalPage({ searchParams }: { searchParams: Promise
   const run = runs.find((r) => r.runId === requested) ?? runs[0];
   if (!run) {
     return (
-      <main className="h-screen overflow-y-auto bg-[#0a0a0a] px-8 py-12 text-[#e5e5e5]">
-        <Link href="/" className="text-sm text-[#999]">← veomath</Link>
+      <main className="h-screen overflow-y-auto bg-background px-8 py-12 text-foreground">
+        <Link href="/" className="text-base text-muted-foreground">← veomath</Link>
         <h1 className="mt-8 text-3xl font-semibold">Benchmark results</h1>
-        <p className="mt-4 text-[#999]">No benchmark runs found in evals/results. Run <code>pnpm eval</code> first.</p>
+        <p className="mt-4 text-muted-foreground">No benchmark runs found in evals/results. Run <code>pnpm eval</code> first.</p>
       </main>
     );
   }

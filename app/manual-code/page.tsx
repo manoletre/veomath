@@ -3,6 +3,8 @@
 import { useState, useRef, useCallback } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 
 const ManimRenderer = dynamic(() => import('../components/ManimRenderer'), { ssr: false });
 
@@ -71,23 +73,23 @@ export default function ManualCodePage() {
     }
 
     return (
-        <div style={{ display: 'flex', height: '100vh', background: '#0a0a0a', color: 'var(--foreground)' }}>
+        <div style={{ display: 'flex', height: '100vh', background: 'var(--background)', color: 'var(--foreground)' }}>
             {/* Left: Code editor */}
             <div
                 style={{
-                    width: '480px',
-                    minWidth: '360px',
+                    width: 'min(480px, 55vw)',
+                    minWidth: 'min(360px, 55vw)',
                     borderRight: '1px solid var(--border)',
                     display: 'flex',
                     flexDirection: 'column',
-                    background: '#0d0d0d',
+                    background: 'var(--card)',
                     flexShrink: 0,
                 }}
             >
                 {/* Header */}
                 <div
                     style={{
-                        padding: '12px 16px',
+                        padding: '10px 12px',
                         borderBottom: '1px solid var(--border)',
                         display: 'flex',
                         justifyContent: 'space-between',
@@ -99,47 +101,30 @@ export default function ManualCodePage() {
                             href="/"
                             style={{
                                 color: 'var(--muted-foreground)',
-                                fontSize: '12px',
+                                fontSize: '15px',
                                 textDecoration: 'none',
                             }}
                         >
                             ← back
                         </Link>
-                        <span style={{ fontSize: '14px', fontWeight: 600, letterSpacing: '-0.01em' }}>
+                        <span style={{ fontSize: '17px', fontWeight: 600, letterSpacing: '-0.01em' }}>
                             manual code
                         </span>
                     </div>
                     <div style={{ display: 'flex', gap: '6px' }}>
-                        <button
+                        <Button variant="outline"
                             onClick={clearAll}
-                            style={{
-                                background: 'none',
-                                border: '1px solid var(--input)',
-                                borderRadius: '6px',
-                                padding: '4px 10px',
-                                color: 'var(--muted-foreground)',
-                                fontSize: '11px',
-                                cursor: 'pointer',
-                            }}
+
                         >
                             clear
-                        </button>
-                        <button
+                        </Button>
+                        <Button variant="default"
                             onClick={runCode}
                             disabled={!code.trim()}
-                            style={{
-                                background: code.trim() ? '#2563eb' : '#1a1a1a',
-                                border: 'none',
-                                borderRadius: '6px',
-                                padding: '4px 14px',
-                                color: code.trim() ? '#fff' : 'var(--muted-foreground)',
-                                fontSize: '11px',
-                                fontWeight: 600,
-                                cursor: code.trim() ? 'pointer' : 'default',
-                            }}
+
                         >
                             Run ⌘↵
-                        </button>
+                        </Button>
                     </div>
                 </div>
 
@@ -147,9 +132,9 @@ export default function ManualCodePage() {
                 {manimExports.length > 0 && (
                     <div
                         style={{
-                            padding: '6px 16px',
+                            padding: '6px 12px',
                             borderBottom: '1px solid var(--border)',
-                            fontSize: '10px',
+                            fontSize: '13px',
                             color: 'var(--muted-foreground)',
                             display: 'flex',
                             gap: '8px',
@@ -160,7 +145,7 @@ export default function ManualCodePage() {
                         {['makeDraggable', 'makeHoverable', 'makeClickable', 'Controls'].map(name => (
                             <span
                                 key={name}
-                                style={{ color: manimExports.includes(name) ? '#4ade80' : '#f87171' }}
+                                style={{ color: manimExports.includes(name) ? 'var(--success)' : 'var(--destructive)' }}
                             >
                                 {name} {manimExports.includes(name) ? '✓' : '✗'}
                             </span>
@@ -170,28 +155,14 @@ export default function ManualCodePage() {
 
                 {/* Textarea */}
                 <div style={{ flex: 1, overflow: 'hidden' }}>
-                    <textarea
-                        ref={textareaRef}
+                    <Textarea
+                        aria-label="Animation code" ref={textareaRef}
                         value={code}
                         onChange={e => setCode(e.target.value)}
                         onKeyDown={handleKeyDown}
                         placeholder={`// Paste manim-web code here\n// All manim-web exports are available (Scene, Circle, makeDraggable, etc.)\n// \`scene\` is pre-created — just use it directly\n// Press ⌘+Enter to run\n\nconst dot = new Dot({ point: [0, 0, 0], color: YELLOW, radius: 0.15 });\nscene.add(dot);\nmakeDraggable(dot, scene);\nmakeHoverable(dot, scene, { hoverScale: 1.5, hoverColor: RED });\n\nawait scene.wait(999999);`}
                         spellCheck={false}
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            background: 'transparent',
-                            border: 'none',
-                            outline: 'none',
-                            color: 'var(--secondary-foreground)',
-                            fontSize: '12px',
-                            fontFamily: "'SF Mono', Monaco, Consolas, 'Courier New', monospace",
-                            lineHeight: '1.7',
-                            padding: '16px',
-                            resize: 'none',
-                            tabSize: 2,
-                            boxSizing: 'border-box',
-                        }}
+                        style={{ width: '100%', height: '100%', resize: 'none', tabSize: 2, boxSizing: 'border-box' }}
                     />
                 </div>
 
@@ -199,23 +170,23 @@ export default function ManualCodePage() {
                 {(renderError || runtimeError) && (
                     <div
                         style={{
-                            padding: '10px 16px',
-                            borderTop: '1px solid #7f1d1d',
-                            background: '#1a0a0a',
+                            padding: '8px 12px',
+                            borderTop: '1px solid var(--destructive)',
+                            background: 'var(--danger-surface)',
                             maxHeight: '180px',
                             overflowY: 'auto',
                         }}
                     >
-                        <div style={{ fontSize: '10px', color: '#ef4444', fontWeight: 600, marginBottom: '4px' }}>
+                        <div style={{ fontSize: '13px', color: 'var(--destructive)', fontWeight: 600, marginBottom: '4px' }}>
                             {renderError ? '✗ Render Error' : '⚠ Runtime Error'}
                         </div>
                         <pre
                             style={{
-                                color: '#f87171',
-                                fontSize: '11px',
+                                color: 'var(--destructive)',
+                                fontSize: '14px',
                                 margin: 0,
                                 whiteSpace: 'pre-wrap',
-                                fontFamily: 'monospace',
+                                fontFamily: 'inherit',
                                 lineHeight: 1.5,
                             }}
                         >
@@ -245,13 +216,13 @@ export default function ManualCodePage() {
                             alignItems: 'center',
                             justifyContent: 'center',
                             color: 'var(--muted-foreground)',
-                            fontSize: '13px',
+                            fontSize: '16px',
                             flexDirection: 'column',
                             gap: '8px',
                         }}
                     >
                         <span>Paste code and press Run</span>
-                        <span style={{ fontSize: '11px', color: 'var(--muted-foreground)' }}>⌘+Enter to run</span>
+                        <span style={{ fontSize: '14px', color: 'var(--muted-foreground)' }}>⌘+Enter to run</span>
                     </div>
                 )}
             </div>

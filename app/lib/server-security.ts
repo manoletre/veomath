@@ -20,12 +20,20 @@ export async function requireUser(request: NextRequest): Promise<DecodedIdToken 
     if (user.firebase.sign_in_provider !== 'google.com') {
       return NextResponse.json({ error: 'Google sign-in is required' }, { status: 403 });
     }
-    if (process.env.NODE_ENV === 'production' && (!user.email_verified || !user.email)) {
+    if (!user.email_verified || !user.email) {
       return NextResponse.json({ error: 'A verified Google email is required' }, { status: 403 });
     }
     return user;
-  } catch {
-    return NextResponse.json({ error: 'Session expired. Sign in again.' }, { status: 401 });
+  } catch (error) {
+    const code = (error as { code?: unknown })?.code;
+    // auth/* means the token or its user is bad (expired, revoked, deleted, wrong project).
+    // Anything else is a server problem such as missing Admin credentials, not the user's session.
+    if (typeof code === 'string' && code.startsWith('auth/') && code !== 'auth/internal-error') {
+      console.warn(`requireUser rejected token: ${code}`);
+      return NextResponse.json({ error: 'Session expired. Sign in again.' }, { status: 401 });
+    }
+    console.error('requireUser could not verify token', error);
+    return NextResponse.json({ error: 'Sign-in could not be verified. Try again later.' }, { status: 503 });
   }
 }
 

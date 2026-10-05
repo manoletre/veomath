@@ -161,7 +161,7 @@ function SandboxContent() {
         style={{ width: 1280, height: 720, position: 'relative', background: '#000' }}
       />
       {status === 'loading' && (
-        <div style={{ position: 'absolute', top: 10, left: 10, color: '#555', fontSize: 12 }}>
+        <div style={{ position: 'absolute', top: 10, left: 10, color: 'var(--muted-foreground)', fontSize: 15 }}>
           Loading...
         </div>
       )}
@@ -173,7 +173,7 @@ export default function SandboxPage() {
   return (
     <Suspense
       fallback={
-        <div style={{ width: '100vw', height: '100vh', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#555' }}>
+        <div style={{ width: '100vw', height: '100vh', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--muted-foreground)' }}>
           Loading...
         </div>
       }

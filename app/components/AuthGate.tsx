@@ -6,7 +6,10 @@ import { Fragment, useEffect, useState } from 'react';
 import { auth } from '../lib/firebase-client';
 import MathLogo from './MathLogo';
 import { LoginButtonSocial1 } from '@/components/login-button-social-1';
-import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Separator } from '@/components/ui/separator';
+import { AccountContext } from './AccountContext';
 
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -25,12 +28,13 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   if (!ready) return <main className="auth-screen">Loading sign-in…</main>;
   if (!user) {
     return <main className="auth-screen">
-      <div className="auth-card">
+      <Card className="auth-card">
         <h1 style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <MathLogo size={36} />
           veomath
         </h1>
         <p>Sign in to create math visualizations.</p>
+        <Separator className="mb-6" />
         <LoginButtonSocial1 disabled={signingIn} aria-busy={signingIn} onClick={async () => {
           setError('');
           setSigningIn(true);
@@ -38,15 +42,11 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
           catch (err) { setError(err instanceof Error ? err.message : 'Sign-in failed'); }
           finally { setSigningIn(false); }
         }} />
-        {error && <p role="alert" className="auth-error">{error}</p>}
-      </div>
+        {error && <Alert variant="destructive" className="mt-4"><AlertDescription>{error}</AlertDescription></Alert>}
+      </Card>
     </main>;
   }
-  return <>
-    <div className="account-bar">
-      <span>{user.email}</span>
-      <Button variant="ghost" size="sm" className="h-7 px-2 text-xs" onClick={() => signOut(auth)}>Sign out</Button>
-    </div>
+  return <AccountContext.Provider value={{ email: user.email, signOut: () => signOut(auth) }}>
     <Fragment key={user.uid}>{children}</Fragment>
-  </>;
+  </AccountContext.Provider>;
 }
