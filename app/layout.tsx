@@ -12,7 +12,7 @@ const ptSerif = PT_Serif({
 
 export const metadata: Metadata = {
   title: "veomath",
-  description: "Math visualization with AI and manim-web",
+  description: "Learn math visually. Ask a question and get an interactive animation that shows why it’s true.",
 };
 
 export default function RootLayout({

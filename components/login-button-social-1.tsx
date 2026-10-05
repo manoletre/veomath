@@ -7,9 +7,10 @@ import { cn } from '@/lib/utils';
 
 // Based on the public Google-login preview, using the open-source shadcn Button:
 // https://www.shadcnblocks.com/component/login-button/login-button-social-1
-export function LoginButtonSocial1({ className, ...props }: Omit<ComponentProps<typeof Button>, 'children'>) {
+// Hover lifts the button instead of dimming it: a dimmed background shows the icon's white square.
+export function LoginButtonSocial1({ className, label = 'Continue with Google', ...props }: Omit<ComponentProps<typeof Button>, 'children'> & { label?: string }) {
   return (
-    <Button type="button" size="lg" className={cn('w-full', className)} {...props}>
+    <Button type="button" size="lg" className={cn('w-full transition duration-200 hover:-translate-y-0.5 hover:bg-primary hover:shadow-lg motion-reduce:hover:translate-y-0', className)} {...props}>
       <span className="relative size-5 shrink-0 overflow-hidden" aria-hidden="true">
         <Image
           src="/google-signin-icon.png"
@@ -20,7 +21,7 @@ export function LoginButtonSocial1({ className, ...props }: Omit<ComponentProps<
           unoptimized
         />
       </span>
-      Continue with Google
+      {label}
     </Button>
   );
 }
