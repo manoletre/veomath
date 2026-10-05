@@ -38,11 +38,25 @@
 }
 
 .auth-screen { min-height: 100vh; display: grid; place-items: center; color: var(--foreground); }
-.auth-card { width: min(440px, calc(100vw - 32px)); padding: 24px; }
-.auth-card h1 { font-size: 28px; margin: 0 0 12px; }
-.auth-card p { color: var(--secondary-foreground); line-height: 1.5; margin: 0 0 12px; }
-.auth-card .auth-error { margin: 12px 0 0; }
-.auth-error { color: var(--destructive) !important; font-size: 15px; }
+
+/* Signed-out landing page. body doesn't scroll (the app is a fixed-height workspace), so the landing scrolls itself. */
+.landing { height: 100dvh; overflow-x: hidden; overflow-y: auto; }
+.landing-hero { position: relative; display: grid; place-items: center; min-height: calc(100dvh - 64px); padding: 48px 16px 96px; }
+.landing-section { display: flex; align-items: center; min-height: 100dvh; padding: 96px 16px; scroll-margin-top: 0; }
+.landing-scroll-cue { position: absolute; bottom: 28px; left: 50%; translate: -50% 0; padding: 8px; color: var(--muted-foreground); animation: landing-bob 2s ease-in-out infinite; }
+.landing-reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.landing-reveal.is-visible { opacity: 1; transform: none; }
+.landing-caret { display: inline-block; width: 2px; height: 1.1em; margin-left: 2px; vertical-align: -0.2em; background: currentColor; animation: landing-blink 1s steps(1) infinite; }
+.landing-nudge { animation: landing-wiggle 1.6s ease-in-out infinite; transform-origin: 50% 90%; }
+
+@keyframes landing-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+@keyframes landing-blink { 50% { opacity: 0; } }
+@keyframes landing-wiggle { 0%, 60%, 100% { transform: rotate(0); } 15% { transform: rotate(-14deg); } 35% { transform: rotate(10deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-reveal { transition: none; }
+  .landing-scroll-cue, .landing-caret, .landing-nudge { animation: none; }
+}
 :root {
   --background: #000000;
   --foreground: #ffffff;

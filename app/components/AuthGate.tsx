@@ -4,11 +4,7 @@ import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, User 
 import { usePathname } from 'next/navigation';
 import { Fragment, useEffect, useState } from 'react';
 import { auth } from '../lib/firebase-client';
-import MathLogo from './MathLogo';
-import { LoginButtonSocial1 } from '@/components/login-button-social-1';
-import { Card } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
+import Landing from './Landing';
 import { AccountContext } from './AccountContext';
 
 export default function AuthGate({ children }: { children: React.ReactNode }) {
@@ -27,24 +23,13 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   if (pathname === '/sandbox') return children;
   if (!ready) return <main className="auth-screen">Loading sign-in…</main>;
   if (!user) {
-    return <main className="auth-screen">
-      <Card className="auth-card">
-        <h1 style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <MathLogo size={36} />
-          veomath
-        </h1>
-        <p>Sign in to create math visualizations.</p>
-        <Separator className="mb-6" />
-        <LoginButtonSocial1 disabled={signingIn} aria-busy={signingIn} onClick={async () => {
-          setError('');
-          setSigningIn(true);
-          try { await signInWithPopup(auth, new GoogleAuthProvider()); }
-          catch (err) { setError(err instanceof Error ? err.message : 'Sign-in failed'); }
-          finally { setSigningIn(false); }
-        }} />
-        {error && <Alert variant="destructive" className="mt-4"><AlertDescription>{error}</AlertDescription></Alert>}
-      </Card>
-    </main>;
+    return <Landing signingIn={signingIn} error={error} onSignIn={async () => {
+      setError('');
+      setSigningIn(true);
+      try { await signInWithPopup(auth, new GoogleAuthProvider()); }
+      catch (err) { setError(err instanceof Error ? err.message : 'Sign-in failed'); }
+      finally { setSigningIn(false); }
+    }} />;
   }
   return <AccountContext.Provider value={{ email: user.email, signOut: () => signOut(auth) }}>
     <Fragment key={user.uid}>{children}</Fragment>
