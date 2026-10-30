@@ -4,6 +4,8 @@
 
 export interface LandingDemo {
   id: string;
+  /** Short name for the landing page's example index. */
+  title: string;
   prompt: string;
   /** Tells the visitor how to play with the live scene. */
   hint: string;
@@ -346,18 +348,21 @@ await scene.wait(999999);
 export const LANDING_DEMOS: LandingDemo[] = [
   {
     id: 'triangle',
+    title: 'Angles of a triangle',
     prompt: 'Why do the angles of a triangle always add up to 180°?',
     hint: 'drag the yellow vertex. The three angles still fill the straight line.',
     code: triangleAngleSum,
   },
   {
     id: 'derivative',
+    title: 'Secant to tangent',
     prompt: 'Where does the derivative come from? Show me a secant line turning into the tangent.',
     hint: 'drag Q toward P and watch the secant’s slope settle on the tangent’s.',
     code: secantToTangent,
   },
   {
     id: 'unit-circle',
+    title: 'Sine and cosine',
     prompt: 'How do the sine and cosine waves come from the unit circle?',
     hint: 'drag the yellow point around the circle and follow both waves.',
     code: unitCircleWaves,

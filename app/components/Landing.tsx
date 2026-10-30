@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { LANDING_DEMOS, type LandingDemo } from '../lib/landing-demos';
 import ManimRenderer from './ManimRenderer';
 import MathLogo from './MathLogo';
+import VisuallyWord from './VisuallyWord';
 
 interface LandingProps {
   onSignIn: () => void;
@@ -118,36 +119,67 @@ function DemoSection({ demo, index, total, onSignIn, signingIn }: {
   </section>;
 }
 
+/** Index of the example section currently filling most of the scroll area, or -1 above the first. */
+function useActiveExample(count: number) {
+  const [active, setActive] = useState(-1);
+  useEffect(() => {
+    const sections = Array.from({ length: count }, (_, i) => document.getElementById(`demo-${i}`)).filter(el => el !== null);
+    const hero = document.getElementById('landing-hero');
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        setActive(entry.target === hero ? -1 : sections.indexOf(entry.target as HTMLElement));
+      }
+    }, { root: document.querySelector('.landing-main'), threshold: 0.5 });
+    [hero, ...sections].forEach(el => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, [count]);
+  return active;
+}
+
+function Credit() {
+  return <>made by <a href="https://manoletre.com" target="_blank" rel="noopener noreferrer" className="text-foreground underline-offset-4 hover:underline">manoletre</a> <span role="img" aria-label="Colombia">🇨🇴</span></>;
+}
+
 export default function Landing({ onSignIn, signingIn, error }: LandingProps) {
-  return <main className="landing">
-    <header className="sticky top-0 z-40 border-b border-border/40 bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-[1120px] items-center justify-between px-4 md:px-6">
-        <span className="flex items-center gap-2.5 text-xl font-bold"><MathLogo size={28} />veomath</span>
-        <Button variant="outline" size="sm" disabled={signingIn} onClick={onSignIn}>Sign in</Button>
-      </div>
-    </header>
+  const active = useActiveExample(LANDING_DEMOS.length);
 
-    <section className="landing-hero">
-      <div className="mx-auto flex max-w-[760px] flex-col items-center gap-6 text-center">
-        <h1 className="text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">Learn math <em className="font-normal">visually</em></h1>
-        <p className="max-w-[560px] text-lg text-muted-foreground md:text-xl">
-          Ask a math question. Get an interactive animation that explains it.
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          <LoginButtonSocial1 className="w-auto" label="Sign up with Google" disabled={signingIn} aria-busy={signingIn} onClick={onSignIn} />
-          <Button variant="ghost" size="lg" onClick={() => scrollToId('demo-0')}>See examples<ArrowDown /></Button>
+  return <div className="landing">
+    <aside className="landing-rail">
+      <span className="flex items-center gap-3 text-2xl font-bold md:text-[2rem]"><MathLogo size={32} />veomath</span>
+      <Button variant="outline" size="sm" className="md:hidden" disabled={signingIn} onClick={onSignIn}>Sign in</Button>
+
+      <div className="hidden flex-1 flex-col gap-10 md:flex">
+        <p className="text-base text-muted-foreground">A math tutor that answers with animations you can interact with.</p>
+        <LoginButtonSocial1 label="Sign up with Google" disabled={signingIn} aria-busy={signingIn} onClick={onSignIn} />
+        <nav aria-label="Examples" className="flex flex-col gap-1">
+          <p className="mb-2 text-sm text-muted-foreground">Examples</p>
+          {LANDING_DEMOS.map((demo, index) => <button key={demo.id} type="button" aria-current={active === index ? 'true' : undefined}
+            className="landing-rail-link" onClick={() => scrollToId(`demo-${index}`)}>
+            <span className="tabular-nums text-muted-foreground">{String(index + 1).padStart(2, '0')}</span>{demo.title}
+          </button>)}
+        </nav>
+        <p className="mt-auto text-sm text-muted-foreground"><Credit /></p>
+      </div>
+    </aside>
+
+    <main className="landing-main">
+      <section id="landing-hero" className="landing-hero">
+        <div className="flex w-full max-w-[960px] flex-col items-start gap-8">
+          <h1 className="text-[clamp(3.5rem,11vw,9rem)] font-bold leading-[0.98] tracking-tight">Learn math<br /><VisuallyWord>visually</VisuallyWord></h1>
+          <p className="max-w-[520px] text-lg text-muted-foreground md:text-xl">
+            Ask a math question. Get an interactive animation that explains it.
+          </p>
+          <Button variant="outline" size="lg" onClick={() => scrollToId('demo-0')}>See it in action<ArrowDown /></Button>
+          {error && <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>}
         </div>
-        {error && <Alert variant="destructive" className="text-left"><AlertDescription>{error}</AlertDescription></Alert>}
-      </div>
-      <button type="button" aria-label="Scroll to the first example" onClick={() => scrollToId('demo-0')} className="landing-scroll-cue">
-        <ArrowDown className="size-5" />
-      </button>
-    </section>
+      </section>
 
-    {LANDING_DEMOS.map((demo, index) => <DemoSection key={demo.id} demo={demo} index={index} total={LANDING_DEMOS.length} onSignIn={onSignIn} signingIn={signingIn} />)}
+      {LANDING_DEMOS.map((demo, index) => <DemoSection key={demo.id} demo={demo} index={index} total={LANDING_DEMOS.length} onSignIn={onSignIn} signingIn={signingIn} />)}
 
-    <footer className="border-t border-border/40 py-10 text-center text-base text-muted-foreground">
-      made by <a href="https://manoletre.com" target="_blank" rel="noopener noreferrer" className="text-foreground underline-offset-4 hover:underline">manoletre</a> <span role="img" aria-label="Colombia">🇨🇴</span>
-    </footer>
-  </main>;
+      <footer className="border-t border-border/40 py-10 text-center text-base text-muted-foreground md:hidden">
+        <Credit />
+      </footer>
+    </main>
+  </div>;
 }
